@@ -36,7 +36,7 @@ import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 interface UserGroupOption {
   id: number;
   name: string;
-  logoUrl?: string;
+  logoUrl?: string | null;
 }
 
 defineProps<{ items: UserGroupOption[] }>();

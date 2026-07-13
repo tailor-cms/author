@@ -1,4 +1,6 @@
 import type { Repository } from '@tailor-cms/interfaces/repository';
+
+import { schema as schemaApi } from '@tailor-cms/config';
 import Promise from 'bluebird';
 
 import { api } from '@/api';
@@ -14,6 +16,7 @@ const initialStatus = () => ({ progress: 0, message: '' });
  */
 export const useCatalogPublish = () => {
   const confirmationDialog = useConfirmationDialog();
+  const notify = useNotification();
 
   const status = ref(initialStatus());
   const isPublishing = computed(() => status.value.progress > 0);
@@ -33,14 +36,22 @@ export const useCatalogPublish = () => {
   };
 
   const publishRepository = (repository: Repository, onDone?: () => unknown) => {
+    const { name } = repository;
+    const repositoryTypeLabel = schemaApi.getLabel(repository);
     const message =
-      `Are you sure you want to publish all content in ${repository.name}?`;
+      `Are you sure you want to publish the ${repositoryTypeLabel} "${name}"?`;
     confirmationDialog({
-      title: 'Publish content',
+      title: `Publish ${repositoryTypeLabel}`,
+      icon: 'mdi-cloud-upload-outline',
       message,
       action: async () => {
-        await publish(repository.id);
-        await onDone?.();
+        try {
+          await publish(repository.id);
+          await onDone?.();
+          notify(`The ${repositoryTypeLabel} has been published`, { immediate: true });
+        } catch {
+          notify(`We couldn't publish the ${repositoryTypeLabel}`, { color: 'error' });
+        }
       },
     });
   };

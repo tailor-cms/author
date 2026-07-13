@@ -7,7 +7,10 @@
       @click="toggle"
     >
       <template #subtitle>
-        <span v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }">
+        <span
+          v-tooltip:bottom="{ text: fullTimestamp, openDelay: 300 }"
+          data-percy="hide"
+        >
           {{ timeOfDay }} · {{ revision.user?.label }}
         </span>
       </template>
