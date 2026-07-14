@@ -1,9 +1,35 @@
-import first from 'lodash/first.js';
-import intersection from 'lodash/intersection.js';
-import { StatusCodes } from 'http-status-codes';
-import { UserRole } from '@tailor-cms/interfaces/role';
-
+import {
+  canCreateRepository,
+  canCreateRepositoryInGroup,
+  hasRepositoryAdminAccess as _hasRepositoryAdminAccess,
+} from '@tailor-cms/utils';
 import { createError } from '#shared/error/helpers.js';
+import { StatusCodes } from 'http-status-codes';
+import first from 'lodash/first.js';
+
+const forbid = () =>
+  createError(StatusCodes.FORBIDDEN, 'Access restricted');
+
+/**
+ * Builds the acting user's access-policy context
+ * (RepositoryAccessContext).
+ */
+const resolveRepositoryAccess = async (repository, user) => {
+  const repositoryUser = first(
+    await repository.getRepositoryUsers({
+      where: { userId: user.id, hasAccess: true },
+    }),
+  );
+  const repositoryGroupIds = (repository.userGroups ?? []).map((it) => it.id);
+  const groupRoles = (user.userGroupMembers ?? [])
+    .filter((it) => repositoryGroupIds.includes(it.groupId))
+    .map((it) => it.role);
+  return {
+    userRole: user.role,
+    repositoryRole: repositoryUser?.role,
+    groupRoles,
+  };
+};
 
 class AccessService {
   static instance;
@@ -18,53 +44,33 @@ class AccessService {
   async hasRepositoryAccess(req, _res, next) {
     const { repository, user } = req;
     const hasAccess = await repository.hasAccess(user);
-    return hasAccess
-      ? next()
-      : createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
+    return hasAccess ? next() : forbid();
   }
 
   async hasRepositoryAdminAccess(req, _res, next) {
     const { repository, user } = req;
-    // If user is a system admin, allow all
+    // System admins skip the membership lookup
     if (user.isAdmin()) return next();
-    // Check if user is associated with the repository as an admin
-    const userRelationship = first(
-      await repository.getRepositoryUsers({
-        where: { userId: user.id, role: UserRole.ADMIN, hasAccess: true },
-      }),
-    );
-    if (userRelationship) return next();
-    // Check if user is a member of repository associated user group and has
-    // admin privileges
-    const repositoryGroupIds = repository.userGroups.map((it) => it.id);
-    const userGroupIds = user.userGroupMembers
-      ?.filter((it) => it.role === UserRole.ADMIN)
-      .map((it) => it.groupId);
-    if (intersection(repositoryGroupIds, userGroupIds).length) return next();
-    // If none of the above conditions are met, deny access
-    return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
+    const access = await resolveRepositoryAccess(repository, user);
+    return _hasRepositoryAdminAccess(access) ? next() : forbid();
   }
 
   async hasCreateRepositoryAccess(req, _res, next) {
     const { body = {}, user } = req;
     const { userGroupIds } = body;
-    // If user is system admin, allow
     if (user.isAdmin()) return next();
-    // If user is creating a repository for themselves, allow
-    if (user.role === UserRole.USER && !userGroupIds?.length) return next();
-    // If repository is created for a user group
-    if (userGroupIds?.length) {
-      const hasCreateGrant = userGroupIds.every((id) =>
-        user.userGroupMembers?.find(
-          (it) =>
-            it.groupId === id &&
-            [UserRole.ADMIN, UserRole.USER].includes(it.role),
-        ),
-      );
-      if (hasCreateGrant) return next();
+    // Creating outside a group is gated by the system role alone
+    if (!userGroupIds?.length) {
+      return canCreateRepository({ userRole: user.role }) ? next() : forbid();
     }
-    // If none of the above conditions are met, deny access
-    return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
+    // Group-targeted creation requires a create-capable role in every
+    // target group
+    const hasCreateGrant = userGroupIds.every((id) =>
+      user.userGroupMembers?.find(
+        (it) => it.groupId === id && canCreateRepositoryInGroup(it.role),
+      ),
+    );
+    return hasCreateGrant ? next() : forbid();
   }
 }
 

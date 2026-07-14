@@ -154,9 +154,13 @@ async function removeUser(userId: number) {
 }
 
 onBeforeMount(async () => {
-  userGroup.value = await api.userGroup.get({
-    params: { id: userGroupId },
-  });
+  try {
+    userGroup.value = await api.userGroup.get({
+      params: { id: userGroupId },
+    });
+  } catch {
+    return navigateTo({ name: 'user-groups' });
+  }
   await fetchUsers();
   isLoading.value = false;
 });

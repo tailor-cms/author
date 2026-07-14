@@ -83,8 +83,8 @@ const sections = [
 ];
 
 onMounted(() => {
-  if (currentRepositoryStore?.repository?.hasAdminAccess) return;
-  navigateTo({ name: 'catalog' });
+  if (!currentRepositoryStore.access.canAccessSettings)
+    navigateTo({ name: 'catalog' });
 });
 </script>
 

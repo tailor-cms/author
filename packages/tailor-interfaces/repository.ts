@@ -1,7 +1,7 @@
+import type { RepositoryRole, UserRole } from './role';
 import type { Activity } from './activity';
 import type { Revision } from './revision';
 import type { UserGroup } from './user-group';
-import type { RepositoryRole } from './role';
 
 // System-managed slot inside Repository.data.
 // Stripped from publish manifests and export archives - never persist
@@ -76,6 +76,16 @@ export interface RepositoryTag {
   repositoryId: number;
   // Tag side of the join
   tagId: number;
+}
+
+// User repository access context
+export interface RepositoryAccessContext {
+  // System-level role of the acting user
+  userRole: UserRole;
+  // Direct per-repository role, when the user is an individual member
+  repositoryRole?: RepositoryRole | null;
+  // Roles the user holds in user groups the repository is shared with
+  groupRoles?: UserRole[];
 }
 
 // User-defined label that can be attached to repositories for filtering
@@ -169,6 +179,9 @@ export interface Repository {
   // true if the current user can administer this repository
   // Convenience, FE derived
   hasAdminAccess?: boolean;
+  // Current user's resolved access-policy context for this repository
+  // Convenience, FE derived
+  accessPolicy?: RepositoryAccessContext;
   createdAt: string;
   updatedAt: string;
   // Soft-delete timestamp; null if active
