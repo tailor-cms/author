@@ -9,6 +9,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
+import { IMAGE_INPUT_EXT } from '../file-extensions';
 
 const SchemaId = 'PT_SCHEMA';
 
@@ -66,7 +67,7 @@ const unitMeta = [
     label: 'Thumbnail Image',
     placeholder: 'Click to add a thumbnail image',
     icon: 'mdi-image',
-    ext: ['jpg', 'jpeg', 'png'],
+    ext: IMAGE_INPUT_EXT,
     showPreview: true,
   },
 ];
@@ -170,7 +171,7 @@ const relatedContentMeta = [
     label: 'Thumbnail Image',
     placeholder: 'Click to add a thumbnail image',
     icon: 'mdi-image',
-    ext: ['jpg', 'jpeg', 'png'],
+    ext: IMAGE_INPUT_EXT,
     showPreview: true,
   },
   {
@@ -267,7 +268,7 @@ const ModuleConfig: ActivityConfig = {
       placeholder: 'Click to add a thumbnail image',
       icon: 'mdi-image',
       validate: {
-        ext: ['jpg', 'jpeg', 'png'],
+        ext: IMAGE_INPUT_EXT,
       },
       hideOnCreate: true,
       showPreview: true,
@@ -313,7 +314,7 @@ const LessonConfig: ActivityConfig = {
       placeholder: 'Click to add a thumbnail image',
       icon: 'mdi-image',
       validate: {
-        ext: ['jpg', 'jpeg', 'png'],
+        ext: IMAGE_INPUT_EXT,
       },
       hideOnCreate: true,
       showPreview: true,
@@ -349,7 +350,7 @@ export const SCHEMA: Schema = {
       label: 'Thumbnail Image',
       placeholder: 'Click to add a thumbnail image',
       icon: 'mdi-image',
-      ext: ['jpg', 'jpeg', 'png'],
+      ext: IMAGE_INPUT_EXT,
       hideOnCreate: true,
       showPreview: true,
     },
