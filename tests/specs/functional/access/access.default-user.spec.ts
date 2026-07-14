@@ -22,6 +22,7 @@ import { Toast } from '../../../pom/common/Toast.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
 const REPOSITORY_NAME = 'Access Test Repository';
+const REPOSITORY_TYPE = 'Course';
 
 const seedMemberRepository = async (role: 'ADMIN' | 'AUTHOR') => {
   const repository = await createCleanRepository(REPOSITORY_NAME);
@@ -279,19 +280,19 @@ test.describe('Default user acting on a repository they administer', () => {
   test('clones from the card', async ({ page }) => {
     const card = await openCard(page, REPOSITORY_NAME);
     await card.clone('Cloned by default admin');
-    await new Toast(page).expectCloned(REPOSITORY_NAME);
+    await new Toast(page).expectCloned(REPOSITORY_TYPE);
   });
 
   test('publishes from the card', async ({ page }) => {
     const card = await openCard(page, REPOSITORY_NAME);
     await card.publish();
-    await new Toast(page).expectPublished(REPOSITORY_NAME);
+    await new Toast(page).expectPublished(REPOSITORY_TYPE);
   });
 
   test('deletes from the card', async ({ page }) => {
     const card = await openCard(page, REPOSITORY_NAME);
     await card.delete();
-    await new Toast(page).expectDeleted(REPOSITORY_NAME);
+    await new Toast(page).expectDeleted(REPOSITORY_TYPE);
     await expect(card.el).not.toBeVisible();
   });
 });
