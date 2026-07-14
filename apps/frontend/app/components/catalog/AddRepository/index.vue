@@ -126,8 +126,10 @@
         <VSelect
           v-show="showUserGroupInput"
           v-model="groupInput"
+          :clearable="!lockedGroupId"
           :error-messages="errors.userGroupIds"
           :items="authStore.groupsWithCreateRepositoryAccess"
+          :item-props="(group) => ({ disabled: group.id === lockedGroupId })"
           class="user-group-select mb-3"
           item-title="name"
           item-value="id"
@@ -136,10 +138,16 @@
           variant="outlined"
           hide-details
           chips
-          clearable
           closable-chips
           multiple
-        />
+        >
+          <template #chip="{ internalItem, props: chipProps }">
+            <VChip
+              v-bind="chipProps"
+              :closable="internalItem.value !== lockedGroupId"
+            />
+          </template>
+        </VSelect>
       </div>
     </template>
     <template #actions>
@@ -201,6 +209,19 @@ const serverError = ref('');
 const showUserGroupInput = computed(() => {
   if (authStore.hasDefaultUserGroup) return false;
   return !!authStore.groupsWithCreateRepositoryAccess?.length;
+});
+
+// The workspace selected in the catalog rail, when it's a real group the user
+// can create in. Repos created while inside a workspace are pinned to it (a
+// non-removable chip), so they don't vanish from the workspace-filtered
+// catalog. `0` (All workspaces) means no context to pin.
+const lockedGroupId = computed<number | null>(() => {
+  if (!showUserGroupInput.value) return null;
+  const id = repositoryStore.selectedUserGroupId;
+  const canCreateHere = authStore.groupsWithCreateRepositoryAccess.some(
+    (group) => group.id === id,
+  );
+  return id && canCreateHere ? id : null;
 });
 
 const metaValidation = reactive<Record<string, any>>({});
@@ -318,9 +339,11 @@ watch(
 
 watch(isVisible, (val) => {
   if (!val) return emit('close');
-  groupInput.value = authStore.hasDefaultUserGroup
-    ? [authStore.userGroups[0]!.id]
-    : [];
+  if (authStore.hasDefaultUserGroup) {
+    groupInput.value = [authStore.userGroups[0]!.id];
+    return;
+  }
+  groupInput.value = lockedGroupId.value ? [lockedGroupId.value] : [];
 });
 </script>
 

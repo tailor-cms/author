@@ -3,9 +3,10 @@
     <WorkspaceRail
       v-if="userGroupOptions.length"
       v-model="repositoryStore.selectedUserGroupId"
-      :is-create-enabled="authStore.isAdmin"
       :items="userGroupOptions"
-      @create="isCreateWorkspaceVisible = true"
+      @created="onWorkspaceCreated"
+      @deleted="onWorkspaceDeleted"
+      @updated="onWorkspaceUpdated"
       @update:model-value="onUserGroupChange"
     />
     <VSheet
@@ -144,12 +145,6 @@
         </VContainer>
       </div>
     </VSheet>
-    <UserGroupDialog
-      :user-groups="authStore.userGroups"
-      :visible="isCreateWorkspaceVisible"
-      @created="onWorkspaceCreate"
-      @update:visible="isCreateWorkspaceVisible = $event"
-    />
   </NuxtLayout>
 </template>
 
@@ -177,9 +172,7 @@ import RepositoryFilterSelection
   from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
-import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
 import { describeSelection } from '@/utils/describeSelection';
-import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 import WorkspaceRail from '@/components/catalog/WorkspaceRail/index.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
@@ -208,7 +201,6 @@ const isLoading = ref(true);
 const isDeleting = ref(false);
 const cloneTarget = ref<Repository | null>(null);
 const exportTarget = ref<Repository | null>(null);
-const isCreateWorkspaceVisible = ref(false);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -224,9 +216,17 @@ const userGroupOptions = computed(() =>
   authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
 );
 
-const onWorkspaceCreate = async (group: UserGroup) => {
+const onWorkspaceCreated = (group: UserGroup) =>
+  navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
+
+const onWorkspaceUpdated = () => authStore.fetchUserInfo();
+
+const onWorkspaceDeleted = async (id: number) => {
+  const wasSelected = repositoryStore.selectedUserGroupId === id;
   await authStore.fetchUserInfo();
-  await navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
+  if (!wasSelected) return;
+  repositoryStore.selectedUserGroupId = 0;
+  await onUserGroupChange();
 };
 
 const onUserGroupChange = async () => {

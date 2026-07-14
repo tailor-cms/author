@@ -9,25 +9,19 @@
     permanent
   >
     <div class="rail-tiles mt-2">
-      <UserGroupAvatar
+      <WorkspaceTile
         v-for="item in items"
         :key="item.id"
-        v-tooltip:end="{ text: item.name, openDelay: 300 }"
-        :aria-label="item.name"
-        :aria-pressed="item.id === selectedId"
-        :class="['rail-avatar', { 'rail-avatar--active': item.id === selectedId }]"
-        :logo-url="isAllOption(item) ? null : item.logoUrl"
-        :placeholder-icon="isAllOption(item) ? 'mdi-view-grid-outline' : undefined"
-        role="button"
-        size="42"
-        tabindex="0"
-        rounded="xl"
-        @click="selectedId = item.id"
-        @keydown.enter="selectedId = item.id"
-        @keydown.space.prevent="selectedId = item.id"
+        :can-manage="some(authStore.groupsWithAdminAccess, { id: item.id })"
+        :can-modify="authStore.isAdmin"
+        :is-active="item.id === selectedId"
+        :item="item"
+        @delete="confirmDelete(item)"
+        @edit="openEdit(item.id)"
+        @select="selectedId = item.id"
       />
       <VAvatar
-        v-if="isCreateEnabled"
+        v-if="authStore.isAdmin"
         v-tooltip:end="{ text: 'Create workspace', openDelay: 300 }"
         aria-label="Create workspace"
         class="rail-add mt-1"
@@ -36,32 +30,71 @@
         rounded="xl"
         size="42"
         tabindex="0"
-        @click="emit('create')"
-        @keydown.enter="emit('create')"
-        @keydown.space.prevent="emit('create')"
+        @click="openCreate"
+        @keydown.enter="openCreate"
+        @keydown.space.prevent="openCreate"
       >
         <VIcon color="primary" icon="mdi-plus" size="22" />
       </VAvatar>
     </div>
+    <UserGroupDialog
+      v-model:visible="isDialogVisible"
+      :group-data="editedWorkspace"
+      :user-groups="authStore.userGroups"
+      @created="emit('created', $event)"
+      @updated="emit('updated', $event)"
+    />
   </VNavigationDrawer>
 </template>
 
 <script lang="ts" setup>
-import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
-interface WorkspaceOption {
-  id: number;
-  name: string;
-  logoUrl?: string;
-}
+import { api } from '@/api';
+import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
+import WorkspaceTile, { type WorkspaceOption } from './WorkspaceTile.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
+import { find, some } from 'lodash-es';
 
-defineProps<{ items: WorkspaceOption[]; isCreateEnabled?: boolean }>();
+defineProps<{ items: WorkspaceOption[] }>();
 
-const emit = defineEmits<{ create: [] }>();
+const emit = defineEmits<{
+  created: [group: UserGroup];
+  updated: [group: UserGroup];
+  deleted: [id: number];
+}>();
 
 const selectedId = defineModel<number | null>();
 
-const isAllOption = (item: WorkspaceOption) => item.id === 0;
+const authStore = useAuthStore();
+const confirmationDialog = useConfirmationDialog();
+
+const editedWorkspace = ref<UserGroup | null>(null);
+const isDialogVisible = ref(false);
+
+const openCreate = () => {
+  editedWorkspace.value = null;
+  isDialogVisible.value = true;
+};
+
+const openEdit = (id: number) => {
+  editedWorkspace.value = find(authStore.userGroups, { id }) ?? null;
+  isDialogVisible.value = true;
+};
+
+const confirmDelete = ({ id, name }: WorkspaceOption) =>
+  confirmationDialog({
+    title: 'Delete workspace',
+    color: 'error',
+    message:
+      `Delete "${name}"? This removes all its members and unlinks its ` +
+      `repositories, which may cut off members' access. This can't be undone.`,
+    action: async () => {
+      await api.userGroup.delete({ params: { id } });
+      emit('deleted', id);
+    },
+  });
 </script>
 
 <style lang="scss" scoped>
@@ -71,22 +104,6 @@ const isAllOption = (item: WorkspaceOption) => item.id === 0;
   align-items: center;
   gap: 0.625rem;
   padding-block: 0.25rem;
-}
-
-.rail-avatar {
-  cursor: pointer;
-  opacity: 0.85;
-  transition: opacity 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
-
-  &:hover {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-
-  &--active {
-    opacity: 1;
-    box-shadow: 0 0 0 2px rgb(var(--v-theme-primary));
-  }
 }
 
 .rail-add {

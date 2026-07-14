@@ -19,7 +19,8 @@
       <VTextField
         v-model="search"
         :label="`Filter ${props.label}...`"
-        class="mt-3 mx-3"
+        class="my-3 mx-3"
+        density="comfortable"
         variant="outlined"
         clearable
         hide-details
@@ -32,6 +33,8 @@
         max-height="300"
         select-strategy="leaf"
         return-object
+        nav
+        density="compact"
         @click:select="emit('update', $event.id)"
       >
         <template #prepend="{ isSelected, select }">

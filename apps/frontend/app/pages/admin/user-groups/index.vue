@@ -78,11 +78,10 @@
       </template>
     </VDataTableServer>
     <UserGroupDialog
+      v-model:visible="isGroupDialogVisible"
       :group-data="editedGroup"
       :user-groups="userGroups"
-      :visible="isGroupDialogVisible"
       @created="fetch(defaultPage)"
-      @update:visible="isGroupDialogVisible = $event"
       @updated="fetch(defaultPage)"
     />
   </div>
