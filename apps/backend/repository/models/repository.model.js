@@ -263,7 +263,8 @@ class Repository extends Model {
     );
   }
 
-  async clone(name, description, context) {
+  async clone(name, description, options) {
+    const { context, shareWithSamePeople = false } = options;
     const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
@@ -277,6 +278,7 @@ class Repository extends Model {
       context,
       transaction,
     });
+    if (shareWithSamePeople) await this.copyAccessTo(dst, context, transaction);
     const src = await Activity.findAll({
       where: { repositoryId: this.id, parentId: null },
       transaction,
@@ -288,6 +290,32 @@ class Repository extends Model {
     await dst.mapClonedReferences(idMap, transaction);
     await transaction.commit();
     return dst;
+  }
+
+  /**
+   * Shares the given repository with everyone that can access this one;
+   * links it to the same user groups and grants the active members their
+   * current roles. The acting user keeps the ADMIN membership created
+   * alongside the clone.
+   */
+  async copyAccessTo(dst, context, transaction) {
+    const RepositoryUser = this.sequelize.model('RepositoryUser');
+    const userGroups = await this.getUserGroups({ transaction });
+    if (userGroups.length) await dst.setUserGroups(userGroups, { transaction });
+    const memberships = await this.getRepositoryUsers({
+      where: { hasAccess: true, userId: { [Op.ne]: context.userId } },
+      transaction,
+    });
+    if (!memberships.length) return;
+    await RepositoryUser.bulkCreate(
+      memberships.map((it) => ({
+        userId: it.userId,
+        repositoryId: dst.id,
+        role: it.role,
+        hasAccess: true,
+      })),
+      { transaction },
+    );
   }
 
   // Check if there is at least one outline activity with unpublished

@@ -14,13 +14,14 @@ test.describe('as a System Admin', () => {
   test('should see the admin menu entry', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).toBeVisible();
   });
 
   test('should be able to see 4 menu entries', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
-    await appBar.adminLink.click();
+    await appBar.goToAdmin();
     const sidebarLocator = page.locator('.admin-sidebar');
     await expect(sidebarLocator.locator('.v-list-item')).toHaveCount(4);
     await expect(sidebarLocator).toContainText('System Users');

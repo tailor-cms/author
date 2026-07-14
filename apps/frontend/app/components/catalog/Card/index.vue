@@ -5,8 +5,8 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-container"
-    elevation="2"
+    color="surface-raised"
+    elevation="1"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <!-- Poster artwork: sharp on the right, dissolving into the card surface on
@@ -22,6 +22,7 @@
     <div class="card-body">
       <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
         <div
+          v-if="hasAdminAccess"
           :aria-checked="isSelected"
           :class="{ 'is-selected': isSelected }"
           aria-label="Select repository"
@@ -33,20 +34,20 @@
           @keydown.space.prevent="$emit('toggle-selection', repository.id)"
         >
           <VIcon
-            v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
-            :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-            :color="hasUnpublishedChanges ? 'warning' : 'success'"
-            class="status-dot"
-            icon="mdi-circle"
-            size="14"
-          />
-          <VIcon
             :color="isSelected ? 'primary' : undefined"
             :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
             class="checkbox"
             size="24"
           />
         </div>
+        <VIcon
+          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+          :color="hasUnpublishedChanges ? 'warning' : 'success'"
+          class="status-dot mr-2"
+          icon="mdi-circle"
+          size="14"
+        />
         <div
           ref="schema"
           v-tooltip="{
@@ -58,8 +59,12 @@
         >
           {{ schemaName }}
         </div>
-        <div v-if="repository?.hasAdminAccess" class="d-flex align-center ga-1">
+        <div
+          v-if="hasAdminAccess || repositoryActions.length"
+          class="d-flex align-center ga-1"
+        >
           <VBtn
+            v-if="hasAdminAccess"
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
             class="repo-info glass-btn"
@@ -72,7 +77,11 @@
               params: { id: repository.id },
             })"
           />
-          <VMenu location="bottom end" offset="4">
+          <VMenu
+            v-if="repositoryActions.length"
+            location="bottom end"
+            offset="4"
+          >
             <template #activator="{ props: menuProps }">
               <VBtn
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
@@ -88,13 +97,13 @@
             </template>
             <VList density="compact" min-width="200" nav>
               <VListItem
-                v-for="action in actions"
+                v-for="action in repositoryActions"
                 :key="action.name"
                 :base-color="action.color"
                 :prepend-icon="`mdi-${action.icon}`"
                 :title="action.label"
                 rounded="lg"
-                @click.stop="onAction(action.name)"
+                @click.stop="onRepositoryAction(action.name)"
               />
             </VList>
           </VMenu>
@@ -135,18 +144,19 @@
 </template>
 
 <script lang="ts" setup>
-import { first, get } from 'lodash-es';
 import type {
   Repository,
   RepositoryFileMeta,
 } from '@tailor-cms/interfaces/repository';
+import type { RepositoryAction } from '@/composables/useRepositoryActions';
 import type { Revision } from '@tailor-cms/interfaces/revision';
+import { first, get } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useTimeAgo } from '@vueuse/core';
 
-import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
+import Tags from './Tags/index.vue';
 
 const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
@@ -155,6 +165,7 @@ const props = defineProps<{
   repository: Repository;
   isSelected?: boolean;
 }>();
+
 const emit = defineEmits([
   'toggle-selection',
   'clone',
@@ -163,33 +174,8 @@ const emit = defineEmits([
   'delete',
 ]);
 
-interface CardAction {
-  name: 'settings' | 'clone' | 'publish' | 'export' | 'delete';
-  label: string;
-  icon: string;
-  color?: string;
-}
-
-const actions = computed<CardAction[]>(() => [
-  { name: 'clone', label: 'Clone', icon: 'content-copy' },
-  { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
-  { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
-  { name: 'delete', label: 'Delete', icon: 'trash-can-outline', color: 'error' },
-]);
-
-const onAction = (name: CardAction['name']) => {
-  if (name === 'settings') {
-    return navigateTo({
-      name: 'repository-settings-general',
-      params: { id: props.repository.id },
-    });
-  }
-  emit(name, props.repository);
-};
-
 // Template ref
 const schema = ref(null);
-
 const isSchemaNameTruncated = ref(false);
 const schemaName = computed(() => $schemaService.getLabel(props.repository));
 
@@ -215,6 +201,14 @@ const publishingInfo = computed(() => hasUnpublishedChanges.value
   ? 'Has unpublished changes.'
   : 'Published.',
 );
+
+const repositoryActions = useRepositoryActions(
+  () => props.repository.accessPolicy,
+);
+const hasAdminAccess = computed(() => !!props.repository.hasAdminAccess);
+
+const onRepositoryAction = (name: RepositoryAction['name']) =>
+  emit(name, props.repository);
 
 const detectSchemaTruncation = () => {
   const { clientWidth, scrollWidth } = schema.value as any;
@@ -363,51 +357,33 @@ onMounted(() => nextTick(detectSchemaTruncation));
   outline: 2px solid rgb(var(--v-theme-primary));
 }
 
-// Left slot cross-fades the published-status dot into the select checkbox on
-// hover/selection (same footprint, no layout shift) — mirrors the asset list.
+// Select checkbox occupies zero width at rest and expands on
+// hover/focus/selection, nudging the status dot and schema name right
+// instead of covering them — the dot (and its tooltip) stays visible.
 .select-checkbox {
-  position: relative;
   flex: none;
-  margin-left: -0.25rem;
-  width: 1.75rem;
+  width: 0;
   height: 1.75rem;
-  margin-right: 0.25rem;
+  overflow: hidden;
+  opacity: 0;
   cursor: pointer;
   border-radius: 4px;
+  transition:
+    width 0.28s ease-in-out,
+    margin 0.28s ease-in-out,
+    opacity 0.28s ease-in-out;
+}
 
-  &:focus-visible {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: 2px;
-  }
-
-  .status-dot,
-  .checkbox {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    transition:
-      opacity 0.28s ease-in-out,
-      transform 0.28s ease-in-out;
-  }
-
-  .checkbox {
-    opacity: 0;
-    transform: scale(0.7);
-    pointer-events: none;
-  }
+.status-dot {
+  flex: none;
 }
 
 .repository-card:hover .select-checkbox,
 .select-checkbox:focus-visible,
 .select-checkbox.is-selected {
-  .checkbox {
-    opacity: 1;
-    transform: scale(1);
-  }
-
-  .status-dot {
-    opacity: 0;
-    transform: scale(0.7);
-  }
+  width: 1.75rem;
+  margin-left: -0.25rem;
+  margin-right: 0.25rem;
+  opacity: 1;
 }
 </style>

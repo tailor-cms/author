@@ -3,6 +3,7 @@
     <VTextField
       v-model="nameInput"
       v-bind="$attrs"
+      :counter="meta.validate.max"
       :error-messages="errors"
       :label="props.label"
       :messages="warning"

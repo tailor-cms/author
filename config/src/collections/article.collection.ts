@@ -15,6 +15,7 @@ import {
   TailorEntity,
 } from '../lib/index.ts';
 import { OUTLINE_COLOR } from '../colors';
+import { IMAGE_INPUT_EXT } from '../file-extensions';
 
 const embedElementConfig = [
   ContentElementType.TiptapHtml,
@@ -39,7 +40,7 @@ class Author {
     placeholder: 'Upload a profile photo',
     showPreview: true,
     icon: 'mdi-account',
-    ext: ['jpg', 'jpeg', 'png'],
+    ext: IMAGE_INPUT_EXT,
   })
   avatar: string;
 }
@@ -93,7 +94,7 @@ class Article {
     placeholder: 'Click to upload a thumbnail image',
     showPreview: true,
     icon: 'mdi-image',
-    ext: ['jpg', 'jpeg', 'png'],
+    ext: IMAGE_INPUT_EXT,
   })
   thumbnail: string;
 
@@ -163,7 +164,7 @@ export const articleCollection = new TailorCollection({
       placeholder: 'Click to add a poster image',
       icon: 'mdi-image',
       validate: {
-        ext: ['jpg', 'jpeg', 'png'],
+        ext: IMAGE_INPUT_EXT,
       },
       hideOnCreate: true,
       showPreview: true,
