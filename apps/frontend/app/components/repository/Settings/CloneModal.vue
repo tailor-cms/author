@@ -14,6 +14,7 @@
       </p>
       <VTextField
         v-model="nameInput"
+        :counter="NAME_MAX_LENGTH"
         :disabled="inProgress"
         :error-messages="errors.name"
         class="required mb-4"
@@ -23,6 +24,7 @@
       />
       <VTextarea
         v-model="descriptionInput"
+        :counter="DESCRIPTION_MAX_LENGTH"
         :disabled="inProgress"
         :error-messages="errors.description"
         class="required"
@@ -79,6 +81,9 @@ const props = withDefaults(
 
 const emit = defineEmits(['close', 'cloned']);
 
+const NAME_MAX_LENGTH = 250;
+const DESCRIPTION_MAX_LENGTH = 2000;
+
 const notify = useNotification();
 
 const authStore = useAuthStore();
@@ -111,8 +116,8 @@ const shareHint = computed(() => {
 
 const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
-    name: string().required().min(2).max(250),
-    description: string().required().min(2).max(2000),
+    name: string().required().min(2).max(NAME_MAX_LENGTH),
+    description: string().required().min(2).max(DESCRIPTION_MAX_LENGTH),
   }),
   // The copy usually keeps the original description; the name must be new.
   initialValues: {
