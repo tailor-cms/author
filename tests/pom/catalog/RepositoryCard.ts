@@ -1,7 +1,12 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { confirmAction, selectMenuOption } from '../common/utils';
+import {
+  confirmAction,
+  getMenuOptions,
+  selectMenuOption,
+} from '../common/utils';
+import { CloneDialog } from '../repository/CloneDialog';
 
 export class RepositoryCard {
   readonly page: Page;
@@ -10,6 +15,7 @@ export class RepositoryCard {
   readonly pinBtn: Locator;
   readonly actionsBtn: Locator;
   readonly settingsBtn: Locator;
+  readonly selectCheckbox: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -18,6 +24,7 @@ export class RepositoryCard {
     this.pinBtn = el.getByLabel('Pin repository');
     this.actionsBtn = el.getByLabel('Repository actions');
     this.settingsBtn = el.getByLabel('Repository settings');
+    this.selectCheckbox = el.getByLabel('Select repository');
   }
 
   async openSettings() {
@@ -25,9 +32,25 @@ export class RepositoryCard {
     await this.settingsBtn.click();
   }
 
+  async select() {
+    await this.el.hover();
+    await this.selectCheckbox.click();
+  }
+
   async runAction(name: 'Clone' | 'Publish' | 'Export' | 'Delete') {
     await this.actionsBtn.click();
     await selectMenuOption(this.page, name);
+  }
+
+  // Labels of the card actions menu the acting user is offered
+  async getActionLabels() {
+    await this.actionsBtn.click();
+    return getMenuOptions(this.page);
+  }
+
+  async clone(name: string) {
+    await this.runAction('Clone');
+    await new CloneDialog(this.page).clone(name);
   }
 
   async publish() {

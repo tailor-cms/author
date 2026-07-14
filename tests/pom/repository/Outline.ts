@@ -8,6 +8,9 @@ import { OutlineItem } from './OutlineItem';
 import { OutlineSidebar } from './OutlineSidebar';
 
 export class ActivityOutline {
+  static getRoute = (repositoryId: number) =>
+    `/repository/${repositoryId}/root/structure`;
+
   readonly page: Page;
   readonly el: Locator;
   readonly searchInput: Locator;

@@ -16,6 +16,7 @@
       </div>
       <VTextField
         v-model="nameInput"
+        :counter="NAME_MAX_LENGTH"
         :error-messages="errors.name"
         class="mb-3 required"
         label="Group name"
@@ -58,6 +59,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['created', 'updated', 'update:visible']);
 
+const NAME_MAX_LENGTH = 250;
+
 const isDialogVisible = computed({
   get: () => props.visible,
   set(value) {
@@ -74,7 +77,7 @@ const onAvatarSave = (imgUrl: string) => {
 const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm(
   {
     validationSchema: object({
-      name: string().min(2).max(250).required(),
+      name: string().min(2).max(NAME_MAX_LENGTH).required(),
       logoUrl: string().nullable(),
     }),
   },

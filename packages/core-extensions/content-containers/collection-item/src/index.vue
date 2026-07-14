@@ -8,7 +8,6 @@
           :meta="{ ...meta, value: entryMetaValues[meta.key] }"
           :name="meta.key"
           :is-disabled="disabled"
-          class="pb-4"
           hide-details="auto"
           @update="(e) => (entryMetaValues[meta.key] = e)"
         />

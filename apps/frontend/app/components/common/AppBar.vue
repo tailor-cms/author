@@ -9,75 +9,25 @@
     </NuxtLink>
     <nav
       v-if="!smAndDown"
-      class="d-flex align-center ml-2"
+      class="d-flex align-center ml-2 ga-2"
       aria-label="Global"
     >
       <VBtn
-        class="px-2 text-body-medium font-weight-medium"
+        class="px-3 text-body-medium font-weight-medium"
         height="32"
         rounded="lg"
         text="Catalog"
         variant="text"
         :to="{ name: 'catalog' }"
       />
-      <template v-if="currentRepository">
-        <span class="text-disabled mx-1" aria-hidden="true">/</span>
-        <RepositorySelector :repository="currentRepository" />
-      </template>
+      <RepositorySelector
+        v-if="currentRepository"
+        :repository="currentRepository"
+      />
     </nav>
     <template #append>
       <RenoirLauncher class="ml-2" />
-      <VMenu
-        :close-on-content-click="false"
-        attach="#mainAppBar"
-        width="250"
-        offset="10"
-        transition="slide-y-transition"
-      >
-        <template #activator="{ props }">
-          <UserAvatar
-            v-bind="props"
-            :img-url="user.imgUrl"
-            aria-label="User menu"
-            class="mr-4 ml-2"
-            tag="button"
-          />
-        </template>
-        <VList class="break-word text-left" density="compact" rounded="lg" nav>
-          <div class="d-flex flex-column pa-4 align-center text-center">
-            <UserAvatar :img-url="user.imgUrl" size="x-large" />
-            <div class="text-body-large font-weight-semibold mt-2">
-              {{ user.label }}
-            </div>
-            <div v-if="user.fullName" class="text-body-small text-medium-emphasis">
-              {{ user.email }}
-            </div>
-          </div>
-          <VDivider class="mx-n2 mb-2" />
-          <template v-if="authStore.hasAdminAccess">
-            <VListItem
-              :to="{
-                name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
-              }"
-              title="Admin"
-              prepend-icon="mdi-account-cog-outline"
-            />
-          </template>
-          <VListItem
-            :to="{ name: 'user-profile' }"
-            title="Profile"
-            prepend-icon="mdi-account-circle-outline"
-            rounded="lg"
-          />
-          <ThemeSwitcher submenu />
-          <VListItem
-            title="Logout"
-            prepend-icon="mdi-logout"
-            rounded="lg"
-            @click="logout"
-          />
-        </VList>
-      </VMenu>
+      <UserMenu :user="user" />
     </template>
   </VAppBar>
 </template>
@@ -85,32 +35,18 @@
 <script lang="ts" setup>
 import { useDisplay } from 'vuetify';
 import type { User } from '@tailor-cms/interfaces/user';
-import { UserAvatar } from '@tailor-cms/core-components';
-import { useAuthStore } from '@/stores/auth';
-import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 import RepositorySelector from '@/components/common/RepositorySelector.vue';
-import ThemeSwitcher from '@/components/common/ThemeSwitcher.vue';
+import UserMenu from '@/components/common/UserMenu.vue';
 import RenoirLauncher from '@/components/common/AgentPanel/RenoirLauncher.vue';
 
 defineProps<{ user: User }>();
 
 const { smAndDown } = useDisplay();
 
-const { $oidc } = useNuxtApp() as any;
-const config = useConfigStore();
-const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 
 const currentRepository = computed(() => currentRepositoryStore.repository);
-
-const logout = async () => {
-  if (authStore.isOidcActive && config.props.oidcLogoutEnabled) {
-    return $oidc.logout();
-  }
-  await authStore.logout();
-  navigateTo('/auth');
-};
 </script>
 
 <style lang="scss" scoped>

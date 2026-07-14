@@ -106,6 +106,7 @@
           v-model="descriptionInput"
           class="mb-2"
           :class="{ required: isCreate }"
+          :counter="DESCRIPTION_MAX_LENGTH"
           :error-messages="errors.description"
           :placeholder="
             isCreate ? 'Enter description...' : 'Leave blank to inherit from the archive'
@@ -179,6 +180,7 @@ const config = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
+const DESCRIPTION_MAX_LENGTH = 2000;
 
 const props = withDefaults(
   defineProps<{
@@ -220,7 +222,9 @@ const { defineField, handleSubmit, resetForm, errors } = useForm({
     // archive (see the archiveInput watch). Description stays optional on
     // Import: blank inherits the archive's own value via the backend fallback.
     name: 'required|min:2|max:250',
-    description: isCreate.value ? 'required|min:2|max:2000' : 'min:2|max:2000',
+    description: isCreate.value
+      ? `required|min:2|max:${DESCRIPTION_MAX_LENGTH}`
+      : `min:2|max:${DESCRIPTION_MAX_LENGTH}`,
     archive: { required: selectedTab.value === IMPORT_TAB },
     ...metaValidation,
   })),

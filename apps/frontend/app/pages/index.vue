@@ -234,9 +234,16 @@ const onUserGroupChange = async () => {
   repositoryStore.resetPaginationParams();
   await repositoryStore.fetch();
 };
+
+// Bulk selection drives bulk delete, so only repositories the user can
+// administer are selectable (the card hides the checkbox for the rest).
+const selectableRepositories = computed(() =>
+  repositories.value.filter((it) => it.hasAdminAccess),
+);
+
 const isAllSelected = computed(() =>
-  repositories.value.length > 0 &&
-  selectedRepos.value.size === repositories.value.length,
+  selectableRepositories.value.length > 0 &&
+  selectedRepos.value.size === selectableRepositories.value.length,
 );
 
 const togglePinFilter = () => {
@@ -251,7 +258,9 @@ const toggleSelection = (id: number) => {
 
 const toggleSelectAll = () => {
   if (isAllSelected.value) return selectedRepos.value.clear();
-  selectedRepos.value = new Set(repositories.value.map((repo) => repo.id));
+  selectedRepos.value = new Set(
+    selectableRepositories.value.map((repo) => repo.id),
+  );
 };
 
 const deleteSelected = () => {

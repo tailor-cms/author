@@ -1,6 +1,7 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { filter, kebabCase, map } from 'lodash-es';
 
+export * from './access';
 export * from './calculatePosition';
 export * as activity from './activity';
 export { default as InsertLocation } from './insertLocation';
