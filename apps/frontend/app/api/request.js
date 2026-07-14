@@ -6,7 +6,7 @@ Axios.prototype.submitForm = function (url, fields, options) {
   return Promise.resolve(submitForm(action, fields, options));
 };
 
-const isAuthError = (err) => [401, 403].includes(err.response?.status);
+const isAuthError = (err) => err.response?.status === 401;
 
 // Response interceptor that bumps unauthenticated users back to /auth.
 // Exported so other axios instances can apply the same behaviour without

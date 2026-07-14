@@ -39,7 +39,7 @@
         v-for="plugin in globalPlugins"
         :key="plugin.id"
       />
-      <VMenu v-if="actions.length" location="end" offset="8">
+      <VMenu v-if="repositoryActions.length" location="end" offset="8">
         <template #activator="{ props: menuProps }">
           <VBtn
             v-bind="menuProps"
@@ -52,7 +52,7 @@
         <VList density="compact" min-width="200" nav>
           <VListSubheader>Repository actions</VListSubheader>
           <VListItem
-            v-for="action in actions"
+            v-for="action in repositoryActions"
             :key="action.name"
             :base-color="action.color"
             :prepend-icon="`mdi-${action.icon}`"
@@ -67,9 +67,10 @@
 </template>
 
 <script lang="ts" setup>
-import { ActiveUsersGroup } from '@tailor-cms/core-components';
+import type { RepositoryAction } from '@/composables/useRepositoryActions';
 import type { RouteLocationRaw } from 'vue-router';
 
+import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useUserTracking } from '@/stores/user-tracking';
 
@@ -81,14 +82,7 @@ interface RailTab {
   matches?: (routeName: string) => boolean;
 }
 
-interface RailAction {
-  name: 'clone' | 'publish' | 'export' | 'delete';
-  label: string;
-  icon: string;
-  color?: string;
-}
-
-const emit = defineEmits<{ action: [name: RailAction['name']] }>();
+const emit = defineEmits<{ action: [name: RepositoryAction['name']] }>();
 
 const route = useRoute();
 const repoStore = useCurrentRepository();
@@ -194,7 +188,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
     });
   }
 
-  if (repoStore.repository?.hasAdminAccess) {
+  if (repoStore.access.canAccessSettings) {
     items.push({
       key: 'settings',
       label: 'Settings',
@@ -207,15 +201,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
   return items;
 });
 
-const actions = computed<RailAction[]>(() => {
-  if (!repoStore.repository?.hasAdminAccess) return [];
-  return [
-    { name: 'clone', label: 'Clone', icon: 'content-copy' },
-    { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
-    { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
-    { name: 'delete', label: 'Delete', icon: 'trash-can-outline', color: 'error' },
-  ];
-});
+const repositoryActions = useRepositoryActions(() => repoStore.accessPolicy);
 </script>
 
 <style lang="scss" scoped>

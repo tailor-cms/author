@@ -12,8 +12,36 @@ import {
   RepositoryGroups,
   RepositoryMembers,
 } from '../../../pom/repository/RepositorySettings.ts';
+import { ActivityOutline } from '../../../pom/repository/Outline.ts';
+import { Toast } from '../../../pom/common/Toast.ts';
 import SeedClient from '../../../api/SeedClient.ts';
-import { toEmptyRepository } from '../../../helpers/seed.ts';
+import {
+  addRepositoryMember,
+  createCleanRepository,
+  toEmptyRepository,
+} from '../../../helpers/seed.ts';
+import {
+  openCard,
+  verifyRepositoryAccess,
+  type RepositoryAccessScenario,
+} from '../../../helpers/access-matrix.ts';
+
+const REPOSITORY_NAME = 'Access Test Repository';
+const REPOSITORY_TYPE = 'Course';
+
+const seedMemberRepository = async (role: 'ADMIN' | 'AUTHOR') => {
+  const repository = await createCleanRepository(REPOSITORY_NAME);
+  await addRepositoryMember(repository.id, COLLAB_TEST_USER.email, role);
+  return repository;
+};
+
+const seedGroupRepository = async (role: 'ADMIN' | 'COLLABORATOR') => {
+  const { data } = await SeedClient.seedUser({
+    email: COLLAB_TEST_USER.email,
+    userGroup: { name: 'Test Group', role },
+  });
+  return createCleanRepository(REPOSITORY_NAME, [data.userGroup.id]);
+};
 
 test.describe('Collaborator, without User Group assignment', () => {
   test.beforeEach(async () => {
@@ -250,5 +278,100 @@ test.describe('Collaborator added to a User Group with Colaborator role', () => 
     const accessRoute = RepositoryMembers.getRoute(repository.id);
     await page.goto(accessRoute, { waitUntil: 'networkidle' });
     await expect(page).toHaveURL('/');
+  });
+});
+
+// Per-repository access matrix
+const REPOSITORY_ACCESS_SCENARIOS: RepositoryAccessScenario[] = [
+  {
+    title: 'Collaborator with AUTHOR role on a repository',
+    isAdmin: false,
+    seed: () => seedMemberRepository('AUTHOR'),
+  },
+  // Admin standing overrides the COLLABORATOR system role.
+  {
+    title: 'Collaborator with ADMIN role on a repository',
+    isAdmin: true,
+    seed: () => seedMemberRepository('ADMIN'),
+  },
+  {
+    title: 'Collaborator viewing a repository shared with their group',
+    isAdmin: false,
+    seed: () => seedGroupRepository('COLLABORATOR'),
+  },
+  {
+    title: 'Collaborator as ADMIN of a group a repository is shared with',
+    isAdmin: true,
+    seed: () => seedGroupRepository('ADMIN'),
+  },
+];
+
+REPOSITORY_ACCESS_SCENARIOS.forEach(verifyRepositoryAccess);
+
+// A repository admin can run the card actions
+test.describe('Collaborator acting on a repository they administer', () => {
+  test.beforeEach(async () => {
+    await SeedClient.resetDatabase();
+    const repository = await createCleanRepository(REPOSITORY_NAME);
+    await addRepositoryMember(repository.id, COLLAB_TEST_USER.email, 'ADMIN');
+  });
+
+  test('clones from the card', async ({ page }) => {
+    const card = await openCard(page, REPOSITORY_NAME);
+    await card.clone('Cloned by collaborator');
+    await new Toast(page).expectCloned(REPOSITORY_TYPE);
+  });
+
+  test('publishes from the card', async ({ page }) => {
+    const card = await openCard(page, REPOSITORY_NAME);
+    await card.publish();
+    await new Toast(page).expectPublished(REPOSITORY_TYPE);
+  });
+
+  test('deletes from the card', async ({ page }) => {
+    const card = await openCard(page, REPOSITORY_NAME);
+    await card.delete();
+    await new Toast(page).expectDeleted(REPOSITORY_TYPE);
+    await expect(card.el).not.toBeVisible();
+  });
+});
+
+test.describe('Collaborator opening a repository without access', () => {
+  test.beforeEach(() => SeedClient.resetDatabase());
+
+  // A non-member hitting a repository URL is bounced to the catalog with an
+  // access-denied toast
+  test('returns to the catalog with an access-denied toast', async ({
+    page,
+  }) => {
+    const repository = await createCleanRepository(REPOSITORY_NAME);
+    await page.goto(ActivityOutline.getRoute(repository.id));
+    await expect(page).toHaveURL('/');
+    await new Toast(page).expectRepositoryAccessDenied();
+    await expect(new AppBar(page).catalogLink).toBeVisible();
+  });
+});
+
+test.describe('Group admin opening a group they do not administer', () => {
+  test.beforeEach(async () => {
+    await SeedClient.resetDatabase();
+    await SeedClient.seedUser({
+      email: COLLAB_TEST_USER.email,
+      userGroup: { name: 'Group A', role: 'ADMIN' },
+    });
+    await SeedClient.seedUser({
+      email: COLLAB_TEST_USER.email,
+      userGroup: { name: 'Group B', role: 'USER' },
+    });
+  });
+
+  test('should return to group listing without being logged out', async ({
+    page,
+  }) => {
+    const groupManagement = await GroupManagement.visit(page);
+    const entry = await groupManagement.getEntryByName('Group B');
+    await entry.el.getByRole('link', { name: 'Group B' }).click();
+    await expect(page).toHaveURL(/admin\/user-groups\/?$/);
+    await expect(groupManagement.groupTable).toBeVisible();
   });
 });

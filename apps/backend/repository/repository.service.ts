@@ -120,7 +120,7 @@ export async function list(
   opts.distinct = true;
   opts.include = [
     includeRepositoryUser(user, query),
-    { model: RepositoryUserGroup },
+    { model: UserGroup },
     ...includeRepositoryTags(query),
   ];
   if (search) opts.where.name = { [Op.iLike]: `%${search}%` };

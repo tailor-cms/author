@@ -85,7 +85,7 @@ const actions = computed(() => {
       action: () => editorStore.toggleDiff(),
     },
   ];
-  if (!currentRepositoryStore.repository?.hasAdminAccess) return items;
+  if (!currentRepositoryStore.access.canPublish) return items;
   return items.concat({
     title: 'Publish',
     icon: 'cloud-upload-outline',
