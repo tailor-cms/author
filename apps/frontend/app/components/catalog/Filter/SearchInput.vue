@@ -1,22 +1,21 @@
 <template>
   <div class="repo-search">
-    <div :style="{ width: mdAndDown || isExpanded ? '100%' : '85%' }">
-      <VTextField
-        v-model="internalValue"
-        :bg-color="isExpanded ? 'surface-container-high' : 'surface-container' "
-        aria-label="Search repositories"
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        rounded="pill"
-        variant="solo"
-        clearable
-        flat
-        hide-details
-        @blur="isExpanded = false"
-        @focus="isExpanded = true"
-        @update:model-value="emitChange"
-      />
-    </div>
+    <VTextField
+      v-model="internalValue"
+      :bg-color="isExpanded ? 'surface-container-high' : 'surface-container' "
+      aria-label="Search repositories"
+      placeholder="Search..."
+      prepend-inner-icon="mdi-magnify"
+      rounded="pill"
+      variant="solo-filled"
+      density="comfortable"
+      clearable
+      flat
+      hide-details
+      @blur="isExpanded = false"
+      @focus="isExpanded = true"
+      @update:model-value="emitChange"
+    />
   </div>
 </template>
 

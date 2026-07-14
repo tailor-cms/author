@@ -16,7 +16,6 @@
           class="add-repository-btn"
           color="primary"
           prepend-icon="mdi-plus"
-          size="large"
           text="New"
           variant="flat"
         />

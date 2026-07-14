@@ -1,27 +1,27 @@
 <template>
   <NuxtLayout name="main">
+    <WorkspaceRail
+      v-if="userGroupOptions.length"
+      v-model="repositoryStore.selectedUserGroupId"
+      :is-create-enabled="authStore.isAdmin"
+      :items="userGroupOptions"
+      @create="isCreateWorkspaceVisible = true"
+      @update:model-value="onUserGroupChange"
+    />
     <VSheet
-      class="h-100 mx-3"
+      class="h-100 mr-3"
       color="surface-canvas"
       rounded="t-xl"
       border
     >
       <div class="catalog-scroll">
-        <VContainer class="catalog" max-width="1360">
+        <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
           <VRow
             v-if="!isEmptyCatalog"
-            class="catalog-actions py-10"
+            class="catalog-actions py-8"
             density="compact"
           >
-            <VCol cols="12" lg="4" md="6">
-              <UserGroupSelect
-                v-if="userGroupOptions.length"
-                v-model="repositoryStore.selectedUserGroupId"
-                :items="userGroupOptions"
-                @update:model-value="onUserGroupChange"
-              />
-            </VCol>
-            <VCol cols="12" lg="4" md="6">
+            <VCol cols="12" md="4">
               <SearchInput
                 :search-input="repositoryStore.queryParams.search"
                 @update="onSearchInput"
@@ -30,7 +30,7 @@
             <VCol
               class="d-flex justify-end align-bottom pl-2 text-sm-left"
               cols="12"
-              lg="4"
+              md="8"
             >
               <VBtn
                 v-tooltip:top="{
@@ -41,6 +41,7 @@
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 aria-label="Toggle pinned items filter"
                 class="text-medium-emphasis my-1"
+                size="small"
                 variant="tonal"
                 @click="togglePinFilter"
               />
@@ -143,11 +144,18 @@
         </VContainer>
       </div>
     </VSheet>
+    <UserGroupDialog
+      :user-groups="authStore.userGroups"
+      :visible="isCreateWorkspaceVisible"
+      @created="onWorkspaceCreate"
+      @update:visible="isCreateWorkspaceVisible = $event"
+    />
   </NuxtLayout>
 </template>
 
 <script setup lang="ts">
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { find, map, upperFirst } from 'lodash-es';
 import { SCHEMAS, schema as schemaApi } from '@tailor-cms/config';
@@ -171,6 +179,8 @@ import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
 import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
 import { describeSelection } from '@/utils/describeSelection';
+import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
+import WorkspaceRail from '@/components/catalog/WorkspaceRail/index.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
@@ -198,6 +208,7 @@ const isLoading = ref(true);
 const isDeleting = ref(false);
 const cloneTarget = ref<Repository | null>(null);
 const exportTarget = ref<Repository | null>(null);
+const isCreateWorkspaceVisible = ref(false);
 const selectedRepos = ref<Set<number>>(new Set());
 
 const {
@@ -212,6 +223,11 @@ const arePinnedShown = computed(() => queryParams.value.pinned);
 const userGroupOptions = computed(() =>
   authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
 );
+
+const onWorkspaceCreate = async (group: UserGroup) => {
+  await authStore.fetchUserInfo();
+  await navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
+};
 
 const onUserGroupChange = async () => {
   selectedRepos.value.clear();

@@ -12,6 +12,7 @@
         :icon="icon"
         :aria-label="props.label"
         variant="text"
+        size="small"
       />
     </template>
     <VSheet class="bg-surface-container" min-width="300">
