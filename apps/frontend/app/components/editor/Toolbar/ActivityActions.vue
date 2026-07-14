@@ -1,13 +1,14 @@
 <template>
   <div class="activity-actions d-flex align-center ga-1">
     <VBtn
-      v-for="{ active, title, icon, action, disabled } in actions"
+      v-for="{ active, title, icon, action, disabled, loading } in actions"
       :key="title"
       v-tooltip:bottom="{ text: title, offset: 12 }"
       :active="active"
       :aria-label="title"
       :color="active ? 'tertiary' : ''"
       :disabled="disabled"
+      :loading="loading"
       class="action-btn"
       density="comfortable"
       icon
@@ -29,6 +30,7 @@ const { $schemaService } = useNuxtApp() as any;
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const contentElementStore = useContentElementStore();
+const publishingUtils = usePublishActivity();
 
 const showPublishDiff = computed(() => editorStore.showDiff);
 
@@ -46,8 +48,17 @@ const hasMetadata = computed(() => {
     ?.length;
 });
 
+interface ToolbarAction {
+  title: string;
+  icon: string;
+  action: () => unknown;
+  active?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+}
+
 const actions = computed(() => {
-  const items = [
+  const items: ToolbarAction[] = [
     {
       title: 'Back',
       icon: 'arrow-left',
@@ -89,6 +100,7 @@ const actions = computed(() => {
   return items.concat({
     title: 'Publish',
     icon: 'cloud-upload-outline',
+    loading: publishingUtils.isPublishing.value,
     action: () => confirmPublishing(),
   });
 });
@@ -113,7 +125,6 @@ const hasContentElements = computed(() => {
 
 const confirmPublishing = () => {
   if (!editorStore.selectedActivity) return;
-  const publishingUtils = usePublishActivity();
   publishingUtils.confirmPublishing([editorStore.selectedActivity]);
 };
 </script>
