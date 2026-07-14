@@ -13,11 +13,11 @@
       aria-label="Global"
     >
       <VBtn
-        text="Catalog"
-        variant="text"
-        rounded="lg"
         class="px-2 text-body-medium font-weight-medium"
         height="32"
+        rounded="lg"
+        text="Catalog"
+        variant="text"
         :to="{ name: 'catalog' }"
       />
       <template v-if="currentRepository">
