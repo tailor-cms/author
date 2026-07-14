@@ -17,7 +17,7 @@
       />
       <VSwitch
         v-model="showArchiveToggle"
-        label="Archived"
+        label="Include Archived"
         hide-details
         density="comfortable"
       />

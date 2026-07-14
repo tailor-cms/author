@@ -53,6 +53,7 @@ test.describe('Default user role, without User Group assignment', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.catalogLink).toBeVisible();
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 
@@ -96,12 +97,14 @@ test.describe('Default user role, added to a User Group as Admin,', () => {
   test('should see the Admin menu entry', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).toBeVisible();
   });
 
   test('should be able to access group listing', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).toBeVisible();
     await appBar.adminLink.click();
     await page.waitForLoadState('networkidle');
@@ -168,6 +171,7 @@ test.describe('Default user role, added to a User Group as Default User,', () =>
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.catalogLink).toBeVisible();
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 
@@ -212,6 +216,7 @@ test.describe('Default user role, added to a Group with Colaborator role', () =>
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await expect(appBar.catalogLink).toBeVisible();
+    await appBar.openUserMenu();
     await expect(appBar.adminLink).not.toBeVisible();
   });
 

@@ -41,6 +41,21 @@ export default class BaseClient {
     return formatResponse(res);
   };
 
+  patch = async (
+    path: string = '',
+    data?: any,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.patch(this.getUrl(path), { data });
+    return formatResponse(res);
+  };
+
+  delete = async (path: string = ''): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.delete(this.getUrl(path));
+    return formatResponse(res);
+  };
+
   private signIn = async () => {
     const { email, password } = ADMIN_TEST_USER;
     BaseClient.req = await Playwright.request.newContext();
