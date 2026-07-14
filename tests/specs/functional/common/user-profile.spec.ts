@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { faker } from '@faker-js/faker';
-import userSeed from 'tailor-seed/user.json' assert { type: 'json' };
+import userSeed from 'tailor-seed/user.json' with { type: 'json' };
 
 import {
   STRONG_TEST_PASSWORD,

@@ -25,4 +25,46 @@ export class Toast {
   waitForDismiss() {
     return expect(this.el).not.toBeVisible();
   }
+
+  // Named confirmation toasts
+  expectCreated(label: string) {
+    return this.hasText(`A new ${label} has been created`);
+  }
+
+  expectImportSucceeded() {
+    return this.hasText('Import successful');
+  }
+
+  expectCloned(label: string) {
+    return this.expectConfirmed(label, 'cloned');
+  }
+
+  expectCopied(label: string) {
+    return this.expectConfirmed(label, 'copied');
+  }
+
+  expectLinked(label: string) {
+    return this.expectConfirmed(label, 'linked');
+  }
+
+  expectPublished(label: string) {
+    return this.expectConfirmed(label, 'published');
+  }
+
+  expectExported(label: string) {
+    return this.expectConfirmed(label, 'exported');
+  }
+
+  expectDeleted(label: string) {
+    return this.expectConfirmed(label, 'deleted');
+  }
+
+  // Bulk variant, e.g. expectDeletedMany('2 Courses')
+  expectDeletedMany(countLabel: string) {
+    return this.hasText(`${countLabel} have been deleted`);
+  }
+
+  private expectConfirmed(label: string, verb: string) {
+    return this.hasText(`The ${label} has been ${verb}`);
+  }
 }

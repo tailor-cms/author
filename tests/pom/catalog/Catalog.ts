@@ -1,5 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { confirmAction } from '../common/utils';
+
 export class Catalog {
   static route = '/';
   readonly page: Page;
@@ -93,6 +95,14 @@ export class Catalog {
       .getByRole('checkbox', { name: 'Select repository' });
   }
 
+  getCardStatusDot() {
+    return this.getRepositoryCards().locator('.status-dot');
+  }
+
+  getCardCheckboxSlot() {
+    return this.getRepositoryCards().locator('.select-checkbox');
+  }
+
   getCardCheckbox(hasText: string) {
     return this.findRepositoryCard(hasText)
       .getByRole('checkbox', { name: 'Select repository' });
@@ -101,5 +111,11 @@ export class Catalog {
   async toggleRepository(hasText: string) {
     await this.findRepositoryCard(hasText).hover();
     await this.getCardCheckbox(hasText).click();
+  }
+
+  async bulkDelete(...names: string[]) {
+    for (const name of names) await this.toggleRepository(name);
+    await this.deleteSelectedBtn.click();
+    await confirmAction(this.page);
   }
 }

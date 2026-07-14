@@ -1,13 +1,14 @@
 import { literal, Model, Op } from 'sequelize';
 import { register as registerSchema, schema } from '@tailor-cms/config';
 import first from 'lodash/first.js';
+import hooks from './repository.hooks.ts';
 import intersection from 'lodash/intersection.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import set from 'lodash/fp/set.js';
 import Promise from 'bluebird';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import { RepositoryRole } from '@tailor-cms/interfaces/role';
-import hooks from './repository.hooks.ts';
 import { syncSchemaSnapshot } from '../lib/schema.ts';
 import { stripInstanceSpecific } from '../lib/data-attr.ts';
 
@@ -262,7 +263,8 @@ class Repository extends Model {
     );
   }
 
-  async clone(name, description, context) {
+  async clone(name, description, options) {
+    const { context, shareWithSamePeople = false } = options;
     const Repository = this.sequelize.model('Repository');
     const Activity = this.sequelize.model('Activity');
     const srcAttributes = pick(this, ['schema', 'data']);
@@ -276,6 +278,7 @@ class Repository extends Model {
       context,
       transaction,
     });
+    if (shareWithSamePeople) await this.copyAccessTo(dst, context, transaction);
     const src = await Activity.findAll({
       where: { repositoryId: this.id, parentId: null },
       transaction,
@@ -287,6 +290,32 @@ class Repository extends Model {
     await dst.mapClonedReferences(idMap, transaction);
     await transaction.commit();
     return dst;
+  }
+
+  /**
+   * Shares the given repository with everyone that can access this one;
+   * links it to the same user groups and grants the active members their
+   * current roles. The acting user keeps the ADMIN membership created
+   * alongside the clone.
+   */
+  async copyAccessTo(dst, context, transaction) {
+    const RepositoryUser = this.sequelize.model('RepositoryUser');
+    const userGroups = await this.getUserGroups({ transaction });
+    if (userGroups.length) await dst.setUserGroups(userGroups, { transaction });
+    const memberships = await this.getRepositoryUsers({
+      where: { hasAccess: true, userId: { [Op.ne]: context.userId } },
+      transaction,
+    });
+    if (!memberships.length) return;
+    await RepositoryUser.bulkCreate(
+      memberships.map((it) => ({
+        userId: it.userId,
+        repositoryId: dst.id,
+        role: it.role,
+        hasAccess: true,
+      })),
+      { transaction },
+    );
   }
 
   // Check if there is at least one outline activity with unpublished
@@ -336,6 +365,24 @@ class Repository extends Model {
     const snapshotConfig = this.data?.$$?.schema?.config;
     if (snapshotConfig) registerSchema(snapshotConfig);
     return getSchema(this.schema);
+  }
+
+  /**
+   * FILE-type meta on this repository as { metaKey, storageKey } refs - one per
+   * file field that holds a value. Empty when the schema can't be resolved.
+   */
+  getFileMetaInputs() {
+    let config;
+    try {
+      config = this.getSchemaConfig();
+    } catch {
+      return [];
+    }
+    return (config.meta ?? []).flatMap((field) => {
+      if (field.type !== MetaInputType.File) return [];
+      const value = this.data?.[field.key];
+      return value?.key ? [{ metaKey: field.key, storageKey: value.key }] : [];
+    });
   }
 }
 

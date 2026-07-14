@@ -43,6 +43,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
+  const recentRepositories = useRecentRepositories();
 
   const $users = reactive(new Map<string, RepositoryMember>());
   const users = computed(() => Array.from($users.values()));
@@ -209,6 +210,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     await Activity.fetch(repoId, { outlineOnly: true });
     // Notify plugins about repository change (e.g., i18n initialization)
     if (repository.value) {
+      recentRepositories.touch(repoId);
       $pluginRegistry.filter('repository:change', null, {
         schema: schema.value,
         repository: repository.value,

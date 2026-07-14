@@ -1,17 +1,44 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
+import { confirmAction, selectMenuOption } from '../common/utils';
+
 export class RepositoryCard {
   readonly page: Page;
   readonly el: Locator;
   readonly addTagBtn: Locator;
   readonly pinBtn: Locator;
+  readonly actionsBtn: Locator;
+  readonly settingsBtn: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
     this.el = el;
     this.addTagBtn = el.getByLabel('Add tag');
     this.pinBtn = el.getByLabel('Pin repository');
+    this.actionsBtn = el.getByLabel('Repository actions');
+    this.settingsBtn = el.getByLabel('Repository settings');
+  }
+
+  async openSettings() {
+    await this.el.hover();
+    await this.settingsBtn.click();
+  }
+
+  async runAction(name: 'Clone' | 'Publish' | 'Export' | 'Delete') {
+    await this.actionsBtn.click();
+    await selectMenuOption(this.page, name);
+  }
+
+  async publish() {
+    await this.runAction('Publish');
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'Confirm' }).click();
+  }
+
+  async delete() {
+    await this.runAction('Delete');
+    await confirmAction(this.page);
   }
 
   togglePin() {

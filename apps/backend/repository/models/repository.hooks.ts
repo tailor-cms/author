@@ -1,8 +1,9 @@
-import forEach from 'lodash/forEach.js';
-import publishAccessService from '#shared/publishing/publish.access.service.js';
-import { createLogger } from '#logger';
 import type { OperationContext } from '#shared/database/types.ts';
 import type { Repository } from './repository.model.js';
+import { createLogger } from '#logger';
+import { stripFileMetaVirtuals } from '../lib/data-attr.ts';
+import forEach from 'lodash/forEach.js';
+import publishAccessService from '#shared/publishing/publish.access.service.js';
 
 const logger = createLogger('repository:hooks');
 
@@ -16,8 +17,8 @@ type RepoHook = (
 
 function add(Repository: any, Hooks: any) {
   const hooks: Record<string, RepoHook[]> = {
-    [Hooks.beforeCreate]: [markAsUnpublished],
-    [Hooks.beforeUpdate]: [markAsUnpublished],
+    [Hooks.beforeCreate]: [sanitizeFileMeta, markAsUnpublished],
+    [Hooks.beforeUpdate]: [sanitizeFileMeta, markAsUnpublished],
     [Hooks.beforeDestroy]: [markAsUnpublished],
     [Hooks.afterCreate]: [scheduleAccessUpdate],
     [Hooks.afterDestroy]: [deleteAccessFile],
@@ -28,6 +29,19 @@ function add(Repository: any, Hooks: any) {
       Repository.addHook(type, Hooks.withType(type, hook));
     });
   });
+
+  // Repository listings enrich FILE-type meta values with read-time
+  // virtuals (signed URLs, backing asset id);
+  function sanitizeFileMeta(_hookType: string, repository: Repository) {
+    if (!repository.changed('data')) return;
+    const inputs = repository.getFileMetaInputs();
+    if (!inputs.length) return;
+    const data = { ...repository.data };
+    inputs.forEach(({ metaKey }: { metaKey: string }) => {
+      data[metaKey] = stripFileMetaVirtuals(data[metaKey]);
+    });
+    repository.data = data;
+  }
 
   function markAsUnpublished(
     _hookType: string,

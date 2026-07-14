@@ -29,15 +29,25 @@ const lightTheme: ThemeDefinition = {
     'on-surface-container-lowest': '#30323B',
 
     // Surface add-ons
-    'background': '#F9FAFC',
-    'on-background': '#30323B',
     'surface-bright': '#F9FAFC',
     'surface-dim': '#D5D8DD',
 
-    'surface-raised': '#F9FAFC', // cards, list rows
+    'surface-base': '#F9FAFC', // app backdrop; transparent bars composite here
+    'on-surface-base': '#30323B',
+    'surface-canvas': '#F2F4F7', // recessed content wells / inset panels
+    'on-surface-canvas': '#30323B',
+    'surface-sunken': '#ECEFF3', // wells within a canvas well (board columns)
+    'on-surface-sunken': '#30323B',
+    'surface-raised': '#F9FAFC', // cards, list rows (= base; shadow-separated)
     'on-surface-raised': '#30323B',
-    'surface-sidebar': '#FFFFFF', // sidebar panel
+    'surface-sidebar': '#F9FAFC', // docked side panels (= base; border-separated)
     'on-surface-sidebar': '#30323B',
+    'surface-overlay': '#FFFFFF', // menus, dialogs, popovers (+ shadow)
+    'on-surface-overlay': '#30323B',
+
+    // Background
+    'background': '#F9FAFC',
+    'on-background': '#30323B',
 
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#1E9659',
@@ -108,7 +118,6 @@ const lightTheme: ThemeDefinition = {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
     'theme-kbd': '#DFE2E7',
     'theme-on-kbd': '#5E6470',
-    'theme-surface-raised-overlay-multiplier': 0.8,
   },
 };
 
@@ -133,15 +142,25 @@ const darkTheme: ThemeDefinition = {
     'on-surface-container-lowest': '#C5CCDA',
 
     // Surface add-ons
-    'background': '#15181D',
-    'on-background': '#C5CCDA',
     'surface-bright': '#404550',
     'surface-dim': '#15181D',
 
-    'surface-raised': '#22262B', // cards, list rows
+    'surface-base': '#1F2328', // app backdrop; bars composite here    (L* 13.5)
+    'on-surface-base': '#C5CCDA',
+    'surface-canvas': '#191C21', // recessed content wells (below base) (L* 10)
+    'on-surface-canvas': '#C5CCDA',
+    'surface-sunken': '#15181D', // wells within a canvas well           (L* 8)
+    'on-surface-sunken': '#C5CCDA',
+    'surface-raised': '#22262B', // cards, list rows                   (L* 15)
     'on-surface-raised': '#C5CCDA',
-    'surface-sidebar': '#262B31', // sidebar panel
+    'surface-sidebar': '#262B31', // docked side panels                (L* 17)
     'on-surface-sidebar': '#C5CCDA',
+    'surface-overlay': '#2C3137', // menus, dialogs, popovers          (L* 20)
+    'on-surface-overlay': '#C5CCDA',
+
+    // Background
+    'background': '#1F2328',
+    'on-background': '#C5CCDA',
 
     // Primary — jade (contemporary, vibrant; tone-derived)
     'primary': '#6FD49A',
@@ -210,7 +229,6 @@ const darkTheme: ThemeDefinition = {
     // v-kbd key — mirrors surface-variant / on-surface-variant.
     'theme-kbd': '#454A52',
     'theme-on-kbd': '#B0B6C2',
-    'theme-surface-raised-overlay-multiplier': 0.4,
   },
 };
 
@@ -227,7 +245,7 @@ export default defineNuxtPlugin({
       components,
       directives,
       defaults: {
-        VMenu: { VList: { class: 'bg-surface-raised' } },
+        VMenu: { VList: { class: 'bg-surface-overlay' } },
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).

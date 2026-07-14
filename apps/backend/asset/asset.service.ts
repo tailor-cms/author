@@ -16,20 +16,19 @@ import {
   type ImportFileOptions,
   type ImportLinkMeta,
   type ListFilter,
+  type ResolvedStorageKey,
   type StoredFile,
   VideoLinkMode,
 } from './schemas/index.ts';
+import type { Repository } from '../repository/models/repository.model.js';
 import { AssetType, type Asset, type AssetMeta } from './models/asset.model.js';
-import {
-  buildAttachmentKey,
-  buildStorageKey,
-} from './utils/storage-key.ts';
+import { buildAttachmentKey, buildStorageKey } from './utils/storage-key.ts';
 import { downloadFile } from './utils/download.ts';
 import { extractDimensions } from './utils/image.ts';
 import { fetchOpenGraph } from './extraction/open-graph.ts';
 import { normalizeFolder } from './utils/folder.ts';
 import { removeFromStore } from './indexing/indexing.service.ts';
-import type { Repository } from '../repository/models/repository.model.js';
+import { resolveThumbnailUrl } from './thumbnail.service.ts';
 import { resolveType } from './utils/mime.ts';
 import Storage from '../repository/storage.ts';
 
@@ -162,8 +161,14 @@ export async function list(
   options: Omit<ListFilter, 'key'> = {},
 ) {
   const {
-    search, type, folder, offset = 0, limit = 100, signed = false,
-    sortBy = 'createdAt', sortOrder = 'DESC',
+    search,
+    type,
+    folder,
+    offset = 0,
+    limit = 100,
+    signed = false,
+    sortBy = 'createdAt',
+    sortOrder = 'DESC',
     videoLinkMode,
   } = options;
   logger.debug(
@@ -188,7 +193,10 @@ export async function list(
     if (normalized) where[FOLDER_COLUMN] = normalized;
     else {
       and.push({
-        [Op.or]: [{ [FOLDER_COLUMN]: { [Op.is]: null } }, { [FOLDER_COLUMN]: '' }],
+        [Op.or]: [
+          { [FOLDER_COLUMN]: { [Op.is]: null } },
+          { [FOLDER_COLUMN]: '' },
+        ],
       });
     }
   }
@@ -414,7 +422,9 @@ export async function listFolders(repositoryId: number): Promise<string[]> {
     ],
     raw: true,
   });
-  const folders = rows.map((row) => normalizeFolder(row.folder)).filter(Boolean);
+  const folders = rows
+    .map((row) => normalizeFolder(row.folder))
+    .filter(Boolean);
   return uniq(folders).sort();
 }
 
@@ -503,6 +513,48 @@ export async function getDownloadUrl(key: string) {
   };
 }
 
+/**
+ * Assets whose storageKey is in the given list.
+ */
+export async function findByStorageKeys(
+  storageKeys: string[],
+): Promise<Asset[]> {
+  const keys = uniq(storageKeys.filter(Boolean));
+  if (!keys.length) return [];
+  return Asset.findAll({ where: { storageKey: { [Op.in]: keys } } });
+}
+
+/**
+ * Signs URLs for assets whose storageKey is in the given list.
+ */
+export async function resolveByStorageKey(
+  storageKeys: string[],
+): Promise<Map<string, ResolvedStorageKey>> {
+  const assets = await findByStorageKeys(storageKeys);
+  if (!assets.length) return new Map();
+  await Asset.resolvePublicUrls(assets);
+  // A miss warms in the background rather than blocking this response
+  assets
+    .filter((asset) => !asset.thumbnailUrl)
+    .forEach((asset) => {
+      resolveThumbnailUrl(asset).catch((err) => {
+        logger.warn(
+          { err, assetId: asset.id },
+          'Background thumbnail generation failed',
+        );
+      });
+    });
+  const entries = assets.map((asset) => {
+    const resolved: ResolvedStorageKey = {
+      assetId: asset.id,
+      publicUrl: asset.publicUrl ?? null,
+      thumbnailUrl: asset.thumbnailUrl ?? null,
+    };
+    return [asset.storageKey!, resolved] as const;
+  });
+  return new Map(entries);
+}
+
 export async function updateAsset(
   asset: Asset,
   { meta, name }: { meta: Partial<AssetMeta>; name?: string },
@@ -545,9 +597,13 @@ export async function attachFile(
   }
   // NOTE: Old file is NOT deleted, published content may reference it
   const storageKey = buildAttachmentKey(
-    asset.repositoryId, fileKey, file.originalname,
+    asset.repositoryId,
+    fileKey,
+    file.originalname,
   );
-  await Storage.saveFile(storageKey, file.buffer, { ContentType: file.mimetype });
+  await Storage.saveFile(storageKey, file.buffer, {
+    ContentType: file.mimetype,
+  });
   const files = { ...asset.meta?.files, [fileKey]: storageKey };
   return asset.update({ meta: { ...asset.meta, files } });
 }
@@ -627,9 +683,17 @@ export async function importFromLink(
     meta: {
       url,
       ...pick(ogData, [
-        'title', 'description', 'thumbnail', 'favicon',
-        'domain', 'siteName', 'ogType',
+        'title',
+        'description',
+        'thumbnail',
+        'favicon',
+        'domain',
+        'siteName',
+        'ogType',
       ]),
+      // Caller-resolved preview (e.g. discovery's Google/Unsplash thumbnail)
+      // wins over the page's own OG image
+      ...(meta.thumbnailUrl && { thumbnail: meta.thumbnailUrl }),
       ...(contentType && { contentType }),
       ...(detected.provider && { provider: detected.provider }),
       ...(tags.length && { tags }),

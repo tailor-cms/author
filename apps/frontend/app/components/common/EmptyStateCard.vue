@@ -3,16 +3,14 @@
     :data-testid="testId"
     class="empty-state-card pa-8 text-center"
     color="surface-container"
-    max-width="230"
-    min-width="200"
     rounded="lg"
     variant="flat"
-
+    width="230"
   >
     <VAvatar v-if="icon" color="tertiary" size="64" variant="tonal">
       <VIcon :icon="icon" size="x-large" />
     </VAvatar>
-    <div class="text-body-large font-weight-semibold mt-3">{{ title }}</div>
+    <div class="text-body-large font-weight-semibold mt-4">{{ title }}</div>
     <div class="text-body-small text-medium-emphasis mt-1">{{ text }}</div>
   </VCard>
 </template>

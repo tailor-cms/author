@@ -1,7 +1,7 @@
 <template>
   <VAppBar
     :class="{ 'diff-mode': isHistoryMode || showPublishDiff }"
-    color="surface-container-low"
+    color="surface-canvas"
     border="b"
     class="toolbar-wrapper"
     order="1"
@@ -40,6 +40,7 @@
             v-if="activity.publishedAt"
             :text="formatDate(activity.publishedAt, 'MM/dd/yy HH:mm')"
             class="ml-2"
+            data-percy="hide"
             size="x-small"
             label
           />

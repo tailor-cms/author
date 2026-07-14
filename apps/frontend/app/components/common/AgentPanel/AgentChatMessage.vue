@@ -132,7 +132,7 @@ const renderedContent = computed(() => {
   :deep(pre) {
     padding: 0.5rem 0.6875rem;
     border-radius: 0.5rem;
-    background: rgb(var(--v-theme-surface-container-low));
+    background: rgb(var(--v-theme-surface-canvas));
     font-size: 0.75rem;
     white-space: pre-wrap;
     word-break: break-word;
@@ -152,7 +152,7 @@ const renderedContent = computed(() => {
     color: rgb(var(--v-theme-tertiary));
     font-family: Menlo, Consolas, monospace;
     font-size: 0.6875rem;
-    background: rgb(var(--v-theme-surface-container-low));
+    background: rgb(var(--v-theme-surface-canvas));
     border-radius: 0.25rem;
   }
 

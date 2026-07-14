@@ -1,7 +1,7 @@
 <template>
   <VLayout class="general-page h-100">
     <VMain>
-      <VContainer class="px-md-10 py-md-8 text-left" max-width="1300">
+      <VContainer class="px-md-10 py-md-8 text-left" max-width="1400">
         <div class="d-flex align-center mb-4">
           <VSpacer />
           <VBtn
