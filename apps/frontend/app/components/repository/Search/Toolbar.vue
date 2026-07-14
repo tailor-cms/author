@@ -6,7 +6,6 @@
       bg-color="transparent"
       class="search-input"
       density="comfortable"
-      maxlength="250"
       placeholder="Search content elements..."
       prepend-inner-icon="mdi-magnify"
       rounded="pill"

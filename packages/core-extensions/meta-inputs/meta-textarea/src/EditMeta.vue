@@ -1,6 +1,7 @@
 <template>
   <VTextarea
     v-model="input"
+    :counter="meta.validate?.max"
     :label="meta.label"
     :name="meta.key"
     :placeholder="meta.placeholder"
