@@ -9,19 +9,17 @@
     </NuxtLink>
     <nav
       v-if="!smAndDown"
-      class="d-flex align-center ml-2"
+      class="d-flex align-center ml-2 ga-2"
       aria-label="Global"
     >
       <VBtn
-        class="px-2 text-body-medium font-weight-medium"
-        height="32"
+        class="text-body-medium font-weight-medium"
         rounded="lg"
         text="Catalog"
         variant="text"
         :to="{ name: 'catalog' }"
       />
       <template v-if="currentRepository">
-        <span class="text-disabled mx-1" aria-hidden="true">/</span>
         <RepositorySelector :repository="currentRepository" />
       </template>
     </nav>
