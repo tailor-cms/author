@@ -13,15 +13,17 @@
       aria-label="Global"
     >
       <VBtn
-        class="text-body-medium font-weight-medium"
+        class="px-3 text-body-medium font-weight-medium"
+        height="32"
         rounded="lg"
         text="Catalog"
         variant="text"
         :to="{ name: 'catalog' }"
       />
-      <template v-if="currentRepository">
-        <RepositorySelector :repository="currentRepository" />
-      </template>
+      <RepositorySelector
+        v-if="currentRepository"
+        :repository="currentRepository"
+      />
     </nav>
     <template #append>
       <RenoirLauncher class="ml-2" />

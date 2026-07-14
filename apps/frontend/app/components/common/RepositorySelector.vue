@@ -10,12 +10,13 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="menuProps"
-        class="repository-selector"
+        class="repository-selector px-3"
         variant="text"
         rounded="lg"
+        height="32"
         active
       >
-        <span class="text-truncate text-body-medium font-weight-semibold mr-1">
+        <span class="text-truncate text-body-medium font-weight-medium mr-1">
           {{ repository.name }}
         </span>
         <VIcon class="mr-n1" icon="mdi-menu-down" size="small" />
