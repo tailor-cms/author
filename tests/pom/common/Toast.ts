@@ -35,6 +35,11 @@ export class Toast {
     return this.hasText('Import successful');
   }
 
+  // Shown when a repository is opened without view access (403).
+  expectRepositoryAccessDenied() {
+    return this.hasText('You do not have access to this repository.');
+  }
+
   expectCloned(label: string) {
     return this.expectConfirmed(label, 'cloned');
   }

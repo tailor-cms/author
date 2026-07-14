@@ -1,10 +1,25 @@
-import { faker } from '@faker-js/faker';
 import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
+
+// Grants (or updates) a repository role for the given user
+export const addRepositoryMember = async (
+  repositoryId: number,
+  email: string,
+  role: 'ADMIN' | 'AUTHOR',
+) => {
+  const { status, data } = await REPOSITORY_API.post(
+    `${repositoryId}/users`,
+    { email, role },
+  );
+  expect(status).toBe(200);
+  return data;
+};
 
 export const createCleanRepository = async (
   name?: string,
