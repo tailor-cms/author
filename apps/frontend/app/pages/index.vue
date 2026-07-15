@@ -19,7 +19,7 @@
         <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
           <VRow
             v-if="!isEmptyCatalog"
-            class="catalog-actions py-8"
+            class="catalog-actions pb-8"
             density="compact"
           >
             <VCol cols="12" md="4">
@@ -475,7 +475,6 @@ onBeforeMount(async () => {
 
 .catalog-actions {
   position: relative;
-  padding-top: 0.75rem;
 }
 
 .v-infinite-scroll {
