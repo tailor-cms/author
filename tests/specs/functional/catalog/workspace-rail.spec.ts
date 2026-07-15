@@ -141,6 +141,16 @@ test('locks the current workspace as the target when creating', async ({
   await expect(dialog.groupChipRemove('Design')).toHaveCount(0);
 });
 
+test('shows the create button when the admin has no workspaces', async ({
+  page,
+}) => {
+  // No groups seeded, so the admin can still create their first workspace.
+  await page.goto('/');
+
+  const rail = new WorkspaceRail(page);
+  await expect(rail.addBtn).toBeVisible();
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });

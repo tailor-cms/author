@@ -43,14 +43,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
-  const userGroupOptions = computed(() => [
-    { id: 0, name: 'All workspaces' },
-    ...authStore.userGroups,
-  ]);
   const storedUserGroupId = useLocalStorage<number>(
     'tailor:selected-user-group',
     0,
   );
+
+  const userGroupOptions = computed(() => [
+    { id: 0, name: 'All workspaces' },
+    ...authStore.userGroups,
+  ]);
 
   // Falls back to "All workspaces" when the persisted id isn't one of the
   // user's groups (deleted / access revoked). Trust it until user info loads,

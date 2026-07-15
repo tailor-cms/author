@@ -1,9 +1,9 @@
 <template>
   <NuxtLayout name="main">
     <WorkspaceRail
-      v-if="userGroupOptions.length"
+      v-if="authStore.userGroups.length || authStore.canCreateUserGroups"
       v-model="repositoryStore.selectedUserGroupId"
-      :items="userGroupOptions"
+      :items="repositoryStore.userGroupOptions"
       @created="onGroupCreated"
       @deleted="onGroupDeleted"
       @updated="onGroupUpdated"
@@ -212,9 +212,6 @@ const {
 
 const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
-const userGroupOptions = computed(() =>
-  authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
-);
 
 const onGroupCreated = (group: UserGroup) =>
   navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
