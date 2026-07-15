@@ -18,19 +18,16 @@
     >
       <div class="catalog-scroll">
         <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
-          <VRow
+          <div
             v-if="!isEmptyCatalog"
-            class="catalog-actions pb-8"
-            density="compact"
+            class="catalog-actions ga-3 mb-4"
           >
-            <VCol cols="12" md="4">
-              <SearchInput
-                :search-input="repositoryStore.queryParams.search"
-                @update="onSearchInput"
-              />
-            </VCol>
-            <VCol
-              class="d-flex justify-end align-bottom pl-2 text-sm-left"
+            <SearchInput
+              :search-input="repositoryStore.queryParams.search"
+              @update="onSearchInput"
+            />
+            <div
+              class="d-flex justify-end align-bottom ml-auto pl-2 text-sm-left"
               cols="12"
               md="8"
             >
@@ -66,8 +63,8 @@
                   @created="onRepositoryAdd"
                 />
               </span>
-            </VCol>
-          </VRow>
+            </div>
+          </div>
           <RepositoryFilterSelection
             @clear:all="(queryParams.filter = []) && refetchRepositories()"
             @close="onFilterChange"
@@ -97,7 +94,7 @@
           />
           <VInfiniteScroll
             v-if="!isLoading && hasRepositories"
-            class="d-flex ma-0 pa-0"
+            class="d-flex ma-0 mt-8 pa-0"
             empty-text=""
             mode="manual"
             @load="loadMore"
@@ -475,6 +472,10 @@ onBeforeMount(async () => {
 }
 
 .catalog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
 }
 

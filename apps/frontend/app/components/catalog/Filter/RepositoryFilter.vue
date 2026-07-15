@@ -16,15 +16,23 @@
       />
     </template>
     <VSheet class="bg-surface-container" min-width="300">
+      <VListSubheader class="text-label-medium mx-4">
+        Filter {{ props.label }}
+      </VListSubheader>
       <VTextField
         v-model="search"
-        :label="`Filter ${props.label}...`"
-        class="my-3 mx-3"
-        density="comfortable"
-        variant="outlined"
+        :placeholder="`Search ${props.label}...`"
+        bg-color="surface-container-high"
+        class="ma-2 mt-0"
+        density="compact"
+        rounded="md"
+        variant="solo"
         clearable
         hide-details
+        flat
+        autofocus
       />
+      <VDivider />
       <VList
         v-if="filteredOptions.length"
         :items="filteredOptions"
@@ -41,8 +49,7 @@
           <VCheckboxBtn :model-value="isSelected" color="primary" @click="select" />
         </template>
       </VList>
-      <div v-else class="d-flex align-center py-5 px-6">
-        <VIcon icon="mdi-information-outline" start />
+      <div v-else class="text-center pa-5 text-medium-emphasis text-label-large">
         No {{ props.label }} found
       </div>
     </VSheet>
