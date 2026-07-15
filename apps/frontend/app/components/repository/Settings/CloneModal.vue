@@ -12,13 +12,10 @@
         "{{ target?.name }}". Name the copy and adjust its description as
         needed.
       </p>
-      <VTextField
-        v-model="nameInput"
-        :counter="NAME_MAX_LENGTH"
+      <RepositoryNameField
         :disabled="inProgress"
-        :error-messages="errors.name"
-        class="required mb-4"
-        label="Name"
+        :show-validation="submitCount > 0"
+        class="mb-4"
         placeholder="Enter name..."
         variant="outlined"
       />
@@ -73,6 +70,7 @@ import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useRepositoryStore } from '@/stores/repository';
+import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
 
 const props = withDefaults(
   defineProps<{ show?: boolean; repository?: Repository }>(),
@@ -114,7 +112,7 @@ const shareHint = computed(() => {
     : `The original ${label} isn't shared with anyone else.`;
 });
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
+const { defineField, errors, handleSubmit, resetForm, submitCount } = useForm({
   validationSchema: object({
     name: string().required().min(2).max(NAME_MAX_LENGTH),
     description: string().required().min(2).max(DESCRIPTION_MAX_LENGTH),
