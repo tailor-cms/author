@@ -10,14 +10,21 @@
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <!-- Poster artwork: sharp on the right, dissolving into the card surface on
-         the left via a theme-aware scrim + horizontal progressive blur -->
+         the left. A blurred base (mirrored reflection + a blurred cover copy)
+         sits under a sharp cover masked to fade left, so it reads sharp on the
+         right and softens leftward. Uses filter: blur() instead of
+         backdrop-filter, whose stacked full-card layers thrashed the
+         compositor and blanked cards on fast scroll (#752). -->
     <div v-if="thumbnailUrl" aria-hidden="true" class="card-bg">
-      <img :src="thumbnailUrl" alt="" class="card-underlay" loading="lazy" />
-      <img :src="thumbnailUrl" alt="" class="card-cover" loading="lazy" />
+      <img
+        v-for="layer in posterLayers"
+        :key="layer"
+        :src="thumbnailUrl"
+        :class="layer"
+        alt=""
+        loading="lazy"
+      />
       <div class="card-scrim" />
-      <div class="card-blur card-blur--1" />
-      <div class="card-blur card-blur--2" />
-      <div class="card-blur card-blur--3" />
     </div>
     <div class="card-body">
       <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
@@ -158,6 +165,14 @@ import { useTimeAgo } from '@vueuse/core';
 import { useRepositoryStore } from '@/stores/repository';
 import Tags from './Tags/index.vue';
 
+// Poster layers, painted back-to-front: the blurred mirror base, a blurred
+// cover base, then the sharp cover masked to fade left.
+const posterLayers = [
+  'card-underlay',
+  'card-cover card-cover--blur',
+  'card-cover card-cover--sharp',
+];
+
 const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
 
@@ -182,7 +197,8 @@ const schemaName = computed(() => $schemaService.getLabel(props.repository));
 // Signed URLs are delivered on the list payload (RepositoryFileMeta);
 // prefer the cached thumbnail and fall back to the original file.
 const thumbnailUrl = computed(() => {
-  const poster = props.repository.data.posterImage as RepositoryFileMeta | undefined;
+  const poster =
+    props.repository.data.posterImage as RepositoryFileMeta | undefined;
   return poster?.thumbnailUrl ?? poster?.publicUrl ?? '';
 });
 
@@ -258,7 +274,7 @@ onMounted(() => nextTick(detectSchemaTruncation));
 // cover's dimensions (identical object-fit crop) but its right edge sits on the
 // seam and it's flipped horizontally, so the image's left-edge column lands
 // exactly where the cover's does — the two align at the seam and the reflection
-// continues leftward, giving the blur/scrim image-into-image to fade.
+// continues leftward, giving the scrim an image-into-image fade.
 .card-underlay {
   position: absolute;
   top: 0;
@@ -266,7 +282,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scaleX(-1);
+  // Mirrored + blurred: the soft left base.
+  transform: scaleX(-1) scale(1.06);
+  filter: blur(16px);
 }
 
 .card-cover {
@@ -276,6 +294,19 @@ onMounted(() => nextTick(detectSchemaTruncation));
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+// Blurred cover copy: the right-hand half of the soft base
+.card-cover--blur {
+  transform: scale(1.06);
+  filter: blur(16px);
+}
+
+// Sharp cover on top, masked to fade out toward the left so it dissolves into
+// the blurred base
+.card-cover--sharp {
+  -webkit-mask-image: linear-gradient(to right, transparent 8%, black 45%);
+  mask-image: linear-gradient(to right, transparent 8%, black 45%);
 }
 
 // Fade the artwork into the card surface from the left. Theme-aware, so it
@@ -297,18 +328,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
     transparent 90%
   );
 }
-
-// Progressive blur: three masked backdrop layers ramping 3 -> 9 -> 20px,
-// each revealed further left so the blur intensifies toward the left edge.
-.card-blur {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.card-blur--1 { @include mixins.blur-band(3px, 42%, 68%); }
-.card-blur--2 { @include mixins.blur-band(9px, 28%, 52%); }
-.card-blur--3 { @include mixins.blur-band(20px, 12%, 34%); }
 
 // Icon buttons layered over the poster (settings cog, actions menu)
 .glass-btn {
