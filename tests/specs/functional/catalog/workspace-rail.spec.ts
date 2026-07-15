@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import { Catalog } from '../../../pom/catalog/Catalog';
 import {
   createCleanRepository,
@@ -120,6 +121,24 @@ test('falls back to All when the stored workspace is gone', async ({
 
   await rail.expectActive('All workspaces');
   await expect(new Catalog(page).getRepositoryCards()).toHaveCount(1);
+});
+
+test('locks the current workspace as the target when creating', async ({
+  page,
+}) => {
+  const group = await createUserGroup('Design');
+  await createCleanRepository('Existing', [group.id]);
+  await page.goto('/');
+
+  const rail = new WorkspaceRail(page);
+  await rail.select('Design');
+
+  const dialog = new AddRepositoryDialog(page);
+  await dialog.open();
+  // The active workspace is preselected as the target group...
+  await expect(dialog.groupChip('Design')).toBeVisible();
+  // ...and locked, so it can't be removed from the selection.
+  await expect(dialog.groupChipRemove('Design')).toHaveCount(0);
 });
 
 test.afterAll(async () => {
