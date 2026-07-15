@@ -231,5 +231,6 @@ export const issueCollection = new TailorCollection({
   name: 'Issues',
   description:
     'Bug reports and proposals, mirroring the GitHub issue forms.',
+  workflowId: 'ISSUE_WORKFLOW',
   entities: [Bug, Proposal],
 });

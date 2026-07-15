@@ -5,6 +5,7 @@ import { createRegistry } from './lib/registry';
 import { getFeedbackApi, RUBRICS } from './rubrics';
 import { SCHEMA as CourseSchema } from './schemas/course.schema';
 import { DEFAULT_WORKFLOW as DefaultWorkflow } from './workflows/default.workflow';
+import { ISSUE_WORKFLOW as IssueWorkflow } from './workflows/issue.workflow';
 import { articleCollection } from './collections/article.collection';
 import { issueCollection } from './collections/issue.collection';
 import { SCHEMA as FeedSchema } from './schemas/feed.schema';
@@ -41,6 +42,6 @@ const contentElementTypes: string[] = Object.values(ContentElementType);
 export const { schema, register, refreshSnapshot, adoptSchema } =
   createRegistry(SCHEMAS, contentElementTypes);
 
-export const workflow = getWorkflowApi([DefaultWorkflow], schema);
+export const workflow = getWorkflowApi([DefaultWorkflow, IssueWorkflow], schema);
 
 export const feedback = getFeedbackApi(RUBRICS, schema);
