@@ -1,7 +1,7 @@
 <template>
   <NuxtLayout name="main">
     <WorkspaceRail
-      v-if="authStore.userGroups.length || authStore.canCreateUserGroups"
+      v-if="showWorkspaceRail"
       v-model="repositoryStore.selectedUserGroupId"
       :items="repositoryStore.userGroupOptions"
       @created="onGroupCreated"
@@ -10,6 +10,7 @@
       @update:model-value="onUserGroupChange"
     />
     <VSheet
+      :class="{ 'ml-3': !showWorkspaceRail }"
       class="h-100 mr-3"
       color="surface-canvas"
       rounded="t-xl"
@@ -131,7 +132,7 @@
           </VInfiniteScroll>
           <CatalogEmptyState
             v-else-if="hasEmptyStateActions"
-            class="mt-8"
+            class="mt-4"
             @created="onRepositoryAdd"
           />
           <TailorEmptyState
@@ -212,6 +213,9 @@ const {
 
 const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
+const showWorkspaceRail = computed(() =>
+  authStore.userGroups.length || authStore.canCreateUserGroups,
+);
 
 const onGroupCreated = (group: UserGroup) =>
   navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
