@@ -129,7 +129,6 @@
           :clearable="!lockedGroupId"
           :error-messages="errors.userGroupIds"
           :items="authStore.groupsWithCreateRepositoryAccess"
-          :item-props="(group) => ({ disabled: group.id === lockedGroupId })"
           class="user-group-select mb-3"
           item-title="name"
           item-value="id"
@@ -137,6 +136,7 @@
           placeholder="Select user group..."
           variant="outlined"
           hide-details
+          hide-selected
           chips
           closable-chips
           multiple
