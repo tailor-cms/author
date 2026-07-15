@@ -1,15 +1,18 @@
 import type { NextFunction, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { UserRole } from '@tailor-cms/interfaces/role';
+import {
+  canWriteUserGroup,
+  hasUserGroupAdminAccess,
+} from '@tailor-cms/utils';
 import { createError } from '#shared/error/helpers.js';
 import db from '#shared/database/index.js';
+import find from 'lodash/find.js';
 
-const { UserGroup, UserGroupMember } = db;
+const { UserGroup } = db;
 
-// Param middleware: loads the UserGroup onto req and gates access.
-// Non-system-admins must hold the ADMIN role on the group itself,
-// otherwise every /:id/* route returns 403 - read access is the same
-// gate as write access here.
+// Param middleware: loads the UserGroup onto req and gates every /:id route
+// on hasUserGroupAdminAccess - system admins, or ADMIN members of the group
+// (the member-management surface). Reads share this gate with writes here.
 export async function getUserGroup(
   req: any,
   _res: Response,
@@ -25,14 +28,24 @@ export async function getUserGroup(
     return createError(StatusCodes.NOT_FOUND, 'User group not found');
   }
   const { user } = req;
-  if (!user.isAdmin()) {
-    const isGroupAdmin = await UserGroupMember.findOne({
-      where: { userId: user.id, groupId: group.id, role: UserRole.ADMIN },
-    });
-    if (!isGroupAdmin) {
-      return createError(StatusCodes.FORBIDDEN, 'Access denied');
-    }
+  const membership = find(user.userGroupMembers, { groupId: group.id });
+  const access = { userRole: user.role, groupRole: membership?.role };
+  if (!hasUserGroupAdminAccess(access)) {
+    return createError(StatusCodes.FORBIDDEN, 'Access denied');
   }
   req.userGroup = group;
   next();
+}
+
+// Writing the group entity (create/rename/logo/delete) is a system-admin
+// surface - narrower than the member management getUserGroup opens to group
+// admins. Returns 403, consistent with getUserGroup's own denial. INTEGRATION
+// counts as a system admin here, matching every rule in @tailor-cms/utils.
+export function authorizeGroupWrite(
+  req: any,
+  _res: Response,
+  next: NextFunction,
+) {
+  if (canWriteUserGroup({ userRole: req.user.role })) return next();
+  return createError(StatusCodes.FORBIDDEN, 'Access denied');
 }

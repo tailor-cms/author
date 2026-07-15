@@ -12,8 +12,8 @@
       <WorkspaceTile
         v-for="item in items"
         :key="item.id"
-        :can-manage="some(authStore.groupsWithAdminAccess, { id: item.id })"
-        :can-modify="authStore.isAdmin"
+        :can-manage="authStore.manageableUserGroupIds.includes(item.id)"
+        :can-modify="authStore.canModifyUserGroups"
         :is-active="item.id === selectedId"
         :item="item"
         @delete="confirmDelete(item)"
@@ -21,7 +21,7 @@
         @select="selectedId = item.id"
       />
       <VAvatar
-        v-if="authStore.isAdmin"
+        v-if="authStore.canCreateUserGroups"
         v-tooltip:end="{ text: 'Create workspace', openDelay: 300 }"
         aria-label="Create workspace"
         class="rail-add mt-1"
@@ -55,7 +55,7 @@ import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 import WorkspaceTile, { type WorkspaceOption } from './WorkspaceTile.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
-import { find, some } from 'lodash-es';
+import { find } from 'lodash-es';
 
 defineProps<{ items: WorkspaceOption[] }>();
 

@@ -17,7 +17,7 @@
       />
       <VSpacer />
       <VBtn
-        v-if="authStore.isAdmin"
+        v-if="authStore.canCreateUserGroups"
         aria-label="Add user group"
         color="primary"
         prepend-icon="mdi-account-multiple-plus"
@@ -53,7 +53,7 @@
               {{ item.name }}
             </NuxtLink>
           </td>
-          <td v-if="authStore.isAdmin" class="text-no-wrap text-left">
+          <td v-if="authStore.canModifyUserGroups" class="text-no-wrap text-left">
             <VBtn
               aria-label="Edit user group"
               class="mr-1"
@@ -112,7 +112,8 @@ const authStore = useAuthStore();
 
 const headers: any = [
   { title: 'Group name', key: 'name', sortable: false },
-  authStore.isAdmin && { title: 'Actions', key: 'actions', sortable: false },
+  authStore.canModifyUserGroups &&
+    { title: 'Actions', key: 'actions', sortable: false },
 ].filter(Boolean);
 
 const isLoading = ref(true);

@@ -4,9 +4,9 @@
       v-if="userGroupOptions.length"
       v-model="repositoryStore.selectedUserGroupId"
       :items="userGroupOptions"
-      @created="onWorkspaceCreated"
-      @deleted="onWorkspaceDeleted"
-      @updated="onWorkspaceUpdated"
+      @created="onGroupCreated"
+      @deleted="onGroupDeleted"
+      @updated="onGroupUpdated"
       @update:model-value="onUserGroupChange"
     />
     <VSheet
@@ -216,12 +216,12 @@ const userGroupOptions = computed(() =>
   authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
 );
 
-const onWorkspaceCreated = (group: UserGroup) =>
+const onGroupCreated = (group: UserGroup) =>
   navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
 
-const onWorkspaceUpdated = () => authStore.fetchUserInfo();
+const onGroupUpdated = () => authStore.fetchUserInfo();
 
-const onWorkspaceDeleted = async (id: number) => {
+const onGroupDeleted = async (id: number) => {
   const wasSelected = repositoryStore.selectedUserGroupId === id;
   await authStore.fetchUserInfo();
   if (!wasSelected) return;

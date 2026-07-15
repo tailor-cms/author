@@ -13252,6 +13252,9 @@
               }
             }
           },
+          "403": {
+            "description": "Caller is not a system admin"
+          },
           "409": {
             "description": "Group name already exists"
           }
@@ -13368,7 +13371,7 @@
             }
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
@@ -13422,7 +13425,7 @@
             "description": "No content"
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
