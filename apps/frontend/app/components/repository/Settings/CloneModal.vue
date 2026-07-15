@@ -14,6 +14,7 @@
       </p>
       <RepositoryNameField
         :disabled="inProgress"
+        :show-validation="submitCount > 0"
         class="mb-4"
         placeholder="Enter name..."
         variant="outlined"
@@ -111,7 +112,7 @@ const shareHint = computed(() => {
     : `The original ${label} isn't shared with anyone else.`;
 });
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
+const { defineField, errors, handleSubmit, resetForm, submitCount } = useForm({
   validationSchema: object({
     name: string().required().min(2).max(NAME_MAX_LENGTH),
     description: string().required().min(2).max(DESCRIPTION_MAX_LENGTH),
