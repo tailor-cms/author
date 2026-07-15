@@ -20,22 +20,20 @@
         @edit="openEdit(item.id)"
         @select="selectedId = item.id"
       />
-      <VAvatar
+      <VBtn
         v-if="authStore.canCreateUserGroups"
         v-tooltip:end="{ text: 'Create workspace', openDelay: 300 }"
         aria-label="Create workspace"
         class="rail-add mt-1"
         color="surface-container-high"
-        role="button"
         rounded="xl"
         size="42"
-        tabindex="0"
+        flat
+        icon
         @click="openCreate"
-        @keydown.enter="openCreate"
-        @keydown.space.prevent="openCreate"
       >
         <VIcon color="primary" icon="mdi-plus" size="22" />
-      </VAvatar>
+      </VBtn>
     </div>
     <UserGroupDialog
       v-model:visible="isDialogVisible"
@@ -107,7 +105,6 @@ const confirmDelete = ({ id, name }: WorkspaceOption) =>
 }
 
 .rail-add {
-  cursor: pointer;
   opacity: 0.85;
   transition: opacity 0.2s ease, transform 0.2s ease;
 

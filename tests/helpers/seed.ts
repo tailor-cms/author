@@ -6,6 +6,15 @@ import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
+const USER_GROUP_API = new ApiClient('/api/user-group/');
+
+// Creates a workspace (user group) via the REST API; returns the new group.
+export const createUserGroup = async (
+  name: string,
+): Promise<{ id: number; name: string }> => {
+  const { data } = await USER_GROUP_API.create({ name } as any);
+  return data;
+};
 
 // Grants (or updates) a repository role for the given user
 export const addRepositoryMember = async (

@@ -1,20 +1,23 @@
 <template>
   <div :class="['workspace-tile', { 'workspace-tile--active': isActive }]">
-    <UserGroupAvatar
+    <VBtn
       v-tooltip:end="{ text: item.name, openDelay: 300 }"
       :aria-label="item.name"
       :aria-pressed="isActive"
-      :logo-url="isAll ? null : item.logoUrl"
-      :placeholder-icon="isAll ? 'mdi-view-grid-outline' : undefined"
       class="tile-avatar"
-      role="button"
       rounded="xl"
       size="42"
-      tabindex="0"
+      flat
+      icon
       @click="emit('select')"
-      @keydown.enter="emit('select')"
-      @keydown.space.prevent="emit('select')"
-    />
+    >
+      <UserGroupAvatar
+        :logo-url="isAll ? null : item.logoUrl"
+        :placeholder-icon="isAll ? 'mdi-view-grid-outline' : undefined"
+        rounded="xl"
+        size="42"
+      />
+    </VBtn>
     <VMenu v-if="canManage && !isAll" location="end" offset="4">
       <template #activator="{ props: menuProps }">
         <VBtn
