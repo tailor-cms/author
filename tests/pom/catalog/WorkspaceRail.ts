@@ -1,7 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { confirmAction, selectMenuOption } from '../common/utils';
+import { confirmAction, getMenuOptions, selectMenuOption } from '../common/utils';
 import { GroupDialog } from '../admin/GroupManagement';
 
 export const ALL_WORKSPACES = 'All workspaces';
@@ -47,12 +47,18 @@ export class WorkspaceRail {
     await dialog.save();
   }
 
-  // Kebab only reveals on hover.
+  actionsButton(name: string): Locator {
+    return this.tile(name).getByRole('button', { name: 'Workspace actions' });
+  }
+
   async openActions(name: string) {
     await this.tile(name).hover();
-    await this.tile(name)
-      .getByRole('button', { name: 'Workspace actions' })
-      .click();
+    await this.actionsButton(name).click();
+  }
+
+  async getActionLabels(name: string): Promise<string[]> {
+    await this.openActions(name);
+    return getMenuOptions(this.page);
   }
 
   async manage(name: string) {
