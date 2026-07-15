@@ -435,10 +435,9 @@ const emptyState = computed(() => {
 onBeforeMount(async () => {
   // Refetch user info to get the latest permissions
   authStore.fetchUserInfo();
-  // If the user is coming back to the catalog page, we need to make sure
-  // that the store items are purged and fetched again
-  // (in case the user has deleted a repository).
-  repositoryStore.$items.clear();
+  // Coming back to the catalog, reset pagination so the fetch restarts from
+  // the first page
+  repositoryStore.resetPaginationParams();
   await repositoryStore.fetch();
   await repositoryStore.fetchTags();
   isLoading.value = false;
