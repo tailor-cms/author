@@ -27,12 +27,7 @@
         @click="$emit('toggle-all', !isAllSelected)"
       />
       <VSpacer />
-      <div
-        v-tooltip:bottom="{
-          text: 'Selected assets need a description or tags to be indexed',
-          disabled: hasIndexable,
-        }"
-      >
+      <div v-tooltip:bottom="indexTooltip">
         <VBtn
           :disabled="!hasIndexable || isIndexing"
           :loading="isIndexing"
@@ -68,8 +63,9 @@
 
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
-
-import { isIndexable } from './utils';
+import { ProcessingStatus } from '@tailor-cms/interfaces/asset';
+import { canIndex } from './utils';
+import { oneLine } from 'common-tags';
 
 const props = defineProps<{
   selected: Map<number, Asset>;
@@ -88,9 +84,33 @@ defineEmits<{
 
 const hasSelection = computed(() => props.selected.size > 0);
 
-const hasIndexable = computed(() =>
-  [...props.selected.values()].some((a) => isIndexable(a)),
+// props.selected is a Map, so spread its values into an array the index
+// checks below can filter/iterate over
+const selectedAssets = computed(() => [...props.selected.values()]);
+
+const indexableCount = computed(
+  () => selectedAssets.value.filter((a) => canIndex(a)).length,
 );
+
+const hasIndexable = computed(() => indexableCount.value > 0);
+
+const indexTooltip = computed(() => {
+  const total = props.selected.size;
+  const items = total === 1 ? 'item' : 'items';
+  if (indexableCount.value > 0) {
+    return `${indexableCount.value} of ${total} selected ${items} can be indexed`;
+  }
+  const allIndexed = selectedAssets.value.every(
+    (a) => a.processingStatus === ProcessingStatus.Completed,
+  );
+  if (allIndexed) {
+    return `Selected ${items} ${total === 1 ? 'is' : 'are'} already indexed.`;
+  }
+  return oneLine`
+    None of the ${total} selected ${items} can be indexed - add a
+    description or tags to make an asset eligible.
+  `;
+});
 </script>
 
 <style lang="scss" scoped>
