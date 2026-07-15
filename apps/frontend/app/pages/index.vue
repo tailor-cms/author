@@ -1,36 +1,35 @@
 <template>
   <NuxtLayout name="main">
+    <WorkspaceRail
+      v-if="showWorkspaceRail"
+      v-model="repositoryStore.selectedUserGroupId"
+      :items="repositoryStore.userGroupOptions"
+      @created="onGroupCreated"
+      @deleted="onGroupDeleted"
+      @updated="onGroupUpdated"
+      @update:model-value="onUserGroupChange"
+    />
     <VSheet
-      class="h-100 mx-3"
+      :class="{ 'ml-3': !showWorkspaceRail }"
+      class="h-100 mr-3"
       color="surface-canvas"
       rounded="t-xl"
       border
     >
       <div class="catalog-scroll">
-        <VContainer class="catalog" max-width="1360">
-          <VRow
+        <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
+          <div
             v-if="!isEmptyCatalog"
-            class="catalog-actions py-10"
-            density="compact"
+            class="catalog-actions ga-3 mb-4"
           >
-            <VCol cols="12" lg="4" md="6">
-              <UserGroupSelect
-                v-if="userGroupOptions.length"
-                v-model="repositoryStore.selectedUserGroupId"
-                :items="userGroupOptions"
-                @update:model-value="onUserGroupChange"
-              />
-            </VCol>
-            <VCol cols="12" lg="4" md="6">
-              <SearchInput
-                :search-input="repositoryStore.queryParams.search"
-                @update="onSearchInput"
-              />
-            </VCol>
-            <VCol
-              class="d-flex justify-end align-bottom pl-2 text-sm-left"
+            <SearchInput
+              :search-input="repositoryStore.queryParams.search"
+              @update="onSearchInput"
+            />
+            <div
+              class="d-flex justify-end align-bottom ml-auto pl-2 text-sm-left"
               cols="12"
-              lg="4"
+              md="8"
             >
               <VBtn
                 v-tooltip:top="{
@@ -41,6 +40,7 @@
                 :icon="arePinnedShown ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
                 aria-label="Toggle pinned items filter"
                 class="text-medium-emphasis my-1"
+                size="small"
                 variant="tonal"
                 @click="togglePinFilter"
               />
@@ -63,8 +63,8 @@
                   @created="onRepositoryAdd"
                 />
               </span>
-            </VCol>
-          </VRow>
+            </div>
+          </div>
           <RepositoryFilterSelection
             @clear:all="(queryParams.filter = []) && refetchRepositories()"
             @close="onFilterChange"
@@ -94,7 +94,7 @@
           />
           <VInfiniteScroll
             v-if="!isLoading && hasRepositories"
-            class="d-flex ma-0 pa-0"
+            class="d-flex ma-0 mt-8 pa-0"
             empty-text=""
             mode="manual"
             @load="loadMore"
@@ -129,7 +129,7 @@
           </VInfiniteScroll>
           <CatalogEmptyState
             v-else-if="hasEmptyStateActions"
-            class="mt-8"
+            class="mt-4"
             @created="onRepositoryAdd"
           />
           <TailorEmptyState
@@ -148,6 +148,7 @@
 
 <script setup lang="ts">
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { find, map, upperFirst } from 'lodash-es';
 import { SCHEMAS, schema as schemaApi } from '@tailor-cms/config';
@@ -169,8 +170,8 @@ import RepositoryFilterSelection
   from '@/components/catalog/Filter/RepositoryFilterSelection/index.vue';
 import SearchInput from '@/components/catalog/Filter/SearchInput.vue';
 import SelectOrder from '@/components/catalog/Filter/SelectOrder.vue';
-import UserGroupSelect from '@/components/catalog/Filter/UserGroupSelect.vue';
 import { describeSelection } from '@/utils/describeSelection';
+import WorkspaceRail from '@/components/catalog/WorkspaceRail/index.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useConfigStore } from '@/stores/config';
@@ -209,9 +210,22 @@ const {
 
 const hasRepositories = computed(() => !!repositories.value.length);
 const arePinnedShown = computed(() => queryParams.value.pinned);
-const userGroupOptions = computed(() =>
-  authStore.userGroups.length ? repositoryStore.userGroupOptions : [],
+const showWorkspaceRail = computed(() =>
+  authStore.userGroups.length || authStore.canCreateUserGroups,
 );
+
+const onGroupCreated = (group: UserGroup) =>
+  navigateTo({ name: 'user-group', params: { userGroupId: group.id } });
+
+const onGroupUpdated = () => authStore.fetchUserInfo();
+
+const onGroupDeleted = async (id: number) => {
+  const wasSelected = repositoryStore.selectedUserGroupId === id;
+  await authStore.fetchUserInfo();
+  if (!wasSelected) return;
+  repositoryStore.selectedUserGroupId = 0;
+  await onUserGroupChange();
+};
 
 const onUserGroupChange = async () => {
   selectedRepos.value.clear();
@@ -458,8 +472,11 @@ onBeforeMount(async () => {
 }
 
 .catalog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
   position: relative;
-  padding-top: 0.75rem;
 }
 
 .v-infinite-scroll {

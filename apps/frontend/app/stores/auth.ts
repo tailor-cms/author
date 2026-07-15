@@ -3,7 +3,12 @@ import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
 import type { UserUpdateProfileReq } from '@tailor-cms/api-client';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import type { RepositoryAccessContext } from '@tailor-cms/utils';
-import { canCreateRepositoryInGroup } from '@tailor-cms/utils';
+import {
+  canCreateRepositoryInGroup,
+  canCreateUserGroup,
+  canManageUserGroupMembers,
+  canModifyUserGroup,
+} from '@tailor-cms/utils';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
@@ -40,6 +45,28 @@ export const useAuthStore = defineStore('auth', () => {
 
   const hasAdminAccess = computed(
     () => isAdmin.value || groupsWithAdminAccess.value.length > 0,
+  );
+
+  // User groups where the acting user may manage members.
+  const manageableUserGroupIds = computed(() => {
+    if (!user.value) return [];
+    const userRole = user.value.role as UserRole;
+    return userGroups.value
+      .filter((it) => canManageUserGroupMembers({ userRole, groupRole: it.role }))
+      .map((it) => it.id);
+  });
+
+  // Creating / renaming / deleting user groups is a system-admin surface.
+  const canCreateUserGroups = computed(
+    () =>
+      !!user.value &&
+      canCreateUserGroup({ userRole: user.value.role as UserRole }),
+  );
+
+  const canModifyUserGroups = computed(
+    () =>
+      !!user.value &&
+      canModifyUserGroup({ userRole: user.value.role as UserRole }),
   );
 
   const hasCreateRepositoryAccess = computed(
@@ -145,6 +172,9 @@ export const useAuthStore = defineStore('auth', () => {
     hasAdminAccess,
     hasDefaultUserGroup,
     hasCreateRepositoryAccess,
+    manageableUserGroupIds,
+    canCreateUserGroups,
+    canModifyUserGroups,
     login,
     logout,
     forgotPassword,

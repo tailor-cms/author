@@ -24,21 +24,20 @@
     </template>
     <VCard color="surface-raised">
       <VListSubheader class="text-label-medium mx-4">Switch repository</VListSubheader>
-      <div class="ma-2 mt-0">
-        <VTextField
-          v-model="search"
-          bg-color="surface-container-high"
-          placeholder="Search repositories…"
-          prepend-inner-icon="mdi-magnify"
-          variant="solo"
-          density="compact"
-          rounded="md"
-          flat
-          hide-details
-          clearable
-          autofocus
-        />
-      </div>
+      <VTextField
+        v-model="search"
+        bg-color="surface-container-high"
+        class="ma-2 mt-0"
+        placeholder="Search repositories…"
+        prepend-inner-icon="mdi-magnify"
+        variant="solo"
+        density="compact"
+        rounded="md"
+        flat
+        hide-details
+        clearable
+        autofocus
+      />
       <VDivider />
       <div class="position-relative">
         <VProgressLinear
