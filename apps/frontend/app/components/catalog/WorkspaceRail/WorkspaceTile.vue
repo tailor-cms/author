@@ -5,7 +5,6 @@
       :aria-label="item.name"
       :aria-pressed="isActive"
       class="tile-avatar"
-      rounded="xl"
       size="42"
       flat
       icon

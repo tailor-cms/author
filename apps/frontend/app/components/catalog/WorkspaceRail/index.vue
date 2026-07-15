@@ -26,7 +26,6 @@
         aria-label="Create workspace"
         class="rail-add mt-1"
         color="surface-container-high"
-        rounded="xl"
         size="42"
         flat
         icon
