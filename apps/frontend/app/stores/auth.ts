@@ -1,6 +1,9 @@
 import type { User } from '@tailor-cms/interfaces/user';
 import type { UserGroupWithRole } from '@tailor-cms/interfaces/user-group';
 import type { UserUpdateProfileReq } from '@tailor-cms/api-client';
+import type { Repository } from '@tailor-cms/interfaces/repository';
+import type { RepositoryAccessContext } from '@tailor-cms/utils';
+import { canCreateRepositoryInGroup } from '@tailor-cms/utils';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
@@ -16,6 +19,16 @@ export const useAuthStore = defineStore('auth', () => {
   const isDefaultUser = computed(() => user.value?.role === UserRole.USER);
   const isOidcActive = computed(() => strategy.value === 'oidc');
 
+  const groupsWithCreateRepositoryAccess = computed(() =>
+    userGroups.value.filter((group) => canCreateRepositoryInGroup(group.role)),
+  );
+
+  const groupsWithAdminAccess = computed(() =>
+    userGroups.value.filter((group) => group.role === UserRole.ADMIN),
+  );
+
+  // The acting user actions are always bound to a group
+  // See default user group computed below
   const hasGroupBoundAccess = computed(
     () => !isAdmin.value && !isDefaultUser.value,
   );
@@ -25,24 +38,14 @@ export const useAuthStore = defineStore('auth', () => {
     return userGroups.value.length === 1;
   });
 
-  const groupsWithCreateRepositoryAccess = computed(() =>
-    userGroups.value.filter(
-      (group) => group.role === UserRole.ADMIN || group.role === UserRole.USER,
-    ),
-  );
-
-  const groupsWithAdminAccess = computed(() =>
-    userGroups.value.filter((group) => group.role === UserRole.ADMIN),
+  const hasAdminAccess = computed(
+    () => isAdmin.value || groupsWithAdminAccess.value.length > 0,
   );
 
   const hasCreateRepositoryAccess = computed(
     () =>
       !hasGroupBoundAccess.value ||
       groupsWithCreateRepositoryAccess.value.length > 0,
-  );
-
-  const hasAdminAccess = computed(
-    () => isAdmin.value || groupsWithAdminAccess.value.length > 0,
   );
 
   function $reset(
@@ -96,6 +99,24 @@ export const useAuthStore = defineStore('auth', () => {
     });
   }
 
+  /**
+   * Builds the acting user's access-policy context for the given
+   * repository.
+   */
+  const getRepositoryAccess = (
+    repository: Repository,
+  ): RepositoryAccessContext => {
+    const repositoryGroups = repository.userGroups ?? [];
+    const groupRoles = userGroups.value
+      .filter((group) => repositoryGroups.some((it) => it.id === group.id))
+      .map((group) => group.role);
+    return {
+      userRole: user.value?.role as UserRole,
+      repositoryRole: repository.repositoryUser?.role,
+      groupRoles,
+    };
+  };
+
   function fetchUserInfo() {
     return api.user
       .me()
@@ -129,6 +150,7 @@ export const useAuthStore = defineStore('auth', () => {
     forgotPassword,
     resetPassword,
     changePassword,
+    getRepositoryAccess,
     fetchUserInfo,
     updateInfo,
     $reset,

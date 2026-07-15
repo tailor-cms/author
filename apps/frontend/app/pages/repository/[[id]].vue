@@ -6,7 +6,7 @@
     <template v-else>
       <NavigationRail @action="onRailAction" />
       <VLayout
-        class="h-100 mr-3 bg-surface-container-low rounded-t-xl border-sm">
+        class="h-100 mr-3 bg-surface-canvas rounded-t-xl border-sm">
         <NuxtPage />
       </VLayout>
       <AgentPanel />
@@ -117,11 +117,23 @@ const initialize = async (repositoryId: number) => {
   isLoading.value = true;
   await nextTick();
   teardown();
-  await Promise.all([
-    authStore.fetchUserInfo(),
-    currentRepositoryStore.initialize(repositoryId),
-    promiseTimeout(1200),
-  ]);
+  try {
+    await Promise.all([
+      authStore.fetchUserInfo(),
+      currentRepositoryStore.initialize(repositoryId),
+      promiseTimeout(1200),
+    ]);
+  } catch (error) {
+    // 403 (not a member) or 404 (deleted); bounce to the catalog with
+    // a notice instead of leaving the loading screen up.
+    const status = (error as any)?.response?.status;
+    const message =
+      status === 403
+        ? 'You do not have access to this repository.'
+        : 'We could not load this repository.';
+    notify(message, { color: 'error', immediate: true });
+    return navigateTo({ name: 'catalog' });
+  }
   isLoading.value = false;
   repositorySSE.connect(repositoryId);
 };

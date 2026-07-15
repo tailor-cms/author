@@ -7888,6 +7888,10 @@
                         "type": "string",
                         "format": "uri"
                       },
+                      "thumbnailUrl": {
+                        "description": "Caller-resolved preview (e.g. discovery's Google/Unsplash thumbnail); wins over the page's own Open Graph image when present.",
+                        "type": "string"
+                      },
                       "altText": {
                         "description": "Alt text for image-like content.",
                         "type": "string"
@@ -10732,6 +10736,20 @@
             }
           },
           {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to specific repository ids; visibility rules still apply, so ids the user cannot see are silently dropped.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          {
             "name": "userGroupId",
             "in": "query",
             "required": false,
@@ -11395,6 +11413,10 @@
                     "minLength": 2,
                     "maxLength": 2000,
                     "description": "Long-form description (2..2000 chars)."
+                  },
+                  "shareWithSamePeople": {
+                    "description": "Share the clone with the same users and user groups as the source.",
+                    "type": "boolean"
                   }
                 },
                 "required": [

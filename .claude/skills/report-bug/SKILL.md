@@ -2,7 +2,7 @@
 name: report-bug
 description: >-
   Draft a high-quality GitHub bug report from a QA observation - dedup,
-  fill the bug_report form fields, suggest labels. DRAFT ONLY: it never
+  fill the bug_report form fields. DRAFT ONLY: it never
   files the issue; it hands you a ready `gh issue create` command to run
   yourself. Use when QA finds a defect to report.
 ---
@@ -16,7 +16,11 @@ themselves.
 
 ## Steps
 
-1. **Collect the facts** (ask for anything missing):
+1. **Verify it's a defect.** Check the code: if nothing is broken (works
+   as designed, missing affordance, "should allow X") it's a proposal,
+   not a bug - switch to `/report-proposal` and draft against
+   `proposal.yml` instead. Then collect the facts (ask for anything
+   missing):
    - Symptom in one line; deterministic **steps to reproduce** (with test
      data / URLs); **expected** vs **actual**.
    - **Affected area** (editor, content elements/containers, repository,
@@ -37,11 +41,15 @@ themselves.
 3. **Draft the body.** Write markdown mirroring the form fields - `gh` does
    NOT render the `.yml` form in non-interactive mode, so bake the
    structure into the body. Title: `[Bug]: <area> - <symptom>`. Save it to
-   a scratch file for `--body-file`.
+   a scratch file for `--body-file`. Do NOT hard-wrap lines (the repo's
+   80-col rule is for code): GitHub renders newlines in issue bodies as
+   line breaks, so keep each paragraph/bullet on one source line.
 
 4. **Hand off - do not file.** Give the user the exact command to run
-   themselves, and suggest labels:
-   `gh issue create --title "[Bug]: ..." --body-file <path>
-   --label "bug,triage"` (add `area:*` / severity labels as suggestions).
+   themselves:
+   `gh issue create --title "[Bug]: ..." --body-file <path> --type Bug`
+   (`--type` is needed because non-interactive `gh` bypasses the form's
+   auto-assigned issue type; the issue type is the canonical
+   classification - no labels).
 
 5. **Offer** to capture it as a failing spec via `/repro-spec`.

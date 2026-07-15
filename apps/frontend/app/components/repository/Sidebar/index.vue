@@ -4,7 +4,7 @@
     :model-value="!!store.selectedActivity"
     :width="width"
     class="text-left"
-    color="surface-raised"
+    color="surface-sidebar"
     location="right"
     mobile-breakpoint="md"
     absolute

@@ -31,6 +31,10 @@ export const ListFilter = z
       .max(250)
       .optional()
       .describe('Exact match against repository name.'),
+    ids: IntArrayFromForm().describe(oneLine`
+      Restrict to specific repository ids; visibility rules still apply,
+      so ids the user cannot see are silently dropped.
+    `),
     userGroupId: IntParam()
       .optional()
       .describe('Filter to repositories shared with a user group.'),

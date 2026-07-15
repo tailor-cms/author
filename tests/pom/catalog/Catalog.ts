@@ -95,6 +95,14 @@ export class Catalog {
       .getByRole('checkbox', { name: 'Select repository' });
   }
 
+  getCardStatusDot() {
+    return this.getRepositoryCards().locator('.status-dot');
+  }
+
+  getCardCheckboxSlot() {
+    return this.getRepositoryCards().locator('.select-checkbox');
+  }
+
   getCardCheckbox(hasText: string) {
     return this.findRepositoryCard(hasText)
       .getByRole('checkbox', { name: 'Select repository' });

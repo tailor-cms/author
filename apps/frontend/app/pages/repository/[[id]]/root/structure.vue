@@ -4,7 +4,7 @@
       <VContainer
         ref="structureEl"
         class="structure d-flex flex-column justify-start px-md-10 py-md-8"
-        max-width="1300"
+        max-width="1400"
       >
         <div v-if="hasToolbar" class="d-flex align-center ga-2 mb-4">
           <OutlineToolbar

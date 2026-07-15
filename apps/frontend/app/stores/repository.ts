@@ -3,9 +3,8 @@ import type {
   RepositoryCreateReq,
   RepositoryUpdateReq,
 } from '@tailor-cms/api-client';
-import { intersectionBy } from 'lodash-es';
 import { register as registerSchema } from '@tailor-cms/config';
-import { UserRole } from '@tailor-cms/interfaces/role';
+import { hasRepositoryAdminAccess } from '@tailor-cms/utils';
 
 import { useAuthStore } from './auth';
 import { api } from '@/api';
@@ -122,10 +121,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
     await api.repository.delete({ params: { repositoryId: id } });
   }
 
-  const clone = (id: number, name: string, description: string) =>
+  const clone = (
+    id: number,
+    name: string,
+    description: string,
+    shareWithSamePeople = false,
+  ) =>
     api.repository.clone({
       params: { repositoryId: id },
-      body: { name, description },
+      body: { name, description, shareWithSamePeople },
     });
 
   async function fetchTags(
@@ -189,14 +193,12 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   function processRepository(repository: Repository) {
     repository.lastChange = repository.revisions![0];
+    // Must be derived before resolving the policy below, which reads
+    // the acting user's membership from `repository.repositoryUser`
     repository.repositoryUser = repository.repositoryUsers?.[0];
-    // If repository or global admin
-    const { groupsWithAdminAccess: userAdminGroups } = authStore;
-    const repositoryGroups = repository?.userGroups || [];
-    repository.hasAdminAccess =
-      authStore.isAdmin ||
-      repository.repositoryUser?.role === UserRole.ADMIN ||
-      !!intersectionBy(userAdminGroups, repositoryGroups, 'id').length;
+    const accessPolicy = authStore.getRepositoryAccess(repository);
+    repository.accessPolicy = accessPolicy;
+    repository.hasAdminAccess = hasRepositoryAdminAccess(accessPolicy);
   }
 
   return {

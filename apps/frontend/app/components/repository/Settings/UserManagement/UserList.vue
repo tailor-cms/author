@@ -38,7 +38,7 @@
                   variant="tonal"
                 />
               </template>
-              <VList max-width="360" min-width="240" slim>
+              <VList max-width="360" min-width="240" nav>
                 <VListSubheader>Choose role</VListSubheader>
                 <VListItem
                   v-for="role in roles"

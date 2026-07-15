@@ -3,7 +3,8 @@
     <VTextField
       v-model="nameInput"
       v-bind="$attrs"
-      :error-messages="errors"
+      :counter="meta.validate.max"
+      :error-messages="props.showValidation ? errors : []"
       :label="props.label"
       :messages="warning"
       class="required"
@@ -50,6 +51,8 @@ interface Props {
   label?: string;
   repositoryId?: number | null;
   entityData?: Record<string, any>;
+  // Show validation errors. Set false to defer them until the first submit.
+  showValidation?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: 'Name',
   repositoryId: null,
   entityData: undefined,
+  showValidation: true,
 });
 const emit = defineEmits(['change']);
 

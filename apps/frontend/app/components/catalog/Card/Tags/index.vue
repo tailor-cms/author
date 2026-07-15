@@ -1,6 +1,6 @@
 <template>
-  <div class="tags-container">
-    <div class="tag-list d-flex align-center ga-2 py-2">
+  <div class="tags-container align-center">
+    <div class="tag-list d-flex align-center ga-2">
       <VChip
         v-for="{ id, name, truncatedName } in tags"
         :key="id"
@@ -28,10 +28,13 @@
       v-if="!exceededTagLimit"
       v-tooltip:bottom="{ text: 'Add tag', openDelay: 400 }"
       aria-label="Add tag"
-      class="text-medium-emphasis ml-2"
-      icon="mdi-tag-plus"
+      class="ml-2"
+      size="x-small"
+      icon
       @click.stop="showTagDialog = true"
-    />
+    >
+      <VIcon icon="mdi-tag-plus" size="20" />
+    </VBtn>
     <AddTag
       :is-visible="showTagDialog"
       :repository="repository"
@@ -88,6 +91,5 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   display: flex;
   justify-content: space-between;
   flex-basis: 100%;
-  min-height: 3rem;
 }
 </style>

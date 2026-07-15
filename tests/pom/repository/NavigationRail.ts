@@ -1,7 +1,11 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { confirmAction, selectMenuOption } from '../common/utils';
+import {
+  confirmAction,
+  getMenuOptions,
+  selectMenuOption,
+} from '../common/utils';
 import { CloneDialog } from './CloneDialog';
 import { ExportDialog } from './ExportDialog';
 
@@ -58,6 +62,12 @@ export class NavigationRail {
   async runAction(name: RailAction) {
     await this.actionsMenuBtn.click();
     await selectMenuOption(this.page, name);
+  }
+
+  // Labels of the rail actions menu the acting user is offered
+  async getActionLabels() {
+    await this.actionsMenuBtn.click();
+    return getMenuOptions(this.page);
   }
 
   async clone(name = 'Cloned repository') {

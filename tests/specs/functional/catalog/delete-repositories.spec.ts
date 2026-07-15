@@ -19,10 +19,10 @@ test.beforeEach(async ({ page }) => {
 
 test('should reveal card checkbox on hover', async ({ page }) => {
   const catalog = new Catalog(page);
-  const checkbox = catalog.getCardCheckboxes().first();
-  await expect(checkbox).not.toBeVisible();
+  const checkboxSlot = catalog.getCardCheckboxSlot().first();
+  await expect(checkboxSlot).toHaveCSS('opacity', '0');
   await catalog.getFirstRepositoryCard().hover();
-  await expect(checkbox).toBeVisible();
+  await expect(checkboxSlot).toHaveCSS('opacity', '1');
 });
 
 test('should be able to select individual repositories', async ({ page }) => {

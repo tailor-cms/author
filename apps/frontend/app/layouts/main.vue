@@ -5,14 +5,18 @@
       <slot></slot>
     </VMain>
     <ConfirmationDialog />
-    <UploadIndicator />
+    <div class="indicator-stack">
+      <IndexingIndicator />
+      <UploadIndicator />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
 import AppBar from '@/components/common/AppBar.vue';
 import ConfirmationDialog from '@/components/common/ConfirmationDialog.vue';
-import UploadIndicator from '@/components/common/UploadIndicator.vue';
+import IndexingIndicator from '@/components/repository/Assets/IndexingIndicator.vue';
+import UploadIndicator from '@/components/repository/Assets/UploadIndicator.vue';
 import { useAuthStore } from '@/stores/auth';
 
 const store = useAuthStore();
@@ -25,6 +29,19 @@ const store = useAuthStore();
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   overflow: hidden;
+}
+
+// Stacks the background-progress indicators (indexing
+// above uploads) so they never overlap.
+.indicator-stack {
+  position: fixed;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: flex-end;
+  z-index: 2000;
 }
 
 .v-main {

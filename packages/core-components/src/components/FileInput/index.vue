@@ -8,7 +8,6 @@
     :placeholder="placeholder || 'Click to add...'"
     :prepend-inner-icon="resolvedIcon"
     :variant="variant"
-    append-inner-icon="mdi-upload"
     readonly
     @click="!readonly && (dialogOpen = true)"
   />
@@ -28,6 +27,7 @@
     :readonly="readonly"
     @delete="onClear"
     @download="downloadFile(resolvedFileKey, resolvedFileName)"
+    @replace="dialogOpen = true"
   />
   <PickerDialog
     v-model="dialogOpen"

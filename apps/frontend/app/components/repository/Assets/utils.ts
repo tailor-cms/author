@@ -1,4 +1,4 @@
-import { AssetType } from '@tailor-cms/interfaces/asset';
+import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 
 export {
   formatFileSize,
@@ -47,6 +47,20 @@ export function isIndexable(
     return !!asset.meta?.files?.captions;
   }
   return false;
+}
+
+/**
+ * Whether an asset can be queued for indexing right now; it has indexable
+ * content and is not already indexed.
+ */
+export function canIndex(asset: {
+  type?: string;
+  meta?: any;
+  processingStatus?: ProcessingStatus | null;
+}): boolean {
+  return (
+    asset.processingStatus !== ProcessingStatus.Completed && isIndexable(asset)
+  );
 }
 
 export function formatDate(date: string | Date): string {

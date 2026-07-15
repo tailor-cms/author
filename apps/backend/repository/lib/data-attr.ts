@@ -9,6 +9,7 @@
 //   2. Defensive-strip server-managed fields in the service layer before
 //      persisting (so a future server-only key can be added in one
 //      place rather than relying on every validator to be updated).
+import omit from 'lodash/omit.js';
 import pick from 'lodash/pick.js';
 import unset from 'lodash/fp/unset.js';
 import { z } from 'zod';
@@ -59,6 +60,19 @@ export function stripServerManaged(
     (acc, path) => unset(path, acc),
     data,
   );
+}
+
+// Read-time fields merged into FILE-type meta values by the repository
+// listing.
+const FILE_META_VIRTUALS = ['publicUrl', 'thumbnailUrl', 'assetId'];
+
+// Removes read-time virtuals from a FILE-type meta value, keeping the
+// stored contract ({ key, name }) and any other fields intact.
+export function stripFileMetaVirtuals(value: unknown): unknown {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return value;
+  }
+  return omit(value as Record<string, unknown>, FILE_META_VIRTUALS);
 }
 
 // $$ keys that ARE allowed to survive a transfer (clone, export, import).
