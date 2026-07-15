@@ -99,7 +99,7 @@
             @download="downloadAsset"
             @folder:open="browseTo"
             @folder:up="browseUp"
-            @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+            @index="(asset: Asset) => indexing.startIndexing([asset])"
             @move="(asset: Asset) => openMove([asset.id])"
             @preview="activeAsset = $event"
             @select:toggle="selection.toggle"
@@ -132,7 +132,7 @@
       @deindex="onDeindex"
       @delete="(asset: Asset) => confirmDelete([asset.id])"
       @download="downloadAsset"
-      @index="(asset: Asset) => indexing.startIndexing([asset.id])"
+      @index="(asset: Asset) => indexing.startIndexing([asset])"
       @move="(asset: Asset) => openMove([asset.id])"
       @save="onSave"
     />
@@ -142,8 +142,8 @@
 <script lang="ts" setup>
 import type { Asset } from '@tailor-cms/interfaces/asset';
 import {
+  canIndex,
   formatFileSize,
-  isIndexable,
 } from '@/components/repository/Assets/utils';
 import { CATEGORY_ALL } from '@/composables/useAssetFiltering';
 import { debounce } from 'lodash-es';
@@ -392,13 +392,10 @@ async function downloadAsset(asset: Asset) {
 }
 
 async function indexSelected() {
-  const ids = [...selection.selected.values()]
-    .filter((a) => isIndexable(a))
-    .map((a) => a.id);
-  if (!ids.length) return;
-  notify(`Indexing ${assetLabel(ids.length)}`, { immediate: true });
+  const assets = [...selection.selected.values()].filter((a) => canIndex(a));
+  if (!assets.length) return;
   selection.clear();
-  await indexing.startIndexing(ids);
+  await indexing.startIndexing(assets);
 }
 
 async function onDeindex(asset: Asset) {
@@ -457,6 +454,10 @@ watch(
   [selectedCategory, sortDirection, currentPath, () => assetStore.itemsPerPage],
   resetAndFetch,
 );
+
+// Switching category tabs or browsing folders changes the visible set, so a
+// prior selection may reference assets the user can no longer see. Reset it;
+watch([selectedCategory, currentPath], () => selection.clear());
 watch(searchQuery, debouncedSearch);
 watch(() => assetStore.page, refetch);
 
@@ -464,6 +465,14 @@ watch(
   () => uploadStore.completedUploadsFor(repositoryId.value),
   (count, prev) => {
     if (count > prev) refetchAll();
+  },
+);
+
+// Refresh the list as indexing items settle
+watch(
+  () => indexing.settledCount.value,
+  (count, prev) => {
+    if (count > prev) refetch();
   },
 );
 

@@ -50,14 +50,14 @@ const emit = defineEmits<{
 
 const show = defineModel<boolean>({ default: false });
 
-const destination = ref<string | null>('');
+const destination = ref<string | null>(null);
 
 const title = computed(() =>
   props.count === 1 ? 'Move asset' : `Move ${props.count} assets`,
 );
 
 watch(show, (isOpen) => {
-  if (isOpen) destination.value = '';
+  if (isOpen) destination.value = null;
 });
 
 function submit() {
