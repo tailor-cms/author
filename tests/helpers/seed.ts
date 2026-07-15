@@ -16,6 +16,9 @@ export const createUserGroup = async (
   return data;
 };
 
+// Deletes a workspace (user group) via the REST API.
+export const deleteUserGroup = (id: number) => USER_GROUP_API.remove(id);
+
 // Grants (or updates) a repository role for the given user
 export const addRepositoryMember = async (
   repositoryId: number,

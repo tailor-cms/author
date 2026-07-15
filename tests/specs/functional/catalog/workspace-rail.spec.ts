@@ -4,6 +4,7 @@ import { Catalog } from '../../../pom/catalog/Catalog';
 import {
   createCleanRepository,
   createUserGroup,
+  deleteUserGroup,
 } from '../../../helpers/seed';
 import { WorkspaceRail } from '../../../pom/catalog/WorkspaceRail';
 import SeedClient from '../../../api/SeedClient';
@@ -80,6 +81,45 @@ test('deletes a workspace from its actions menu', async ({ page }) => {
 
   await expect(rail.tileAvatar('Remove')).toHaveCount(0);
   await expect(rail.tileAvatar('Keep')).toBeVisible();
+});
+
+test('remembers the selected workspace across reloads', async ({ page }) => {
+  const group = await createUserGroup('Persisted');
+  await createCleanRepository('Inside Persisted', [group.id]);
+  await createCleanRepository('Outside Persisted');
+  await page.goto('/');
+
+  const catalog = new Catalog(page);
+  const rail = new WorkspaceRail(page);
+  await rail.select('Persisted');
+  await rail.expectActive('Persisted');
+  await expect(catalog.getRepositoryCards()).toHaveCount(1);
+
+  await page.reload();
+
+  await rail.expectActive('Persisted');
+  await expect(catalog.getRepositoryCards()).toHaveCount(1);
+});
+
+test('falls back to All when the stored workspace is gone', async ({
+  page,
+}) => {
+  await createUserGroup('Keep');
+  const ephemeral = await createUserGroup('Ephemeral');
+  await createCleanRepository('Standalone');
+  await page.goto('/');
+
+  const rail = new WorkspaceRail(page);
+  await rail.select('Ephemeral');
+  await rail.expectActive('Ephemeral');
+
+  // Remove the workspace out-of-band (as if another admin deleted it), so the
+  // persisted selection is stale on the next load.
+  await deleteUserGroup(ephemeral.id);
+  await page.reload();
+
+  await rail.expectActive('All workspaces');
+  await expect(new Catalog(page).getRepositoryCards()).toHaveCount(1);
 });
 
 test.afterAll(async () => {
