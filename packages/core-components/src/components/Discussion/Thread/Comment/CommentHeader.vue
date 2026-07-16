@@ -118,13 +118,16 @@ const fullDate = useDateFormat(
 const elementUid = computed(() => props.comment.contentElement?.uid);
 const isAuthor = computed(() => props.comment.author?.id === props.user?.id);
 const isDeleted = computed(() => !!props.comment.deletedAt);
-const showOptions = computed(
-  () => isAuthor.value && !isDeleted.value && !props.isResolved,
-);
+
 const options = computed<Option[]>(() => {
   const { resolve, edit, remove } = OPTIONS;
-  return props.isActivityThread ? [edit, remove] : [resolve, edit, remove];
+  const authorOptions = isAuthor.value ? [edit, remove] : [];
+  return props.isActivityThread ? authorOptions : [resolve, ...authorOptions];
 });
+
+const showOptions = computed(
+  () => options.value.length > 0 && !isDeleted.value && !props.isResolved,
+);
 </script>
 
 <style lang="scss" scoped>
