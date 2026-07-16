@@ -11,6 +11,7 @@ export class Comment {
   readonly resolveBtn: Locator;
   readonly editBtn: Locator;
   readonly removeBtn: Locator;
+  readonly editor: Locator;
   readonly confirmationDialog: ConfirmationDialog;
 
   constructor(page: Page, el: Locator) {
@@ -22,6 +23,7 @@ export class Comment {
       .filter({ hasText: 'Resolve' });
     this.editBtn = page.locator('.v-list-item').filter({ hasText: 'Edit' });
     this.removeBtn = page.locator('.v-list-item').filter({ hasText: 'Remove' });
+    this.editor = page.locator('.comment-editor').first();
     this.confirmationDialog = new ConfirmationDialog(page, 'Remove comment');
   }
 
@@ -50,9 +52,8 @@ export class Comment {
     // After clicking edit, CommentPreview unmounts (v-if) removing the
     // comment text. The hasText filter on this.el stops matching, so
     // target the editor directly via the unique .comment-editor class.
-    const editor = this.page.locator('.comment-editor').first();
-    await expect(editor).toBeVisible();
-    await editor.getByRole('textbox').fill(content);
+    await expect(this.editor).toBeVisible();
+    await this.editor.getByRole('textbox').fill(content);
     await this.page.getByRole('button', { name: 'Save' }).click();
     await expect(this.page.getByText(content)).toBeVisible();
   }

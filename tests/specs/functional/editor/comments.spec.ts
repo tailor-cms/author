@@ -75,6 +75,18 @@ test('can edit element comment', async ({ page }) => {
   await expect(page.getByText(newComment)).toBeVisible();
 });
 
+test('editing an element comment keeps the flyout open', async ({ page }) => {
+  const editor = new Editor(page);
+  const element = await editor.getElement('The Origins of Pizza');
+  const comment = await element.getComment(COMMENT_CONTENT);
+  await comment.toggleEdit();
+  // Wait out any regressed close animation first; a flyout mid-close would
+  // still satisfy toBeVisible and pass falsely.
+  await page.waitForTimeout(1500);
+  await expect(element.commentsMenu).toBeVisible();
+  await expect(comment.editor).toBeVisible();
+});
+
 test.afterAll(async () => {
   await SeedClient.resetDatabase();
 });
