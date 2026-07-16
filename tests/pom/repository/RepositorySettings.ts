@@ -35,6 +35,7 @@ export class GeneralSettings {
   readonly el: Locator;
   readonly rail: NavigationRail;
   readonly nameInput: Locator;
+  readonly nameWarning: Locator;
   readonly descriptionInput: Locator;
   readonly toast: Toast;
 
@@ -45,6 +46,7 @@ export class GeneralSettings {
     this.page = page;
     this.el = el;
     this.nameInput = el.getByLabel('Name');
+    this.nameWarning = el.getByText('a Repository with that name already exists');
     this.descriptionInput = el.getByLabel('Description');
   }
 
