@@ -18,11 +18,25 @@
         v-model="nameInput"
         :counter="NAME_MAX_LENGTH"
         :error-messages="errors.name"
+        :messages="warning"
         class="mb-3 required"
         label="Group name"
         placeholder="Enter group name..."
         variant="outlined"
-      />
+      >
+        <template #message="{ message }">
+          <div v-if="warning && !errors.name" class="d-flex align-center">
+            <VIcon
+              class="text-body-large"
+              color="warning"
+              icon="mdi-alert"
+              start
+            />
+            {{ message }}
+          </div>
+          <template v-else>{{ message }}</template>
+        </template>
+      </VTextField>
     </template>
     <template #actions>
       <VBtn text="Cancel" variant="text" @click="close" />
@@ -39,7 +53,7 @@
 
 <script lang="ts" setup>
 import { object, string } from 'yup';
-import { isEmpty } from 'lodash-es';
+import { debounce, isEmpty } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
 
@@ -60,6 +74,21 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits(['created', 'updated', 'update:visible']);
 
 const NAME_MAX_LENGTH = 250;
+const NAME_DUPLICATE_MSG = 'Warning: a Group with that name already exists.';
+
+const warning = ref('');
+
+const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm(
+  {
+    validationSchema: object({
+      name: string().min(2).max(NAME_MAX_LENGTH).required(),
+      logoUrl: string().nullable(),
+    }),
+  },
+);
+
+const [nameInput] = defineField('name');
+const [logoUrlInput] = defineField('logoUrl');
 
 const isDialogVisible = computed({
   get: () => props.visible,
@@ -74,17 +103,26 @@ const onAvatarSave = (imgUrl: string) => {
   logoUrlInput.value = imgUrl;
 };
 
-const { defineField, errors, handleSubmit, resetForm, setFieldError } = useForm(
-  {
-    validationSchema: object({
-      name: string().min(2).max(NAME_MAX_LENGTH).required(),
-      logoUrl: string().nullable(),
-    }),
-  },
-);
+const normalize = (value: string) => value.trim().toLowerCase();
 
-const [nameInput] = defineField('name');
-const [logoUrlInput] = defineField('logoUrl');
+const checkDuplicateName = debounce(async (value?: string) => {
+  const target = normalize(value ?? '');
+  if (!target) {
+    warning.value = '';
+    return;
+  }
+  const { items } = await api.userGroup.list({
+    query: { filter: target, limit: 25 },
+  });
+  warning.value = items.some(
+    (group) =>
+      normalize(group.name) === target && group.id !== props.groupData?.id,
+  )
+    ? NAME_DUPLICATE_MSG
+    : '';
+}, 300);
+
+watch(() => nameInput.value, (value) => checkDuplicateName(value));
 
 watch(isDialogVisible, (val) => {
   if (!val) return;
@@ -97,6 +135,8 @@ watch(isDialogVisible, (val) => {
 });
 
 const close = () => {
+  checkDuplicateName.cancel();
+  warning.value = '';
   emit('update:visible', false);
   resetForm();
 };
