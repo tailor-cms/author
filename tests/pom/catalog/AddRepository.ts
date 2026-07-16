@@ -14,6 +14,7 @@ export class AddRepositoryDialog {
   readonly descriptionInput: Locator;
   readonly archiveInput: Locator;
   readonly submitBtn: Locator;
+  readonly userGroupSelect: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -34,6 +35,17 @@ export class AddRepositoryDialog {
     this.submitBtn = dialog.getByRole('button', {
       name: /^(Create|Import)$/,
     });
+    this.userGroupSelect = dialog.locator('.user-group-select');
+  }
+
+  // A selected user-group chip in the create form, by group name.
+  groupChip(name: string): Locator {
+    return this.userGroupSelect.locator('.v-chip').filter({ hasText: name });
+  }
+
+  // The chip's remove affordance - absent when the group is locked.
+  groupChipRemove(name: string): Locator {
+    return this.groupChip(name).locator('.v-chip__close');
   }
 
   async open() {

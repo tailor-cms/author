@@ -30,3 +30,12 @@ export interface UserGroupWithRole extends UserGroup {
 export interface UserGroupMemberWithUser extends User {
   userGroupMember: UserGroupMember;
 }
+
+// Access-check input for the user-group management rules
+// (see @tailor-cms/utils access helpers).
+export interface UserGroupAccessContext {
+  // System-level role of the acting user
+  userRole: UserRole;
+  // Role the user holds in the group, when they are a member
+  groupRole?: UserRole;
+}

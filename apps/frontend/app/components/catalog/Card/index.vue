@@ -5,8 +5,8 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-raised"
     elevation="1"
+    color="surface-raised"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
     <!-- Poster artwork: sharp on the right, dissolving into the card surface on
