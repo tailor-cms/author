@@ -114,8 +114,8 @@ const shareHint = computed(() => {
 
 const { defineField, errors, handleSubmit, resetForm, submitCount } = useForm({
   validationSchema: object({
-    name: string().required().min(2).max(NAME_MAX_LENGTH),
-    description: string().required().min(2).max(DESCRIPTION_MAX_LENGTH),
+    name: string().trim().required().min(2).max(NAME_MAX_LENGTH),
+    description: string().trim().required().min(2).max(DESCRIPTION_MAX_LENGTH),
   }),
   // The copy usually keeps the original description; the name must be new.
   initialValues: {

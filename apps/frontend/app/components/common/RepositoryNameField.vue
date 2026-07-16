@@ -90,7 +90,7 @@ const {
   value: nameInput,
   errors,
   validate,
-} = useField('name', string().required().min(2).max(250), {
+} = useField('name', string().trim().required().min(2).max(250), {
   initialValue: props.value,
 });
 
