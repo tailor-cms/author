@@ -27,7 +27,7 @@
         class="rail-add mt-1"
         color="surface-container-high"
         icon="mdi-plus"
-        size="38"
+        size="40"
         flat
         @click="openCreate"
       />
