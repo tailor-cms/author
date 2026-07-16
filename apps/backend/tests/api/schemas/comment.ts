@@ -1,6 +1,6 @@
 // Wire shape for the seed-comment endpoint.
 import { z } from 'zod';
-import { IntParam } from '#shared/request/schemas.ts';
+import { Email, IntParam } from '#shared/request/schemas.ts';
 
 export const CommentInput = z
   .object({
@@ -11,6 +11,10 @@ export const CommentInput = z
       .optional()
       .describe('Optional content element id; null if activity-level comment.'),
     content: z.string().min(1).max(2000).describe('Comment body.'),
+    authorEmail: Email()
+      .nullable()
+      .optional()
+      .describe('Email of an existing user to attribute the comment to.'),
   })
   .describe('Required and optional fields for seeding a comment.');
 
