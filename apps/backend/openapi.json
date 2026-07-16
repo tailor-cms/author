@@ -4740,6 +4740,51 @@
         ],
         "additionalProperties": false
       },
+      "UpsertMembersResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total emails processed in the request."
+          },
+          "created": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Members newly added to the group."
+          },
+          "updated": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Existing members whose role changed."
+          },
+          "skipped": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Emails already members with an unchanged role."
+          },
+          "failed": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email"
+            },
+            "description": "Emails that could not be invited or assigned."
+          }
+        },
+        "required": [
+          "total",
+          "created",
+          "updated",
+          "skipped",
+          "failed"
+        ],
+        "additionalProperties": false
+      },
       "StoredUserActivityContext": {
         "type": "object",
         "properties": {
@@ -13493,8 +13538,26 @@
         "summary": "Invite or update members of a user group",
         "parameters": [],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Summary of created/updated/skipped members.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Per-request summary of a bulk member upsert.",
+                      "$ref": "#/components/schemas/UpsertMembersResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
             "description": "Caller is not an admin or group admin"
