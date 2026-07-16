@@ -101,6 +101,9 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
+const notify = useNotification();
+const notifyError = (message: string) =>
+  notify(message, { color: 'error', immediate: true });
 
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
@@ -130,11 +133,19 @@ async function fetchUsers() {
 }
 
 async function upsertUser(email: string, role: string) {
-  await api.userGroup.addUser({
-    params: { id: userGroupId },
-    body: { emails: [email], role } as any,
-  });
-  await fetchUsers();
+  try {
+    const { failed } = await api.userGroup.addUser({
+      params: { id: userGroupId },
+      body: { emails: [email], role } as any,
+    });
+    await fetchUsers();
+    // A per-email failure comes back in `failed` (200), not as a throw;
+    // funnel it into the same error notice
+    if (failed.length) throw new Error('Role update failed');
+    notify('User updated', { immediate: true });
+  } catch {
+    notifyError('We couldn\'t update the user\'s role.');
+  }
 }
 
 async function removeUser(userId: number) {
@@ -158,7 +169,14 @@ onBeforeMount(async () => {
     userGroup.value = await api.userGroup.get({
       params: { id: userGroupId },
     });
-  } catch {
+  } catch (error) {
+    // 403 when the acting user isn't an admin of this group
+    const status = (error as any)?.response?.status;
+    notifyError(
+      status === 403
+        ? 'You do not have access to this user group.'
+        : 'We could not load this user group.',
+    );
     return navigateTo({ name: 'user-groups' });
   }
   await fetchUsers();
