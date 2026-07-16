@@ -58,7 +58,7 @@
             v-if="hasAdminAccess"
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
-            class="repo-info glass-btn"
+            class="tinted-btn"
             density="comfortable"
             icon="mdi-cog"
             size="small"
@@ -78,7 +78,7 @@
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
-                class="repo-info glass-btn"
+                class="tinted-btn"
                 density="comfortable"
                 icon="mdi-dots-vertical"
                 size="small"
@@ -129,7 +129,7 @@
       >
         <VIcon :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'" size="20" />
       </VBtn>
-      <Tags :repository="repository" class="glass-tags" />
+      <Tags :repository="repository" />
     </VCardActions>
   </VCard>
 </template>
@@ -236,15 +236,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
   }
 }
 
-.glass-btn,
-.glass-tags :deep(.v-chip),
-.glass-tags :deep(.v-btn) {
+.tinted-btn {
   background: rgba(var(--v-theme-surface-raised), 0.8);
   border: thin solid rgba(var(--v-theme-on-surface), 0.08);
-}
-
-.glass-tags :deep(.v-chip .v-chip__underlay) {
-  border-radius: 0;
 }
 
 .card-body {
