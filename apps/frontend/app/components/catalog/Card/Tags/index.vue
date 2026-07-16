@@ -92,4 +92,14 @@ const showTagDeleteConfirmation = (tagId: number, tagName: string) => {
   justify-content: space-between;
   flex-basis: 100%;
 }
+
+.v-chip,
+.v-btn {
+  background: rgba(var(--v-theme-surface-raised), 0.8);
+  border: thin solid rgba(var(--v-theme-on-surface), 0.08);
+}
+
+.v-chip :deep(.v-chip__underlay) {
+  border-radius: 0;
+}
 </style>

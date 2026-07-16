@@ -147,21 +147,20 @@ const submit = handleSubmit(async () => {
     name: nameInput.value || undefined,
     logoUrl: logoUrlInput.value || undefined,
   };
+  let group;
   try {
-    if (isNewGroup.value) {
-      await api.userGroup.create({ body });
-    } else {
-      await api.userGroup.update({
-        params: { id: props.groupData.id },
-        body,
-      });
-    }
+    group = isNewGroup.value
+      ? await api.userGroup.create({ body })
+      : await api.userGroup.update({
+          params: { id: props.groupData.id },
+          body,
+        });
   } catch (e: any) {
     const { message } = e?.response?.data?.error || {};
     setFieldError('name', message || 'An error occurred!');
     return;
   }
-  emit(`${action}d`);
+  emit(`${action}d`, group);
   close();
 });
 </script>

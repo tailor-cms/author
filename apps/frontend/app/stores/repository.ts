@@ -5,9 +5,11 @@ import type {
 } from '@tailor-cms/api-client';
 import { register as registerSchema } from '@tailor-cms/config';
 import { hasRepositoryAdminAccess } from '@tailor-cms/utils';
+import { useLocalStorage } from '@vueuse/core';
 
 import { useAuthStore } from './auth';
 import { api } from '@/api';
+import { some } from 'lodash-es';
 
 export type SortField = 'name' | 'description' | 'createdAt' | 'updatedAt';
 export type SortDirection = 'ASC' | 'DESC';
@@ -41,11 +43,27 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
+  const storedUserGroupId = useLocalStorage<number>(
+    'tailor:selected-user-group',
+    0,
+  );
+
   const userGroupOptions = computed(() => [
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroupId = ref<number>(userGroupOptions.value[0]!.id);
+
+  // Falls back to "All workspaces" when the persisted id isn't one of the
+  // user's groups (deleted / access revoked). Trust it until user info loads,
+  // else a valid selection would flash to "All" before groups arrive.
+  const selectedUserGroupId = computed({
+    get: () => {
+      const stored = storedUserGroupId.value;
+      if (!authStore.user) return stored;
+      return some(userGroupOptions.value, { id: stored }) ? stored : 0;
+    },
+    set: (value) => (storedUserGroupId.value = value ?? 0),
+  });
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;

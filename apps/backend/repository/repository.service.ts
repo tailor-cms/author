@@ -104,6 +104,15 @@ const selectGroupRepositories = (groupId: number | number[]) =>
     where: { group_id: groupId },
   });
 
+// OR-combined WHERE conditions restricting repositories to those a non-admin
+// user may see: direct membership with access, or access via a user group.
+// Exported so tag scoping stays identical to the catalog list; otherwise the
+// two visibility rules drift and non-admins get a mismatched tag filter.
+export const visibleRepositoryConditions = (user: User) => [
+  { id: { [Op.in]: selectUserRepositories(user.id) } },
+  { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
+];
+
 // Lists repositories visible to the acting user with last-revision
 // annotation per repo. Applies search/name/userGroup/compatibleWith
 // filters; pagination + sort key come from `opts` (built by processQuery).
@@ -135,10 +144,7 @@ export async function list(
       : inGroup;
   }
   if (!user.isAdmin()) {
-    opts.where[Op.or] = [
-      { id: { [Op.in]: selectUserRepositories(user.id) } },
-      { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
-    ];
+    opts.where[Op.or] = visibleRepositoryConditions(user);
   }
   const { rows: repositories, count } =
     await RepositoryModel.findAndCountAll(opts);

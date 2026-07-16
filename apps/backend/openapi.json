@@ -12318,7 +12318,7 @@
         "x-tailor-slice": "seedTestOnly",
         "x-tailor-method": "seedComment",
         "summary": "Seed a comment",
-        "description": "Creates a comment authored by the default seed user.",
+        "description": "Creates a comment authored by the default seed user, or by `authorEmail` when provided.",
         "parameters": [],
         "responses": {
           "200": {
@@ -12363,6 +12363,18 @@
                     "minLength": 1,
                     "maxLength": 2000,
                     "description": "Comment body."
+                  },
+                  "authorEmail": {
+                    "description": "Email of an existing user to attribute the comment to.",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -13297,6 +13309,9 @@
               }
             }
           },
+          "403": {
+            "description": "Caller is not a system admin"
+          },
           "409": {
             "description": "Group name already exists"
           }
@@ -13413,7 +13428,7 @@
             }
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
@@ -13467,7 +13482,7 @@
             "description": "No content"
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
