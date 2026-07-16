@@ -23,7 +23,11 @@
         </template>
       </div>
     </div>
-    <VMenu v-if="showOptions && !isEditing" location="bottom end">
+    <VMenu
+      v-if="showOptions && !isEditing"
+      :close-on-content-click="false"
+      location="bottom end"
+    >
       <template #activator="{ props: menuProps }">
         <VBtn
           v-bind="menuProps"
@@ -35,16 +39,18 @@
           variant="text"
         />
       </template>
-      <VList density="compact" nav>
-        <VListItem
-          v-for="{ action, icon, label, color } in options"
-          :key="action"
-          :base-color="color"
-          :prepend-icon="`mdi-${icon}`"
-          :title="label"
-          @click="emit(action)"
-        />
-      </VList>
+      <template #default="{ isActive }">
+        <VList density="compact" nav>
+          <VListItem
+            v-for="{ action, icon, label, color } in options"
+            :key="action"
+            :base-color="color"
+            :prepend-icon="`mdi-${icon}`"
+            :title="label"
+            @click="isActive.value = false; emit(action)"
+          />
+        </VList>
+      </template>
     </VMenu>
   </div>
 </template>
