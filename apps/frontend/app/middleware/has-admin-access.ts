@@ -9,6 +9,16 @@ export default defineNuxtRouteMiddleware(async (to) => {
     to.path.includes('/admin/user-groups')
   )
     return;
-  if (to.path !== '/') return navigateTo('/');
+  // No admin access; bounce with a notice instead of a silent redirect.
+  if (to.path !== '/') {
+    const notify = useNotification();
+    onNuxtReady(() =>
+      notify('You do not have access to this page.', {
+        color: 'error',
+        immediate: true,
+      }),
+    );
+    return navigateTo('/');
+  }
   navigateTo('/auth');
 });

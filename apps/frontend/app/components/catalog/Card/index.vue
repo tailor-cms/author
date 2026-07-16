@@ -5,20 +5,11 @@
     :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    color="surface-raised"
     elevation="1"
+    color="surface-raised"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
-    <!-- Poster artwork: sharp on the right, dissolving into the card surface on
-         the left via a theme-aware scrim + horizontal progressive blur -->
-    <div v-if="thumbnailUrl" aria-hidden="true" class="card-bg">
-      <img :src="thumbnailUrl" alt="" class="card-underlay" loading="lazy" />
-      <img :src="thumbnailUrl" alt="" class="card-cover" loading="lazy" />
-      <div class="card-scrim" />
-      <div class="card-blur card-blur--1" />
-      <div class="card-blur card-blur--2" />
-      <div class="card-blur card-blur--3" />
-    </div>
+    <PosterArtwork v-if="thumbnailUrl" :src="thumbnailUrl" />
     <div class="card-body">
       <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
         <div
@@ -67,7 +58,7 @@
             v-if="hasAdminAccess"
             v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
             aria-label="Repository settings"
-            class="repo-info glass-btn"
+            class="tinted-btn"
             density="comfortable"
             icon="mdi-cog"
             size="small"
@@ -87,7 +78,7 @@
                 v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
-                class="repo-info glass-btn"
+                class="tinted-btn"
                 density="comfortable"
                 icon="mdi-dots-vertical"
                 size="small"
@@ -138,7 +129,7 @@
       >
         <VIcon :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'" size="20" />
       </VBtn>
-      <Tags :repository="repository" class="glass-tags" />
+      <Tags :repository="repository" />
     </VCardActions>
   </VCard>
 </template>
@@ -156,6 +147,7 @@ import { UserAvatar } from '@tailor-cms/core-components';
 import { useTimeAgo } from '@vueuse/core';
 
 import { useRepositoryStore } from '@/stores/repository';
+import PosterArtwork from './PosterArtwork.vue';
 import Tags from './Tags/index.vue';
 
 const { $schemaService } = useNuxtApp() as any;
@@ -222,8 +214,6 @@ onMounted(() => nextTick(detectSchemaTruncation));
 </script>
 
 <style lang="scss" scoped>
-@use '@tailor-cms/core-components/src/mixins';
-
 .repository-card {
   position: relative;
   height: 13rem;
@@ -246,83 +236,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
   }
 }
 
-// --- Poster artwork stack (behind the content) ---
-.card-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-// Mirror reflection of the cover, hinged at the 25% seam. Its box matches the
-// cover's dimensions (identical object-fit crop) but its right edge sits on the
-// seam and it's flipped horizontally, so the image's left-edge column lands
-// exactly where the cover's does — the two align at the seam and the reflection
-// continues leftward, giving the blur/scrim image-into-image to fade.
-.card-underlay {
-  position: absolute;
-  top: 0;
-  right: 75%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scaleX(-1);
-}
-
-.card-cover {
-  position: absolute;
-  inset: 0;
-  left: 25%;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-// Fade the artwork into the card surface from the left. Theme-aware, so it
-// reads dark in dark mode and light in light mode. The stops follow an
-// ease curve — a plain linear fade leaves visible banding at each stop.
-.card-scrim {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to right,
-    rgb(var(--v-theme-surface-raised)) 0%,
-    rgba(var(--v-theme-surface-raised), 0.97) 18%,
-    rgba(var(--v-theme-surface-raised), 0.89) 30.6%,
-    rgba(var(--v-theme-surface-raised), 0.76) 42.3%,
-    rgba(var(--v-theme-surface-raised), 0.58) 54%,
-    rgba(var(--v-theme-surface-raised), 0.38) 64.8%,
-    rgba(var(--v-theme-surface-raised), 0.2) 74.7%,
-    rgba(var(--v-theme-surface-raised), 0.07) 82.8%,
-    transparent 90%
-  );
-}
-
-// Progressive blur: three masked backdrop layers ramping 3 -> 9 -> 20px,
-// each revealed further left so the blur intensifies toward the left edge.
-.card-blur {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.card-blur--1 { @include mixins.blur-band(3px, 42%, 68%); }
-.card-blur--2 { @include mixins.blur-band(9px, 28%, 52%); }
-.card-blur--3 { @include mixins.blur-band(20px, 12%, 34%); }
-
-// Icon buttons layered over the poster (settings cog, actions menu)
-.glass-btn {
-  @include mixins.glass;
-}
-
-// Tag chips + add-tag button rendered by the Tags child component
-.glass-tags :deep(.v-chip),
-.glass-tags :deep(.v-btn) {
-  @include mixins.glass;
-}
-
-.glass-tags :deep(.v-chip .v-chip__underlay) {
-  border-radius: 0;
+.tinted-btn {
+  background: rgba(var(--v-theme-surface-raised), 0.8);
+  border: thin solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .card-body {

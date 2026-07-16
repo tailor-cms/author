@@ -11,6 +11,7 @@ import type {
   ListFilter,
   PatchInput,
   UpsertMembersInput,
+  UpsertMembersResult,
 } from './schemas/index.ts';
 import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { UserGroup } from './models/user-group.model.js';
@@ -123,26 +124,47 @@ export async function listMembers(group: UserGroup) {
 }
 
 // Invites missing users by email and assigns each (or updates the role
-// of an existing member) on the supplied group. Sequential by design so
-// invitation mails aren't sent in a thundering herd.
+// of an existing member) on the supplied group. Returns a per-request
+// summary so the caller can tell added-vs-already-member apart (the upsert
+// is otherwise a silent idempotent no-op for existing members). Each email
+// is processed independently: a single failure is recorded in `failed`
+// rather than aborting the whole batch, so partial success is reported.
 export async function upsertMembers(
   group: UserGroup,
   payload: UpsertMembersInput,
-): Promise<void> {
+): Promise<UpsertMembersResult> {
   const { emails, role, skipInvite = false } = payload;
+  const summary: UpsertMembersResult = {
+    total: emails.length,
+    created: 0,
+    updated: 0,
+    skipped: 0,
+    failed: [],
+  };
   for (const email of emails) {
-    let user = await UserModel.findOne({ where: { email } });
-    if (!user) {
-      user = await UserModel.inviteOrUpdate({ email }, { skipInvite });
-    }
-    const [member, created] = await UserGroupMember.findOrCreate({
-      where: { userId: user.id, groupId: group.id },
-      defaults: { userId: user.id, groupId: group.id, role },
-    });
-    if (!created && member.role !== role) {
-      await member.update({ role });
+    try {
+      let user = await UserModel.findOne({ where: { email } });
+      if (!user) {
+        user = await UserModel.inviteOrUpdate({ email }, { skipInvite });
+      }
+      const [member, created] = await UserGroupMember.findOrCreate({
+        where: { userId: user.id, groupId: group.id },
+        defaults: { userId: user.id, groupId: group.id, role },
+      });
+      if (created) {
+        summary.created += 1;
+      } else if (member.role !== role) {
+        await member.update({ role });
+        summary.updated += 1;
+      } else {
+        summary.skipped += 1;
+      }
+    } catch (err) {
+      logger.error({ err, email }, 'Failed to upsert group member');
+      summary.failed.push(email);
     }
   }
+  return summary;
 }
 
 // Removes a member's row from the group. `MemberUserNotFoundError` if

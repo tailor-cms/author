@@ -1,9 +1,12 @@
 import type {
   RepositoryAccessContext,
 } from '@tailor-cms/interfaces/repository';
+import type {
+  UserGroupAccessContext,
+} from '@tailor-cms/interfaces/user-group';
 import { RepositoryRole, UserRole } from '@tailor-cms/interfaces/role';
 
-export type { RepositoryAccessContext };
+export type { RepositoryAccessContext, UserGroupAccessContext };
 
 type SystemAccess = Pick<RepositoryAccessContext, 'userRole'>;
 
@@ -44,3 +47,24 @@ export const canCreateRepository = (access: SystemAccess): boolean =>
 // Group roles allowed to create (or import) repositories in that group.
 export const canCreateRepositoryInGroup = (groupRole: UserRole): boolean =>
   groupRole === UserRole.ADMIN || groupRole === UserRole.USER;
+
+/**
+ * Admin standing on a user group: system admin, or an ADMIN member of
+ * the group itself.
+ */
+export const hasUserGroupAdminAccess = (
+  access: UserGroupAccessContext,
+): boolean => isSystemAdmin(access) || access.groupRole === UserRole.ADMIN;
+
+// Member management is the group-admin surface.
+export const canManageUserGroupMembers = hasUserGroupAdminAccess;
+
+/**
+ * Writing the group entity (create/rename/logo/delete) is a system-admin
+ * surface, matching the admin group-management screen. Group role is
+ * irrelevant, so this takes the role-only access shape.
+ */
+export const canWriteUserGroup = (access: SystemAccess): boolean =>
+  isSystemAdmin(access);
+export const canCreateUserGroup = canWriteUserGroup;
+export const canModifyUserGroup = canWriteUserGroup;

@@ -21,10 +21,9 @@
       <VCombobox
         ref="emailInputEl"
         v-model="emailInput"
-        :clear-on-select="false"
         :error-messages="errors.email"
         :items="suggestedUsers"
-        class="required mb-4"
+        class="email-combobox required mb-4"
         item-title="email"
         item-value="email"
         label="Email"
@@ -88,11 +87,12 @@
 </template>
 
 <script lang="ts" setup>
+import type { User } from '@tailor-cms/interfaces/user';
+import type { UpsertMembersResult } from '@tailor-cms/api-client';
 import { array, boolean, object, string } from 'yup';
 import { throttle } from 'lodash-es';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
-import type { User } from '@tailor-cms/interfaces/user';
 import { UserRole } from '@tailor-cms/interfaces/role';
 
 import { api } from '@/api';
@@ -107,6 +107,41 @@ const props = defineProps<{
 const emit = defineEmits(['save']);
 
 const authStore = useAuthStore();
+const notify = useNotification();
+
+const pluralize = (count: number, noun: string) =>
+  `${count} ${noun}${count === 1 ? '' : 's'}`;
+
+const buildNotification = ({
+  created,
+  updated,
+  skipped,
+  failed,
+}: UpsertMembersResult) => {
+  const hasSuccess = created > 0 || updated > 0;
+  const hasFailures = failed.length > 0;
+  // Clean no-op: everyone was already a member and nothing failed.
+  if (!hasSuccess && !hasFailures && skipped) {
+    const message =
+      skipped === 1
+        ? 'User is already a member of this group'
+        : 'All selected users are already members of this group';
+    return { message, color: undefined as string | undefined };
+  }
+  const parts = [];
+  if (created) parts.push(`${pluralize(created, 'user')} added`);
+  if (updated) parts.push(`${pluralize(updated, 'role')} updated`);
+  if (skipped) {
+    parts.push(`${skipped} already ${skipped === 1 ? 'a member' : 'members'}`);
+  }
+  if (hasFailures) {
+    parts.push(`${pluralize(failed.length, 'email')} failed: ${failed.join(', ')}`);
+  }
+  const message = parts.length ? parts.join(', ') : 'No changes made';
+  let color: string | undefined;
+  if (hasFailures) color = hasSuccess ? 'warning' : 'error';
+  return { message, color };
+};
 
 const emailInputEl = useTemplateRef('emailInputEl');
 const isVisible = ref(false);
@@ -162,14 +197,24 @@ const submit = handleSubmit(async () => {
     role: roleInput.value,
     skipInvite: skipInviteInput.value,
   };
-  await api.userGroup.addUser({
-    params: { id: props.userGroupId },
-    body: payload,
-  });
-  suggestedUsers.value = [];
-  isSaving.value = false;
-  emit('save', payload);
-  close();
+  try {
+    const summary = await api.userGroup.addUser({
+      params: { id: props.userGroupId },
+      body: payload,
+    });
+    const { message, color } = buildNotification(summary);
+    notify(message, { immediate: true, color });
+    suggestedUsers.value = [];
+    emit('save', payload);
+    close();
+  } catch {
+    notify('We couldn\'t add the users. Please try again.', {
+      color: 'error',
+      immediate: true,
+    });
+  } finally {
+    isSaving.value = false;
+  }
 });
 
 const fetchUsers = throttle(async (filter) => {
@@ -183,3 +228,10 @@ const fetchUsers = throttle(async (filter) => {
   suggestedUsers.value = users.map((it: User) => it.email);
 }, 350);
 </script>
+
+<style lang="scss" scoped>
+// Keep the typed email on its own full-width line
+.email-combobox :deep(.v-field__input) input {
+  min-width: 100%;
+}
+</style>
