@@ -44,7 +44,7 @@ export class FileInputPicker {
       name: 'Browse files',
     });
     this.uploadProgress = this.dialog.locator('.upload-progress');
-    this.uploadError = this.dialog.getByRole('alert');
+    this.uploadError = this.dialog.locator('.v-alert[role="alert"]');
 
     // Library tab
     this.librarySearch = this.dialog.getByPlaceholder('Search assets...');
