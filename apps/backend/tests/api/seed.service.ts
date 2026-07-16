@@ -160,6 +160,7 @@ class SeedService {
       repositoryId,
       activityId,
       contentElementId = null,
+      authorEmail = null,
     } = input;
     const repository = await Repository.findByPk(repositoryId);
     if (!repository) throw new Error('Repository not found');
@@ -170,7 +171,7 @@ class SeedService {
       if (!element) throw new Error('Content element not found');
     }
     const author = await UserModel.findOne({
-      where: { email: DEFAULT_USER.email },
+      where: { email: authorEmail || DEFAULT_USER.email },
     });
     if (!author) throw new Error('Seed user not found');
     const comment = await Comment.create({

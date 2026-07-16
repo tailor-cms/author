@@ -1,8 +1,8 @@
 <template>
   <VMenu
     v-model="isVisible"
-    :close-on-click="!isConfirmationActive"
     :close-on-content-click="false"
+    :persistent="isConfirmationActive"
     class="element-discussion"
     location="left"
     width="450"
