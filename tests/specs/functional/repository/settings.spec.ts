@@ -3,7 +3,10 @@ import { expect, test } from '@playwright/test';
 import { Catalog } from '../../../pom/catalog/Catalog';
 import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
 import { Toast } from '../../../pom/common/Toast';
-import { toSeededRepositorySettings } from '../../../helpers/seed';
+import {
+  createCleanRepository,
+  toSeededRepositorySettings,
+} from '../../../helpers/seed';
 import SeedClient from '../../../api/SeedClient';
 
 test.beforeEach(async ({ page }) => {
@@ -42,6 +45,30 @@ test('should be able to edit name', async ({ page }) => {
   await settingsPage.updateName('New Name');
   await page.reload();
   await expect(settingsPage.nameInput).toHaveValue('New Name');
+});
+
+test('should warn on duplicate name but not when reverting the name', async ({
+  page,
+}) => {
+  const OTHER_NAME = 'Astronomy Basics';
+  const settingsPage = new GeneralSettings(page);
+  await createCleanRepository(OTHER_NAME);
+  // Remount so the duplicate check picks up the newly created repository
+  await page.reload();
+  await expect(settingsPage.nameInput).toHaveValue(/.+/);
+  const originalName = await settingsPage.getName();
+  // Another repository's name triggers the duplicate warning
+  await settingsPage.nameInput.fill(OTHER_NAME);
+  await expect(settingsPage.nameWarning).toBeVisible();
+  // The repository's own name does not
+  await settingsPage.nameInput.fill(originalName);
+  await expect(settingsPage.nameWarning).not.toBeVisible();
+  // Rename, then revert to the previously used name
+  await settingsPage.updateName('Renamed Course');
+  await settingsPage.nameInput.fill(OTHER_NAME);
+  await expect(settingsPage.nameWarning).toBeVisible();
+  await settingsPage.nameInput.fill(originalName);
+  await expect(settingsPage.nameWarning).not.toBeVisible();
 });
 
 test('should be able to edit description', async ({ page }) => {

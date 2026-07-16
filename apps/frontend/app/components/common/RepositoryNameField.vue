@@ -78,13 +78,15 @@ const meta = computed(() => ({
 }));
 
 const appendPlugins = computed(() => $pluginRegistry.getAppendComponents());
-const parsedRepos = computed(() => existingRepositories.value.map((repo) => {
-  const { name, description, data } = repo;
-  return $pluginRegistry.filter('data:value', name, {
-    data: { name, description, ...data },
-    key: 'name',
-  });
-}));
+const parsedRepos = computed(() => existingRepositories.value
+  .filter((repo) => repo.id !== props.repositoryId)
+  .map((repo) => {
+    const { name, description, data } = repo;
+    return $pluginRegistry.filter('data:value', name, {
+      data: { name, description, ...data },
+      key: 'name',
+    });
+  }));
 
 const {
   value: nameInput,
