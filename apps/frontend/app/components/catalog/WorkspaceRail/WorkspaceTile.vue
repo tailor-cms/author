@@ -5,7 +5,7 @@
       :aria-label="item.name"
       :aria-pressed="isActive"
       class="tile-avatar"
-      size="42"
+      size="38"
       flat
       icon
       @click="emit('select')"
@@ -14,7 +14,7 @@
         :logo-url="isAll ? null : item.logoUrl"
         :placeholder-icon="isAll ? 'mdi-view-grid-outline' : undefined"
         rounded="xl"
-        size="42"
+        size="38"
       />
     </VBtn>
     <VMenu v-if="canManage && !isAll" location="end" offset="4">

@@ -8,7 +8,7 @@
     border="none"
     permanent
   >
-    <div class="rail-tiles mt-2">
+    <div class="rail-tiles mt-1">
       <WorkspaceTile
         v-for="item in items"
         :key="item.id"
@@ -26,13 +26,11 @@
         aria-label="Create workspace"
         class="rail-add mt-1"
         color="surface-container-high"
-        size="42"
+        icon="mdi-plus"
+        size="38"
         flat
-        icon
         @click="openCreate"
-      >
-        <VIcon color="primary" icon="mdi-plus" size="22" />
-      </VBtn>
+      />
     </div>
     <UserGroupDialog
       v-model:visible="isDialogVisible"
@@ -99,7 +97,7 @@ const confirmDelete = ({ id, name }: WorkspaceOption) =>
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.625rem;
+  gap: 0.75rem;
   padding-block: 0.25rem;
 }
 
