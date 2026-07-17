@@ -23,6 +23,14 @@
         @focus="emit('focus')"
         @keydown="onKeydown"
       />
+      <div
+        v-if="isLensRunning"
+        class="d-flex align-center ga-2 px-4 text-label-small text-medium-emphasis"
+        role="status"
+      >
+        <VIcon icon="mdi-camera-iris" size="14" />
+        Lens review running - send is available once it completes.
+      </div>
       <div ref="controlsEl" class="d-flex align-center pa-4 pt-0 ga-2">
         <AgentCmdMenu
           ref="cmdMenuEl"
@@ -69,12 +77,16 @@ interface FocusChip {
 
 interface Props {
   disabled?: boolean;
+  // A Lens review is reading the content; only sending is blocked (the
+  // agent must not edit mid-scan) - typing stays available.
+  isLensRunning?: boolean;
   placeholder?: string;
   focusChip?: FocusChip | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
+  isLensRunning: false,
   placeholder:
     'Ask Renoir - generate, refine, restructure. Press / for shortcuts.',
   focusChip: null,
@@ -103,8 +115,9 @@ const effort = defineModel<ReasoningEffortLiteral>('effort', {
   required: true,
 });
 
+const isEmpty = computed(() => text.value.trim().length === 0);
 const canSubmit = computed(
-  () => text.value.trim().length > 0 && !props.disabled,
+  () => !isEmpty.value && !props.disabled && !props.isLensRunning,
 );
 
 function onKeydown(e: KeyboardEvent) {
