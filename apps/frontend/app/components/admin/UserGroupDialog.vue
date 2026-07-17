@@ -1,15 +1,24 @@
 <template>
   <TailorDialog
     v-model="isDialogVisible"
-    :title="`${isNewGroup ? 'Create' : 'Edit'} User Group`"
+    :title="`${isNewGroup ? 'Create a' : 'Edit'} user group`"
     header-icon="mdi-account-group"
     persistent
     @submit="submit"
   >
     <template #body>
-      <div class="d-flex justify-center mt-2 mb-7">
+      <div
+        v-if="isNewGroup"
+        class="text-body-small text-medium-emphasis mx-1 mb-2"
+      >
+        A user group is a shared workspace for a team. Everyone you add
+        works with the same content, and each member's role controls what
+        they can view and edit.
+      </div>
+      <div class="d-flex justify-center mt-6 mb-8">
         <GroupAvatar
           :img-url="logoUrlInput"
+          :size="150"
           @save="onAvatarSave"
           @delete="onAvatarSave('')"
         />
