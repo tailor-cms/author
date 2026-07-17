@@ -30,6 +30,17 @@ export function applyAuthInterceptor(target) {
   );
 }
 
+// Adapts axios upload-progress events into a 0..100 percent callback, the
+// single progress contract shared by every upload caller. Returns undefined
+// (which axios ignores) when no callback is given, so it can be passed through
+// unconditionally.
+export function uploadProgress(onProgress) {
+  if (!onProgress) return undefined;
+  return ({ loaded, total }) => {
+    if (total) onProgress(Math.round((loaded / total) * 100));
+  };
+}
+
 const config = {
   baseURL: '/api',
   withCredentials: true,
