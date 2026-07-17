@@ -36,6 +36,9 @@
     :allowed-extensions="allowedExtensions"
     :heading="dialogHeading"
     :icon="resolvedIcon"
+    :is-uploading="uploading"
+    :upload-error="uploadError"
+    :upload-progress="progress"
     @select="onSelect"
     @upload="onUploadFile"
   />
@@ -108,9 +111,20 @@ const emit = defineEmits<{
 }>();
 
 const storageService = inject<any>('$storageService');
-const { upload, downloadFile } = useUpload(emit as any);
+const {
+  upload,
+  uploading,
+  progress,
+  error: uploadError,
+  downloadFile,
+} = useUpload(emit as any);
 
 const dialogOpen = ref(false);
+
+// Discard a stale failure message from the previous session
+watch(dialogOpen, (isOpen) => {
+  if (isOpen) uploadError.value = '';
+});
 
 const dialogHeading = computed(() => {
   const base = props.placeholder || resolvedLabel.value;
@@ -179,7 +193,12 @@ watch(
   { immediate: true },
 );
 
-const onUploadFile = (file: File) => upload(file);
+// Dialog stays open showing progress; on failure it remains
+// open with the error so the user can retry
+const onUploadFile = async (file: File) => {
+  const payload = await upload(file);
+  if (payload) dialogOpen.value = false;
+};
 
 const onSelect = (payload: Record<string, any>) => emit('input', payload);
 

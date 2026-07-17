@@ -1,4 +1,4 @@
-import request from './request';
+import request, { uploadProgress } from './request';
 
 const urls = {
   base: (repositoryId) => `/repositories/${repositoryId}/assets`,
@@ -11,9 +11,10 @@ function getUrl(repositoryId, key) {
     .then((res) => res.data.url);
 }
 
-function upload(repositoryId, data) {
+function upload(repositoryId, data, { onProgress } = {}) {
   return request
     .post(urls.base(repositoryId), data, {
+      onUploadProgress: uploadProgress(onProgress),
       headers: {
         /*
         The default value of the Content-Type header is set to `application/json` inside
