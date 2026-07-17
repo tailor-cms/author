@@ -8,12 +8,7 @@
     offset="4"
   >
     <template #activator="{ props: menuProps }">
-      <VBadge
-        :color="badgeColor"
-        :content="usages?.length ?? '?'"
-        offset-x="-2"
-        offset-y="-2"
-      >
+      <VBadge :color="badgeColor" :content="usages?.length ?? '?'">
         <VBtn
           v-tooltip:left="{
             text: 'Linked copies',
@@ -77,16 +72,16 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'usages:fetch': [];
-  'usage:view': [usage: Usage];
+  'usage:view': [usage: ElementSourceInfo];
 }>();
 
 const menuOpen = ref(false);
 
-const badgeColor = computed(() => {
-  return props.usages?.length > 0 ? 'tertiary' : 'inverse-surface';
-});
+const badgeColor = computed(() =>
+  props.usages?.length ? 'tertiary' : 'inverse-surface',
+);
 
-const onViewUsage = (usage: Usage) => {
+const onViewUsage = (usage: ElementSourceInfo) => {
   emit('usage:view', usage);
   menuOpen.value = false;
 };
@@ -97,3 +92,14 @@ watch(menuOpen, (open) => {
   }
 });
 </script>
+
+<style lang="scss" scoped>
+// Compact count badge
+:deep(.v-badge__badge) {
+  height: 1rem;
+  min-width: 1rem;
+  padding: 0 0.1875rem;
+  font-size: 0.625rem;
+  transform: translate(0.5625rem, 0.125rem);
+}
+</style>
