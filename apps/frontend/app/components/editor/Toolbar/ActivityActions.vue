@@ -1,12 +1,21 @@
 <template>
   <div class="activity-actions d-flex align-center ga-1">
     <VBtn
-      v-for="{ active, title, icon, action, disabled, loading } in actions"
+      v-for="{
+        active,
+        title,
+        icon,
+        action,
+        disabled,
+        loading,
+        color,
+        iconSize,
+      } in actions"
       :key="title"
       v-tooltip:bottom="{ text: title, offset: 12 }"
       :active="active"
       :aria-label="title"
-      :color="active ? 'tertiary' : ''"
+      :color="color ?? (active ? 'tertiary' : '')"
       :disabled="disabled"
       :loading="loading"
       class="action-btn"
@@ -14,7 +23,7 @@
       icon
       @click.stop="action"
     >
-      <VIcon :icon="`mdi-${icon}`" size="small" />
+      <VIcon :icon="`mdi-${icon}`" :size="iconSize ?? 'small'" />
     </VBtn>
   </div>
 </template>
@@ -55,6 +64,8 @@ interface ToolbarAction {
   active?: boolean;
   disabled?: boolean;
   loading?: boolean;
+  color?: string;
+  iconSize?: string | number;
 }
 
 const actions = computed(() => {
@@ -99,7 +110,11 @@ const actions = computed(() => {
   if (!currentRepositoryStore.access.canPublish) return items;
   return items.concat({
     title: 'Publish',
-    icon: 'cloud-upload-outline',
+    icon: publishingUtils.showPublishSuccess.value
+      ? 'check-circle-outline'
+      : 'cloud-upload-outline',
+    color: publishingUtils.showPublishSuccess.value ? 'success' : undefined,
+    iconSize: publishingUtils.showPublishSuccess.value ? '1.7em' : undefined,
     loading: publishingUtils.isPublishing.value,
     action: () => confirmPublishing(),
   });
