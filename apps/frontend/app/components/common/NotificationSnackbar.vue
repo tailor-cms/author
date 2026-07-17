@@ -1,66 +1,51 @@
 <template>
-  <VSnackbar
-    v-model="isVisible"
-    :color="context.color"
-    :text="context.message"
-    :timeout="context.timeout"
-    class="ma-8"
+  <VSnackbarQueue
+    v-model="messages"
+    :total-visible="MAX_VISIBLE"
+    :gap="12"
+    content-class="ma-4"
     location="bottom right"
   >
-    <template #actions>
+    <template #actions="{ props: actionProps }">
       <VBtn
+        v-bind="actionProps"
         icon="mdi-close"
         density="comfortable"
-        @click="close"
       />
     </template>
-  </VSnackbar>
+  </VSnackbarQueue>
 </template>
 
 <script lang="ts" setup>
-import { debounce } from 'lodash-es';
-import Queue from 'promise-queue';
-
 interface NotificationOptions {
   message: string;
   color?: string;
   timeout?: number;
-  immediate?: boolean;
 }
 
+interface QueuedNotification {
+  text: string;
+  color?: string;
+  timeout: number;
+}
+
+const DEFAULT_TIMEOUT = 2500;
+const MAX_VISIBLE = 4;
+
 const { $eventBus } = useNuxtApp() as any;
-const queue = new Queue(1, Infinity);
+// VSnackbarQueue owns the queue: pushing drives display, it shifts items off.
+const messages = ref<any[]>([]);
 
-const initialData = (): NotificationOptions => ({
-  message: '',
-  timeout: 2500,
-  immediate: false,
-});
-
-const isVisible = ref(false);
-const context = ref(initialData());
-
-const show = (options: NotificationOptions) => {
-  context.value = options;
-  isVisible.value = true;
-};
-
-const close = () => {
-  isVisible.value = false;
-};
-
-const addToQueue = (opts: NotificationOptions) => {
-  return queue.add(() => Promise.resolve(show(opts)));
-};
-
-const schedule = (opts: NotificationOptions) => {
-  return (opts.immediate ? addToQueue : debounce(addToQueue, 2500))(opts);
+const enqueue = (opts: NotificationOptions) => {
+  const message: QueuedNotification = {
+    text: opts.message,
+    color: opts.color,
+    timeout: opts.timeout ?? DEFAULT_TIMEOUT,
+  };
+  messages.value.push(message);
 };
 
 onMounted(() => {
-  const appChannel = $eventBus.channel('app');
-  appChannel.on('showNotificationSnackbar', (opts: NotificationOptions) => {
-    schedule(opts);
-  });
+  $eventBus.channel('app').on('showNotificationSnackbar', enqueue);
 });
 </script>

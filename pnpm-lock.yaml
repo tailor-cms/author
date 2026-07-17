@@ -523,9 +523,6 @@ importers:
       pluralize-esm:
         specifier: ^9.0.5
         version: 9.0.5
-      promise-queue:
-        specifier: ^2.2.5
-        version: 2.2.5
       url-join:
         specifier: ^5.0.0
         version: 5.0.0
@@ -563,9 +560,6 @@ importers:
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
-      '@types/promise-queue':
-        specifier: ^2.2.3
-        version: 2.2.3
       autoprefixer:
         specifier: ^10.5.0
         version: 10.5.0(postcss@8.5.15)
@@ -5180,9 +5174,6 @@ packages:
 
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
-
-  '@types/promise-queue@2.2.3':
-    resolution: {integrity: sha512-CuEQpGSYKvHr3SQ7C7WkluLg9CFjVORbn8YFRsQ5u6mqGbZVfSOv03ic9t95HtZuMchnlNqnIsQGFOpxqdhjTQ==}
 
   '@types/qs@6.15.1':
     resolution: {integrity: sha512-GZHUBZR9hckSUhrxmp1nG6NwdpM9fCunJwyThLW1X3AyHgd9IlHb6VANpQQqDr2o/qQp6McZ3y/IA2rVzKzSbw==}
@@ -15669,8 +15660,6 @@ snapshots:
   '@types/normalize-package-data@2.4.4': {}
 
   '@types/pluralize@0.0.33': {}
-
-  '@types/promise-queue@2.2.3': {}
 
   '@types/qs@6.15.1': {}
 
