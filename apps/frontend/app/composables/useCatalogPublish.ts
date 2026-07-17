@@ -48,7 +48,7 @@ export const useCatalogPublish = () => {
         try {
           await publish(repository.id);
           await onDone?.();
-          notify(`The ${repositoryTypeLabel} has been published`, { immediate: true });
+          notify(`The ${repositoryTypeLabel} has been published`);
         } catch {
           notify(`We couldn't publish the ${repositoryTypeLabel}`, { color: 'error' });
         }

@@ -135,7 +135,7 @@ const viewSource = (sourceInfo: SourceInfo) => {
 const unlinkActivity = async (activityId: number) => {
   try {
     await editorStore.unlinkActivity(activityId);
-    notify('Activity unlinked', { immediate: true });
+    notify('Activity unlinked');
   } catch {
     notify('Failed to unlink activity', { color: 'error' });
   }

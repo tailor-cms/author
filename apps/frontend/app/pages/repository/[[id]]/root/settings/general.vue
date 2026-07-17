@@ -160,7 +160,7 @@ const updateMeta = async (
   }
 
   await repositoryStore.update(repoData);
-  notify('Saved', { immediate: true });
+  notify('Saved');
 };
 
 const publish = async () => {
@@ -176,7 +176,7 @@ const publish = async () => {
     params: { repositoryId: repository.value!.id },
   });
   isPublishing.value = false;
-  notify('Info successfully published', { immediate: true });
+  notify('Info successfully published');
 };
 </script>
 

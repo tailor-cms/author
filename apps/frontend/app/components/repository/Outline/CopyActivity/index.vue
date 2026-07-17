@@ -163,7 +163,7 @@ const copySelection = async () => {
       const copied = await copyActivity(item, prevOutlineItem);
       prevOutlineItem = copied[0]; // Only first copied activity is outline item
     }
-    notify(`${upperFirst(noun)} ${verb} been copied`, { immediate: true });
+    notify(`${upperFirst(noun)} ${verb} been copied`);
     emit('completed', items[0]?.parentId);
     close();
   } catch {
