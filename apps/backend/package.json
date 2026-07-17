@@ -1,6 +1,6 @@
 {
   "name": "tailor-server",
-  "version": "9.0.0-beta.1",
+  "version": "10.0.0-beta.2",
   "codename": "Quilt",
   "author": "ExtensionEngine <info@extensionengine.com>",
   "type": "module",

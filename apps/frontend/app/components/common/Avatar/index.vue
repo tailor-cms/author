@@ -2,14 +2,14 @@
   <div>
     <VSpeedDial content-class="flex-column" location="right" target="#avatar">
       <template #activator="{ props: activatorProps }">
-        <VAvatar id="avatar" size="180" color="surface-container-low" border="lg">
+        <VAvatar id="avatar" :size="size" color="surface-container-low" border="lg">
           <img v-if="imgUrl" :src="imgUrl" alt="Avatar" class="h-100 w-100" />
           <VIcon
             v-else
             :icon="placeholderIcon"
+            :size="placeholderIconSize"
             color="surface-container-highest"
             class="placeholder"
-            size="96"
           />
           <VSheet
             v-bind="(imgUrl && !isGravatar) ? activatorProps : {}"
@@ -18,7 +18,7 @@
             role="button"
             @click="!(imgUrl && !isGravatar) && triggerUpload()"
           >
-            <VIcon icon="mdi-camera" size="48" />
+            <VIcon icon="mdi-camera" :size="cameraIconSize" />
           </VSheet>
         </VAvatar>
       </template>
@@ -59,12 +59,18 @@ import { resizeAvatarImage } from './resize-image';
 export interface Props {
   imgUrl?: string;
   placeholderIcon?: string;
+  size?: number | string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   imgUrl: '',
   placeholderIcon: 'mdi-account-multiple',
+  size: 180,
 });
+
+// Keep the placeholder & camera icons proportional to the avatar circle.
+const placeholderIconSize = computed(() => Math.round(Number(props.size) * 0.53));
+const cameraIconSize = computed(() => Math.round(Number(props.size) * 0.27));
 
 const emit = defineEmits(['save', 'delete']);
 
