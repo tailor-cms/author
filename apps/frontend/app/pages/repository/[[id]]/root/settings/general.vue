@@ -47,6 +47,7 @@ import { cloneDeep, find } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { useForm } from 'vee-validate';
 
 import { api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
@@ -69,6 +70,8 @@ provide('$storageService', storageService);
 
 const notify = useNotification();
 
+const { errors } = useForm();
+
 const isPublishing = ref(false);
 
 const repository = computed(
@@ -76,6 +79,18 @@ const repository = computed(
 );
 const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
+);
+
+// Gate publish on this page's own fields only. Plugin-injected fields (e.g.
+// i18n's *_i18n) also register in the form but are empty for untranslated
+// languages - a valid state that must not block publishing.
+const ownFieldKeys = computed(() => [
+  'name',
+  'description',
+  ...metadata.value.map((it: Metadata) => it.key),
+]);
+const hasBlockingErrors = computed(() =>
+  ownFieldKeys.value.some((key) => errors.value[key]),
 );
 
 // Construct entity data for plugin hooks
@@ -149,6 +164,13 @@ const updateMeta = async (
 };
 
 const publish = async () => {
+  if (hasBlockingErrors.value) {
+    notify('Please fix the highlighted errors before publishing', {
+      color: 'error',
+      immediate: true,
+    });
+    return;
+  }
   isPublishing.value = true;
   await api.repository.publishMeta({
     params: { repositoryId: repository.value!.id },
