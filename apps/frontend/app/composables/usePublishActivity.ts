@@ -1,13 +1,17 @@
 import type { StoreActivity } from '@/stores/activity';
 
 import { schema as schemaApi } from '@tailor-cms/config';
+import { refAutoReset } from '@vueuse/core';
 import Promise from 'bluebird';
+import pMinDelay from 'p-min-delay';
 import pluralize from 'pluralize-esm';
 
 import { api } from '@/api';
 import { useActivityStore } from '@/stores/activity';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+const MIN_PUBLISH_MS = 1500;
+const PUBLISHED_FLASH_MS = 2000;
 const initialStatus = () => ({ progress: 0, message: '' });
 const prefix = (msg: string) => `Are you sure you want to publish ${msg}`;
 
@@ -22,6 +26,9 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
 
   const status = ref(initialStatus());
   const isPublishing = computed(() => status.value.progress > 0);
+  // Briefly confirm a successful publish once the
+  // spinner clears; refAutoReset flips it back after the delay.
+  const showPublishSuccess = refAutoReset(false, PUBLISHED_FLASH_MS);
 
   const getPublishMessage = (items: StoreActivity[]) => {
     const activityCount = items.length;
@@ -35,12 +42,20 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
   };
 
   const publish = (activities: StoreActivity[]) => {
-    return Promise.each(activities, (activity: StoreActivity, i: number) => {
-      const progress = (i + 1) / activities.length;
-      const message = `Publishing ${activity.data.name}`;
-      status.value = { progress, message };
-      return activityStore.publish(activity);
-    }).finally(() => (status.value = initialStatus()));
+    const task = Promise.each(
+      activities,
+      (activity: StoreActivity, i: number) => {
+        const progress = (i + 1) / activities.length;
+        const message = `Publishing ${activity.data.name}`;
+        status.value = { progress, message };
+        return activityStore.publish(activity);
+      },
+    );
+    // Keep the progress indicator visible long enough
+    // so the button spinner doesn't just flicker.
+    return pMinDelay(task, MIN_PUBLISH_MS).finally(
+      () => (status.value = initialStatus()),
+    );
   };
 
   const confirmPublishing = (activities: StoreActivity[]) => {
@@ -54,6 +69,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
         try {
           await publish(activities.filter((it) => !it.detached));
           notify(`The ${label} has been published`, { immediate: true });
+          showPublishSuccess.value = true;
         } catch {
           notify(`We couldn't publish the ${label}`, { color: 'error' });
         }
@@ -77,6 +93,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
           notify(`The ${repositoryTypeLabel} has been published`, {
             immediate: true,
           });
+          showPublishSuccess.value = true;
         } catch {
           notify(`We couldn't publish the ${repositoryTypeLabel}`, {
             color: 'error',
@@ -88,6 +105,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
 
   return {
     isPublishing,
+    showPublishSuccess,
     status,
     publish,
     confirmPublishing,
