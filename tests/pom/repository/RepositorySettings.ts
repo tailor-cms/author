@@ -37,6 +37,9 @@ export class GeneralSettings {
   readonly nameInput: Locator;
   readonly nameWarning: Locator;
   readonly descriptionInput: Locator;
+  readonly publishInfoBtn: Locator;
+  readonly infoPublishedToast: Locator;
+  readonly publishBlockedToast: Locator;
   readonly toast: Toast;
 
   constructor(page: Page) {
@@ -48,10 +51,19 @@ export class GeneralSettings {
     this.nameInput = el.getByLabel('Name');
     this.nameWarning = el.getByText('a Repository with that name already exists');
     this.descriptionInput = el.getByLabel('Description');
+    this.publishInfoBtn = el.getByRole('button', { name: 'Publish info' });
+    this.infoPublishedToast = page.getByText('Info successfully published');
+    this.publishBlockedToast = page.getByText(
+      'Please fix the highlighted errors before publishing',
+    );
   }
 
   getName() {
     return this.page.getByLabel('Name').inputValue();
+  }
+
+  publishInfo() {
+    return this.publishInfoBtn.click();
   }
 
   async updateName(name: string) {
