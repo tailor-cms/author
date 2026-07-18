@@ -2,7 +2,7 @@
   <VListItem
     :active="isActive"
     :ripple="false"
-    class="asset-row bg-surface-raised text-left"
+    class="asset-row bg-surface-raised text-left px-3"
     density="compact"
     elevation="1"
     lines="two"
@@ -10,37 +10,40 @@
     @click="emit('preview', asset)"
   >
     <template #prepend>
-      <div
-        :aria-checked="isSelected"
-        :class="{ selected: isSelected }"
-        class="asset-select"
-        role="checkbox"
-        tabindex="0"
-        @click.stop="emit('toggle', asset)"
-        @keydown.enter.prevent="emit('toggle', asset)"
-        @keydown.space.prevent="emit('toggle', asset)"
-      >
-        <VImg
-          v-if="thumbnailSrc"
-          :src="thumbnailSrc"
-          :aspect-ratio="1"
-          class="thumbnail rounded"
-          cover
-          @error="onThumbnailError"
-        />
-        <VIcon
-          v-else
-          :color="getAssetColor(asset)"
-          :icon="getAssetIcon(asset)"
-          class="thumbnail"
-          size="24"
-        />
-        <VIcon
-          :color="isSelected ? 'primary' : undefined"
-          :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
-          class="checkbox"
-          size="24"
-        />
+      <div class="asset-prepend d-flex align-center">
+        <div
+          :aria-checked="isSelected"
+          :aria-label="`Select ${getAssetDisplayName(asset)}`"
+          :class="{ 'selected': isSelected, 'selection-active': isSelectionActive }"
+          class="asset-select d-flex align-center justify-center"
+          role="checkbox"
+          tabindex="0"
+          @click.stop="emit('toggle', asset)"
+          @keydown.enter.prevent="emit('toggle', asset)"
+          @keydown.space.prevent="emit('toggle', asset)"
+        >
+          <VIcon
+            :color="isSelected ? 'primary' : undefined"
+            :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
+            size="24"
+          />
+        </div>
+        <div class="asset-thumbnail d-flex align-center justify-center">
+          <VImg
+            v-if="thumbnailSrc"
+            :src="thumbnailSrc"
+            :aspect-ratio="1"
+            class="rounded"
+            cover
+            @error="onThumbnailError"
+          />
+          <VIcon
+            v-else
+            :color="getAssetColor(asset)"
+            :icon="getAssetIcon(asset)"
+            size="24"
+          />
+        </div>
       </div>
     </template>
     <VListItemTitle class="d-flex align-center text-title-small">
@@ -134,6 +137,8 @@ const props = defineProps<{
   asset: Asset;
   isSelected: boolean;
   isActive: boolean;
+  // Any asset selected -> reveal every checkbox (list multi-select mode).
+  isSelectionActive: boolean;
   // Show location (only in flat search/filter results).
   showFolder: boolean;
   // Collapse low-priority meta (type + size) when the list is narrow.
@@ -163,32 +168,36 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 .asset-row {
   cursor: pointer;
   border-radius: 8px;
-  padding-left: 0.5rem;
 }
 
 .asset-select {
-  position: relative;
-  width: 2rem;
-  height: 2rem;
-  margin: 0.25rem 0 0.25rem 0.25rem;
+  flex: none;
+  width: 0;
+  height: 1.75rem;
+  overflow: hidden;
+  opacity: 0;
   cursor: pointer;
   border-radius: 4px;
+  transition:
+    width 0.2s ease-in-out,
+    margin 0.2s ease-in-out,
+    opacity 0.2s ease-in-out;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
     outline-offset: 2px;
   }
+}
 
-  .thumbnail, .checkbox {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    transition: opacity 0.15s ease;
-  }
+.asset-thumbnail {
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  margin: 0.25rem 0;
 
-  .checkbox {
-    opacity: 0;
-    pointer-events: none;
+  :deep(.v-img) {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -196,10 +205,22 @@ const folderLabel = computed(() => folderPath.value || 'Library');
   padding-left: 0.625rem;
 }
 
-.asset-row:hover,
+.asset-row:hover .asset-select,
 .asset-select:focus-visible,
-.asset-select.selected {
-  .checkbox { opacity: 1; }
-  .thumbnail { opacity: 0; }
+.asset-select.selected,
+.asset-select.selection-active {
+  width: 1.75rem;
+  margin-right: 0.75rem;
+  opacity: 1;
+}
+
+// Touch devices have no hover: keep the checkbox visible so multi-select is
+// discoverable and the tap target isn't a hidden toggle.
+@media (hover: none) {
+  .asset-select {
+    width: 1.75rem;
+    margin-right: 0.75rem;
+    opacity: 1;
+  }
 }
 </style>

@@ -109,6 +109,7 @@
               >
                 <RepositoryCard
                   :is-selected="selectedRepos.has(repository.id)"
+                  :is-selection-active="selectedRepos.size > 0"
                   :repository="repository"
                   @toggle-selection="toggleSelection"
                   @clone="onCardClone"
