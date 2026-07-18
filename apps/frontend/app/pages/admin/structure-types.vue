@@ -50,7 +50,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, provide, reactive, ref } from 'vue';
+import { computed, ref } from 'vue';
 import type {
   ActivityConfig,
   I18nConfig,
@@ -62,10 +62,7 @@ import { refDebounced } from '@vueuse/core';
 import { map, without, xor } from 'lodash-es';
 
 import SchemaCard from '@/components/admin/SchemaCard/index.vue';
-import {
-  SchemaTreeKey,
-  type TreeItem,
-} from '@/components/admin/SchemaCard/types';
+import type { TreeItem } from '@/components/admin/SchemaCard/types';
 import { useConfigStore } from '@/stores/config';
 
 definePageMeta({
@@ -76,20 +73,6 @@ const search = ref('');
 const debouncedSearch = refDebounced(search, 150);
 const config = useConfigStore();
 const expanded = ref<string[]>([]);
-
-// Tree nodes default to open; we track only the collapsed ones. A live
-// search force-opens everything so matches inside can't hide.
-const collapsedNodes = reactive(new Set<string>());
-
-const isCollapsed = (id: string) =>
-  !debouncedSearch.value && collapsedNodes.has(id);
-
-const toggleNode = (id: string) => {
-  if (debouncedSearch.value) return;
-  if (!collapsedNodes.delete(id)) collapsedNodes.add(id);
-};
-
-provide(SchemaTreeKey, { isCollapsed, toggleNode });
 
 const buildTree = (type: string, structure: ActivityConfig[]) => {
   const id = cuid();
@@ -155,16 +138,13 @@ const toggle = (label: string) => {
   expanded.value = xor(expanded.value, [label]);
 };
 
-const isAllExpanded = computed(
-  () =>
-    !collapsedNodes.size &&
-    schemas.value.every(({ label }) => expanded.value.includes(label)),
+const isAllExpanded = computed(() =>
+  schemas.value.every(({ label }) => expanded.value.includes(label)),
 );
 
 const toggleAll = () => {
   if (isAllExpanded.value) return (expanded.value = []);
   expanded.value = map(schemas.value, 'label');
-  collapsedNodes.clear();
 };
 </script>
 

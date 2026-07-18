@@ -5,10 +5,9 @@
       :style="{ '--row-accent': item.color }"
       class="schema-item bg-surface-raised"
       elevation="1"
-      @click="hasChildren && toggleNode(item.id)"
     >
       <template v-if="hasChildren" #prepend>
-        <VIcon :icon="`mdi-folder${isExpanded ? '-open' : ''}`" size="20" />
+        <VIcon icon="mdi-folder-open" size="20" />
       </template>
       <div class="item-name">
         <span class="text-truncate">{{ item.label }}</span>
@@ -23,37 +22,25 @@
           variant="tonal"
         />
       </div>
-      <template v-if="hasChildren" #append>
-        <VIcon
-          :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
-          class="text-medium-emphasis"
-          size="20"
-        />
-      </template>
     </VListItem>
-    <VExpandTransition>
-      <div v-if="hasChildren && isExpanded" class="d-flex flex-column ga-1 mt-1">
-        <SchemaTreeItem
-          v-for="child in item.children"
-          :key="child.id"
-          :item="child"
-        />
-      </div>
-    </VExpandTransition>
+    <div v-if="hasChildren" class="d-flex flex-column ga-1 mt-1">
+      <SchemaTreeItem
+        v-for="child in item.children"
+        :key="child.id"
+        :item="child"
+      />
+    </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { SchemaTreeKey, type TreeItem } from './types';
+import type { TreeItem } from './types';
 
 const props = defineProps<{
   item: TreeItem;
 }>();
 
-const { isCollapsed, toggleNode } = inject(SchemaTreeKey)!;
-
 const hasChildren = computed(() => !!props.item.children?.length);
-const isExpanded = computed(() => !isCollapsed(props.item.id));
 </script>
 
 <style lang="scss" scoped>
@@ -64,7 +51,6 @@ const isExpanded = computed(() => !isCollapsed(props.item.id));
   border-radius: 0.25rem;
   border-left: 6px solid
     var(--row-accent, rgb(var(--v-theme-surface-container-high)));
-  transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 
   :deep(.v-list-item__prepend) {
     width: 2rem;

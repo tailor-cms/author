@@ -1,13 +1,3 @@
-import type { InjectionKey } from 'vue';
-
-export interface SchemaTreeState {
-  isCollapsed: (id: string) => boolean;
-  toggleNode: (id: string) => void;
-}
-
-export const SchemaTreeKey: InjectionKey<SchemaTreeState> =
-  Symbol('schema-tree');
-
 export interface TreeItem {
   id: string;
   label: string;
