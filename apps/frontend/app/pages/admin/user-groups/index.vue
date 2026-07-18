@@ -1,15 +1,16 @@
 <template>
   <div class="group-management">
-    <div class="d-flex ga-3 mb-6 align-end">
+    <div class="d-flex align-center ga-4 mb-4">
       <VTextField
         v-model="filter"
         bg-color="transparent"
+        class="group-search"
         data-testid="search-user-groups"
         density="comfortable"
-        label="Search"
         max-width="300"
+        placeholder="Search user groups..."
         prepend-inner-icon="mdi-magnify"
-        rounded="pill"
+        rounded="xl"
         variant="solo-filled"
         clearable
         flat
@@ -20,69 +21,60 @@
         v-if="authStore.canCreateUserGroups"
         aria-label="Add user group"
         color="primary"
-        prepend-icon="mdi-account-multiple-plus"
+        prepend-icon="mdi-plus"
         text="Add user group"
         variant="flat"
-        @click.stop="showGroupDialog"
+        @click="showGroupDialog()"
       />
     </div>
-    <VDataTableServer
-      :headers="headers"
-      :items="userGroups"
-      :items-length="totalItems"
-      :items-per-page="dataTable.itemsPerPage"
-      :items-per-page-options="[10, 25, 50, 100]"
-      :loading="isLoading"
-      :page="dataTable.page"
-      :sort-by="dataTable.sortBy"
-      no-data-text="No user groups."
-      class="mt-4 rounded-xl"
-      item-value="id"
-      must-sort
-      @update:options="fetch"
-      @update:sort-by="($event) => (dataTable.sortBy = $event)"
-    >
-      <template #item="{ item }">
-        <tr :key="item.id" class="group-entry">
-          <td class="text-no-wrap text-left">
-            <UserGroupAvatar :logo-url="item.logoUrl" size="32" />
-            <NuxtLink
-              :to="{ name: 'user-group', params: { userGroupId: item.id } }"
-              class="ml-6"
-            >
-              {{ item.name }}
-            </NuxtLink>
-          </td>
-          <td v-if="authStore.canModifyUserGroups" class="text-no-wrap text-left">
-            <VBtn
-              aria-label="Edit user group"
-              class="mr-1"
-              density="comfortable"
-              icon="mdi-square-edit-outline"
-              size="small"
-              variant="text"
-              @click="showGroupDialog(item)"
-            />
-            <VBtn
-              aria-label="Delete user group"
-              color="error"
-              density="comfortable"
-              icon="mdi-trash-can-outline"
-              label="Delete user group"
-              size="small"
-              variant="text"
-              @click="remove(item)"
-            />
-          </td>
-        </tr>
-      </template>
-    </VDataTableServer>
+    <VAlert
+      v-if="!isLoading && !userGroups.length"
+      :text="filter ? 'No user groups match your search.' : 'No user groups.'"
+      icon="mdi-information-outline"
+      variant="tonal"
+    />
+    <template v-else-if="!isLoading">
+      <VRow class="group-grid" dense>
+        <VCol
+          v-for="group in userGroups"
+          :key="group.id"
+          cols="12"
+          md="4"
+          sm="6"
+          xl="3"
+        >
+          <UserGroupCard
+            :group="group"
+            :has-actions="authStore.canModifyUserGroups"
+            @edit:group="showGroupDialog"
+            @delete:group="remove"
+          />
+        </VCol>
+      </VRow>
+      <div
+        v-if="totalItems"
+        class="d-flex align-center justify-space-between mt-2 px-1"
+      >
+        <span class="text-body-medium">
+          Showing {{ pageStart }}–{{ pageEnd }} of {{ totalItems }}
+        </span>
+        <VPagination
+          v-if="pageCount > 1"
+          :length="pageCount"
+          :model-value="dataTable.page"
+          :total-visible="7"
+          density="comfortable"
+          rounded
+          @update:model-value="(page) => fetch({ page })"
+        />
+      </div>
+    </template>
     <UserGroupDialog
       v-model:visible="isGroupDialogVisible"
       :group-data="editedGroup"
       :user-groups="userGroups"
-      @created="fetch(defaultPage)"
-      @updated="fetch(defaultPage)"
+      @created="fetch(defaultPage())"
+      @updated="fetch(defaultPage())"
     />
   </div>
 </template>
@@ -91,38 +83,38 @@
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { api } from '@/api';
-import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
+import UserGroupCard from '@/components/admin/UserGroupCard/index.vue';
+import type { UserGroupRow } from '@/components/admin/UserGroupCard/types';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 
-definePageMeta({
-  name: 'user-groups',
-});
-
-useHead({
-  title: 'User group management',
-});
+definePageMeta({ name: 'user-groups' });
+useHead({ title: 'User group management' });
 
 const defaultPage = () => ({
-  sortBy: [{ key: 'name', order: 'desc' }] as any,
+  sortBy: [{ key: 'name', order: 'asc' as const }],
   page: 1,
-  itemsPerPage: 10,
+  itemsPerPage: 24,
 });
 
 const authStore = useAuthStore();
 
-const headers: any = [
-  { title: 'Group name', key: 'name', sortable: false },
-  authStore.canModifyUserGroups &&
-    { title: 'Actions', key: 'actions', sortable: false },
-].filter(Boolean);
-
 const isLoading = ref(true);
 const isGroupDialogVisible = ref(false);
-const userGroups = ref<UserGroup[]>([]);
+const userGroups = ref<UserGroupRow[]>([]);
 const totalItems = ref(0);
 const dataTable = reactive(defaultPage());
 const filter = ref('');
 const editedGroup = ref<UserGroup | null>(null);
+
+const pageCount = computed(() =>
+  Math.ceil(totalItems.value / dataTable.itemsPerPage),
+);
+const pageStart = computed(
+  () => (dataTable.page - 1) * dataTable.itemsPerPage + 1,
+);
+const pageEnd = computed(() =>
+  Math.min(dataTable.page * dataTable.itemsPerPage, totalItems.value),
+);
 
 const showGroupDialog = (group: UserGroup | null = null) => {
   isGroupDialogVisible.value = true;
@@ -134,8 +126,8 @@ const fetch = async (opts = {}) => {
   isLoading.value = true;
   const { items, total } = await api.userGroup.list({
     query: {
-      sortBy: dataTable.sortBy[0].key,
-      sortOrder: dataTable.sortBy[0].order === 'desc' ? 'DESC' : 'ASC',
+      sortBy: dataTable.sortBy[0]?.key,
+      sortOrder: dataTable.sortBy[0]?.order === 'desc' ? 'DESC' : 'ASC',
       offset: (dataTable.page - 1) * dataTable.itemsPerPage,
       limit: dataTable.itemsPerPage,
       filter: filter.value,
@@ -160,11 +152,13 @@ const remove = (group: UserGroup) => {
   showDialog(confirmation);
 };
 
-watch(filter, () => fetch());
+watch(filter, () => fetch(defaultPage()));
+
+onMounted(() => fetch());
 </script>
 
 <style lang="scss" scoped>
-.filters {
-  margin: 0 1.125rem 0.5rem;
+.group-search :deep(.v-field__outline) {
+  display: none;
 }
 </style>
