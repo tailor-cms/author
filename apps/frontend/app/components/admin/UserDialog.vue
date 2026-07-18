@@ -160,7 +160,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
         message: 'Email is already taken',
         test: (email) => {
           if (!isNewUser.value) return true;
-          if (props.userData.email === email) return true;
+          if (props.userData?.email === email) return true;
           return api.user
             .list({ query: { email } })
             .then(({ total }) => !total);

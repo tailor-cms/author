@@ -48,9 +48,9 @@ test('should be able to remove user group', async ({ page }) => {
   await expect(userGroupPage.groupGrid).toContainText(name);
   await page.reload();
   await userGroupPage.removeUserGroup(name);
-  await expect(userGroupPage.groupGrid).not.toContainText(name);
+  await expect(userGroupPage.el).not.toContainText(name);
   await page.reload();
-  await expect(userGroupPage.groupGrid).not.toContainText(name);
+  await expect(userGroupPage.el).not.toContainText(name);
 });
 
 test('should be able to paginate groups', async ({ page }) => {

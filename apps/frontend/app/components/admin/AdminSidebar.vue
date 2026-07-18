@@ -1,5 +1,10 @@
 <template>
-  <VList class="px-3 text-left" density="compact" bg-color="transparent" nav>
+  <VList
+    class="admin-sidebar px-3 text-left"
+    density="compact"
+    bg-color="transparent"
+    nav
+  >
     <VListItem
       v-for="{ name, label, icon, query } in routes"
       :key="name"

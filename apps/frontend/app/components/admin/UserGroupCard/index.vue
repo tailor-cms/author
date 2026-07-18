@@ -36,14 +36,14 @@
           prepend-icon="mdi-square-edit-outline"
           title="Edit"
           rounded="lg"
-          @click.stop="emit('edit:group', group)"
+          @click="emit('edit:group', group)"
         />
         <VListItem
           base-color="error"
           prepend-icon="mdi-trash-can-outline"
           title="Delete"
           rounded="lg"
-          @click.stop="emit('delete:group', group)"
+          @click="emit('delete:group', group)"
         />
       </VList>
     </VMenu>

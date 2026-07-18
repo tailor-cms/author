@@ -161,9 +161,12 @@ export class RepositoryMembers {
     return this.userEntriesLocator.filter({ hasText: email });
   }
 
+  getRoleButton(email: string) {
+    return this.getEntryByEmail(email).locator('.member-role-btn');
+  }
+
   async setUserRole(email: string, role: 'Admin' | 'Author') {
-    const entry = this.getEntryByEmail(email);
-    await entry.locator('.member-role-btn').click();
+    await this.getRoleButton(email).click();
     const menu = this.page.locator('.v-overlay.v-menu').last();
     await menu.locator('.role-option').filter({ hasText: role }).click();
   }
