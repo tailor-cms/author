@@ -16,7 +16,6 @@
         <VListItem
           v-for="{ raw: group } in items"
           :key="group.id"
-          :to="{ name: 'user-group', params: { userGroupId: group.id } }"
           :title="group.name"
           class="group-row bg-surface-raised py-3 px-4 mb-2"
           elevation="1"
@@ -27,13 +26,22 @@
           </template>
           <template #append>
             <VBtn
+              :to="{ name: 'user-group', params: { userGroupId: group.id } }"
+              append-icon="mdi-arrow-right"
+              aria-label="View user group"
+              class="mr-2"
+              size="small"
+              text="View group"
+              variant="tonal"
+            />
+            <VBtn
               aria-label="Deassociate user group"
               color="error"
               density="comfortable"
               icon="mdi-trash-can-outline"
               size="small"
               variant="tonal"
-              @click.stop.prevent="remove(group)"
+              @click="remove(group)"
             />
           </template>
         </VListItem>
