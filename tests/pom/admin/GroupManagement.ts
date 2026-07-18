@@ -54,6 +54,8 @@ export class UserGroupUserList {
   readonly userList: Locator;
   readonly userEntriesLocator: Locator;
   readonly addBtn: Locator;
+  readonly searchInput: Locator;
+  readonly sortToggle: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
 
@@ -62,6 +64,8 @@ export class UserGroupUserList {
     this.userList = el.locator('.member-list');
     this.userEntriesLocator = this.userList.locator('.member-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.searchInput = el.getByPlaceholder('Search members...');
+    this.sortToggle = el.getByRole('button', { name: 'Toggle sort order' });
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });
     this.page = page;

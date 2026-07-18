@@ -5,6 +5,11 @@ import {
   GroupManagement,
   UserGroupUserList,
 } from '../../../pom/admin/GroupManagement.ts';
+import {
+  addUserGroupMembers,
+  createCleanRepository,
+  createUserGroup,
+} from '../../../helpers/seed.ts';
 import ApiClient from '../../../api/ApiClient.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
@@ -81,6 +86,49 @@ test('should be able to filter by name', async ({ page }) => {
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(1);
   await userGroupPage.searchInput.fill('sdlkas');
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(0);
+});
+
+test('should show member and repository counts on a group card', async ({
+  page,
+}) => {
+  const group = await createUserGroup('Counts Group');
+  await addUserGroupMembers(group.id, [
+    'count-a@gostudion.com',
+    'count-b@gostudion.com',
+  ]);
+  await createCleanRepository('Counts Repo', [group.id]);
+  const userGroupPage = new GroupManagement(page);
+  await page.reload({ waitUntil: 'networkidle' });
+  const entry = await userGroupPage.getEntryByName('Counts Group');
+  await expect(entry.el).toContainText('2 members');
+  await expect(entry.el).toContainText('1 repository');
+});
+
+test('should be able to search and sort group members', async ({ page }) => {
+  const group = await createUserGroup('Roster Group');
+  await addUserGroupMembers(group.id, [
+    'roster-ann@gostudion.com',
+    'roster-bob@gostudion.com',
+    'roster-cara@gostudion.com',
+  ]);
+  const memberList = new UserGroupUserList(page);
+  await page.goto(UserGroupUserList.getRoute(group.id));
+  await expect(memberList.userEntriesLocator).toHaveCount(3);
+
+  // Search narrows the roster by email
+  await memberList.searchInput.fill('roster-bob');
+  await expect(memberList.userEntriesLocator).toHaveCount(1);
+  await expect(memberList.userEntriesLocator).toContainText('roster-bob');
+  await memberList.searchInput.fill('');
+  await expect(memberList.userEntriesLocator).toHaveCount(3);
+
+  // Default order is A–Z; the toggle flips it to Z–A
+  const entries = memberList.userEntriesLocator;
+  await expect(entries.first()).toContainText('roster-ann');
+  await expect(entries.last()).toContainText('roster-cara');
+  await memberList.sortToggle.click();
+  await expect(entries.first()).toContainText('roster-cara');
+  await expect(entries.last()).toContainText('roster-ann');
 });
 
 test('should be able to assign user to a group', async ({ page }) => {
