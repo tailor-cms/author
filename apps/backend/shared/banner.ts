@@ -1,10 +1,14 @@
 /**
  * Boot banner - a 24-bit ANSI wordmark (coloured via chalk) printed once the
- * server is up: a gradient "TAILOR X" logo with a status line. Falls back to
- * a single plain line when NO_COLOR is set, under CI, or the terminal is too
- * narrow - so machine-read logs stay clean.
+ * server is up: a gradient "TAILOR X" logo, Local + Network URLs (clickable
+ * via OSC 8 hyperlinks), a status line, and a scan-to-open QR code for the
+ * network URL (opt out with BOOT_QR=0 or NO_QR). Falls back to a single plain
+ * line when NO_COLOR is set, under CI, or the terminal is too narrow - so
+ * machine-read logs stay clean.
  */
+import os from 'node:os';
 import { Chalk } from 'chalk';
+import qrcode from 'qrcode-terminal';
 
 type Rgb = [number, number, number];
 
@@ -21,7 +25,7 @@ const GLYPHS: Record<string, string[]> = {
   L: ['█      ', '█      ', '█      ', '█      ', '███████'],
   O: [' █████ ', '█     █', '█     █', '█     █', ' █████ '],
   R: ['██████ ', '█     █', '██████ ', '█   ██ ', '█    ██'],
-  X: ['██   ██', ' ██ ██ ', '  ███  ', ' ██ ██ ', '██   ██'],
+  X: ['██     ██', '  ██ ██  ', '   ███   ', '  ██ ██  ', '██     ██'],
 };
 const GLYPH_ROWS = 5;
 
@@ -65,6 +69,17 @@ const fg = ([r, g, b]: Rgb, s: string) => chalk.rgb(r, g, b)(s);
 // Wrap a string in the ANSI dim style.
 const dim = (s: string) => chalk.dim(s);
 
+// Flat accent stylers for the status area, pre-bound to their 24-bit hues.
+// (The gradient art shares this truecolour space;
+type Styler = (text: string) => string;
+const accent = chalk.rgb(94, 234, 212); // teal - arrows & QR marker
+const value = chalk.rgb(226, 232, 240); // slate - versions & timings
+const muted = chalk.rgb(148, 130, 220); // violet - tagline & network host
+const dot = chalk.rgb(52, 211, 153); // green - status dot
+const envTint = chalk.rgb(167, 243, 208); // mint - environment name
+const local = chalk.rgb(125, 211, 252); // sky - localhost URL
+const bolt = chalk.rgb(250, 204, 21); // amber - ready-time bolt
+
 // Render a word into GLYPH_ROWS rows of block-letter art.
 const renderWord = (word: string): string[] => {
   const rows = Array.from({ length: GLYPH_ROWS }, () => '');
@@ -95,13 +110,57 @@ const gradientRule = (width: number, stops: Rgb[]) =>
   ).join('');
 
 // One-line fallback banner for non-colour / CI / narrow terminals.
-const plainLine = ({ version, port, env }: BannerContext, readyMs: number) =>
-  `Tailor X v${version}  ·  http://localhost:${port}  ·  ${env}  ·  ` +
-  `ready in ${readyMs}ms`;
+const plainLine = (
+  { version, port, env }: BannerContext,
+  network: string | undefined,
+  readyMs: number,
+) =>
+  `Tailor X v${version}  ·  http://localhost:${port}` +
+  (network ? `  ·  http://${network}` : '') +
+  `  ·  ${env}  ·  ready in ${readyMs}ms`;
+
+// OSC 8 terminal hyperlink - makes the URL ⌘/ctrl-clickable in terminals that
+// support it, and degrades to plain text everywhere else.
+const hyperlink = (url: string, text: string) =>
+  `\u001B]8;;${url}\u0007${text}\u001B]8;;\u0007`;
+
+// First non-internal IPv4 address, so the app can be opened from another
+// device (phone/tablet) on the same network. `undefined` when offline.
+const networkHost = (port: string | number): string | undefined => {
+  for (const nets of Object.values(os.networkInterfaces())) {
+    for (const net of nets ?? []) {
+      if (net.family === 'IPv4' && !net.internal) {
+        return `${net.address}:${port}`;
+      }
+    }
+  }
+  return undefined;
+};
+
+// A "➜  Label  host" row with the host rendered as a clickable link.
+const urlRow = (label: string, host: string, color: Styler) =>
+  `  ${accent('➜')}  ${dim(label.padEnd(9))}` +
+  color(hyperlink(`http://${host}`, host));
+
+// Compact QR code for a URL, returned as raw rows (caller pads/centres them).
+// The library invokes the callback synchronously, so we capture and return.
+const renderQr = (url: string): string[] => {
+  let out = '';
+  qrcode.generate(url, { small: true }, (qr: string) => {
+    out = qr;
+  });
+  return out.replace(/\n+$/, '').split('\n');
+};
+
+// Left pad that centres `content` of `contentWidth` columns within `width`,
+// keeping the banner's 2-space base indent.
+const centrePad = (width: number, contentWidth: number): string =>
+  ' '.repeat(2 + Math.max(0, Math.floor((width - contentWidth) / 2)));
 
 // Print the boot banner, or the plain fallback when colour is unavailable.
 export const printBanner = (ctx: BannerContext): void => {
   const readyMs = Math.round(process.uptime() * 1000);
+  const network = networkHost(ctx.port);
 
   // Render the art whenever colour isn't disabled. `pnpm dev` pipes the
   // backend through `concurrently`, so stdout isn't a TTY yet colour still
@@ -110,41 +169,58 @@ export const printBanner = (ctx: BannerContext): void => {
   const columns = process.stdout.columns ?? 80;
   const noColor = !!process.env.NO_COLOR || process.env.TERM === 'dumb';
   const canRender = !noColor && !process.env.CI && columns >= 64;
-  if (!canRender) return console.log(plainLine(ctx, readyMs));
+  if (!canRender) return console.log(plainLine(ctx, network, readyMs));
 
   const width = renderWord('TAILOR')[0]!.length;
   const tailor = gradientWord('TAILOR', COOL);
   const x = gradientWord('X', WARM);
-  // Centre the accent X on its own line below the wordmark.
-  const xPad = ' '.repeat(Math.floor((width - GLYPHS.X![0]!.length) / 2));
-
   const tagline = 'Content, tailored.';
-  const taglinePad = ' '.repeat(
-    Math.max(0, Math.floor((width - tagline.length) / 2)),
-  );
+
+  // Centre the accent X and tagline under the wordmark, like the QR below.
+  const xPad = centrePad(width, GLYPHS.X![0]!.length);
+  const taglinePad = centrePad(width, tagline.length);
 
   const sep = dim(' · ');
-  const info =
-    `${fg([52, 211, 153], '●')} ${fg([167, 243, 208], ctx.env)}` +
-    sep +
-    `${dim('v')}${fg([226, 232, 240], String(ctx.version))}` +
-    sep +
-    `${dim('↗ ')}${fg([125, 211, 252], `localhost:${ctx.port}`)}` +
-    sep +
-    `${fg([250, 204, 21], '⚡')} ${fg([226, 232, 240], `${readyMs}ms`)}` +
-    sep +
-    dim(`node ${process.versions.node.split('.')[0]}`);
+  const meta = [
+    `${dot('●')} ${envTint(ctx.env)}`,
+    `${dim('v')}${value(String(ctx.version))}`,
+    `${bolt('⚡')} ${value(`${readyMs}ms`)}`,
+    dim(`node ${process.versions.node.split('.')[0]}`),
+  ].join(sep);
+
+  const urls = [urlRow('Local', `localhost:${ctx.port}`, local)];
+  if (network) urls.push(urlRow('Network', network, muted));
+
+  // Reaching here means colour rendered; show the QR unless explicitly off,
+  // centred under the wordmark like the accent X.
+  const qrDisabled = process.env.BOOT_QR === '0' || !!process.env.NO_QR;
+  const qr: string[] = [];
+  if (network && !qrDisabled) {
+    const rows = renderQr(`http://${network}`);
+    const qrPad = centrePad(width, rows[0]?.length ?? 0);
+    const hint = 'Scan to open on another device';
+    const hintPad = centrePad(width, hint.length + 2);
+    qr.push(
+      '',
+      `${hintPad}${accent('▦')} ${dim(hint)}`,
+      ...rows.map((row) => `${qrPad}${row}`),
+    );
+  }
 
   console.log(
     [
       '',
       ...tailor.map((row) => `  ${row}`),
       '',
-      ...x.map((row) => `  ${xPad}${row}`),
+      ...x.map((row) => `${xPad}${row}`),
       '',
-      `  ${taglinePad}${fg([148, 130, 220], dim(tagline))}`,
+      `${taglinePad}${muted(dim(tagline))}`,
       `  ${gradientRule(width, RULE)}`,
-      `  ${info}`,
+      ...urls,
+      '',
+      `  ${meta}`,
+      ...qr,
+      '',
       '',
     ].join('\n'),
   );

@@ -8,8 +8,15 @@ import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';
 import db from '#shared/database/index.js';
 
-// Bluebird long-stack-trace config (global for all bluebird instances).
-BluebirdPromise.config({ longStackTraces: !config.isProduction });
+// Bluebird dev diagnostics (long stack traces; off in production).
+// `shared/database` casts every Sequelize result to a Bluebird promise (see
+// wrapMethods), so when those flow into Express 5's native-promise router,
+// Bluebird misfires a "promise created in a handler but not returned" warning.
+// It is benign, so `wForgottenReturn` is disabled.
+BluebirdPromise.config({
+  longStackTraces: !config.isProduction,
+  warnings: { wForgottenReturn: false },
+});
 
 const logger = createLogger();
 
@@ -25,13 +32,13 @@ db.initialize()
         server.requestTimeout = 30 * 60 * 1000;
       }),
   )
+  .then(() => logger.info(`Server listening on port ${config.port}`))
+  .then(() => writeOpenApiSnapshot())
   .then(() => {
-    logger.info(`Server listening on port ${config.port}`);
     printBanner({
       version: config.packageVersion,
       port: config.port,
-      env: process.env.NODE_ENV ?? 'development',
+      env: config.env.NODE_ENV,
     });
   })
-  .then(() => writeOpenApiSnapshot())
   .catch((err: unknown) => logger.error({ err }));
