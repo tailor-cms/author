@@ -179,9 +179,9 @@ const folderLabel = computed(() => folderPath.value || 'Library');
   cursor: pointer;
   border-radius: 4px;
   transition:
-    width 0.2s ease-in-out,
-    margin 0.2s ease-in-out,
-    opacity 0.2s ease-in-out;
+    width 0.3s ease-in-out,
+    margin 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));

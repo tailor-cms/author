@@ -164,12 +164,15 @@ const folderLabel = computed(() => folderPath.value || 'Library');
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 1.875rem;
+  width: 0;
   height: 1.875rem;
+  overflow: hidden;
   border-radius: 6px 0 6px 0;
   background-color: rgba(var(--v-theme-surface-raised), 0.8);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition:
+    width 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
@@ -185,6 +188,7 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 .select-overlay:focus-visible,
 .select-overlay.selected,
 .select-overlay.selection-active {
+  width: 1.875rem;
   opacity: 1;
 }
 
@@ -192,6 +196,7 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 // trap, so keep the affordance visible at rest.
 @media (hover: none) {
   .select-overlay {
+    width: 1.875rem;
     opacity: 1;
   }
 }
