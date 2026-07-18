@@ -16,6 +16,18 @@
         flat
         hide-details
       />
+      <VBtn
+        v-tooltip:top="{
+          text: sortOrder === 'desc' ? 'Name (Z–A)' : 'Name (A–Z)',
+          openDelay: 500,
+        }"
+        :icon="sortIcon"
+        aria-label="Toggle sort order"
+        class="text-medium-emphasis"
+        size="small"
+        variant="text"
+        @click="toggleSort"
+      />
       <VSpacer />
       <VBtn
         v-if="authStore.canCreateUserGroups"
@@ -27,11 +39,15 @@
         @click="showGroupDialog()"
       />
     </div>
-    <VAlert
+    <TailorEmptyState
       v-if="!isLoading && !userGroups.length"
-      :text="filter ? 'No user groups match your search.' : 'No user groups.'"
-      icon="mdi-information-outline"
-      variant="tonal"
+      :icon="filter ? 'mdi-magnify' : 'mdi-account-group-outline'"
+      :text="
+        filter
+          ? 'No user groups match your search.'
+          : 'Create a user group to get started.'
+      "
+      :title="filter ? 'No matches' : 'No user groups'"
     />
     <template v-else-if="!isLoading">
       <VRow class="group-grid" dense>
@@ -82,6 +98,8 @@
 <script lang="ts" setup>
 import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
+import { TailorEmptyState } from '@tailor-cms/core-components';
+
 import { api } from '@/api';
 import UserGroupCard from '@/components/admin/UserGroupCard/index.vue';
 import type { UserGroupRow } from '@/components/admin/UserGroupCard/types';
@@ -91,7 +109,7 @@ definePageMeta({ name: 'user-groups' });
 useHead({ title: 'User group management' });
 
 const defaultPage = () => ({
-  sortBy: [{ key: 'name', order: 'asc' as const }],
+  sortBy: [{ key: 'name', order: 'asc' as 'asc' | 'desc' }],
   page: 1,
   itemsPerPage: 24,
 });
@@ -115,6 +133,17 @@ const pageStart = computed(
 const pageEnd = computed(() =>
   Math.min(dataTable.page * dataTable.itemsPerPage, totalItems.value),
 );
+
+const sortOrder = computed(() => dataTable.sortBy[0]?.order ?? 'asc');
+const sortIcon = computed(() => sortOrder.value === 'desc'
+  ? 'mdi-sort-alphabetical-descending'
+  : 'mdi-sort-alphabetical-ascending',
+);
+
+const toggleSort = () => {
+  const order = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  fetch({ sortBy: [{ key: 'name', order }], page: 1 });
+};
 
 const showGroupDialog = (group: UserGroup | null = null) => {
   isGroupDialogVisible.value = true;
