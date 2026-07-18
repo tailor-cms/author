@@ -143,8 +143,8 @@ export class RepositoryMembers {
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
     this.rail = new NavigationRail(page);
-    this.userList = el.locator('.user-list');
-    this.userEntriesLocator = el.locator('.user-row');
+    this.userList = el.locator('.member-list');
+    this.userEntriesLocator = el.locator('.member-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.pagination = el.locator('.v-pagination');
     this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
@@ -163,7 +163,7 @@ export class RepositoryMembers {
 
   async setUserRole(email: string, role: 'Admin' | 'Author') {
     const entry = this.getEntryByEmail(email);
-    await entry.locator('.user-role-btn').click();
+    await entry.locator('.member-role-btn').click();
     const menu = this.page.locator('.v-overlay.v-menu').last();
     await menu.locator('.role-option').filter({ hasText: role }).click();
   }

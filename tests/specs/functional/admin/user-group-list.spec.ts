@@ -5,9 +5,12 @@ import {
   GroupManagement,
   UserGroupUserList,
 } from '../../../pom/admin/GroupManagement.ts';
+import ApiClient from '../../../api/ApiClient.ts';
 import SeedClient from '../../../api/SeedClient.ts';
 
-const DEFAULT_GROUPS_PER_PAGE = 10;
+const DEFAULT_GROUPS_PER_PAGE = 24;
+
+const userGroupApi = new ApiClient('/api/user-group/');
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
@@ -19,7 +22,7 @@ test('should be able to create user group', async ({ page }) => {
   const name = 'Test Group';
   await userGroupPage.addUserGroup(name);
   await page.reload();
-  await expect(userGroupPage.groupTable).toContainText(name);
+  await expect(userGroupPage.groupGrid).toContainText(name);
 });
 
 test('should be able to edit user group', async ({ page }) => {
@@ -30,27 +33,28 @@ test('should be able to edit user group', async ({ page }) => {
   const updatedName = 'Edited Test Group';
   await entry.edit(updatedName);
   await page.reload();
-  await expect(userGroupPage.groupTable).toContainText(updatedName);
+  await expect(userGroupPage.groupGrid).toContainText(updatedName);
 });
 
 test('should be able to remove user group', async ({ page }) => {
   const userGroupPage = new GroupManagement(page);
   const name = 'Test Group';
   await userGroupPage.addUserGroup(name);
-  await expect(userGroupPage.groupTable).toContainText(name);
+  await expect(userGroupPage.groupGrid).toContainText(name);
   await page.reload();
   await userGroupPage.removeUserGroup(name);
-  await expect(userGroupPage.groupTable).not.toContainText(name);
+  await expect(userGroupPage.groupGrid).not.toContainText(name);
   await page.reload();
-  await expect(userGroupPage.groupTable).not.toContainText(name);
+  await expect(userGroupPage.groupGrid).not.toContainText(name);
 });
 
 test('should be able to paginate groups', async ({ page }) => {
   const userGroupPage = new GroupManagement(page);
   const pageOverflow = 1;
   const groupCreateCount = DEFAULT_GROUPS_PER_PAGE + pageOverflow;
+  // Seed through the API; creating this many via the dialog is too slow
   for (const i of times(groupCreateCount)) {
-    await userGroupPage.addUserGroup('Test Group ' + i);
+    await userGroupApi.create({ name: `Test Group ${i}` } as any);
   }
   await page.reload({ waitUntil: 'networkidle' });
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(
@@ -73,7 +77,7 @@ test('should be able to filter by name', async ({ page }) => {
   await page.reload();
   const target = 'Test Group 1';
   await userGroupPage.searchInput.fill(target);
-  await expect(userGroupPage.groupTable).toContainText(target);
+  await expect(userGroupPage.groupGrid).toContainText(target);
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(1);
   await userGroupPage.searchInput.fill('sdlkas');
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(0);

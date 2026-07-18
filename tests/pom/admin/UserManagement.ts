@@ -100,7 +100,8 @@ export class UserEntry {
     await dialog.edit(email, data.firstName, data.lastName, data.role);
     await expect(this.el).toContainText(data.firstName);
     await expect(this.el).toContainText(data.lastName);
-    await expect(this.el).toContainText(data.role.toUpperCase());
+    // Role is rendered humanized ('Admin'), matching the dialog options
+    await expect(this.el).toContainText(data.role);
   }
 
   async archive() {
