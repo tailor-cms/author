@@ -50,23 +50,16 @@
       :title="filter ? 'No matches' : 'No user groups'"
     />
     <template v-else-if="!isLoading">
-      <VRow class="group-grid" dense>
-        <VCol
+      <div class="group-grid">
+        <UserGroupCard
           v-for="group in userGroups"
           :key="group.id"
-          cols="12"
-          md="4"
-          sm="6"
-          xl="3"
-        >
-          <UserGroupCard
-            :group="group"
-            :has-actions="authStore.canModifyUserGroups"
-            @edit:group="showGroupDialog"
-            @delete:group="remove"
-          />
-        </VCol>
-      </VRow>
+          :group="group"
+          :has-actions="authStore.canModifyUserGroups"
+          @edit:group="showGroupDialog"
+          @delete:group="remove"
+        />
+      </div>
       <div
         v-if="totalItems"
         class="d-flex align-center justify-space-between mt-2 px-1"
@@ -189,5 +182,11 @@ onMounted(() => fetch());
 <style lang="scss" scoped>
 .group-search :deep(.v-field__outline) {
   display: none;
+}
+
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 0.75rem;
 }
 </style>
