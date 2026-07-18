@@ -80,6 +80,20 @@ test('should be able to edit description', async ({ page }) => {
 
 test('should be able to publish repository info', async ({ page }) => {
   const settingsPage = new GeneralSettings(page);
-  await settingsPage.el.getByRole('button', { name: 'Publish info' }).click();
-  await expect(page.getByText('Info successfully published')).toBeVisible();
+  await settingsPage.publishInfo();
+  await expect(settingsPage.infoPublishedToast).toBeVisible();
+});
+
+test('should not publish repository info while a field is invalid', async ({ page }) => {
+  const settingsPage = new GeneralSettings(page);
+  // Description requires a minimum of 2 characters; a single one is invalid.
+  await settingsPage.descriptionInput.fill('a');
+  await settingsPage.descriptionInput.blur();
+  await expect(
+    settingsPage.el.getByText('Description must be at least 2 characters'),
+  ).toBeVisible();
+  // Publish is blocked: the success toast must not appear.
+  await settingsPage.publishInfo();
+  await expect(settingsPage.publishBlockedToast).toBeVisible();
+  await expect(settingsPage.infoPublishedToast).not.toBeVisible();
 });

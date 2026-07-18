@@ -1,18 +1,18 @@
 <template>
   <div class="auth-container fill-height bg-surface-container-low pa-4">
+    <div class="theme-switcher">
+      <ThemeSwitcher />
+    </div>
     <VSheet
-      class="auth-panel d-flex"
+      class="auth-panel d-flex pa-8"
       color="surface-raised"
       max-width="840"
       rounded="xl"
       elevation="2"
     >
-      <div class="theme-switcher">
-        <ThemeSwitcher />
-      </div>
-      <VRow no-gutters>
+      <VRow>
         <VCol
-          class="d-flex justify-start align-start pa-8"
+          class="d-flex justify-start align-start"
           cols="12"
           lg="5"
         >
@@ -21,7 +21,7 @@
             <h1 class="app-title ml-4">{{ title }}</h1>
           </div>
         </VCol>
-        <VCol class="auth-body pa-8 pa-sm-12" cols="12" lg="7">
+        <VCol class="auth-body pa-" cols="12" lg="7">
           <slot></slot>
         </VCol>
       </VRow>
@@ -42,9 +42,23 @@ const logoPath = '/img/logo-new.svg';
 
 <style lang="scss">
 .auth-container {
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .theme-switcher {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 1;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
 
   .app-title {
     font-size: 1.875rem;
@@ -64,19 +78,6 @@ const logoPath = '/img/logo-new.svg';
 .auth-container .auth-panel {
   position: relative;
   width: 100%;
-
-  .theme-switcher {
-    position: absolute;
-    bottom: 1rem;
-    left: 1rem;
-    z-index: 1;
-    opacity: 0.7;
-    transition: opacity 0.2s ease;
-
-    &:hover {
-      opacity: 1;
-    }
-  }
 
   .auth-body {
     a {
