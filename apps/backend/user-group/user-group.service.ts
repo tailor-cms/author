@@ -52,8 +52,16 @@ export interface ListResult {
   items: UserGroup[];
 }
 
+// The `::int` cast keeps Postgres COUNT (bigint) from serializing as a
+// string; "userGroup" is the alias Sequelize assigns the base model.
+const countByGroup = (table: string) =>
+  sequelize.literal(
+    `(SELECT COUNT(*)::int FROM ${table} WHERE group_id = "userGroup".id)`,
+  );
+
 // Lists user groups, optionally narrowed by name iLike. Non-admins only
 // see groups they are a member of (scoped via UserGroupMember include).
+// Rows are decorated with member and repository counts.
 export async function list(
   user: User,
   opts: ListQueryOptions,
@@ -61,7 +69,17 @@ export async function list(
 ): Promise<ListResult> {
   const where: any = { ...opts.where };
   if (filters.filter) where.name = { [Op.iLike]: `%${filters.filter}%` };
-  const queryOpts: any = { ...opts, where, distinct: true };
+  const queryOpts: any = {
+    ...opts,
+    where,
+    distinct: true,
+    attributes: {
+      include: [
+        [countByGroup('user_group_member'), 'memberCount'],
+        [countByGroup('repository_user_group'), 'repositoryCount'],
+      ],
+    },
+  };
   if (!user.isAdmin()) {
     queryOpts.include = [
       { model: UserGroupMember, where: { userId: user.id }, required: true },
