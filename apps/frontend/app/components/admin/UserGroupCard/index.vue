@@ -1,19 +1,19 @@
 <template>
   <VCard
     :ripple="false"
-    class="group-card d-flex align-center pa-4 text-left"
+    class="group-card d-flex align-center px-4 py-3 text-left"
     data-testid="user-group-card"
     color="surface-raised"
     elevation="1"
     rounded="lg"
     @click="navigateTo({ name: 'user-group', params: { userGroupId: group.id } })"
   >
-    <UserGroupAvatar :logo-url="group.logoUrl" size="52" />
+    <UserGroupAvatar :logo-url="group.logoUrl" size="36" />
     <div class="ml-4 overflow-hidden flex-grow-1">
-      <div class="group-name text-title-medium font-weight-medium">
+      <div class="group-name text-title-medium font-weight-medium text-truncate">
         {{ group.name }}
       </div>
-      <div class="text-label-medium text-medium-emphasis mt-1">
+      <div class="text-body-medium text-medium-emphasis">
         {{ summary }}
       </div>
     </div>
@@ -74,7 +74,6 @@ const summary = computed(() => {
 
 <style lang="scss" scoped>
 .group-card {
-  height: 6rem;
   cursor: pointer;
   transition:
     transform 0.2s ease,
@@ -85,13 +84,7 @@ const summary = computed(() => {
   }
 
   .group-name {
-    line-height: 1.3;
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    line-clamp: 2;
-    overflow: hidden;
-    white-space: normal;
+    line-height: 1.5;
   }
 }
 </style>

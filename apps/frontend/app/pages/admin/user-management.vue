@@ -74,13 +74,7 @@
         </span>
       </template>
       <template #[`item.role`]="{ item }">
-        <VChip
-          :color="item.role === UserRole.ADMIN ? 'primary' : undefined"
-          :text="humanize(item.role)"
-          density="comfortable"
-          size="small"
-          variant="tonal"
-        />
+        {{ item.role }}
       </template>
       <template #[`item.createdAt`]="{ item }">
         <span class="text-no-wrap">
@@ -129,7 +123,6 @@
 </template>
 
 <script lang="ts" setup>
-import { UserRole } from '@tailor-cms/interfaces/role';
 import type { User } from '@tailor-cms/interfaces/user';
 import { formatDate } from 'date-fns/format';
 import humanize from 'humanize-string';

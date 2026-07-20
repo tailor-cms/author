@@ -1,6 +1,6 @@
 <template>
   <VList
-    class="admin-sidebar px-3 text-left"
+    class="admin-sidebar py-0 px-3 text-left"
     density="compact"
     bg-color="transparent"
     nav
