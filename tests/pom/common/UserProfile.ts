@@ -9,14 +9,14 @@ export class UserProfile {
   readonly lastNameInput: Locator;
   readonly saveBtn: Locator;
   readonly cancelBtn: Locator;
-  readonly editBtn: Locator;
   readonly alert: Locator;
   readonly status: Locator;
   readonly avatar: Locator;
-  readonly changeAvatarBtn: Locator;
   readonly uploadAvatarBtn: Locator;
   readonly photoInput: Locator;
   readonly deleteAvatarBtn: Locator;
+  readonly cropPreview: Locator;
+  readonly applyCropBtn: Locator;
   readonly confirmationDialog: Locator;
   readonly confirmDeleteBtn: Locator;
 
@@ -30,20 +30,18 @@ export class UserProfile {
     this.alert = page.getByRole('alert');
     this.status = page.getByRole('status');
     this.avatar = page.getByRole('img', { name: 'Avatar' });
-    this.changeAvatarBtn = page.getByRole('button', { name: 'Change avatar' });
-    this.uploadAvatarBtn = page.getByLabel('Upload avatar');
+    this.uploadAvatarBtn = page.getByRole('button', {
+      name: /Upload avatar|Change avatar/,
+    });
     this.photoInput = page.locator('input[name="photo"]');
     this.deleteAvatarBtn = page.getByRole('button', { name: 'Delete avatar' });
+    this.cropPreview = page.getByRole('img', { name: 'Crop preview' });
+    this.applyCropBtn = page.getByRole('button', { name: 'Apply' });
     const confirmationDialog = page.getByRole('dialog');
     this.confirmationDialog = confirmationDialog;
     this.confirmDeleteBtn = confirmationDialog.getByRole('button', {
       name: 'Confirm',
     });
-  }
-
-  async openAvatarMenu() {
-    await this.avatar.hover({ force: true });
-    await this.changeAvatarBtn.click({ force: true });
   }
 
   fillEmail(email: string) {
@@ -82,18 +80,20 @@ export class UserProfile {
   }
 
   async uploadProfilePhoto() {
-    await this.openAvatarMenu();
+    await this.avatar.hover();
     await this.uploadAvatarBtn.click();
     await this.photoInput.setInputFiles('./fixtures/avatar.jpg');
+    await expect(this.cropPreview).toBeVisible();
+    await this.applyCropBtn.click();
     await this.hasVisibleStatusMessage(
       'Your profile picture has been updated!',
     );
   }
 
   async removeProfilePhoto() {
-    await this.openAvatarMenu();
+    await this.avatar.hover();
     await this.deleteAvatarBtn.click();
-    await this.confirmationDialog.isVisible();
+    await expect(this.confirmationDialog).toBeVisible();
     await this.confirmDeleteBtn.click();
     await this.hasVisibleStatusMessage(
       'Your profile picture has been updated!',
