@@ -24,6 +24,7 @@ export class AssetRow {
   }
 
   async select() {
+    await this.el.hover();
     await this.checkbox.click();
   }
 
