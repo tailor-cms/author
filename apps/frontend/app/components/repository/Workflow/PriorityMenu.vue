@@ -20,6 +20,7 @@
         :aria-label="ariaLabel"
         :color="priority?.color"
         class="cursor-pointer"
+        density="comfortable"
         role="button"
         tabindex="0"
         size="small"

@@ -9,12 +9,11 @@
     elevation="1"
     @click="emit('preview', asset)"
   >
-    <VSheet class="thumbnail" color="surface-container-low" rounded="lg">
+    <VSheet class="thumbnail" color="surface-sunken" rounded="t-lg">
       <VImg
         v-if="thumbnailSrc"
         :src="thumbnailSrc"
         :aspect-ratio="4 / 3"
-        class="rounded-lg"
         cover
         @error="onThumbnailError"
       />
@@ -26,8 +25,9 @@
       />
       <div
         :aria-checked="isSelected"
-        :class="{ selected: isSelected }"
-        class="select-overlay"
+        :aria-label="`Select ${getAssetDisplayName(asset)}`"
+        :class="{ 'selected': isSelected, 'selection-active': isSelectionActive }"
+        class="select-overlay elevation-1"
         role="checkbox"
         tabindex="0"
         @click.stop="emit('toggle', asset)"
@@ -41,7 +41,7 @@
         />
       </div>
     </VSheet>
-    <div class="d-flex align-center px-1 pt-2">
+    <div class="d-flex align-center pl-3 pr-2 py-2">
       <div class="flex-grow-1 overflow-hidden">
         <div class="d-flex align-center text-title-small">
           <span data-testid="assetTile_name" class="text-truncate">
@@ -106,6 +106,8 @@ const props = defineProps<{
   asset: Asset;
   isSelected: boolean;
   isActive: boolean;
+  // Any asset selected -> reveal every checkbox (grid multi-select mode).
+  isSelectionActive: boolean;
   // Show location (only in flat search/filter results).
   showFolder: boolean;
 }>();
@@ -132,7 +134,6 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 <style lang="scss" scoped>
 .asset-tile {
   cursor: pointer;
-  padding: 0.75rem;
   transition: background-color 0.15s ease;
 }
 
@@ -158,17 +159,20 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 
 .select-overlay {
   position: absolute;
-  top: 0.25rem;
-  left: 0.25rem;
+  top: 0;
+  left: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
-  height: 2rem;
-  border-radius: 8px;
-  background-color: rgb(var(--v-theme-surface) / 0.6);
+  width: 0;
+  height: 1.875rem;
+  overflow: hidden;
+  border-radius: 6px 0 6px 0;
+  background-color: rgba(var(--v-theme-surface-raised), 0.8);
   opacity: 0;
-  transition: opacity 0.15s ease;
+  transition:
+    width 0.3s ease-in-out,
+    opacity 0.3s ease-in-out;
 
   &:focus-visible {
     outline: 2px solid rgb(var(--v-theme-primary));
@@ -182,7 +186,18 @@ const folderLabel = computed(() => folderPath.value || 'Library');
 
 .asset-tile:hover .select-overlay,
 .select-overlay:focus-visible,
-.select-overlay.selected {
+.select-overlay.selected,
+.select-overlay.selection-active {
+  width: 1.875rem;
   opacity: 1;
+}
+
+// Touch devices have no hover: a hidden-yet-tappable checkbox is a silent
+// trap, so keep the affordance visible at rest.
+@media (hover: none) {
+  .select-overlay {
+    width: 1.875rem;
+    opacity: 1;
+  }
 }
 </style>
