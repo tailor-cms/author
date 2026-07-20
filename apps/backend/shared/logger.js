@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from 'node:async_hooks';
+import { Chalk } from 'chalk';
 import { randomUUID } from 'node:crypto';
 import pino from 'pino';
 import pinoHttp from 'pino-http';
@@ -25,7 +26,9 @@ const prettyStream = () =>
   pretty({
     colorize: true,
     sync: true,
-    ignore: isVerbose ? 'hostname' : 'hostname,reqId,req,res,responseTime',
+    ignore: isVerbose
+      ? 'hostname,pid'
+      : 'hostname,pid,reqId,req,res,responseTime',
   });
 
 // Attach the dev pretty stream outside production; production logs raw JSON.
@@ -102,6 +105,21 @@ const fullUrl = (req) =>
 const requestSummary = (req, res, detail) =>
   `${req.method} ${fullUrl(req)} ${res.statusCode} (${detail})`;
 
+// Colour the response time by how slow it was, so a slow request stands
+// out while scanning the dev console. Skipped in production, where output
+// is raw JSON and never read as coloured text.
+const chalk = new Chalk({ level: 3 });
+const FAST_MS = 30;
+const MODERATE_MS = 50;
+
+const colorizeDuration = (responseTime) => {
+  const text = `${responseTime}ms`;
+  if (isProduction) return text;
+  if (responseTime < FAST_MS) return chalk.green(text);
+  if (responseTime < MODERATE_MS) return chalk.yellow(text);
+  return chalk.red(text);
+};
+
 /**
  * HTTP request logging, shared by prod (JSON) and dev (pretty). Each request
  * logs one concise summary line; "GET /api/users 200 (4ms)" - the dev-server
@@ -151,7 +169,7 @@ const httpLoggerOptions = {
     return 'info';
   },
   customSuccessMessage: (req, res, responseTime) =>
-    requestSummary(req, res, `${responseTime}ms`),
+    requestSummary(req, res, colorizeDuration(responseTime)),
   customErrorMessage: (req, res, err) => requestSummary(req, res, err.message),
 };
 
