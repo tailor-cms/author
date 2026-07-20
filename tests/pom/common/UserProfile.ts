@@ -80,7 +80,6 @@ export class UserProfile {
   }
 
   async uploadProfilePhoto() {
-    await this.avatar.hover();
     await this.uploadAvatarBtn.click();
     await this.photoInput.setInputFiles('./fixtures/avatar.jpg');
     await expect(this.cropPreview).toBeVisible();
@@ -91,7 +90,6 @@ export class UserProfile {
   }
 
   async removeProfilePhoto() {
-    await this.avatar.hover();
     await this.deleteAvatarBtn.click();
     await expect(this.confirmationDialog).toBeVisible();
     await this.confirmDeleteBtn.click();
