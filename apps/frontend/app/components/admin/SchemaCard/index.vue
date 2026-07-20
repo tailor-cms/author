@@ -1,5 +1,5 @@
 <template>
-  <VCard class="mb-2" color="surface-sunken" rounded="lg" flat>
+  <VCard class="mb-3" color="surface-sunken" rounded="lg" flat>
     <VCardItem
       :aria-expanded="isExpanded"
       class="schema-header py-3 px-4"
@@ -41,7 +41,7 @@
       </template>
     </VCardItem>
     <VExpandTransition>
-      <div v-if="isExpanded" class="d-flex flex-column ga-1 pa-4 pt-0">
+      <div v-if="isExpanded" class="d-flex flex-column ga-1 pa-5 pt-0">
         <SchemaTreeItem
           v-for="item in schema.children"
           :key="item.id"
