@@ -17,7 +17,7 @@
       @pointerdown="startResize"
     />
     <div class="sidebar-layout">
-      <div class="sidebar-header pa-5">
+      <div class="sidebar-header pa-5 pb-1">
         <div class="d-flex align-center mb-3">
           <span class="text-title-medium font-weight-bold">
             Review lens
@@ -25,7 +25,7 @@
           <VSpacer />
           <VBtn
             v-tooltip:bottom="{ text: 'Refresh analysis', openDelay: 500 }"
-            :disabled="reviewStore.isRunning"
+            :disabled="reviewStore.isRunning || isAgentRunning"
             aria-label="Refresh analysis"
             density="comfortable"
             icon="mdi-refresh"
@@ -53,21 +53,41 @@
           :computed-at="result?.computedAt"
           :is-running="reviewStore.isRunning"
           :is-stale="status?.isStale ?? false"
-          class="mt-3 mx-1"
+          class="my-2 mx-1"
         />
+        <VScrollYTransition mode="out-in">
+          <VAlert
+            v-if="isAgentRunning"
+            class="my-2"
+            density="compact"
+            icon="mdi-creation-outline"
+            icon-size="20"
+            role="status"
+            type="info"
+            variant="tonal"
+          >
+            <span class="text-label-medium">
+              Renoir is editing this content. You can run a new review once
+              it finishes.
+            </span>
+          </VAlert>
+        </VScrollYTransition>
+        <VScrollYTransition mode="out-in">
+          <VAlert
+            v-if="status?.status === 'failed'"
+            class="my-2"
+            density="compact"
+            icon-size="20"
+            type="error"
+            variant="tonal"
+          >
+            <span class="text-label-medium">
+              The last analysis failed. Refresh to try again.
+            </span>
+          </VAlert>
+        </VScrollYTransition>
       </div>
-      <div class="sidebar-body px-5 d-flex flex-column ga-3">
-        <VAlert
-          v-if="status?.status === 'failed'"
-          color="error"
-          density="compact"
-          icon="mdi-alert-circle-outline"
-          variant="tonal"
-        >
-          <span class="text-body-small">
-            The last analysis failed. Refresh to try again.
-          </span>
-        </VAlert>
+      <div class="sidebar-body px-5 pb-5 d-flex flex-column ga-3">
         <div
           v-if="reviewStore.isRunning"
           class="d-flex flex-column align-center ga-4 pa-6 mt-8"
@@ -107,7 +127,7 @@
             </div>
           </template>
           <div class="text-label-medium font-weight-bold mt-2">Score breakdown</div>
-          <VExpansionPanels class="dimension-panels pb-4" multiple flat>
+          <VExpansionPanels class="dimension-panels" multiple flat>
             <DimensionCard
               v-for="dimension in dimensions"
               :key="dimension.key"
@@ -124,9 +144,16 @@
           text="Get feedback on this content - engagement scoring, what
             works, and what to improve."
           variant="text"
-          action-text="Analyze"
-          @click:action="reviewStore.requestAnalysis()"
-        />
+        >
+          <template #actions>
+            <VBtn
+              :disabled="isAgentRunning"
+              text="Analyze"
+              variant="flat"
+              @click="reviewStore.requestAnalysis()"
+            />
+          </template>
+        </TailorEmptyState>
       </div>
     </div>
   </VNavigationDrawer>
@@ -187,6 +214,9 @@ const { width, isResizing, startResize } = useDrawerResize({
 const config = useConfigStore();
 const elementStore = useContentElementStore();
 const reviewStore = useReviewStore();
+// Mutual exclusion with Renoir: while it edits the content, starting a
+// review would analyze a moving target.
+const { isAgentRunning } = useAgentRunState();
 
 const status = computed(() => reviewStore.status);
 const result = computed(() => status.value?.result ?? null);
@@ -268,6 +298,11 @@ const askAgent = (prompt: string) => {
 
 .sidebar-header {
   flex-shrink: 0;
+
+  > .v-alert {
+    flex: none;
+    line-height: 1;
+  }
 }
 
 .sidebar-body {
