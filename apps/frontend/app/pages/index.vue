@@ -109,7 +109,7 @@
               >
                 <RepositoryCard
                   :is-selected="selectedRepos.has(repository.id)"
-                  :is-selection-active="selectedRepos.size > 0"
+                  :is-selection-active="hasSelection"
                   :repository="repository"
                   @toggle-selection="toggleSelection"
                   @clone="onCardClone"
@@ -214,6 +214,8 @@ const arePinnedShown = computed(() => queryParams.value.pinned);
 const showWorkspaceRail = computed(() =>
   authStore.userGroups.length || authStore.canCreateUserGroups,
 );
+
+const hasSelection = computed(() => selectedRepos.value.size > 0);
 
 const onGroupCreated = (group: UserGroup) =>
   navigateTo({ name: 'user-group', params: { userGroupId: group.id } });

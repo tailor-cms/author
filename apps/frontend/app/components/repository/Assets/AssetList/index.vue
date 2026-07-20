@@ -132,9 +132,6 @@ const isFiltered = computed(
   () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
 );
 
-// Once any asset is selected, reveal every checkbox so the grid enters an
-// obvious multi-select mode (standard grid-select pattern) instead of hiding
-// the affordance behind per-tile hover.
 const hasSelection = computed(() => props.selected.size > 0);
 
 const showLoading = computed(
