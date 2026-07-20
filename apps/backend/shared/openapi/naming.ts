@@ -38,6 +38,9 @@
 // we fall back to the full method+path-derived name for every colliding
 // entry, which is unique by construction.
 import type { RouteRecord } from './registry.ts';
+import { createLogger } from '#logger';
+
+const logger = createLogger('openapi');
 
 export interface OperationNames {
   slice: string;
@@ -192,7 +195,7 @@ interface VerbAssignment {
 //      verb (e.g. `getIndexingStatus` collision above).
 //   3. Anything still colliding (same path shape, e.g. two POSTs that
 //      both shorten to the same word) falls back to the full method+path
-//      name with a console.warn - rare, but worth flagging.
+//      name with a warning - rare, but worth flagging.
 const resolveCollisions = (
   slice: string,
   assignments: VerbAssignment[],
@@ -222,8 +225,8 @@ const resolveCollisions = (
   const unresolvable = collidingVerbs(disambiguated);
   return disambiguated.map((a) => {
     if (!unresolvable.has(a.verb)) return a;
-    console.warn(
-      `[openapi] unresolvable collision in slice "${slice}" on verb `
+    logger.warn(
+      `Unresolvable collision in slice "${slice}" on verb `
       + `"${a.verb}"; falling back to full path-derived name.`,
     );
     return { route: a.route, verb: fullVerb(a.route) };

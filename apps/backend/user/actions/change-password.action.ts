@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import { audit } from '#shared/audit.ts';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { createError } from '#shared/error/helpers.js';
 import { WeakPasswordError } from '../lib/password-strength.ts';
@@ -20,6 +21,10 @@ async function handler({
       body.currentPassword,
       body.newPassword,
     );
+    // A wrong current password is a failed credential check
+    audit('auth:password-change', ok ? 'success' : 'failure', {
+      userId: user.id,
+    });
     if (!ok) return createError(StatusCodes.BAD_REQUEST, ERR_MSG);
   } catch (err) {
     if (err instanceof WeakPasswordError) {

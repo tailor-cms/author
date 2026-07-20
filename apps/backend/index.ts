@@ -2,6 +2,7 @@ import BluebirdPromise from 'bluebird';
 
 import { createLogger } from '#logger';
 import { printBanner } from '#shared/banner.ts';
+import { registerProcessHandlers } from '#shared/lifecycle.ts';
 import { writeOpenApiSnapshot } from '#shared/openapi/index.ts';
 import app from './app.ts';
 import config from '#config';
@@ -19,6 +20,7 @@ BluebirdPromise.config({
 });
 
 const logger = createLogger();
+registerProcessHandlers(logger);
 
 db.initialize()
   .then(() => logger.info('Database initialized'))
