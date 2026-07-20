@@ -41,7 +41,7 @@
       </template>
     </VCardItem>
     <VExpandTransition>
-      <div v-if="isExpanded" class="d-flex flex-column ga-1 pa-5 pt-0">
+      <div v-if="isExpanded" class="schema-tree d-flex flex-column pa-6 pt-0">
         <SchemaTreeItem
           v-for="item in schema.children"
           :key="item.id"
@@ -75,5 +75,9 @@ const emit = defineEmits<{ toggle: [] }>();
   &.rotate-180 {
     transform: rotate(180deg);
   }
+}
+
+.schema-tree {
+  gap: 0.375rem;
 }
 </style>

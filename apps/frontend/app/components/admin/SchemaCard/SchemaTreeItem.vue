@@ -23,7 +23,7 @@
         />
       </div>
     </VListItem>
-    <div v-if="hasChildren" class="d-flex flex-column ga-1 mt-1">
+    <div v-if="hasChildren" class="schema-tree d-flex flex-column">
       <SchemaTreeItem
         v-for="child in item.children"
         :key="child.id"
@@ -70,5 +70,10 @@ const hasChildren = computed(() => !!props.item.children?.length);
 
 .schema-item-wrapper .schema-item-wrapper {
   margin-left: 1rem;
+}
+
+.schema-tree {
+  gap: 0.375rem;
+  margin-top: 0.375rem;
 }
 </style>
