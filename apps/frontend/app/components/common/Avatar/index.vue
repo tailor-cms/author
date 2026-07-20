@@ -44,7 +44,7 @@
       id="photoInput"
       :key="imgUrl"
       ref="fileInput"
-      accept="image/*"
+      :accept="acceptedExtensions"
       name="photo"
       type="file"
       hidden
@@ -54,6 +54,8 @@
 </template>
 
 <script lang="ts" setup>
+import { IMAGE_INPUT_EXT } from '@tailor-cms/config';
+
 import { resizeAvatarImage } from './resize-image';
 
 export interface Props {
@@ -86,13 +88,20 @@ const AVATAR_SIZE = 250;
 // A resized/compressed AVATAR_SIZE x AVATAR_SIZE JPEG data URL should land under
 const MAX_IMAGE_LENGTH = 300_000;
 
+const acceptedExtensions = IMAGE_INPUT_EXT.map((ext) => `.${ext}`).join(',');
+
+const isSupportedImage = (file: File) => {
+  const name = file.name.toLowerCase();
+  return IMAGE_INPUT_EXT.some((ext) => name.endsWith(`.${ext}`));
+};
+
 const selectPhoto = async (event: Event) => {
   const input = event.target as HTMLInputElement;
   const file = input.files?.[0];
   input.value = '';
   if (!file) return;
-  if (!file.type.startsWith('image/')) {
-    notify('Please select an image file.', {
+  if (!isSupportedImage(file)) {
+    notify('That image format isn\'t supported. Please choose a different image.', {
       immediate: true,
       color: 'error',
     });
