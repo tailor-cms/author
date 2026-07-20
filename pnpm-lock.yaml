@@ -532,9 +532,6 @@ importers:
       pluralize-esm:
         specifier: ^9.0.5
         version: 9.0.5
-      promise-queue:
-        specifier: ^2.2.5
-        version: 2.2.5
       url-join:
         specifier: ^5.0.0
         version: 5.0.0
@@ -572,9 +569,6 @@ importers:
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
-      '@types/promise-queue':
-        specifier: ^2.2.3
-        version: 2.2.3
       autoprefixer:
         specifier: ^10.5.0
         version: 10.5.0(postcss@8.5.15)
@@ -5189,9 +5183,6 @@ packages:
 
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
-
-  '@types/promise-queue@2.2.3':
-    resolution: {integrity: sha512-CuEQpGSYKvHr3SQ7C7WkluLg9CFjVORbn8YFRsQ5u6mqGbZVfSOv03ic9t95HtZuMchnlNqnIsQGFOpxqdhjTQ==}
 
   '@types/qrcode-terminal@0.12.2':
     resolution: {integrity: sha512-v+RcIEJ+Uhd6ygSQ0u5YYY7ZM+la7GgPbs0V/7l/kFs2uO4S8BcIUEMoP7za4DNIqNnUD5npf0A/7kBhrCKG5Q==}
@@ -13264,7 +13255,7 @@ snapshots:
       perfect-debounce: 2.1.0
       pkg-types: 2.3.1
       scule: 1.3.0
-      semver: 7.8.1
+      semver: 7.8.5
       srvx: 0.11.16
       std-env: 4.1.0
       tinyclip: 0.1.12
@@ -13325,7 +13316,7 @@ snapshots:
       pathe: 2.0.3
       perfect-debounce: 2.1.0
       pkg-types: 2.3.1
-      semver: 7.8.1
+      semver: 7.8.5
       simple-git: 3.36.0
       sirv: 3.0.2
       structured-clone-es: 2.0.0
@@ -13424,7 +13415,7 @@ snapshots:
       pkg-types: 2.3.1
       rc9: 3.0.1
       scule: 1.3.0
-      semver: 7.8.1
+      semver: 7.8.5
       tinyglobby: 0.2.16
       ufo: 1.6.4
       unctx: 2.5.0
@@ -15686,8 +15677,6 @@ snapshots:
 
   '@types/pluralize@0.0.33': {}
 
-  '@types/promise-queue@2.2.3': {}
-
   '@types/qrcode-terminal@0.12.2': {}
 
   '@types/qs@6.15.1': {}
@@ -15796,7 +15785,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.59.4
       debug: 4.4.3
       minimatch: 10.2.5
-      semver: 7.8.1
+      semver: 7.8.5
       tinyglobby: 0.2.16
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3

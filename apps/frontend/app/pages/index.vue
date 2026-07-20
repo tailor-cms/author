@@ -283,7 +283,7 @@ const deleteSelected = () => {
         await Promise.each(selected, ({ id }: Repository) =>
           repositoryStore.remove(id),
         );
-        notify(`${upperFirst(noun)} ${verb} been deleted`, { immediate: true });
+        notify(`${upperFirst(noun)} ${verb} been deleted`);
       } catch {
         notify(`We couldn't delete the selected ${pluralize(label)}`, {
           color: 'error',
@@ -318,7 +318,7 @@ const deleteRepository = (repository: Repository) => {
     action: async () => {
       try {
         await repositoryStore.remove(repository.id);
-        notify(`The ${type} has been deleted`, { immediate: true });
+        notify(`The ${type} has been deleted`);
         await refetchRepositories();
       } catch {
         notify(`We couldn't delete the ${type}`, { color: 'error' });

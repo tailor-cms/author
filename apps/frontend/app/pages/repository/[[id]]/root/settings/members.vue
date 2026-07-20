@@ -170,7 +170,7 @@ watch([search, sortOrder], () => {
 
 const upsertUser = async (email: string, newRole: RepositoryRole) => {
   await store.upsertUser(email, newRole);
-  await notify('User updated', { immediate: true });
+  await notify('User updated');
 };
 
 const removeUser = async (userId: number) => {

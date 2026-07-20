@@ -68,7 +68,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
       action: async () => {
         try {
           await publish(activities.filter((it) => !it.detached));
-          notify(`The ${label} has been published`, { immediate: true });
+          notify(`The ${label} has been published`);
           showPublishSuccess.value = true;
         } catch {
           notify(`We couldn't publish the ${label}`, { color: 'error' });
@@ -90,9 +90,7 @@ export const usePublishActivity = (anchorActivity?: StoreActivity) => {
             params: { repositoryId: currentRepository.repositoryId! },
           });
           await publish(activities.filter((it) => !it.detached));
-          notify(`The ${repositoryTypeLabel} has been published`, {
-            immediate: true,
-          });
+          notify(`The ${repositoryTypeLabel} has been published`);
           showPublishSuccess.value = true;
         } catch {
           notify(`We couldn't publish the ${repositoryTypeLabel}`, {

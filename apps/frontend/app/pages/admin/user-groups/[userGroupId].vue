@@ -148,8 +148,7 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const notify = useNotification();
-const notifyError = (message: string) =>
-  notify(message, { color: 'error', immediate: true });
+const notifyError = (message: string) => notify(message, { color: 'error' });
 
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
@@ -194,7 +193,7 @@ async function upsertUser(email: string, role: string) {
     // A per-email failure comes back in `failed` (200), not as a throw;
     // funnel it into the same error notice
     if (failed.length) throw new Error('Role update failed');
-    notify('User updated', { immediate: true });
+    notify('User updated');
   } catch {
     notifyError('We couldn\'t update the user\'s role.');
   }

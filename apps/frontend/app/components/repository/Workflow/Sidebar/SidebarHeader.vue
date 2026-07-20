@@ -33,7 +33,7 @@
       v-clipboard:copy="activity.shortId"
       v-clipboard:error="() => notify('Not able to copy the ID')"
       v-clipboard:success="
-        () => notify('ID copied to the clipboard', { immediate: true })
+        () => notify('ID copied to the clipboard')
       "
       class="ml-3 px-4"
       size="small"
@@ -47,7 +47,7 @@
       v-clipboard:copy="statusUrl"
       v-clipboard:error="() => notify('Not able to copy the link')"
       v-clipboard:success="
-        () => notify('Link copied to the clipboard', { immediate: true })
+        () => notify('Link copied to the clipboard')
       "
       class="ml-2 px-4"
       size="small"

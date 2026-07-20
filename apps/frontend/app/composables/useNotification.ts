@@ -1,7 +1,6 @@
 interface NotificationOptions {
   color?: string;
   timeout?: number;
-  immediate?: boolean;
 }
 export const useNotification = () => {
   const { $eventBus } = useNuxtApp() as any;

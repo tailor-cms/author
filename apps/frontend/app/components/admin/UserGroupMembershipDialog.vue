@@ -203,15 +203,12 @@ const submit = handleSubmit(async () => {
       body: payload,
     });
     const { message, color } = buildNotification(summary);
-    notify(message, { immediate: true, color });
+    notify(message, { color });
     suggestedUsers.value = [];
     emit('save', payload);
     close();
   } catch {
-    notify('We couldn\'t add the users. Please try again.', {
-      color: 'error',
-      immediate: true,
-    });
+    notify('We couldn\'t add the users. Please try again.', { color: 'error' });
   } finally {
     isSaving.value = false;
   }
