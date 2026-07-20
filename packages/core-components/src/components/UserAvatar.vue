@@ -47,7 +47,7 @@ const style = computed(() =>
 
 <style lang="scss" scoped>
 .user-avatar-container {
-  padding: 0.125rem;
+  padding: 0;
   overflow: hidden;
 
   .user-avatar {
