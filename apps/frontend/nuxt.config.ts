@@ -1,3 +1,4 @@
+import compactHmrLog from './app/lib/vite-plugins/compactHmrLog';
 import injectConfigHeaders from './app/lib/vite-plugins/injectConfigHeaders';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -35,6 +36,9 @@ export default defineNuxtConfig({
   },
   telemetry: false,
   debug: false,
+  hooks: {
+    'vite:extendConfig': compactHmrLog,
+  },
   googleFonts: {
     families: {
       Geist: [400, 500, 600, 700],
