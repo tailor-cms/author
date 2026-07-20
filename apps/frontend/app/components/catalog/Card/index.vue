@@ -15,7 +15,7 @@
         <div
           v-if="hasAdminAccess"
           :aria-checked="isSelected"
-          :class="{ 'is-selected': isSelected }"
+          :class="{ 'is-selected': isSelected, 'selection-active': isSelectionActive }"
           aria-label="Select repository"
           class="select-checkbox d-flex align-center justify-center"
           role="checkbox"
@@ -156,6 +156,8 @@ const store = useRepositoryStore();
 const props = defineProps<{
   repository: Repository;
   isSelected?: boolean;
+  // Any repository selected -> reveal every checkbox (bulk-select mode).
+  isSelectionActive?: boolean;
 }>();
 
 const emit = defineEmits([
@@ -296,10 +298,22 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card:hover .select-checkbox,
 .select-checkbox:focus-visible,
-.select-checkbox.is-selected {
+.select-checkbox.is-selected,
+.select-checkbox.selection-active {
   width: 1.75rem;
   margin-left: -0.25rem;
   margin-right: 0.25rem;
   opacity: 1;
+}
+
+// Touch devices have no hover: keep the checkbox expanded so bulk-select is
+// discoverable and the tap target isn't a hidden toggle.
+@media (hover: none) {
+  .select-checkbox {
+    width: 1.75rem;
+    margin-left: -0.25rem;
+    margin-right: 0.25rem;
+    opacity: 1;
+  }
 }
 </style>

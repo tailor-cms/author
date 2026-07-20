@@ -11,7 +11,7 @@
         variant="text"
       />
     </template>
-    <VCard max-height="480" width="800">
+    <VCard color="surface-overlay" max-height="480" width="800">
       <div class="d-flex align-center px-3 py-2">
         <span class="text-body-large font-weight-medium">Asset Metadata</span>
         <VSpacer />
@@ -40,7 +40,7 @@
           >
             {{ display }}
           </span>
-          <VSheet v-else color="surface-container-low mt-1" rounded>
+          <VSheet v-else color="surface-container-low" class="mt-1" rounded>
             <pre class="entry-object text-label-medium ma-0">{{ display }}</pre>
           </VSheet>
         </div>

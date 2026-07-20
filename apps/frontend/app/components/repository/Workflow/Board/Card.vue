@@ -82,7 +82,6 @@ useScrollWhenSelected(() => rootEl.value?.$el, isSelected);
     pointer-events: none;
   }
 }
-
 .board-card__accent {
   position: absolute;
   inset-block: 0;
