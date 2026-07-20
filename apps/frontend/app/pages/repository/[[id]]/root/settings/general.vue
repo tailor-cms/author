@@ -169,14 +169,13 @@ const updateMeta = async (
   }
 
   await repositoryStore.update(repoData);
-  notify('Saved', { immediate: true });
+  notify('Saved');
 };
 
 const publish = async () => {
   if (hasBlockingErrors.value) {
     notify('Please fix the highlighted errors before publishing', {
       color: 'error',
-      immediate: true,
     });
     return;
   }
@@ -189,7 +188,7 @@ const publish = async () => {
       }),
       MIN_PUBLISH_MS,
     );
-    notify('Info successfully published', { immediate: true });
+    notify('Info successfully published');
     showSuccess.value = true;
   } catch {
     notify('We couldn\'t publish the info', { color: 'error' });

@@ -217,7 +217,7 @@ const linkSelection = async () => {
       if (!firstLinked) firstLinked = linked[0];
       prevLinkedItem = linked[0];
     }
-    notify(`${upperFirst(noun)} ${verb} been linked`, { immediate: true });
+    notify(`${upperFirst(noun)} ${verb} been linked`);
     emit('completed', items);
     if (firstLinked) currentRepositoryStore.selectActivity(firstLinked.id);
     close();

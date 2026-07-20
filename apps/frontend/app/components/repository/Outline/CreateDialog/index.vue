@@ -186,7 +186,7 @@ const submitForm = handleSubmit(async () => {
     if (anchor && anchor.id === activity.value?.parentId) {
       selectedActivity.expandOutlineItemParent(item);
     }
-    notify(`A new ${label} has been created`, { immediate: true });
+    notify(`A new ${label} has been created`);
     emit('created', item);
     visible.value = false;
     if (props.openInEditor) {
