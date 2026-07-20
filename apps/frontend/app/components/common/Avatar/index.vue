@@ -102,7 +102,6 @@ const selectPhoto = async (event: Event) => {
   if (!file) return;
   if (!isSupportedImage(file)) {
     notify('That image format isn\'t supported. Please choose a different image.', {
-      immediate: true,
       color: 'error',
     });
     return;
@@ -111,14 +110,13 @@ const selectPhoto = async (event: Event) => {
     const imageUrl = await resizeAvatarImage(file, AVATAR_SIZE);
     if (imageUrl.length > MAX_IMAGE_LENGTH) {
       notify('Unable to compress that image enough, please try a different one.', {
-        immediate: true,
         color: 'error',
       });
       return;
     }
     emit('save', imageUrl);
   } catch (err: any) {
-    notify(err.message, { immediate: true, color: 'error' });
+    notify(err.message, { color: 'error' });
   }
 };
 </script>

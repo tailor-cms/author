@@ -85,9 +85,9 @@ async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
   const isStatusChange = activity.currentStatus.status !== statusId;
   try {
     await activityStore.saveStatus(activity.id, { status: statusId, position });
-    if (isStatusChange) notify('Status saved', { immediate: true });
+    if (isStatusChange) notify('Status saved');
   } catch {
-    notify('Failed to update status', { immediate: true });
+    notify('Failed to update status');
   }
 }
 </script>

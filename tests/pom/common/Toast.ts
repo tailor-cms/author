@@ -10,20 +10,20 @@ export class Toast {
     this.el = page.locator('.v-snackbar');
   }
 
-  hasText(text: string | RegExp) {
-    return expect(this.el).toHaveText(text);
+  private withText(text: string | RegExp) {
+    return this.el.filter({ hasText: text }).first();
   }
 
-  containsText(text: string | RegExp) {
-    return expect(this.el).toContainText(text);
+  hasText(text: string | RegExp) {
+    return expect(this.withText(text)).toBeVisible();
   }
 
   isSaved() {
-    return expect(this.el).toContainText(/saved/i);
+    return expect(this.withText(/saved/i)).toBeVisible();
   }
 
   waitForDismiss() {
-    return expect(this.el).not.toBeVisible();
+    return expect(this.el).toHaveCount(0);
   }
 
   // Named confirmation toasts

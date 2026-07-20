@@ -86,7 +86,7 @@ const showDeleteConfirmation = () => {
     action: async () => {
       try {
         await repositoryStore.remove(id);
-        notify(`The ${type} has been deleted`, { immediate: true });
+        notify(`The ${type} has been deleted`);
         navigateTo('/');
       } catch {
         notify(`We couldn't delete the ${type}`, { color: 'error' });

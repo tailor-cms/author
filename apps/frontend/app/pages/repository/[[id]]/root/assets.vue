@@ -298,7 +298,7 @@ function uploadFiles(files: File[]) {
     const names = tooLarge.map((file) => file.name).join(', ');
     notify(
       `Exceeds the ${formatFileSize(maxUploadSize.value)} upload limit: ${names}`,
-      { color: 'error', immediate: true },
+      { color: 'error' },
     );
     return;
   }
@@ -335,7 +335,7 @@ async function onMoveConfirm(folder: string) {
   await assetStore.move(ids, folder);
   ids.forEach((id) => selection.selected.delete(id));
   closeSidebarIf((a) => ids.includes(a.id));
-  notify(`Moved ${assetLabel(ids.length)}`, { immediate: true });
+  notify(`Moved ${assetLabel(ids.length)}`);
   if (folder) registerFolder(folder);
   refetchAll();
 }
@@ -410,7 +410,7 @@ async function onSave(
 ) {
   await assetStore.updateAsset(asset.id, payload);
   syncActiveAsset(asset.id);
-  notify('Saved', { immediate: true });
+  notify('Saved');
 }
 
 function toggleSortDirection() {

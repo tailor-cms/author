@@ -89,11 +89,11 @@ const submit = handleSubmit(() => {
       lastName: lastNameInput.value,
     })
     .then(() => {
-      notify('User information updated!', { immediate: true });
+      notify('User information updated!');
       resetForm({ values: initialFormValues(store.user) });
     })
     .catch(() => {
-      notify('Something went wrong!', { immediate: true, color: 'error' });
+      notify('Something went wrong!', { color: 'error' });
     });
 });
 </script>
