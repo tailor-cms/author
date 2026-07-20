@@ -24,15 +24,21 @@ const connection = env.DATABASE_URI
 
 const config = {
   ...connection,
-  benchmark: env.NODE_ENV === 'production',
+  // Time each query and hand the elapsed ms to `logging` (2nd arg), powering
+  // the `duration` field below.
+  benchmark: true,
+  // Table Sequelize uses to record which migrations have run.
   migrationStorageTableName: 'sequelize_meta',
+  // Apply pending migrations on boot unless explicitly disabled via env.
   migrateOnStartup: !env.DATABASE_DISABLE_MIGRATIONS_ON_STARTUP,
   logger,
+  // Called by Sequelize for every query.
   // https://sequelize.org/docs/v6/getting-started/#logging
+  // With `benchmark` on, the 2nd arg is the elapsed ms
   logging(msg: string, time?: number) {
     const info: LogPayload = { msg };
-    if (time) info.duration = `${time}ms`;
-    return logger.info(info);
+    if (typeof time === 'number') info.duration = `${time}ms`;
+    return logger.debug(info);
   },
 };
 

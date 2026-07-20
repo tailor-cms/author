@@ -1,6 +1,7 @@
 import get from 'lodash/get.js';
 import roleConfig from '@tailor-cms/interfaces/role';
 import { StatusCodes } from 'http-status-codes';
+import { audit } from '../audit.ts';
 import { createError } from '../error/helpers.js';
 import { auth as authConfig } from '#config';
 
@@ -11,6 +12,13 @@ function authorize(...allowed) {
   return (req, res, next) => {
     const { user } = req;
     if (user && allowed.includes(user.role)) return next();
+    // A signed-in user hitting routes above their role
+    audit('auth:access-denied', 'failure', {
+      userId: user?.id,
+      role: user?.role,
+      method: req.method,
+      path: req.originalUrl,
+    });
     return createError(StatusCodes.UNAUTHORIZED, 'Access restricted');
   };
 }

@@ -132,8 +132,8 @@ class DefaultAdapter {
     await Promise.map(uniq(context.assets), async (it) => {
       try {
         await importFile(blobStore, it, { context });
-      } catch (e) {
-        console.log(`Unable to import file: ${it}\n`, e.message);
+      } catch (err) {
+        logger.warn({ err, file: it }, 'Unable to import file');
       }
     });
   }
