@@ -133,7 +133,7 @@ const getUsers = async () => {
 
 const upsertUser = async (email: string, role: RepositoryRole) => {
   await store.upsertUser(email, role);
-  await notify('User updated', { immediate: true });
+  await notify('User updated');
 };
 
 const removeUser = async (userId: number) => {

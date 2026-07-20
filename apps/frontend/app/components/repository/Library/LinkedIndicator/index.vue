@@ -113,7 +113,7 @@ const handleUnlink = async () => {
       params: { repositoryId, activityId: id },
     });
     store.add(unlinked);
-    notify('Activity unlinked', { immediate: true });
+    notify('Activity unlinked');
   } catch {
     notify('Failed to unlink activity', { color: 'error' });
   }

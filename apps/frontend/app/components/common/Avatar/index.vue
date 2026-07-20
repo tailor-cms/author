@@ -132,7 +132,6 @@ const selectPhoto = async (event: Event) => {
   if (!file) return;
   if (!isSupportedImage(file)) {
     notify('That image format isn\'t supported. Please choose a different image.', {
-      immediate: true,
       color: 'error',
     });
     return;
@@ -141,7 +140,7 @@ const selectPhoto = async (event: Event) => {
     cropSrc.value = await prepareCropSource(file, CROP_SOURCE_SIZE);
     isCropOpen.value = true;
   } catch (err: any) {
-    notify(err.message, { immediate: true, color: 'error' });
+    notify(err.message, { color: 'error' });
   }
 };
 

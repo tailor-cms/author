@@ -141,9 +141,7 @@ const submit = handleSubmit(async () => {
       descriptionInput.value,
       shareWithSamePeople.value,
     );
-    notify(`The ${repositoryTypeLabel.value} has been cloned`, {
-      immediate: true,
-    });
+    notify(`The ${repositoryTypeLabel.value} has been cloned`);
     emit('cloned');
     close();
   } catch {

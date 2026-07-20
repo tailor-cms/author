@@ -108,7 +108,7 @@ function handleError(err: any) {
     setFieldError('currentPassword', msg);
     return;
   }
-  notify('Failed to change password!', { immediate: true, color: 'error' });
+  notify('Failed to change password!', { color: 'error' });
 }
 
 const submit = handleSubmit(() => {
@@ -118,7 +118,7 @@ const submit = handleSubmit(() => {
       newPassword: newPasswordInput.value,
     })
     .then(() => {
-      notify('Password changed!', { immediate: true });
+      notify('Password changed!');
       store.logout();
       navigateTo('/auth');
     })

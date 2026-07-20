@@ -76,7 +76,7 @@ const exportRepository = () => {
   // so the browser handles the download natively
   const url = `/api/repositories/${props.repository.id}/export/${jobId.value}`;
   window.open(url, '_blank');
-  notify(`The ${repositoryTypeLabel} has been exported`, { immediate: true });
+  notify(`The ${repositoryTypeLabel} has been exported`);
   close();
 };
 
