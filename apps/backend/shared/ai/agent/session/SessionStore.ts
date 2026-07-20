@@ -47,10 +47,11 @@
 // pointer, so as long as the user is active the pointer's TTL never
 // runs out. Per-user keying ("${userId}:${repoId}") prevents users
 // from sharing or stumbling onto each other's conversations.
-import { randomUUID } from 'node:crypto';
-import Keyv from 'keyv';
 import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
+import { randomUUID } from 'node:crypto';
+import { createAiLogger } from '../../logger.ts';
 import { kvStore as kvConfig } from '#config';
+import Keyv from 'keyv';
 
 import { AgentSession, type AgentSessionData } from './AgentSession.ts';
 
@@ -177,14 +178,13 @@ function activeKey(repositoryId: number, userId: number): ActiveKey {
 }
 
 function createStore<T>(namespace: string): Keyv<T> {
+  const logger = createAiLogger(namespace);
   const keyv = new Keyv<T>({
     ...kvConfig.keyvDefaultConfig,
     namespace,
     ttl: SESSION_TTL_MS,
   });
-  keyv.on('error', (err) =>
-    console.warn(`[${namespace}]`, err?.message ?? err),
-  );
+  keyv.on('error', (err) => logger.warn({ err }, 'KV store error'));
   return keyv;
 }
 
