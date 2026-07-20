@@ -46,6 +46,7 @@
             v-model:mode="mode"
             v-model:effort="effort"
             :disabled="isRunning"
+            :is-lens-running="isLensRunning"
             :focus-chip="focusChip"
             @autorun="runner.send"
             @focus="scrollToLatest"
@@ -89,9 +90,11 @@ import { useAgentStatusRotation } from './composables/useAgentStatusRotation';
 import { usePanelVisibility } from './composables/usePanelVisibility';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useReviewStore } from '@/stores/review';
 
 const config = useConfigStore();
 const repositoryStore = useCurrentRepository();
+const reviewStore = useReviewStore();
 const { xlAndUp } = useDisplay();
 
 const inputEl = ref<{ focus: () => void } | null>(null);
@@ -157,6 +160,10 @@ function scrollToLatest() {
   nextTick(() => messageListEl.value?.scrollToBottom());
 }
 
+// Mutual exclusion with the review Lens: while it analyzes the content,
+// Renoir must not edit it mid-scan, so sending is blocked
+const isLensRunning = computed(() => reviewStore.isAnyRunning);
+
 const runner = useAgentRunner({
   repositoryId,
   sessionId,
@@ -164,6 +171,7 @@ const runner = useAgentRunner({
   mode,
   effort,
   focusPayload,
+  isBlocked: isLensRunning,
   onScroll: scrollToLatest,
   onRunStart: startStatus,
   onRunEnd: stopStatus,
