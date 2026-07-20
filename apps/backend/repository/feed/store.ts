@@ -25,8 +25,8 @@ const keyOf = (user: FeedUser) => String(user.id);
 // active-context list, creating the user record on first call.
 async function addContext(user: FeedUser, context: UserActivityContext) {
   const record = await findOrCreate(user);
-  const contexts = [...record!.contexts, context as StoredUserActivityContext];
-  return store.set(keyOf(user), { ...record!, contexts });
+  const contexts = [...record.contexts, context as StoredUserActivityContext];
+  return store.set(keyOf(user), { ...record, contexts });
 }
 
 // Removes any of the user's stored contexts matching the predicate;
@@ -54,15 +54,17 @@ async function getActiveUsers() {
   );
 }
 
-async function findOrCreate(
-  user: FeedUser,
-): Promise<FeedPresenceRecord | undefined> {
-  const hasKey = await store.has(keyOf(user));
-  if (!hasKey) {
-    const connectedAt = new Date().toISOString();
-    await store.set(keyOf(user), { ...user, connectedAt, contexts: [] });
-  }
-  return store.get(keyOf(user));
+// Returns the caller's presence record, creating it on first contact.
+// Returns the record directly rather than re-reading it, so a concurrent
+// removeContext (which deletes the record once empty) or a TTL expiry
+// between write and read can't surface an undefined record.
+async function findOrCreate(user: FeedUser): Promise<FeedPresenceRecord> {
+  const existing = await store.get(keyOf(user));
+  if (existing) return existing;
+  const connectedAt = new Date().toISOString();
+  const record = { ...user, connectedAt, contexts: [] };
+  await store.set(keyOf(user), record);
+  return record;
 }
 
 export { addContext, removeContext, getActiveUsers, store };

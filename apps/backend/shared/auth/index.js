@@ -7,19 +7,34 @@ import db from '../database/index.js';
 import Audience from './audience.js';
 import auth from './authenticator.js';
 import OIDCStrategy from './oidc.js';
+import { audit } from '../audit.ts';
 import { auth as config, origin } from '#config';
 
 const { User } = db;
 
+// Failed logins are audited here - the strategy is the only place that
+// sees the credential check. We log who and from where, never whether the
+// email or the password was at fault. `passReqToCallback` is on solely to
+// reach `req.ip`.
 auth.use(
   new LocalStrategy({
     usernameField: 'email',
+    passReqToCallback: true,
     session: false,
-  }, (email, password, done) => {
+  }, (req, email, password, done) => {
     return User.scope('withGroups')
       .findOne({ where: { email } })
       .then((user) => user && user.authenticate(password))
-      .then((user) => done(null, user || false))
+      .then((user) => {
+        if (!user) {
+          audit('auth:login', 'failure', {
+            strategy: 'local',
+            email,
+            ip: req.ip,
+          });
+        }
+        return done(null, user || false);
+      })
       .error((err) => done(err, false));
   }),
 );
@@ -76,13 +91,26 @@ function verifyJWT(payload, done) {
     .error((err) => done(err, false));
 }
 
+// OIDC logins are audited here (both outcomes) - the identity provider
+// callback is the only step that knows whether sign-in succeeded.
 function verifyOIDC(tokenSet, profile, done) {
   return findOrCreateOIDCUser(profile)
     .then((user) => {
       user.authData = { tokenSet };
+      audit('auth:login', 'success', {
+        strategy: 'oidc',
+        userId: user.id,
+        email: user.email,
+      });
       done(null, user);
     })
-    .catch((err) => done(Object.assign(err, { email: profile.email }), false));
+    .catch((err) => {
+      audit('auth:login', 'failure', {
+        strategy: 'oidc',
+        email: profile.email,
+      });
+      done(Object.assign(err, { email: profile.email }), false);
+    });
 }
 
 function extractJwtFromCookie(req) {
