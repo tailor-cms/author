@@ -12,11 +12,14 @@ import SeedClient from '../../../api/SeedClient';
 // The entities of the bundled ARTICLE collection schema.
 export const ENTITY = collectionSeed.entities;
 
+// Fixed so the repository switcher renders a stable label for Percy.
+const COLLECTION_NAME = 'Visual test collection';
+
 // Reset, create an empty ARTICLE collection repository and land on its
 // structure page. Returns the repository plus a ready CollectionView.
 export async function toCollection(page: Page) {
   await SeedClient.resetDatabase();
-  const repository = await toEmptyCollection(page);
+  const repository = await toEmptyCollection(page, COLLECTION_NAME);
   const collection = new CollectionView(page, repository.id);
   return { repository, collection };
 }
