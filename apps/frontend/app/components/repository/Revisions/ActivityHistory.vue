@@ -219,7 +219,7 @@ onBeforeUnmount(() =>
 }
 
 .history-day-header {
-  background: rgb(var(--v-theme-surface-container-low));
+  background: rgb(var(--v-theme-surface-canvas));
   position: sticky;
   top: 0;
   z-index: 1;
