@@ -4507,6 +4507,79 @@
         ],
         "additionalProperties": false
       },
+      "UserGroupWithCounts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 250,
+            "description": "Display name (2..250 chars; unique across groups)."
+          },
+          "logoUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+          },
+          "memberCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of members in the group."
+          },
+          "repositoryCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of repositories shared with the group."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "logoUrl",
+          "memberCount",
+          "repositoryCount"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroupListResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "A user group decorated with member and repository counts.",
+              "$ref": "#/components/schemas/UserGroupWithCounts"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
       "UserGroup": {
         "type": "object",
         "properties": {
@@ -4539,30 +4612,6 @@
           "id",
           "name",
           "logoUrl"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroupListResult": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "description": "A workspace user group; repositories are shared with groups.",
-              "$ref": "#/components/schemas/UserGroup"
-            },
-            "description": "Page of rows."
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Total rows matching the query (ignoring pagination)."
-          }
-        },
-        "required": [
-          "items",
-          "total"
         ],
         "additionalProperties": false
       },

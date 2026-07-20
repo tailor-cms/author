@@ -1,64 +1,78 @@
 <template>
-  <div class="text-left">
+  <div class="installed-elements text-left">
     <VTextField
       v-model.trim="search"
-      prepend-inner-icon="mdi-magnify"
       bg-color="transparent"
+      class="element-search mb-4"
       density="comfortable"
-      label="Search"
       max-width="300"
-      rounded="pill"
+      placeholder="Search elements..."
+      prepend-inner-icon="mdi-magnify"
+      rounded="xl"
       variant="solo-filled"
       clearable
       flat
+      hide-details
     />
-    <VList
-      :opened="Object.keys(filteredRegistry)"
-      bg-color="transparent"
-      class="pa-0"
+    <VCard
+      v-for="(elements, group) in filteredRegistry"
+      :key="group"
+      class="bg-surface-sunken mb-4"
       rounded="lg"
-      nav
+      elevation="0"
     >
-      <VListGroup
-        v-for="(elements, group) in filteredRegistry"
-        :key="group"
-        :value="group"
-      >
-        <template #activator="{ props: activatorProps }">
-          <VListItem
-            v-bind="activatorProps"
-            :title="startCase(group)"
-            class="pa-0 px-4"
-          />
-        </template>
-        <VAlert
-          v-if="!elements.length"
-          class="ma-4"
-          icon="mdi-information-outline"
-          text="No elements found!"
-          variant="tonal"
-        />
-        <VListItem
+      <VCardItem class="py-3 px-4">
+        <VCardTitle class="text-title-medium d-flex align-center ga-2">
+          {{ startCase(group) }}
+          <VChip :text="`${elements.length}`" density="comfortable" size="small" />
+        </VCardTitle>
+      </VCardItem>
+      <VAlert
+        v-if="!elements.length"
+        class="ma-4 mt-0"
+        icon="mdi-information-outline"
+        text="No elements found!"
+        variant="tonal"
+      />
+      <VRow v-else class="pa-4 pt-0" density="compact">
+        <VCol
           v-for="{ name, ui, version, position, ai } in elements"
-          v-else
           :key="position"
-          :prepend-icon="ui.icon || DEFAULT_ICON"
-          :subtitle="`Version ${version}`"
-          :title="name"
-          class="pa-0 px-8"
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
         >
-          <template v-if="ai" #append>
-            <VChip
-              text="AI Powered"
-              size="x-small"
-              color="secondary"
-              prepend-icon="mdi-creation"
-              rounded
-            />
-          </template>
-        </VListItem>
-      </VListGroup>
-    </VList>
+          <VCard
+            class="pa-3 h-100"
+            color="surface-raised"
+            rounded="lg"
+            elevation="1"
+          >
+            <div class="d-flex align-center ga-3">
+              <VAvatar color="surface-container-highest" size="36">
+                <VIcon :icon="ui.icon || DEFAULT_ICON" size="20" />
+              </VAvatar>
+              <div class="overflow-hidden">
+                <div class="text-body-medium text-truncate">{{ name }}</div>
+                <div class="text-label-small text-medium-emphasis">
+                  Version {{ version }}
+                </div>
+              </div>
+              <VSpacer />
+              <VIcon
+                v-if="ai"
+                v-tooltip:bottom="{ text: 'AI Powered', openDelay: 500 }"
+                aria-label="AI Powered"
+                color="tertiary"
+                icon="mdi-creation"
+                size="18"
+              />
+            </div>
+          </VCard>
+        </VCol>
+      </VRow>
+    </VCard>
   </div>
 </template>
 

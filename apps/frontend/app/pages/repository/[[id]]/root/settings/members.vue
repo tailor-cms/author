@@ -23,63 +23,105 @@
               />
             </template>
           </VHover>
-          <VMenu location="bottom end">
-            <template #activator="{ props: menuProps }">
-              <VBtn
-                v-bind="menuProps"
-                :text="activeSortLabel"
-                append-icon="mdi-chevron-down"
-                class="sort-btn"
-                prepend-icon="mdi-sort-variant"
-                rounded="lg"
-                size="small"
-                variant="text"
-              />
-            </template>
-            <VList density="compact" nav>
-              <VListSubheader>Sort by</VListSubheader>
-              <VListItem
-                v-for="option in USER_SORT_OPTIONS"
-                :key="`${option.key}-${option.order}`"
-                :active="isActiveSort(option)"
-                :prepend-icon="isActiveSort(option) ? 'mdi-check' : 'mdi-blank'"
-                :title="option.title"
-                @click="sort = { key: option.key, order: option.order }"
-              />
-            </VList>
-          </VMenu>
+          <VBtn
+            v-tooltip:top="{
+              text: sortOrder === 'desc' ? 'Name (Z–A)' : 'Name (A–Z)',
+              openDelay: 500,
+            }"
+            :icon="sortIcon"
+            aria-label="Toggle sort order"
+            class="text-medium-emphasis"
+            size="small"
+            variant="text"
+            @click="toggleSort"
+          />
           <VSpacer />
           <AddUserDialog :roles="roles" />
         </div>
-        <UserList :roles="roles" :users="filteredUsers" />
+        <template v-if="!isLoading">
+          <TailorEmptyState
+            v-if="!users.length"
+            icon="mdi-account-multiple-outline"
+            text="No users assigned to this repository yet."
+            title="No members"
+          />
+          <VDataIterator
+            v-else
+            v-model:page="page"
+            :items="users"
+            :items-per-page="ITEMS_PER_PAGE"
+            :search="search"
+            :filter-keys="FILTER_KEYS"
+            :sort-by="[{ key: 'label', order: sortOrder }]"
+          >
+            <template #default="{ items }">
+              <VList
+                bg-color="transparent"
+                class="member-list pa-0 overflow-visible"
+              >
+                <MemberRow
+                  v-for="{ raw: user } in items"
+                  :key="user.id"
+                  :img-url="user.imgUrl"
+                  :role="user.repositoryRole"
+                  :roles="roles"
+                  :subtitle="user.fullName ? user.email : ''"
+                  :title="user.label"
+                  @update:role="upsertUser(user.email, $event as RepositoryRole)"
+                  @remove:member="remove(user)"
+                />
+              </VList>
+            </template>
+            <template #no-data>
+              <TailorEmptyState
+                icon="mdi-magnify"
+                text="No members match your search."
+                title="No matches"
+              />
+            </template>
+            <template #footer="{ page: currentPage, pageCount, itemsCount }">
+              <div
+                v-if="itemsCount"
+                class="d-flex align-center justify-space-between mt-2 px-1"
+              >
+                <span class="text-body-medium">
+                  Showing {{ (currentPage - 1) * ITEMS_PER_PAGE + 1 }}
+                  –{{ Math.min(currentPage * ITEMS_PER_PAGE, itemsCount) }}
+                  of {{ itemsCount }}
+                </span>
+                <VPagination
+                  v-if="pageCount > 1"
+                  v-model="page"
+                  :length="pageCount"
+                  :total-visible="7"
+                  density="comfortable"
+                  rounded
+                />
+              </div>
+            </template>
+          </VDataIterator>
+        </template>
       </VContainer>
     </VMain>
   </VLayout>
 </template>
 
 <script lang="ts" setup>
-import { map, orderBy } from 'lodash-es';
+import { map } from 'lodash-es';
 import { role, type RepositoryRole } from '@tailor-cms/interfaces/role';
 import { storeToRefs } from 'pinia';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
 
 import AddUserDialog from
   '@/components/repository/Settings/UserManagement/AddUserDialog.vue';
-import UserList from
-  '@/components/repository/Settings/UserManagement/UserList.vue';
+import MemberRow from '@/components/common/MemberRow.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface Role {
   title: string;
   value: RepositoryRole;
   description?: string;
-}
-
-type SortOrder = 'asc' | 'desc';
-interface SortOption {
-  key: string;
-  order: SortOrder;
-  title: string;
 }
 
 const ROLE_DESCRIPTIONS = {
@@ -89,26 +131,25 @@ const ROLE_DESCRIPTIONS = {
     repository.`,
 };
 
-const USER_SORT_OPTIONS: SortOption[] = [
-  { key: 'label', order: 'asc', title: 'Name (A–Z)' },
-  { key: 'label', order: 'desc', title: 'Name (Z–A)' },
-  { key: 'repositoryRole', order: 'asc', title: 'Role' },
-];
+const ITEMS_PER_PAGE = 10;
+const FILTER_KEYS = ['label', 'email'];
 
 definePageMeta({
   name: 'repository-settings-members',
 });
 
 const store = useCurrentRepository();
+const notify = useNotification();
 const { users } = storeToRefs(store);
 
-onMounted(() => store.getUsers());
-
+const isLoading = ref(true);
+const page = ref(1);
 const search = ref('');
-const sort = ref<{ key: string; order: SortOrder }>({
-  key: USER_SORT_OPTIONS[0]!.key,
-  order: USER_SORT_OPTIONS[0]!.order,
-});
+const sortOrder = ref<'asc' | 'desc'>('asc');
+
+const toggleSort = () => {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+};
 
 const roles = computed<Role[]>(() =>
   map(role.repository, (value) => ({
@@ -118,24 +159,38 @@ const roles = computed<Role[]>(() =>
   })),
 );
 
-const isActiveSort = (option: SortOption) =>
-  sort.value.key === option.key && sort.value.order === option.order;
-
-const activeSortLabel = computed(
-  () => USER_SORT_OPTIONS.find(isActiveSort)?.title ?? 'Sort',
+const sortIcon = computed(() => sortOrder.value === 'desc'
+  ? 'mdi-sort-alphabetical-descending'
+  : 'mdi-sort-alphabetical-ascending',
 );
 
-const matchesSearch = (haystack: string) => {
-  const term = search.value.trim().toLowerCase();
-  if (!term) return true;
-  return haystack.toLowerCase().includes(term);
+watch([search, sortOrder], () => {
+  page.value = 1;
+});
+
+const upsertUser = async (email: string, newRole: RepositoryRole) => {
+  await store.upsertUser(email, newRole);
+  await notify('User updated');
 };
 
-const filteredUsers = computed(() => {
-  const list = users.value.filter((u) =>
-    matchesSearch(`${u.label ?? ''} ${u.email ?? ''} ${u.fullName ?? ''}`),
-  );
-  return orderBy(list, [sort.value.key], [sort.value.order]);
+const removeUser = async (userId: number) => {
+  await store.removeUser(userId);
+};
+
+const remove = (user: { id: number; email: string }) => {
+  const showConfirmationModal = useConfirmationDialog();
+  showConfirmationModal({
+    title: 'Remove user',
+    color: 'error',
+    message: `Are you sure you want to remove user "${user.email}" \
+from this repository?`,
+    action: () => removeUser(user.id),
+  });
+};
+
+onMounted(async () => {
+  await store.getUsers();
+  isLoading.value = false;
 });
 </script>
 
@@ -155,14 +210,6 @@ const filteredUsers = computed(() => {
 
   :deep(.v-field__outline) {
     display: none;
-  }
-}
-
-.sort-btn {
-  opacity: 0.85;
-
-  &:hover {
-    opacity: 1;
   }
 }
 </style>

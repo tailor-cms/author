@@ -119,8 +119,7 @@ test.describe('Default user role, added to a User Group as Admin,', () => {
   test('should not be able to access group actions', async ({ page }) => {
     const groupManagement = await GroupManagement.visit(page);
     const groupEntry = await groupManagement.getEntryByName('Test');
-    await expect(groupEntry.editBtn).not.toBeVisible();
-    await expect(groupEntry.removeBtn).not.toBeVisible();
+    await expect(groupEntry.actionsBtn).not.toBeVisible();
   });
 
   test('should be able to assign user to a group', async ({ page }) => {
