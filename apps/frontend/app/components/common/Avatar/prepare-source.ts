@@ -1,20 +1,10 @@
 import Compressor from 'compressorjs';
 
-const toBase64 = (blob: Blob): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.readAsDataURL(blob);
-    reader.onload = () => resolve(reader.result as string);
-    reader.onerror = (error) => reject(error);
-  });
-};
-
 const compressWithLibrary = (file: File, size: number): Promise<Blob> => {
   return new Promise((resolve, reject) => {
     new Compressor(file, {
-      width: size,
-      height: size,
-      resize: 'cover',
+      maxWidth: size,
+      maxHeight: size,
       mimeType: 'image/jpeg',
       success: (result) => resolve(result),
       error: reject,
@@ -40,21 +30,15 @@ const drawToCanvas = async (file: File, size: number): Promise<Blob> => {
     } catch {
       throw new Error('Failed to load the selected image.');
     }
-    const canvas = new OffscreenCanvas(size, size);
+    const scale = Math.min(1, size / Math.max(image.width, image.height));
+    const width = Math.round(image.width * scale);
+    const height = Math.round(image.height * scale);
+    const canvas = new OffscreenCanvas(width, height);
     const context = canvas.getContext('2d');
     if (!context) {
       throw new Error('Image resizing is not supported in this browser.');
     }
-    const scale = Math.max(size / image.width, size / image.height);
-    const drawWidth = image.width * scale;
-    const drawHeight = image.height * scale;
-    context.drawImage(
-      image,
-      (size - drawWidth) / 2,
-      (size - drawHeight) / 2,
-      drawWidth,
-      drawHeight,
-    );
+    context.drawImage(image, 0, 0, width, height);
     return await canvas.convertToBlob({ type: 'image/jpeg', quality: 0.8 });
   } finally {
     URL.revokeObjectURL(objectUrl);
@@ -62,13 +46,13 @@ const drawToCanvas = async (file: File, size: number): Promise<Blob> => {
 };
 
 /**
- * Resizes/crops an image file to a square JPEG data URL. Tries
- * compressorjs first, since it also corrects EXIF orientation, but falls
- * back to a direct canvas draw whenever compressorjs bails out and hands
- * back the untouched original (its `result` is then the same object
- * reference as `file`).
+ * Prepares a picked image for the cropper as a normalized JPEG object URL
+ * capped to `size`. Tries compressorjs first, since it also corrects EXIF
+ * orientation, but falls back to a direct canvas draw whenever compressorjs
+ * bails out and hands back the untouched original (its `result` is then the
+ * same object reference as `file`). Callers must revoke the returned URL.
  */
-export async function resizeAvatarImage(
+export async function prepareCropSource(
   file: File,
   size: number,
 ): Promise<string> {
@@ -79,5 +63,5 @@ export async function resizeAvatarImage(
   } catch {
     blob = await drawToCanvas(file, size);
   }
-  return toBase64(blob);
+  return URL.createObjectURL(blob);
 }
