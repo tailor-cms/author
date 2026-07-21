@@ -94,6 +94,7 @@
             :has-folders="showSubfolders"
             :total="assetStore.total"
             :view-mode="viewMode"
+            @clear:filters="resetFilters"
             @delete="(asset: Asset) => confirmDelete([asset.id])"
             @deindex="onDeindex"
             @download="downloadAsset"
