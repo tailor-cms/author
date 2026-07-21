@@ -12,9 +12,12 @@
       </div>
       <TailorEmptyState
         v-if="!sortedItems.length"
+        :action-text="search ? 'Clear search' : undefined"
+        :prepend-action-icon="search ? 'mdi-close' : undefined"
         icon="mdi-magnify"
-        title="No matches found."
-        text="Try adjusting your search."
+        text="No items match your search."
+        title="No matches"
+        @click:action="search = ''"
       />
       <VList v-else bg-color="transparent" class="collection-list pa-0">
         <CollectionItem
@@ -36,15 +39,12 @@ import CollectionSortMenu from '@/components/repository/Outline/CollectionSortMe
 import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
-const props = defineProps<{
-  search: string;
-}>();
-
+const search = defineModel<string>('search', { required: true });
 const selectedEntity = defineModel<string>('selectedEntity', { default: '' });
 
 const { entities, hasMultipleEntities } = useCollectionEntities();
 const { sort, sortedItems, hasActivities } = useCollectionList(
-  () => props.search,
+  () => search.value,
   selectedEntity,
 );
 </script>

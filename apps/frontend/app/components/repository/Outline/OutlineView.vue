@@ -36,9 +36,12 @@
     </div>
     <TailorEmptyState
       v-if="!filteredActivities.length"
+      action-text="Clear search"
       icon="mdi-magnify"
-      title="No matches found."
-      text="Try adjusting your search."
+      prepend-action-icon="mdi-close"
+      text="No activities match your search."
+      title="No matches"
+      @click:action="search = ''"
     />
   </div>
 </template>
@@ -56,7 +59,7 @@ import StructureEmptyState
 import { useCurrentRepository } from '@/stores/current-repository';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
-const props = defineProps<{ search: string }>();
+const search = defineModel<string>('search', { required: true });
 defineEmits<{ show: [activity: StoreActivity] }>();
 
 const repositoryStore = useCurrentRepository();
@@ -68,8 +71,8 @@ const reorder = useOutlineReorder();
 const hasActivities = computed(() => !!rootActivities.value.length);
 
 const filteredActivities = computed(() => {
-  if (!props.search) return outlineActivities.value;
-  const regex = new RegExp(props.search.trim(), 'i');
+  if (!search.value) return outlineActivities.value;
+  const regex = new RegExp(search.value.trim(), 'i');
   return outlineActivities.value.filter(({ shortId, data: { name } }) => {
     return regex.test(shortId) || regex.test(name as string);
   });
