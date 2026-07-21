@@ -72,7 +72,7 @@
           />
         </template>
         <TailorEmptyState
-          v-else
+          v-else-if="hasActiveFilters"
           action-text="Clear filters"
           class="mt-4"
           icon="mdi-magnify"
@@ -80,6 +80,13 @@
           text="No activities match the current filters."
           title="No matches"
           @click:action="resetFilters"
+        />
+        <TailorEmptyState
+          v-else
+          class="mt-4"
+          icon="mdi-clipboard-text-outline"
+          text="Add content in the outline to start tracking its progress."
+          title="No activities yet"
         />
       </VContainer>
     </VMain>
@@ -142,10 +149,14 @@ const view = useLocalStorage<'board' | 'list' | 'table'>(
   'board',
 );
 
+const isSearchActive = computed(() => {
+  const { search } = filters;
+  return Boolean(search && search.length > SEARCH_LENGTH_THRESHOLD);
+});
+
 const filteredActivities = computed(() => {
-  const { assigneeIds, search, status, priority, type } = filters;
+  const { assigneeIds, status, priority, type } = filters;
   const { recentOnly, unpublishedOnly } = filters;
-  const searchFilterEnabled = search && search.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
     status.length && filterByStatus,
@@ -157,9 +168,19 @@ const filteredActivities = computed(() => {
   return activities.value.filter(
     (activity) =>
       (!statusFilters.length || overEvery(statusFilters)(activity.currentStatus)) &&
-      (!searchFilterEnabled || filterBySearch(activity)) &&
+      (!isSearchActive.value || filterBySearch(activity)) &&
       (!type.length || type.includes(activity.type)) &&
       (!unpublishedOnly || activityUtils.isChanged(activity)),
+  );
+});
+
+const hasActiveFilters = computed(() => {
+  const { status, priority, type, assigneeIds } = filters;
+  const { recentOnly, unpublishedOnly } = filters;
+  return Boolean(
+    isSearchActive.value
+      || status.length || priority.length || type.length
+      || assigneeIds.length || recentOnly || unpublishedOnly,
   );
 });
 

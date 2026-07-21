@@ -17,6 +17,7 @@ export class Workflow {
   readonly boardViewBtn: Locator;
   readonly listViewBtn: Locator;
   readonly tableViewBtn: Locator;
+  readonly emptyState: Locator;
   readonly board: WorkflowBoard;
   readonly list: WorkflowList;
   readonly table: WorkflowTable;
@@ -34,6 +35,7 @@ export class Workflow {
     this.boardViewBtn = this.el.getByRole('button', { name: 'Board view' });
     this.listViewBtn = this.el.getByRole('button', { name: 'List view' });
     this.tableViewBtn = this.el.getByRole('button', { name: 'Table view' });
+    this.emptyState = this.el.getByText('No activities yet');
     this.board = new WorkflowBoard(page, this.el);
     this.list = new WorkflowList(page, this.el);
     this.table = new WorkflowTable(page, this.el);
