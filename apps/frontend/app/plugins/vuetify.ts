@@ -250,6 +250,11 @@ export default defineNuxtPlugin({
         // contrast with the page (dark on light theme, light on dark theme).
         VSnackbar: { color: 'inverse-surface' },
         VTooltip: { color: 'inverse-surface' },
+        VMenu: {
+          // VList rendered inside a menu defaults to this surface; any
+          // explicit bg-color on the <v-list> in a template overrides it.
+          VList: { bgColor: 'surface-overlay' },
+        },
         VSwitch: {
           color: 'primary',
           inset: 'material',
