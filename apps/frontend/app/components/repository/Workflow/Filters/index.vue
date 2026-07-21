@@ -18,52 +18,53 @@
         hide-details
       />
     </VHover>
-    <SelectChip
-      v-model="status"
-      :items="statusOptions"
-      data-testid="workflow_statusFilter"
-      label="Status"
-    />
-    <SelectChip
-      v-model="priority"
-      :items="priorityItems"
-      data-testid="workflow_priorityFilter"
-      label="Priority"
-    />
-    <SelectChip
-      v-if="typeItems.length > 1"
-      v-model="type"
-      :items="typeItems"
-      data-testid="workflow_typeFilter"
-      label="Type"
-    />
-    <VChip
-      :aria-pressed="recentOnly"
-      :color="recentOnly ? 'tertiary' : ''"
-      :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
-      role="button"
-      rounded="lg"
-      text="Recent"
-      variant="tonal"
-      @click="recentOnly = !recentOnly"
-    />
-    <VChip
-      :aria-pressed="unpublishedOnly"
-      :color="unpublishedOnly ? 'tertiary' : ''"
-      :prepend-icon="unpublishedOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
-      role="button"
-      rounded="lg"
-      text="Unpublished"
-      variant="tonal"
-      @click="unpublishedOnly = !unpublishedOnly"
-    />
-    <AssigneeFilter
-      v-if="assigneeOptions"
-      v-model="assigneeIds"
-      :options="assigneeOptions"
-      class="ml-1"
-      data-testid="workflow_assigneeFilter"
-    />
+    <div class="d-flex align-center flex-wrap ga-2 py-2">
+      <SelectChip
+        v-model="status"
+        :items="statusOptions"
+        data-testid="workflow_statusFilter"
+        label="Status"
+      />
+      <SelectChip
+        v-model="priority"
+        :items="priorityItems"
+        data-testid="workflow_priorityFilter"
+        label="Priority"
+      />
+      <SelectChip
+        v-if="typeItems.length > 1"
+        v-model="type"
+        :items="typeItems"
+        data-testid="workflow_typeFilter"
+        label="Type"
+      />
+      <VChip
+        :aria-pressed="recentOnly"
+        :color="recentOnly ? 'tertiary' : ''"
+        :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
+        role="button"
+        rounded="lg"
+        text="Recent"
+        variant="tonal"
+        @click="recentOnly = !recentOnly"
+      />
+      <VChip
+        :aria-pressed="unpublishedOnly"
+        :color="unpublishedOnly ? 'tertiary' : ''"
+        :prepend-icon="unpublishedOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
+        role="button"
+        rounded="lg"
+        text="Unpublished"
+        variant="tonal"
+        @click="unpublishedOnly = !unpublishedOnly"
+      />
+      <AssigneeFilter
+        v-if="assigneeOptions"
+        v-model="assigneeIds"
+        :options="assigneeOptions"
+        data-testid="workflow_assigneeFilter"
+      />
+    </div>
   </div>
 </template>
 

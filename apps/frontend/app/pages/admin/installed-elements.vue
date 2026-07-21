@@ -15,7 +15,7 @@
       hide-details
     />
     <VCard
-      v-for="(elements, group) in filteredRegistry"
+      v-for="(elements, group) in visibleGroups"
       :key="group"
       class="bg-surface-sunken mb-4"
       rounded="lg"
@@ -27,14 +27,7 @@
           <VChip :text="`${elements.length}`" density="comfortable" size="small" />
         </VCardTitle>
       </VCardItem>
-      <VAlert
-        v-if="!elements.length"
-        class="ma-4 mt-0"
-        icon="mdi-information-outline"
-        text="No elements found!"
-        variant="tonal"
-      />
-      <VRow v-else class="pa-4 pt-0" density="compact">
+      <VRow class="pa-4 pt-0" density="compact">
         <VCol
           v-for="{ name, ui, version, position, ai } in elements"
           :key="position"
@@ -73,17 +66,18 @@
         </VCol>
       </VRow>
     </VCard>
+    <TailorEmptyState
+      v-if="isEmpty(visibleGroups)"
+      v-bind="emptyState"
+      @click:action="search = ''"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { startCase } from 'lodash-es';
-
-interface Registry {
-  contentElements: any[];
-  questions: any[];
-}
+import { isEmpty, partition, pickBy, startCase } from 'lodash-es';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 definePageMeta({
   name: 'installed-elements',
@@ -94,24 +88,28 @@ const DEFAULT_ICON = 'mdi-help-rhombus';
 const { $ceRegistry } = useNuxtApp() as any;
 const search = ref('');
 
-const registry = computed<Registry>(() => {
-  return $ceRegistry.all.reduce(
-    (registry: Registry, item: any) => {
-      const group = item.isQuestion ? 'questions' : 'contentElements';
-      registry[group].push(item);
-      return registry;
-    },
-    { contentElements: [], questions: [] },
+// Split the registry into groups, keep only the ones with matches.
+const visibleGroups = computed(() => {
+  const term = search.value.trim().toLowerCase();
+  const matches = $ceRegistry.all.filter(({ name }: any) =>
+    name.toLowerCase().includes(term),
   );
+  const [questions, contentElements] = partition(matches, 'isQuestion');
+  return pickBy({ contentElements, questions }, 'length');
 });
 
-const filteredRegistry = computed<Registry>(() => {
-  if (!search.value) return registry.value;
-  const cond = ({ name }: { name: string }) =>
-    name.toLowerCase().includes(search.value.toLowerCase());
-  return {
-    contentElements: registry.value.contentElements.filter(cond),
-    questions: registry.value.questions.filter(cond),
-  };
-});
+const emptyState = computed(() => search.value
+  ? {
+      actionText: 'Clear search',
+      icon: 'mdi-magnify',
+      prependActionIcon: 'mdi-close',
+      text: 'No elements match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-puzzle-outline',
+      text: 'Installed content elements will appear here.',
+      title: 'No elements installed',
+    },
+);
 </script>

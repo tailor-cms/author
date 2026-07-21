@@ -56,14 +56,7 @@
           @save="fetchUsers()"
         />
       </div>
-      <TailorEmptyState
-        v-if="!userGroupUsers.length"
-        icon="mdi-account-multiple-outline"
-        text="No users assigned to this group yet."
-        title="No members"
-      />
       <VDataIterator
-        v-else
         v-model:page="page"
         :items="userGroupUsers"
         :items-per-page="ITEMS_PER_PAGE"
@@ -90,11 +83,7 @@
           </VList>
         </template>
         <template #no-data>
-          <TailorEmptyState
-            icon="mdi-magnify"
-            text="No members match your search."
-            title="No matches"
-          />
+          <TailorEmptyState v-bind="emptyState" @click:action="search = ''" />
         </template>
         <template #footer="{ page: currentPage, pageCount, itemsCount }">
           <div
@@ -167,6 +156,21 @@ const sortOrder = ref<'asc' | 'desc'>('asc');
 const sortIcon = computed(() => sortOrder.value === 'desc'
   ? 'mdi-sort-alphabetical-descending'
   : 'mdi-sort-alphabetical-ascending',
+);
+
+const emptyState = computed(() => search.value
+  ? {
+      actionText: 'Clear search',
+      prependActionIcon: 'mdi-close',
+      icon: 'mdi-magnify',
+      text: 'No members match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-account-multiple-outline',
+      text: 'No users assigned to this group yet.',
+      title: 'No members',
+    },
 );
 
 const toggleSort = () => {

@@ -245,12 +245,16 @@ export default defineNuxtPlugin({
       components,
       directives,
       defaults: {
-        VMenu: { VList: { class: 'bg-surface-overlay' } },
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).
         VSnackbar: { color: 'inverse-surface' },
         VTooltip: { color: 'inverse-surface' },
+        VMenu: {
+          // VList rendered inside a menu defaults to this surface; any
+          // explicit bg-color on the <v-list> in a template overrides it.
+          VList: { bgColor: 'surface-overlay' },
+        },
         VSwitch: {
           color: 'primary',
           inset: 'material',

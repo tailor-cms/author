@@ -35,16 +35,9 @@
     />
     <TailorEmptyState
       v-if="!filteredSchemas.length"
-      :icon="
-        debouncedSearch ? 'mdi-file-search-outline' : 'mdi-file-tree-outline'
-      "
-      :text="
-        debouncedSearch
-          ? `No schemas match “${debouncedSearch}”.`
-          : 'Installed schemas will appear here.'
-      "
-      :title="debouncedSearch ? 'No matches' : 'No schemas installed'"
+      v-bind="emptyState"
       class="mt-4"
+      @click:action="search = ''"
     />
   </div>
 </template>
@@ -58,7 +51,6 @@ import type {
 } from '@tailor-cms/interfaces/schema';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 import { createId as cuid } from '@paralleldrive/cuid2';
-import { refDebounced } from '@vueuse/core';
 import { map, without, xor } from 'lodash-es';
 
 import SchemaCard from '@/components/admin/SchemaCard/index.vue';
@@ -70,7 +62,6 @@ definePageMeta({
 });
 
 const search = ref('');
-const debouncedSearch = refDebounced(search, 150);
 const config = useConfigStore();
 const expanded = ref<string[]>([]);
 
@@ -119,7 +110,7 @@ const filterTree = (items: TreeItem[], term: string): TreeItem[] =>
   });
 
 const filteredSchemas = computed(() => {
-  const term = debouncedSearch.value.toLowerCase();
+  const term = search.value.toLowerCase();
   if (!term) return schemas.value;
   return schemas.value.flatMap((schema) => {
     if (schema.label.toLowerCase().includes(term)) return [schema];
@@ -131,10 +122,10 @@ const filteredSchemas = computed(() => {
 // A collapsed card would hide its own search hits; force cards open
 // while a query is active.
 const isExpanded = (label: string) =>
-  !!debouncedSearch.value || expanded.value.includes(label);
+  !!search.value || expanded.value.includes(label);
 
 const toggle = (label: string) => {
-  if (debouncedSearch.value) return;
+  if (search.value) return;
   expanded.value = xor(expanded.value, [label]);
 };
 
@@ -146,6 +137,21 @@ const toggleAll = () => {
   if (isAllExpanded.value) return (expanded.value = []);
   expanded.value = map(schemas.value, 'label');
 };
+
+const emptyState = computed(() => search.value
+  ? {
+      actionText: 'Clear search',
+      prependActionIcon: 'mdi-close',
+      icon: 'mdi-magnify',
+      text: 'No schemas match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-file-tree-outline',
+      text: 'Installed schemas will appear here.',
+      title: 'No schemas installed',
+    },
+);
 </script>
 
 <style lang="scss" scoped>
