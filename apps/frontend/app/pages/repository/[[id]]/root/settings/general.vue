@@ -5,10 +5,13 @@
         <div class="d-flex align-center mb-4">
           <VSpacer />
           <VBtn
+            :color="showSuccess ? 'success' : 'tertiary'"
             :loading="isPublishing"
-            color="primary"
-            prepend-icon="mdi-cloud-upload-outline"
-            text="Publish info"
+            :prepend-icon="
+              showSuccess ? 'mdi-check-circle-outline' : 'mdi-cloud-upload-outline'
+            "
+            :text="showSuccess ? 'Published' : 'Publish info'"
+            min-width="140"
             variant="flat"
             @click="publish"
           />
@@ -43,10 +46,13 @@
 </template>
 
 <script lang="ts" setup>
-import { cloneDeep, find } from 'lodash-es';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
-import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { cloneDeep, find } from 'lodash-es';
+import { refAutoReset } from '@vueuse/core';
+import { useForm } from 'vee-validate';
+import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
+import pMinDelay from 'p-min-delay';
 
 import { api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
@@ -69,13 +75,31 @@ provide('$storageService', storageService);
 
 const notify = useNotification();
 
+const { errors } = useForm();
+
+const MIN_PUBLISH_MS = 2000;
 const isPublishing = ref(false);
+// Briefly flash a success check on the Publish
+const showSuccess = refAutoReset(false, 2000);
 
 const repository = computed(
   () => currentRepositoryStore.repository as Repository,
 );
+
 const metadata = computed(() =>
   $schemaService.getRepositoryMetadata(repository.value),
+);
+
+// Gate publish on this page's own fields only. Plugin-injected fields (e.g.
+// i18n's *_i18n) also register in the form but are empty for untranslated
+// languages - a valid state that must not block publishing.
+const ownFieldKeys = computed(() => [
+  'name',
+  'description',
+  ...metadata.value.map((it: Metadata) => it.key),
+]);
+const hasBlockingErrors = computed(() =>
+  ownFieldKeys.value.some((key) => errors.value[key]),
 );
 
 // Construct entity data for plugin hooks
@@ -145,16 +169,32 @@ const updateMeta = async (
   }
 
   await repositoryStore.update(repoData);
-  notify('Saved', { immediate: true });
+  notify('Saved');
 };
 
 const publish = async () => {
+  if (hasBlockingErrors.value) {
+    notify('Please fix the highlighted errors before publishing', {
+      color: 'error',
+    });
+    return;
+  }
   isPublishing.value = true;
-  await api.repository.publishMeta({
-    params: { repositoryId: repository.value!.id },
-  });
-  isPublishing.value = false;
-  notify('Info successfully published', { immediate: true });
+  try {
+    // Hold the spinner a minimum time so fast publishes don't just flicker.
+    await pMinDelay(
+      api.repository.publishMeta({
+        params: { repositoryId: repository.value!.id },
+      }),
+      MIN_PUBLISH_MS,
+    );
+    notify('Info successfully published');
+    showSuccess.value = true;
+  } catch {
+    notify('We couldn\'t publish the info', { color: 'error' });
+  } finally {
+    isPublishing.value = false;
+  }
 };
 </script>
 

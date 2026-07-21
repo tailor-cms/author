@@ -13,9 +13,9 @@ export async function createRepository() {
 }
 
 // Create a blank repository and navigate to its (empty) asset library.
-export async function toAssetLibrary(page: Page) {
+export async function toAssetLibrary(page: Page, name?: string) {
   await SeedClient.resetDatabase();
-  const repository = await createCleanRepository();
+  const repository = await createCleanRepository(name);
   await page.goto(`/repository/${repository.id}/root/assets`);
   await page.waitForLoadState('networkidle');
   return { repositoryId: repository.id as number, lib: new AssetLibrary(page) };
@@ -25,8 +25,9 @@ export async function toAssetLibrary(page: Page) {
 export async function toSeededAssetLibrary(
   page: Page,
   seed: (repositoryId: number) => Promise<any>,
+  name?: string,
 ) {
-  const { repositoryId, lib } = await toAssetLibrary(page);
+  const { repositoryId, lib } = await toAssetLibrary(page, name);
   await seed(repositoryId);
   await page.reload({ waitUntil: 'networkidle' });
   await lib.waitForLoad();
@@ -35,9 +36,9 @@ export async function toSeededAssetLibrary(
 
 // Create a blank repository with a single empty module, then select it so the
 // structure sidebar shows an unset `thumbnail` File meta.
-export async function toFileMetaInput(page: Page) {
+export async function toFileMetaInput(page: Page, name?: string) {
   await SeedClient.resetDatabase();
-  const repository = await createCleanRepository();
+  const repository = await createCleanRepository(name);
   await page.goto(`/repository/${repository.id}/root/structure`);
   await page.waitForLoadState('networkidle');
   const outline = new ActivityOutline(page);

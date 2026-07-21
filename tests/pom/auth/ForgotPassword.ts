@@ -8,11 +8,23 @@ export class ForgotPassword {
   readonly page: Page;
   readonly emailInput: Locator;
   readonly submitBtn: Locator;
+  readonly successAlert: Locator;
+  readonly errorAlert: Locator;
+  readonly backToSignInBtn: Locator;
+  readonly retryBtn: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.emailInput = page.getByLabel('Email');
     this.submitBtn = page.getByRole('button', { name: 'Send reset email' });
+    this.successAlert = page
+      .getByRole('alert')
+      .filter({ hasText: 'Check your inbox' });
+    this.errorAlert = page
+      .getByRole('alert')
+      .filter({ hasText: 'Something went wrong' });
+    this.backToSignInBtn = page.getByRole('link', { name: 'Back to sign in' });
+    this.retryBtn = page.getByRole('button', { name: 'Retry' });
   }
 
   visit() {
@@ -21,6 +33,11 @@ export class ForgotPassword {
 
   fillEmail(email: string) {
     return this.emailInput.fill(email);
+  }
+
+  async submit(email: string) {
+    await this.fillEmail(email);
+    await this.submitBtn.click();
   }
 
   async requestPasswordReset(email: string) {

@@ -3,6 +3,7 @@
   vuejs-accessibility/no-static-element-interactions -->
 <template>
   <div
+    ref="rootEl"
     :class="[
       element.diffChange,
       {
@@ -90,7 +91,10 @@
         <div class="pt-4 text-title-small">Component is not available!</div>
       </VSheet>
     </template>
-    <div v-if="!props.isDisabled" class="element-actions ga-1">
+    <div
+      v-if="!props.isDisabled"
+      :class="['element-actions', { comfortable: isComfortable }]"
+    >
       <div
         v-if="element.isLinkedCopy"
         :class="{ 'is-visible': isHighlighted || element.isLinkedCopy }"
@@ -115,7 +119,10 @@
       </div>
       <div
         v-if="showDiscussion"
-        :class="{ 'is-visible': isHighlighted || hasComments }"
+        :class="{
+          'is-visible': isHighlighted || hasComments,
+          'pinned-first': hasComments,
+        }"
       >
         <ElementLinkedDiscussion
           v-if="props.element.isLinkedCopy"
@@ -130,9 +137,6 @@
           :user="currentUser"
           @open="focus"
         />
-      </div>
-      <div v-if="showAI" :class="{ 'is-visible': isHighlighted }">
-        <ElementGeneration @generate="generateContent" />
       </div>
       <div :class="{ 'is-visible': isHighlighted }">
         <VBtn
@@ -170,6 +174,14 @@
 </template>
 
 <script lang="ts" setup>
+import type {
+  ContentElement,
+  ElementSourceInfo,
+} from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import type { Meta } from '@tailor-cms/interfaces/common';
+import type { User } from '@tailor-cms/interfaces/user';
 import {
   computed,
   inject,
@@ -178,23 +190,15 @@ import {
   provide,
   ref,
 } from 'vue';
-import type {
-  ContentElement,
-  ElementSourceInfo,
-} from '@tailor-cms/interfaces/content-element';
-import type { Activity } from '@tailor-cms/interfaces/activity';
+import { useResizeObserver } from '@vueuse/core';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
-import { cloneDeep } from 'lodash-es';
-import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { getElementId } from '@tailor-cms/utils';
-import type { Meta } from '@tailor-cms/interfaces/common';
-import type { User } from '@tailor-cms/interfaces/user';
 
 import ActiveUsers from './ActiveUsers.vue';
 import CircularProgress from './CircularProgress.vue';
 import DiffChip from './DiffChip.vue';
 import ElementDiscussion from './ElementDiscussion.vue';
-import ElementGeneration from './ElementGeneration.vue';
 import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
 import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
 import ElementSourceUsages from './ElementSourceUsages.vue';
@@ -255,6 +259,7 @@ const isFocused = ref(false);
 const isSaving = ref(false);
 const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
+const rootEl = ref<HTMLElement | null>(null);
 
 const id = computed(() => getElementId(props.element));
 const manifest = computed(() => ceRegistry.getByEntity(props.element));
@@ -264,9 +269,6 @@ const isHighlighted = computed(() => isFocused.value || props.isHovered);
 const hasComments = computed(() => !!props.element.comments?.length);
 const showDiff = computed(() => editorState?.showDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
-const showAI = computed(
-  () => !props.element.embedded && !!doTheMagic && manifest.value?.ai,
-);
 
 // Linked element state
 const isElementEntryPoint = ref(true);
@@ -279,6 +281,17 @@ const sourceUsages = ref<ElementSourceInfo[] | null>(null);
 const showSourceUsages = computed(
   () => !props.element.isLinkedCopy && !props.element.embedded,
 );
+
+// The action column relaxes its vertical spacing once the host
+// element is tall enough.
+const COMFORTABLE_MIN_HEIGHT = 130;
+const isComfortable = ref(false);
+useResizeObserver(rootEl, ([entry]) => {
+  if (!entry) return;
+  const height = entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height;
+  const comfortable = height >= COMFORTABLE_MIN_HEIGHT;
+  if (comfortable !== isComfortable.value) isComfortable.value = comfortable;
+});
 
 const onSelect = (e: any) => {
   if (!props.isDisabled && !showDiff.value && !e.component) {
@@ -293,6 +306,9 @@ const focus = () => {
 };
 
 const onSave = (data: ContentElement['data']) => {
+  // Editors re-emit `save` on blur even when nothing changed; skip persisting
+  // (and its "saved" toast) when the payload matches the stored data.
+  if (isEqual(data, props.element.data)) return;
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',
@@ -502,6 +518,7 @@ onMounted(() => {
 .element-actions {
   display: flex;
   flex-direction: column;
+  gap: 0.125rem;
   position: absolute;
   top: -0.0625rem;
   right: -2.5rem;
@@ -510,7 +527,8 @@ onMounted(() => {
   padding-left: 0.75rem;
 
   > * {
-    min-height: 1.75rem;
+    flex-shrink: 0;
+    min-height: 1.5rem;
     opacity: 0;
     transition: opacity 0.1s linear;
   }
@@ -518,6 +536,26 @@ onMounted(() => {
   > .is-visible {
     opacity: 1;
     transition: opacity 0.5s linear;
+  }
+
+  // With comments the icon stays visible while the row isn't hovered, so
+  // pin it to the top instead of leaving it below hidden hover-only actions.
+  > .pinned-first {
+    order: -1;
+  }
+
+  // More of vertical spacing when the host element has room; compact hosts
+  // keep the tight stack.
+  &.comfortable {
+    gap: 0.625rem;
+  }
+
+  :deep(.v-btn--icon.v-btn--size-x-small) {
+    --v-btn-height: 0.875rem;
+  }
+
+  :deep(.v-btn--size-x-small .v-icon) {
+    font-size: 1.25rem;
   }
 }
 

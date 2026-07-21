@@ -22,7 +22,7 @@ test('Asset library - populated list', async ({ page }) => {
 });
 
 test('Asset library - empty state', async ({ page }) => {
-  const { lib } = await toAssetLibrary(page);
+  const { lib } = await toAssetLibrary(page, REPOSITORY_NAME);
   await lib.waitForLoad();
   await percySnapshot(page, 'Asset library - empty state');
 });

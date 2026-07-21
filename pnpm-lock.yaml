@@ -153,6 +153,9 @@ importers:
       boxen:
         specifier: ^8.0.1
         version: 8.0.1
+      chalk:
+        specifier: ^5.6.2
+        version: 5.6.2
       cheerio:
         specifier: 1.2.0
         version: 1.2.0
@@ -297,6 +300,9 @@ importers:
       promise-queue:
         specifier: ^2.2.5
         version: 2.2.5
+      qrcode-terminal:
+        specifier: ^0.12.0
+        version: 0.12.0
       qs:
         specifier: ^6.15.2
         version: 6.15.2
@@ -400,6 +406,9 @@ importers:
       '@types/node':
         specifier: ^25.9.1
         version: 25.9.1
+      '@types/qrcode-terminal':
+        specifier: ^0.12.2
+        version: 0.12.2
       '@types/qs':
         specifier: ^6.15.1
         version: 6.15.1
@@ -523,9 +532,6 @@ importers:
       pluralize-esm:
         specifier: ^9.0.5
         version: 9.0.5
-      promise-queue:
-        specifier: ^2.2.5
-        version: 2.2.5
       url-join:
         specifier: ^5.0.0
         version: 5.0.0
@@ -563,9 +569,6 @@ importers:
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
-      '@types/promise-queue':
-        specifier: ^2.2.3
-        version: 2.2.3
       autoprefixer:
         specifier: ^10.5.0
         version: 10.5.0(postcss@8.5.15)
@@ -788,11 +791,11 @@ importers:
         specifier: ^0.0.1
         version: 0.0.1
       '@tailor-cms/ce-single-choice-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-single-choice-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-table-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.34(typescript@6.0.3))
@@ -4808,18 +4811,18 @@ packages:
     resolution: {integrity: sha512-ipy/mRU/bPk+XLMbnZLOlfZ29FsSEZ3VPZpxT5u7tWr3N3QXLpMeTqqs0ktk7xe6UeTFWERhmu/IjKql+8a5PQ==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-single-choice-edit@2.0.0':
-    resolution: {integrity: sha512-5FW2S/alAyAPecDsF/ZVsCOR0hjinMS0tdb2iNrgYVWesb9sySYgnTR5wIq4JljFR2ghPLs4MAKun0OOAMjYNA==}
+  '@tailor-cms/ce-single-choice-edit@2.0.1':
+    resolution: {integrity: sha512-W+Z0uoadB6bnxijeKjRyE70o3m6RaDwwB+fnjy45crpkJ7GqVVoa2aoo7ASLTwfrZ2vXzSYL+LO9AeHfiRz/0g==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-single-choice-manifest@2.0.0':
-    resolution: {integrity: sha512-IkZnHudfx8pFkx+JITgNrsIdZMgmoCM1jTyQjQByYBr+rRF27sXAMmBsZw54mIkbk+4E5HBjIMLRPWRmntEKew==}
+  '@tailor-cms/ce-single-choice-manifest@2.0.1':
+    resolution: {integrity: sha512-tCIgrHoJQ+rJa/Pbi7j6qIlSlF3zmE9Kx+pUhLsHkz1785rArdeOPVrHoxx1ogZjgmqMPEZh4+qo4MTF7xcYTA==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-single-choice-server@2.0.0':
-    resolution: {integrity: sha512-LxYN3z8uOl9M6+YjjxU0HMQnlAumlsbvO9MXrMy0lVGxqHdKfgTOdyF6DSoxzqJRRuFh+6sa5fH+Zfh/vRHHlA==}
+  '@tailor-cms/ce-single-choice-server@2.0.1':
+    resolution: {integrity: sha512-Gqt3R+48zKFTGfJWYDqrMSGGJbhMf/bKaglwVe0hcMG93dZUz7cQYVNpqSWEelsEhnD8RoZCvBJolNR7tnx0iA==}
 
   '@tailor-cms/ce-table-edit@2.0.0':
     resolution: {integrity: sha512-+vRz0EhxDCFDNus+4S6u2ed0CPyCR4QqO+mN/IAzjh6wks202k21AF21cKUbWusSs88eX1N3XGiC5txyWZK53w==}
@@ -5187,8 +5190,8 @@ packages:
   '@types/pluralize@0.0.33':
     resolution: {integrity: sha512-JOqsl+ZoCpP4e8TDke9W79FDcSgPAR0l6pixx2JHkhnRjvShyYiAYw2LVsnA7K08Y6DeOnaU6ujmENO4os/cYg==}
 
-  '@types/promise-queue@2.2.3':
-    resolution: {integrity: sha512-CuEQpGSYKvHr3SQ7C7WkluLg9CFjVORbn8YFRsQ5u6mqGbZVfSOv03ic9t95HtZuMchnlNqnIsQGFOpxqdhjTQ==}
+  '@types/qrcode-terminal@0.12.2':
+    resolution: {integrity: sha512-v+RcIEJ+Uhd6ygSQ0u5YYY7ZM+la7GgPbs0V/7l/kFs2uO4S8BcIUEMoP7za4DNIqNnUD5npf0A/7kBhrCKG5Q==}
 
   '@types/qs@6.15.1':
     resolution: {integrity: sha512-GZHUBZR9hckSUhrxmp1nG6NwdpM9fCunJwyThLW1X3AyHgd9IlHb6VANpQQqDr2o/qQp6McZ3y/IA2rVzKzSbw==}
@@ -9690,6 +9693,10 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  qrcode-terminal@0.12.0:
+    resolution: {integrity: sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==}
+    hasBin: true
+
   qs@6.15.2:
     resolution: {integrity: sha512-Rzq0KEyX/w/tEybncDgdkZrJgVUsUMk3xjh3t5bv3S1HTAtg+uOYt72+ZfwiQwKdysThkTBdL/rTi6HDmX9Ddw==}
     engines: {node: '>=0.6'}
@@ -13254,7 +13261,7 @@ snapshots:
       perfect-debounce: 2.1.0
       pkg-types: 2.3.1
       scule: 1.3.0
-      semver: 7.8.1
+      semver: 7.8.5
       srvx: 0.11.16
       std-env: 4.1.0
       tinyclip: 0.1.12
@@ -13288,7 +13295,7 @@ snapshots:
       magicast: 0.5.3
       pathe: 2.0.3
       pkg-types: 2.3.1
-      semver: 7.8.1
+      semver: 7.8.5
 
   '@nuxt/devtools@3.2.4(vite@7.3.3(@types/node@25.9.1)(jiti@2.7.0)(sass@1.100.0)(terser@5.48.0)(tsx@4.22.4)(yaml@2.9.0))(vue@3.5.34(typescript@6.0.3))':
     dependencies:
@@ -13315,7 +13322,7 @@ snapshots:
       pathe: 2.0.3
       perfect-debounce: 2.1.0
       pkg-types: 2.3.1
-      semver: 7.8.1
+      semver: 7.8.5
       simple-git: 3.36.0
       sirv: 3.0.2
       structured-clone-es: 2.0.0
@@ -13414,7 +13421,7 @@ snapshots:
       pkg-types: 2.3.1
       rc9: 3.0.1
       scule: 1.3.0
-      semver: 7.8.1
+      semver: 7.8.5
       tinyglobby: 0.2.16
       ufo: 1.6.4
       unctx: 2.5.0
@@ -15263,21 +15270,21 @@ snapshots:
       '@tailor-cms/ce-sequence-manifest': 0.0.1
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-single-choice-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-single-choice-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-single-choice-manifest@2.0.0':
+  '@tailor-cms/ce-single-choice-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       uuid: 14.0.0
 
-  '@tailor-cms/ce-single-choice-server@2.0.0':
+  '@tailor-cms/ce-single-choice-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-single-choice-manifest': 2.0.0
+      '@tailor-cms/ce-single-choice-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
@@ -15688,7 +15695,7 @@ snapshots:
 
   '@types/pluralize@0.0.33': {}
 
-  '@types/promise-queue@2.2.3': {}
+  '@types/qrcode-terminal@0.12.2': {}
 
   '@types/qs@6.15.1': {}
 
@@ -15796,7 +15803,7 @@ snapshots:
       '@typescript-eslint/visitor-keys': 8.59.4
       debug: 4.4.3
       minimatch: 10.2.5
-      semver: 7.8.1
+      semver: 7.8.5
       tinyglobby: 0.2.16
       ts-api-utils: 2.5.0(typescript@6.0.3)
       typescript: 6.0.3
@@ -19559,7 +19566,7 @@ snapshots:
       rollup: 4.60.4
       rollup-plugin-visualizer: 7.0.1(rollup@4.60.4)
       scule: 1.3.0
-      semver: 7.8.1
+      semver: 7.8.5
       serve-placeholder: 2.0.2
       serve-static: 2.2.1
       source-map: 0.7.6
@@ -21043,6 +21050,8 @@ snapshots:
   punycode@1.3.2: {}
 
   punycode@2.3.1: {}
+
+  qrcode-terminal@0.12.0: {}
 
   qs@6.15.2:
     dependencies:

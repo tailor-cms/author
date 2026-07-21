@@ -15,6 +15,10 @@ interface UseAgentRunnerOptions {
   mode: Ref<AgentMode>;
   effort: Ref<ReasoningEffortLiteral>;
   focusPayload: Ref<unknown>;
+  // External gate (e.g. a Lens review analyzing the content); while true,
+  // send() rejects so the agent can't mutate content another AI run is
+  // reading.
+  isBlocked?: Ref<boolean>;
   onScroll: () => void;
   onRunStart: () => void;
   onRunEnd: () => void;
@@ -103,7 +107,8 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
     displayLabel?: string,
   ): Promise<SendResult> {
     const text = message.trim();
-    if (!text || isRunning.value || !opts.repositoryId.value) {
+    const isBlocked = opts.isBlocked?.value;
+    if (!text || isRunning.value || isBlocked || !opts.repositoryId.value) {
       return { cancelled: true };
     }
 

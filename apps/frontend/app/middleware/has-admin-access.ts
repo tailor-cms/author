@@ -13,10 +13,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (to.path !== '/') {
     const notify = useNotification();
     onNuxtReady(() =>
-      notify('You do not have access to this page.', {
-        color: 'error',
-        immediate: true,
-      }),
+      notify('You do not have access to this page.', { color: 'error' }),
     );
     return navigateTo('/');
   }

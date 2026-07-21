@@ -1,15 +1,16 @@
 <template>
   <div class="user-management">
-    <div class="d-flex ga-3 mb-6 align-end">
+    <div class="d-flex align-center ga-4 mb-4">
       <VTextField
         v-model="filter"
         bg-color="transparent"
+        class="user-search"
         data-testid="search-users"
         density="comfortable"
-        label="Search"
         max-width="300"
+        placeholder="Search users..."
         prepend-inner-icon="mdi-magnify"
-        rounded="pill"
+        rounded="xl"
         variant="solo-filled"
         clearable
         flat
@@ -17,17 +18,18 @@
       />
       <VSwitch
         v-model="showArchiveToggle"
-        label="Include Archived"
-        hide-details
+        class="flex-grow-0"
         density="comfortable"
+        label="Include archived"
+        hide-details
       />
       <VSpacer />
       <VBtn
-        prepend-icon="mdi-account-multiple-plus"
         color="primary"
+        prepend-icon="mdi-plus"
         text="Add user"
         variant="flat"
-        @click.stop="showUserDialog"
+        @click="showUserDialog()"
       />
     </div>
     <VDataTableServer
@@ -38,55 +40,74 @@
       :items-per-page-options="[10, 25, 50, 100]"
       :loading="isLoading"
       :page="dataTable.page"
+      :row-props="rowProps"
       :sort-by="dataTable.sortBy"
-      class="mt-4 rounded-xl"
+      class="bg-surface-raised rounded-lg text-left elevation-1"
       item-value="id"
       must-sort
       @update:options="fetch"
       @update:sort-by="($event) => (dataTable.sortBy = $event)"
     >
-      <template #item="{ item }">
-        <tr :key="item.id" class="user-entry">
-          <td class="text-no-wrap text-left">
-            <VAvatar :image="item?.imgUrl" size="36" variant="tonal" />
-          </td>
-          <td class="user-entry-email text-no-wrap text-left">
-            {{ item.email }}
-          </td>
-          <td class="user-entry-first-name text-truncate text-left">
-            {{ item.firstName || '/' }}
-          </td>
-          <td class="user-entry-last-name text-truncate text-left">
-            {{ item.lastName || '/' }}
-          </td>
-          <td class="user-entry-role text-no-wrap text-left">
-            {{ item.role }}
-          </td>
-          <td class="user-entry-created-at text-no-wrap text-left">
-            {{ formatDate(item.createdAt, 'MM/dd/yy HH:mm') }}
-          </td>
-          <td class="user-entry-actions text-no-wrap text-center">
-            <VBtn
-              aria-label="Edit user"
-              class="mr-1"
-              density="comfortable"
-              icon="mdi-square-edit-outline"
-              size="small"
-              variant="text"
-              @click="showUserDialog(item)"
-            />
-            <VBtn
-              :aria-label="item.deletedAt ? 'Restore user' : 'Archive user'"
-              :disabled="currentUser?.id === item?.id"
-              :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
-              :label="item.deletedAt ? 'Restore user' : 'Archive user'"
-              density="comfortable"
-              size="small"
-              variant="text"
-              @click="archiveOrRestore(item)"
-            />
-          </td>
-        </tr>
+      <template #[`item.avatar`]="{ item }">
+        <VAvatar :image="item?.imgUrl" size="32" variant="tonal" />
+      </template>
+      <template #[`item.email`]="{ item }">
+        <div class="d-flex align-center ga-2 text-no-wrap">
+          {{ item.email }}
+          <VChip
+            v-if="item.deletedAt"
+            density="comfortable"
+            size="small"
+            text="Archived"
+            variant="tonal"
+          />
+        </div>
+      </template>
+      <template #[`item.firstName`]="{ item }">
+        <span :class="{ 'text-medium-emphasis': !item.firstName }">
+          {{ item.firstName || '—' }}
+        </span>
+      </template>
+      <template #[`item.lastName`]="{ item }">
+        <span :class="{ 'text-medium-emphasis': !item.lastName }">
+          {{ item.lastName || '—' }}
+        </span>
+      </template>
+      <template #[`item.role`]="{ item }">
+        {{ item.role }}
+      </template>
+      <template #[`item.createdAt`]="{ item }">
+        <span class="text-no-wrap">
+          {{ formatDate(item.createdAt, 'MM/dd/yy HH:mm') }}
+        </span>
+      </template>
+      <template #[`item.actions`]="{ item }">
+        <span class="text-no-wrap">
+          <VBtn
+            v-tooltip:bottom="{ text: 'Edit user', openDelay: 500 }"
+            aria-label="Edit user"
+            class="mr-1"
+            density="comfortable"
+            icon="mdi-square-edit-outline"
+            size="small"
+            variant="text"
+            @click="showUserDialog(item)"
+          />
+          <VBtn
+            v-tooltip:bottom="{
+              text: item.deletedAt ? 'Restore user' : 'Archive user',
+              openDelay: 500,
+            }"
+            :aria-label="item.deletedAt ? 'Restore user' : 'Archive user'"
+            :disabled="currentUser?.id === item?.id"
+            :icon="`mdi-account-${item.deletedAt ? 'convert' : 'off'}`"
+            color="error"
+            density="comfortable"
+            size="small"
+            variant="text"
+            @click="archiveOrRestore(item)"
+          />
+        </span>
       </template>
     </VDataTableServer>
     <UserDialog
@@ -127,13 +148,17 @@ const defaultPage = () => ({
 });
 
 const headers = [
-  { title: 'User', sortable: false },
+  { title: 'User', value: 'avatar', sortable: false },
   { title: 'Email', value: 'email', sortable: true },
-  { title: 'First Name', value: 'firstName', sortable: true },
-  { title: 'Last Name', value: 'lastName', sortable: true },
+  { title: 'First name', value: 'firstName', sortable: true },
+  { title: 'Last name', value: 'lastName', sortable: true },
   { title: 'Role', value: 'role', sortable: true },
-  { title: 'Date Created', value: 'createdAt', sortable: true },
-  { title: 'Actions', value: 'email', sortable: false },
+  { title: 'Date created', value: 'createdAt', sortable: true },
+  {
+    value: 'actions',
+    sortable: false,
+    align: 'end' as const,
+  },
 ];
 
 const actions = {
@@ -152,6 +177,10 @@ const editedUser = ref<User | null>(null);
 const showArchiveToggle = ref(false);
 
 const currentUser = computed(() => authStore.user);
+
+const rowProps = ({ item }: { item: User }) => ({
+  class: ['user-entry', item.deletedAt && 'user-entry--archived'],
+});
 
 const showUserDialog = (user: User | null = null) => {
   isUserDialogVisible.value = true;
@@ -182,6 +211,7 @@ const archiveOrRestore = (user: any) => {
   const confirmation = {
     title: `${humanize(action)} user`,
     message: `Are you sure you want to ${action} user "${user.email}"?`,
+    color: 'error',
     action: () => actions[action](user).then(() => fetch()),
   };
   showDialog(confirmation);
@@ -197,7 +227,7 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
-td.text-truncate {
-  max-width: 7.25rem;
+:deep(tbody) tr.user-entry--archived td:not(:last-child) {
+  opacity: 0.6;
 }
 </style>

@@ -222,7 +222,7 @@ const deleteActivity = () => {
     action: async () => {
       try {
         await activityStore.remove(activity.id);
-        notify(`The ${label} has been deleted`, { immediate: true });
+        notify(`The ${label} has been deleted`);
         focusNearestActivity();
       } catch {
         notify(`We couldn't delete the ${label}`, { color: 'error' });

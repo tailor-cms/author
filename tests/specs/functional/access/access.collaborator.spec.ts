@@ -123,8 +123,7 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
   test('should not be able to access group actions', async ({ page }) => {
     const groupManagement = await GroupManagement.visit(page);
     const groupEntry = await groupManagement.getEntryByName('Test');
-    await expect(groupEntry.editBtn).not.toBeVisible();
-    await expect(groupEntry.removeBtn).not.toBeVisible();
+    await expect(groupEntry.actionsBtn).not.toBeVisible();
   });
 
   test('should be able to assign user to a group', async ({ page }) => {
@@ -370,8 +369,9 @@ test.describe('Group admin opening a group they do not administer', () => {
   }) => {
     const groupManagement = await GroupManagement.visit(page);
     const entry = await groupManagement.getEntryByName('Group B');
-    await entry.el.getByRole('link', { name: 'Group B' }).click();
+    // The whole card navigates to the group detail page
+    await entry.el.click();
     await expect(page).toHaveURL(/admin\/user-groups\/?$/);
-    await expect(groupManagement.groupTable).toBeVisible();
+    await expect(groupManagement.groupGrid).toBeVisible();
   });
 });

@@ -19,6 +19,7 @@
           :asset="asset"
           :is-active="asset.id === activeAssetId"
           :is-selected="selected.has(asset.id)"
+          :is-selection-active="hasSelection"
           :show-folder="isFiltered"
           @preview="emit('preview', $event)"
           @toggle="emit('select:toggle', $event)"
@@ -41,6 +42,7 @@
           :compact="compact"
           :is-active="asset.id === activeAssetId"
           :is-selected="selected.has(asset.id)"
+          :is-selection-active="hasSelection"
           :show-folder="isFiltered"
           @preview="emit('preview', $event)"
           @toggle="emit('select:toggle', $event)"
@@ -130,6 +132,8 @@ const isFiltered = computed(
   () => props.selectedCategory !== CATEGORY_ALL || Boolean(props.search.trim()),
 );
 
+const hasSelection = computed(() => props.selected.size > 0);
+
 const showLoading = computed(
   () => !props.assets.length && (props.isFetching || !props.foldersLoaded),
 );
@@ -173,7 +177,7 @@ const emptyStateText = computed(() => {
 <style lang="scss" scoped>
 .asset-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 0.75rem;
 }
 </style>

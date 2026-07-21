@@ -115,7 +115,7 @@ export function useCollectionItemDeletion() {
       action: async () => {
         try {
           await activityStore.remove(item.id);
-          notify(`The ${label} has been deleted`, { immediate: true });
+          notify(`The ${label} has been deleted`);
           onDeleted?.();
         } catch {
           const failure =

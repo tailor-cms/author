@@ -1,5 +1,5 @@
 <template>
-  <VSheet
+  <VCard
     ref="rootEl"
     :class="{ selected: isSelected }"
     class="list-item text-left"
@@ -38,7 +38,7 @@
       </div>
       <PublishingBadge :activity="activity" />
     </div>
-  </VSheet>
+  </VCard>
 </template>
 
 <script lang="ts" setup>
