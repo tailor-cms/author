@@ -53,21 +53,33 @@
             />
           </VBtnToggle>
         </div>
-        <WorkflowBoard
-          v-if="view === 'board'"
-          :activities="filteredActivities"
-          :statuses="visibleStatuses"
-          class="mt-4 flex-grow-1"
-        />
-        <WorkflowList
-          v-else-if="view === 'list'"
-          :activities="filteredActivities"
-          class="mt-4 flex-grow-1"
-        />
-        <WorkflowTable
+        <template v-if="filteredActivities.length">
+          <WorkflowBoard
+            v-if="view === 'board'"
+            :activities="filteredActivities"
+            :statuses="visibleStatuses"
+            class="mt-4 flex-grow-1"
+          />
+          <WorkflowList
+            v-else-if="view === 'list'"
+            :activities="filteredActivities"
+            class="mt-4 flex-grow-1"
+          />
+          <WorkflowTable
+            v-else
+            :activities="filteredActivities"
+            class="mt-4"
+          />
+        </template>
+        <TailorEmptyState
           v-else
-          :activities="filteredActivities"
+          action-text="Clear filters"
           class="mt-4"
+          icon="mdi-magnify"
+          prepend-action-icon="mdi-close"
+          text="No activities match the current filters."
+          title="No matches"
+          @click:action="resetFilters"
         />
       </VContainer>
     </VMain>
@@ -80,6 +92,7 @@ import { compact, orderBy, overEvery, uniqBy } from 'lodash-es';
 import { isAfter, sub } from 'date-fns';
 import type { Status, StatusConfig } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { useLocalStorage } from '@vueuse/core';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
@@ -104,7 +117,7 @@ interface Filters {
 
 definePageMeta({ name: 'progress' });
 
-const filters = reactive<Filters>({
+const createFilters = (): Filters => ({
   search: null,
   status: [],
   priority: [],
@@ -113,6 +126,9 @@ const filters = reactive<Filters>({
   recentOnly: false,
   unpublishedOnly: false,
 });
+
+const filters = reactive<Filters>(createFilters());
+const resetFilters = () => Object.assign(filters, createFilters());
 
 const store = useCurrentRepository();
 const {
