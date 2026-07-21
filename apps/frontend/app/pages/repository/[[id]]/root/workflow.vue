@@ -5,7 +5,7 @@
         class="workflow d-flex flex-column px-md-10 py-md-8"
         max-width="1400"
       >
-        <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
+        <div v-if="workflow" class="d-flex align-end ga-3 mb-4">
           <WorkflowFilters
             v-model:assignee-ids="filters.assigneeIds"
             v-model:recent-only="filters.recentOnly"
@@ -21,7 +21,7 @@
           />
           <VBtnToggle
             v-model="view"
-            class="flex-shrink-0"
+            class="view-toggle flex-shrink-0"
             color="secondary"
             density="compact"
             variant="outlined"
@@ -208,5 +208,9 @@ onMounted(() => store.getUsers());
 .workflow {
   height: 100%;
   min-height: 0;
+}
+
+.view-toggle {
+  margin: 0.375rem 0;
 }
 </style>
