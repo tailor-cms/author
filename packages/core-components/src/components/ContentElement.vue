@@ -192,7 +192,7 @@ import {
 } from 'vue';
 import { useResizeObserver } from '@vueuse/core';
 import { AiRequestType } from '@tailor-cms/interfaces/ai';
-import { cloneDeep } from 'lodash-es';
+import { cloneDeep, isEqual } from 'lodash-es';
 import { getElementId } from '@tailor-cms/utils';
 
 import ActiveUsers from './ActiveUsers.vue';
@@ -308,6 +308,9 @@ const focus = () => {
 
 const onSave = (data: ContentElement['data']) => {
   if (props.isDisabled) return;
+  // Editors re-emit `save` on blur even when nothing changed; skip persisting
+  // (and its "saved" toast) when the payload matches the stored data.
+  if (isEqual(data, props.element.data)) return;
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',

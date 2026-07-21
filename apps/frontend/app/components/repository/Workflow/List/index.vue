@@ -59,7 +59,7 @@ async function onChange(event: ChangeEvent<StoreActivity>) {
   try {
     await activityStore.saveStatus(activity.id, { position });
   } catch {
-    notify('Failed to save order', { immediate: true });
+    notify('Failed to save order');
   }
 }
 </script>

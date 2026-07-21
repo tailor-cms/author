@@ -46,9 +46,8 @@
 import { computed, useTemplateRef } from 'vue';
 import { omit } from 'lodash-es';
 import { useElementHover } from '@vueuse/core';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-
 import ActivityMenu from '~/components/common/ActivityOptions/ActivityMenu.vue';
+import type { StoreActivity } from '@/stores/activity';
 
 const props = defineProps<{
   id: number;
@@ -69,7 +68,9 @@ const listItem = useTemplateRef<HTMLButtonElement>('listItem');
 const isHovered = useElementHover(listItem);
 const isMenuOpen = ref(false);
 
-const activity = activityStore.findById(props.id) as Activity;
+const activity = computed(
+  () => activityStore.findById(props.id) as StoreActivity,
+);
 
 const prependIcon = computed(() => {
   if (!props.isGroup) return '';

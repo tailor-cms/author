@@ -51,22 +51,23 @@ export class UserGroupUserList {
 
   readonly page: Page;
   readonly el: Locator;
-  readonly userTable: Locator;
+  readonly userList: Locator;
   readonly userEntriesLocator: Locator;
   readonly addBtn: Locator;
+  readonly searchInput: Locator;
+  readonly sortToggle: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
-  readonly itemsPerPageBtn: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.user-group-users');
-    this.userTable = el.locator('.v-table');
-    this.userEntriesLocator = this.userTable.locator('.user-entry');
+    this.userList = el.locator('.member-list');
+    this.userEntriesLocator = this.userList.locator('.member-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.searchInput = el.getByPlaceholder('Search members...');
+    this.sortToggle = el.getByRole('button', { name: 'Toggle sort order' });
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });
-    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
-    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
     this.page = page;
     this.el = el;
   }
@@ -96,14 +97,6 @@ export class UserGroupUserList {
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
     await expect(entry).not.toBeVisible();
-  }
-
-  async selectItemsPerPage(value: 10 | 25 | 50 | 100 = 10) {
-    await this.itemsPerPageBtn.click();
-    await this.page
-      .locator('.v-list-item .v-list-item-title')
-      .filter({ hasText: value.toString() })
-      .click();
   }
 }
 
@@ -140,25 +133,34 @@ export class GroupDialog {
 export class GroupEntry {
   readonly page: Page;
   readonly el: Locator;
-  readonly editBtn: Locator;
-  readonly removeBtn: Locator;
+  readonly actionsBtn: Locator;
 
   constructor(page: Page, el: Locator) {
-    this.editBtn = el.getByRole('button', { name: 'Edit user group' });
-    this.removeBtn = el.getByRole('button', { name: 'Delete user group' });
+    this.actionsBtn = el.getByRole('button', { name: 'User group actions' });
     this.el = el;
     this.page = page;
   }
 
+  // Edit/delete live in the card's overflow menu
+  private async selectAction(label: 'Edit' | 'Delete') {
+    await this.actionsBtn.click();
+    const menu = this.page.locator('.v-overlay.v-menu');
+    await menu
+      .locator('.v-list-item')
+      .filter({ hasText: label })
+      .click();
+    await expect(menu).toBeHidden();
+  }
+
   async edit(name: string) {
-    await this.editBtn.click();
+    await this.selectAction('Edit');
     const dialog = new GroupDialog(this.page);
     await dialog.edit(name);
     await expect(this.el).toContainText(name);
   }
 
   async delete() {
-    await this.removeBtn.click();
+    await this.selectAction('Delete');
     await confirmAction(this.page);
   }
 }
@@ -168,23 +170,20 @@ export class GroupManagement {
   readonly page: Page;
   readonly el: Locator;
   readonly addBtn: Locator;
-  readonly groupTable: Locator;
+  readonly groupGrid: Locator;
   readonly groupEntriesLocator: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
-  readonly itemsPerPageBtn: Locator;
   readonly searchInput: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.group-management');
-    this.groupTable = el.locator('.v-table');
+    this.groupGrid = el.locator('.group-grid');
     this.addBtn = el.getByRole('button', { name: 'Add user group' });
     this.searchInput = el.getByTestId('search-user-groups').locator('input');
-    this.groupEntriesLocator = this.groupTable.locator('.group-entry');
+    this.groupEntriesLocator = this.groupGrid.getByTestId('user-group-card');
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
     this.nextPage = el.getByRole('button', { name: 'Next page' });
-    const itemsPerPage = el.locator('.v-data-table-footer__items-per-page');
-    this.itemsPerPageBtn = itemsPerPage.locator('.v-select');
     this.el = el;
     this.page = page;
   }
@@ -203,17 +202,18 @@ export class GroupManagement {
     await groupManagement.addUserGroup(name);
     const entry = await groupManagement.getEntryByName(name);
     if (options.visit) {
-      await entry.el.getByRole('link', { name }).click();
-      await expect(page.getByText(`${name} user group`)).toBeVisible();
+      // The whole card navigates to the group detail page
+      await entry.el.click();
+      await expect(page.getByRole('heading', { name })).toBeVisible();
     }
   }
 
   static async goToGroupByName(page: Page, name: string) {
     const groupManagement = await GroupManagement.visit(page);
     const entry = await groupManagement.getEntryByName(name);
-    await entry.el.getByRole('link', { name }).click();
+    await entry.el.click();
     await page.waitForLoadState('networkidle');
-    await expect(page.getByText(`${name} user group`)).toBeVisible();
+    await expect(page.getByRole('heading', { name })).toBeVisible();
   }
 
   async getEntries() {
@@ -242,13 +242,5 @@ export class GroupManagement {
     const entry = await this.getEntryByName(name);
     await entry.delete();
     await expect(entry.el).not.toBeVisible();
-  }
-
-  async selectItemsPerPage(value: 10 | 25 | 50 | 100 = 10) {
-    await this.itemsPerPageBtn.click();
-    await this.page
-      .locator('.v-list-item .v-list-item-title')
-      .filter({ hasText: value.toString() })
-      .click();
   }
 }

@@ -42,7 +42,7 @@ export class EditorToolbar {
 
   async unlink() {
     await this.unlinkBtn.click();
-    await this.toast.containsText('unlinked');
+    await this.toast.hasText('unlinked');
   }
 
   async publish() {

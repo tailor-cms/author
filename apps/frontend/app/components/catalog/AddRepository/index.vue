@@ -285,7 +285,6 @@ const createRepository = handleSubmit(async (formPayload: any) => {
       isCreate.value
         ? `A new ${schema.value!.name} has been created`
         : 'Import successful',
-      { immediate: true },
     );
     emit('created');
     hide();

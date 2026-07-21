@@ -15,7 +15,6 @@ import getVal from 'lodash/get.js';
 import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
-import sample from 'lodash/sample.js';
 
 import type {
   BrokenActivityReference,
@@ -56,7 +55,6 @@ const {
 
 const logger = createLogger('repository:svc');
 
-const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
 const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 
 // Sequelize include builder for the user attached to a revision/membership
@@ -196,12 +194,11 @@ async function resolveFileMetaUrls(repositories: any[]) {
   return byRepo;
 }
 
-// Creates a repository seeded with schema-default meta + a sampled label
-// color, then optionally shares it with the supplied user groups.
+// Creates a repository seeded with schema-default meta, then optionally
+// shares it with the supplied user groups.
 export async function create(payload: CreateInput, user: User) {
   const defaultMeta = getVal(schemaApi.getSchema(payload.schema), 'defaultMeta', {});
   const data = {
-    color: sample(DEFAULT_COLORS),
     ...defaultMeta,
     ...stripServerManaged(payload.data),
   };

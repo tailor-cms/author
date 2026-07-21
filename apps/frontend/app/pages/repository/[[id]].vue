@@ -86,7 +86,7 @@ const showDeleteConfirmation = () => {
     action: async () => {
       try {
         await repositoryStore.remove(id);
-        notify(`The ${type} has been deleted`, { immediate: true });
+        notify(`The ${type} has been deleted`);
         navigateTo('/');
       } catch {
         notify(`We couldn't delete the ${type}`, { color: 'error' });
@@ -131,7 +131,7 @@ const initialize = async (repositoryId: number) => {
       status === 403
         ? 'You do not have access to this repository.'
         : 'We could not load this repository.';
-    notify(message, { color: 'error', immediate: true });
+    notify(message, { color: 'error' });
     return navigateTo({ name: 'catalog' });
   }
   isLoading.value = false;

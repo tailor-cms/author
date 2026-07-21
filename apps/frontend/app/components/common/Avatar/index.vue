@@ -1,47 +1,39 @@
 <template>
   <div>
-    <VSpeedDial content-class="flex-column" location="right" target="#avatar">
-      <template #activator="{ props: activatorProps }">
-        <VAvatar id="avatar" :size="size" color="surface-container-low" border="lg">
-          <img v-if="imgUrl" :src="imgUrl" alt="Avatar" class="h-100 w-100" />
-          <VIcon
-            v-else
-            :icon="placeholderIcon"
-            :size="placeholderIconSize"
-            color="surface-container-highest"
-            class="placeholder"
-          />
-          <VSheet
-            v-bind="(imgUrl && !isGravatar) ? activatorProps : {}"
-            aria-label="Change avatar"
-            class="change-avatar h-100 w-100"
-            role="button"
-            @click="!(imgUrl && !isGravatar) && triggerUpload()"
-          >
-            <VIcon icon="mdi-camera" :size="cameraIconSize" />
-          </VSheet>
-        </VAvatar>
-      </template>
-      <VBtn
-        key="1"
-        aria-label="Upload avatar"
-        icon="mdi-upload"
-        for="photoInput"
-        tag="label"
-        variant="tonal"
-      />
-      <VBtn
-        v-if="!isGravatar"
-        key="2"
-        aria-label="Delete avatar"
-        color="error"
-        icon="mdi-trash-can-outline"
-        variant="tonal"
-        @click="$emit('delete')"
-      />
-    </VSpeedDial>
+    <div
+      :class="{ 'is-revealed': isRevealed }"
+      class="avatar d-inline-flex"
+      @click="isRevealed = !isRevealed"
+    >
+      <VAvatar :size="size" color="surface-container-high" border="lg">
+        <img v-if="imgUrl" :src="imgUrl" alt="Avatar" class="h-100 w-100" />
+        <VIcon
+          v-else
+          :icon="placeholderIcon"
+          :size="placeholderIconSize"
+          color="surface-raised"
+          class="placeholder"
+        />
+      </VAvatar>
+      <div class="avatar-actions d-flex align-center justify-center ga-1">
+        <VIconBtn
+          :aria-label="uploadLabel"
+          color="inverse-surface"
+          icon="mdi-upload"
+          variant="tonal"
+          @click.stop="triggerUpload"
+        />
+        <VIconBtn
+          v-if="canDelete"
+          aria-label="Delete avatar"
+          color="error"
+          icon="mdi-trash-can-outline"
+          variant="tonal"
+          @click.stop="$emit('delete')"
+        />
+      </div>
+    </div>
     <input
-      id="photoInput"
       :key="imgUrl"
       ref="fileInput"
       :accept="acceptedExtensions"
@@ -50,13 +42,42 @@
       hidden
       @change="selectPhoto"
     />
+    <TailorDialog
+      v-model="isCropOpen"
+      header-icon="mdi-crop"
+      title="Adjust avatar"
+      width="460"
+      @after-leave="cleanup"
+    >
+      <template #body>
+        <ImageCropper
+          v-if="cropSrc"
+          ref="cropper"
+          :output-size="AVATAR_SIZE"
+          :src="cropSrc"
+        />
+      </template>
+      <template #actions>
+        <VSpacer />
+        <VBtn text="Cancel" variant="text" @click="isCropOpen = false" />
+        <VBtn
+          color="primary"
+          prepend-icon="mdi-check"
+          text="Apply"
+          variant="flat"
+          @click="applyCrop"
+        />
+      </template>
+    </TailorDialog>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { IMAGE_INPUT_EXT } from '@tailor-cms/config';
+import { TailorDialog } from '@tailor-cms/core-components';
 
-import { resizeAvatarImage } from './resize-image';
+import ImageCropper from './ImageCropper.vue';
+import { prepareCropSource } from './prepare-source';
 
 export interface Props {
   imgUrl?: string;
@@ -70,23 +91,32 @@ const props = withDefaults(defineProps<Props>(), {
   size: 180,
 });
 
-// Keep the placeholder & camera icons proportional to the avatar circle.
+// Keep the placeholder icon proportional to the avatar circle.
 const placeholderIconSize = computed(() => Math.round(Number(props.size) * 0.53));
-const cameraIconSize = computed(() => Math.round(Number(props.size) * 0.27));
 
 const emit = defineEmits(['save', 'delete']);
 
 const notify = useNotification();
 
 const fileInput = ref<HTMLInputElement | null>(null);
+const cropper = ref<InstanceType<typeof ImageCropper> | null>(null);
+const isCropOpen = ref(false);
+const cropSrc = ref('');
+// Touch has no hover, so a tap toggles the actions (see the styles).
+const isRevealed = ref(false);
 
 const isGravatar = computed(() => /gravatar.com/.test(props.imgUrl));
+// Gravatars and the placeholder have nothing local to remove.
+const canDelete = computed(() => Boolean(props.imgUrl) && !isGravatar.value);
+const uploadLabel = computed(() =>
+  canDelete.value ? 'Change avatar' : 'Upload avatar',
+);
 
 const triggerUpload = () => fileInput.value?.click();
 
 const AVATAR_SIZE = 250;
-// A resized/compressed AVATAR_SIZE x AVATAR_SIZE JPEG data URL should land under
-const MAX_IMAGE_LENGTH = 300_000;
+// Cap the cropper source so large photos stay responsive to pan/zoom.
+const CROP_SOURCE_SIZE = 1200;
 
 const acceptedExtensions = IMAGE_INPUT_EXT.map((ext) => `.${ext}`).join(',');
 
@@ -102,41 +132,76 @@ const selectPhoto = async (event: Event) => {
   if (!file) return;
   if (!isSupportedImage(file)) {
     notify('That image format isn\'t supported. Please choose a different image.', {
-      immediate: true,
       color: 'error',
     });
     return;
   }
   try {
-    const imageUrl = await resizeAvatarImage(file, AVATAR_SIZE);
-    if (imageUrl.length > MAX_IMAGE_LENGTH) {
-      notify('Unable to compress that image enough, please try a different one.', {
-        immediate: true,
-        color: 'error',
-      });
-      return;
-    }
-    emit('save', imageUrl);
+    cropSrc.value = await prepareCropSource(file, CROP_SOURCE_SIZE);
+    isCropOpen.value = true;
   } catch (err: any) {
-    notify(err.message, { immediate: true, color: 'error' });
+    notify(err.message, { color: 'error' });
   }
+};
+
+const applyCrop = async () => {
+  const imageUrl = await cropper.value?.getResult();
+  isCropOpen.value = false;
+  if (imageUrl) emit('save', imageUrl);
+};
+
+const cleanup = () => {
+  if (cropSrc.value) URL.revokeObjectURL(cropSrc.value);
+  cropSrc.value = '';
 };
 </script>
 
 <style lang="scss" scoped>
-.change-avatar {
-  position: absolute;
-  opacity: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  outline: none;
-  transition: opacity 0.2s ease;
+.avatar {
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
 
-  &:hover,
-  &:focus-visible {
-    opacity: 0.7;
+  img {
+    clip-path: circle(50%);
+    transition:
+      filter 0.3s ease,
+      transform 0.3s ease;
+  }
+}
+
+.avatar-actions {
+  position: absolute;
+  inset: 0;
+  background: rgba(var(--v-theme-surface-container-lowest), 0.6);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+@mixin reveal {
+  img {
+    filter: blur(5px);
+    transform: scale(1.05);
+  }
+
+  .avatar-actions {
+    opacity: 1;
+  }
+}
+
+// Desktop reveals on hover/focus; the tap-toggle is a no-op here.
+@media (hover: hover) {
+  .avatar:hover,
+  .avatar:focus-within {
+    @include reveal;
+  }
+}
+
+// Touch has no hover, so the photo shows by default and a tap reveals the
+// actions via the is-revealed class (see the template click handler).
+@media (hover: none) {
+  .avatar.is-revealed {
+    @include reveal;
   }
 }
 </style>

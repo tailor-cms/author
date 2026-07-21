@@ -8,15 +8,6 @@ import { find, isString, get, map, transform } from 'lodash-es';
 
 import validate from './schema-validation';
 
-const LABEL_COLORS = [
-  ['#F44336', '#E91E63'],
-  ['#9C27B0', '#673AB7'],
-  ['#3F51B5', '#2196F3'],
-  ['#03A9F4', '#00BCD4'],
-  ['#009688', '#4CAF50'],
-  ['#FF9800', '#FF5722'],
-];
-
 interface ProcessOptions {
   // Registered scoring rubric ids; when provided, schema
   // `feedback.rubrics` references are validated against them
@@ -49,17 +40,6 @@ export default (schemas: Schema[] = [], options: ProcessOptions = {}) => {
 
 function processRepositoryConfig(schema: Schema) {
   schema.meta = schema.meta || [];
-  const hasColorMeta = find(schema.meta, { key: 'color' });
-  if (!hasColorMeta) {
-    schema.meta.push({
-      type: 'COLOR',
-      key: 'color',
-      label: 'Label color',
-      colors: LABEL_COLORS,
-      hideOnCreate: true,
-      validate: {},
-    });
-  }
   normalizeFileMeta(schema.meta);
   schema.defaultMeta = getMetaDefaults(schema.meta);
 }

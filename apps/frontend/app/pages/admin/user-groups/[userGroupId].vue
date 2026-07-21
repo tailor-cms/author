@@ -1,87 +1,129 @@
 <template>
   <div class="user-group-users">
-    <div class="d-flex ga-3 mb-6 align-end">
+    <div class="d-flex align-center ga-3 mb-6">
       <VBtn
-        :text="`${userGroup?.name} user group`"
-        class="mr-1"
-        prepend-icon="mdi-arrow-left"
-        size="small"
+        v-tooltip:bottom="{ text: 'Go back', openDelay: 500 }"
+        aria-label="Go back"
+        density="comfortable"
+        icon="mdi-arrow-left"
         variant="text"
         @click="router.back()"
       />
+      <UserGroupAvatar :logo-url="userGroup?.logoUrl" size="40" />
+      <div class="text-left">
+        <h1 class="text-title-large">{{ userGroup?.name }}</h1>
+      </div>
       <VSpacer />
-      <UserGroupMembershipDialog
-        :user-group-id="userGroupId"
-        @save="fetchUsers()"
+      <VBtn
+        v-if="userGroup"
+        prepend-icon="mdi-square-edit-outline"
+        text="Edit"
+        variant="text"
+        @click="isGroupDialogVisible = true"
       />
     </div>
-    <VDataTable
-      v-if="!isLoading"
-      :headers="headers"
-      :items="userGroupUsers"
-      class="mt-4 rounded-xl"
-      no-data-text="No assigned users."
-    >
-      <template #item="{ item }">
-        <tr class="user-entry">
-          <td class="text-left">
-            <UserAvatar :img-url="item.imgUrl" size="32" />
-          </td>
-          <td class="text-left user-entry-email">{{ item.email }}</td>
-          <td class="user-entry-label text-body-medium text-left text-truncate">
-            {{ item.fullName || 'N/A' }}
-          </td>
-          <td class="user-entry-role text-left">
-            <VMenu location="bottom end">
-              <template #activator="{ props: menuProps }">
-                <VBtn
-                  v-bind="menuProps"
-                  :prepend-icon="roleMeta(item.userGroupMember.role)?.icon"
-                  :text="roleLabel(item.userGroupMember.role)"
-                  append-icon="mdi-chevron-down"
-                  class="user-role-btn"
-                  rounded="lg"
-                  size="small"
-                  variant="tonal"
-                />
-              </template>
-              <VList max-width="340" nav>
-                <VListSubheader>Choose role</VListSubheader>
-                <VListItem
-                  v-for="role in roles"
-                  :key="role.value"
-                  :active="item.userGroupMember.role === role.value"
-                  :prepend-icon="role.icon"
-                  :subtitle="role.description"
-                  :title="role.title"
-                  class="role-option py-2"
-                  @click="upsertUser(item.email, role.value)"
-                >
-                  <template #append>
-                    <VIcon
-                      :icon="roleIcon(item.userGroupMember.role, role.value)"
-                      color="primary"
-                      size="small"
-                    />
-                  </template>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </td>
-          <td class="user-entry-actions">
-            <VBtn
-              aria-label="Remove user"
-              color="error"
-              density="comfortable"
-              icon="mdi-trash-can-outline"
-              size="small"
-              variant="text"
-              @click="removeUser(item.id)"
+    <VDivider class="mb-6" />
+    <template v-if="!isLoading">
+      <div class="d-flex align-center ga-3 mb-4">
+        <VTextField
+          v-model="search"
+          bg-color="transparent"
+          class="member-search"
+          density="comfortable"
+          placeholder="Search members..."
+          prepend-inner-icon="mdi-magnify"
+          rounded="xl"
+          variant="solo-filled"
+          clearable
+          flat
+          hide-details
+        />
+        <VBtn
+          v-tooltip:top="{
+            text: sortOrder === 'desc' ? 'Name (Z–A)' : 'Name (A–Z)',
+            openDelay: 500,
+          }"
+          :icon="sortIcon"
+          aria-label="Toggle sort order"
+          class="text-medium-emphasis"
+          size="small"
+          variant="text"
+          @click="toggleSort"
+        />
+        <VSpacer />
+        <UserGroupMembershipDialog
+          :user-group-id="userGroupId"
+          @save="fetchUsers()"
+        />
+      </div>
+      <TailorEmptyState
+        v-if="!userGroupUsers.length"
+        icon="mdi-account-multiple-outline"
+        text="No users assigned to this group yet."
+        title="No members"
+      />
+      <VDataIterator
+        v-else
+        v-model:page="page"
+        :items="userGroupUsers"
+        :items-per-page="ITEMS_PER_PAGE"
+        :search="search"
+        :filter-keys="FILTER_KEYS"
+        :sort-by="[{ key: 'label', order: sortOrder }]"
+      >
+        <template #default="{ items }">
+          <VList
+            bg-color="transparent"
+            class="member-list pa-0 overflow-visible"
+          >
+            <MemberRow
+              v-for="{ raw: user } in items"
+              :key="user.id"
+              :img-url="user.imgUrl"
+              :role="user.userGroupMember.role"
+              :roles="roles"
+              :subtitle="user.fullName ? user.email : ''"
+              :title="user.label"
+              @update:role="upsertUser(user.email, $event)"
+              @remove:member="removeUser(user.id)"
             />
-          </td>
-        </tr>
-      </template>
-    </VDataTable>
+          </VList>
+        </template>
+        <template #no-data>
+          <TailorEmptyState
+            icon="mdi-magnify"
+            text="No members match your search."
+            title="No matches"
+          />
+        </template>
+        <template #footer="{ page: currentPage, pageCount, itemsCount }">
+          <div
+            v-if="itemsCount"
+            class="d-flex align-center justify-space-between mt-2 px-1"
+          >
+            <span class="text-body-medium">
+              Showing {{ (currentPage - 1) * ITEMS_PER_PAGE + 1 }}
+              –{{ Math.min(currentPage * ITEMS_PER_PAGE, itemsCount) }}
+              of {{ itemsCount }}
+            </span>
+            <VPagination
+              v-if="pageCount > 1"
+              v-model="page"
+              :length="pageCount"
+              :total-visible="7"
+              density="comfortable"
+              rounded
+            />
+          </div>
+        </template>
+      </VDataIterator>
+    </template>
+    <UserGroupDialog
+      v-model:visible="isGroupDialogVisible"
+      :group-data="userGroup"
+      :user-groups="[]"
+      @updated="onGroupUpdated"
+    />
   </div>
 </template>
 
@@ -90,9 +132,13 @@ import type {
   UserGroup,
   UserGroupMemberWithUser,
 } from '@tailor-cms/interfaces/user-group';
-import { UserAvatar } from '@tailor-cms/core-components';
+
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import { api } from '@/api';
+import MemberRow from '@/components/common/MemberRow.vue';
+import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
+import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
 
 definePageMeta({
@@ -102,29 +148,34 @@ definePageMeta({
 const route = useRoute();
 const router = useRouter();
 const notify = useNotification();
-const notifyError = (message: string) =>
-  notify(message, { color: 'error', immediate: true });
+const notifyError = (message: string) => notify(message, { color: 'error' });
 
 const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
 const userGroup = ref<UserGroup | null>(null);
 const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
+const isGroupDialogVisible = ref(false);
 
 const roles = GROUP_ROLES;
 
-const headers: any = [
-  { title: 'User', key: 'avatar', sortable: false },
-  { title: 'Email', key: 'email', sortable: false },
-  { title: 'Name', key: 'fullName', sortable: false },
-  { title: 'Role', key: 'role', sortable: false },
-  { title: 'Actions', key: 'actions', sortable: false },
-];
+const ITEMS_PER_PAGE = 10;
+const FILTER_KEYS = ['label', 'email'];
+const page = ref(1);
+const search = ref('');
+const sortOrder = ref<'asc' | 'desc'>('asc');
 
-const roleMeta = (value: string) => roles.find((r) => r.value === value);
-const roleLabel = (value: string) => roleMeta(value)?.title ?? value;
+const sortIcon = computed(() => sortOrder.value === 'desc'
+  ? 'mdi-sort-alphabetical-descending'
+  : 'mdi-sort-alphabetical-ascending',
+);
 
-const roleIcon = (current: string, value: string) =>
-  current === value ? 'mdi-check-circle' : 'mdi-blank';
+const toggleSort = () => {
+  sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+};
+
+watch([search, sortOrder], () => {
+  page.value = 1;
+});
 
 async function fetchUsers() {
   userGroupUsers.value = await api.userGroup.getUsers({
@@ -142,7 +193,7 @@ async function upsertUser(email: string, role: string) {
     // A per-email failure comes back in `failed` (200), not as a throw;
     // funnel it into the same error notice
     if (failed.length) throw new Error('Role update failed');
-    notify('User updated', { immediate: true });
+    notify('User updated');
   } catch {
     notifyError('We couldn\'t update the user\'s role.');
   }
@@ -163,6 +214,12 @@ async function removeUser(userId: number) {
   };
   showDialog(confirmation);
 }
+
+const onGroupUpdated = async () => {
+  userGroup.value = await api.userGroup.get({
+    params: { id: userGroupId },
+  });
+};
 
 onBeforeMount(async () => {
   try {
@@ -185,7 +242,11 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
-:deep(.v-list-item-subtitle) {
-  -webkit-line-clamp: unset;
+.member-search {
+  max-width: 18rem;
+
+  :deep(.v-field__outline) {
+    display: none;
+  }
 }
 </style>
