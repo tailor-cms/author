@@ -1,5 +1,5 @@
 import type { Repository } from '@tailor-cms/interfaces/repository';
-import { keyBy, partition } from 'lodash-es';
+import { keyBy, partition, reject } from 'lodash-es';
 import { useDebounceFn } from '@vueuse/core';
 
 import { api } from '@/api';
@@ -54,6 +54,12 @@ export function useRepositorySwitcher() {
     }
   }
 
+  // Forget a repository from recents, dropping it from the visible list too.
+  function removeRecent(id: number) {
+    recentRepositories.remove([id]);
+    recentItems.value = reject(recentItems.value, { id });
+  }
+
   const debouncedFetch = useDebounceFn(fetch, 300);
   watch(search, (value) => {
     if (value) return debouncedFetch();
@@ -61,5 +67,13 @@ export function useRepositorySwitcher() {
     hasLoaded.value = false;
   });
 
-  return { search, items, recentItems, isLoading, hasLoaded, fetchRecent };
+  return {
+    search,
+    items,
+    recentItems,
+    isLoading,
+    hasLoaded,
+    fetchRecent,
+    removeRecent,
+  };
 }
