@@ -35,10 +35,33 @@ export class SourceContentDialog {
     await expect(this.el.locator('.v-treeview')).toBeVisible();
   }
 
+  getTreeItem(name: string) {
+    return this.el.locator('.v-treeview-item', { hasText: name });
+  }
+
   async selectActivity(name: string) {
-    const treeItem = this.el.locator('.v-treeview-item', { hasText: name });
+    const treeItem = this.getTreeItem(name);
     await expect(treeItem).toBeVisible();
     await treeItem.locator('.activity-select-checkbox').click();
+  }
+
+  async selectActivityByTitle(name: string) {
+    const treeItem = this.getTreeItem(name);
+    await expect(treeItem).toBeVisible();
+    await treeItem.locator('.title-clickable').first().click();
+  }
+
+  async expectSelectionState(
+    name: string,
+    state: 'selected' | 'included' | 'unselected',
+  ) {
+    const iconClass = {
+      selected: /mdi-checkbox-marked(?!-)/,
+      included: /mdi-checkbox-multiple-marked-outline/,
+      unselected: /mdi-checkbox-blank-outline/,
+    }[state];
+    const checkbox = this.getTreeItem(name).locator('.activity-select-checkbox');
+    await expect(checkbox).toHaveClass(iconClass);
   }
 
   async submitSelection() {

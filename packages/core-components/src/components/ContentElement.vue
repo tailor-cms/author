@@ -301,11 +301,13 @@ const onSelect = (e: any) => {
 };
 
 const focus = () => {
+  if (props.isDisabled) return;
   const { element, parent } = props;
   editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onSave = (data: ContentElement['data']) => {
+  if (props.isDisabled) return;
   // Editors re-emit `save` on blur even when nothing changed; skip persisting
   // (and its "saved" toast) when the payload matches the stored data.
   if (isEqual(data, props.element.data)) return;

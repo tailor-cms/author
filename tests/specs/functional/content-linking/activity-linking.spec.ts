@@ -84,6 +84,165 @@ test('can link a group activity via options menu', async ({ page }) => {
   await expect(reloadedGroup.linkIcon).toBeVisible();
 });
 
+test('can select a tree item by clicking its title', async ({ page }) => {
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.expectSelectionState(
+    outlineSeed.primaryPage.title,
+    'unselected',
+  );
+  await linkDialog.selectActivityByTitle(outlineSeed.primaryPage.title);
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'selected');
+});
+
+test('selecting a group visually marks its children as included', async ({
+  page,
+}) => {
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.selectActivity(outlineSeed.group.title);
+  await linkDialog.expectSelectionState(outlineSeed.group.title, 'selected');
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'included');
+});
+
+test('selecting a group after a child replaces the child selection', async ({
+  page,
+}) => {
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.selectActivity(outlineSeed.primaryPage.title);
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'selected');
+  await linkDialog.selectActivity(outlineSeed.group.title);
+  await linkDialog.expectSelectionState(outlineSeed.group.title, 'selected');
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'included');
+});
+
+test('excluding a child from a group keeps its other children selected', async ({
+  page,
+}) => {
+  const {
+    data: { repository: sourceRepo },
+  } = await SeedClient.seedTestRepository();
+  await toEmptyRepository(page);
+  const outline = new ActivityOutline(page);
+  const module = await outline.addFirstItem(outlineLevel.GROUP, 'Target Module');
+  const linkDialog = await module.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.selectActivity(outlineSeed.group.title);
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'included');
+  await linkDialog.selectActivity(outlineSeed.primaryPage.title);
+  await linkDialog.expectSelectionState(outlineSeed.group.title, 'unselected');
+  await linkDialog.expectSelectionState(outlineSeed.primaryPage.title, 'unselected');
+  await linkDialog.expectSelectionState(outlineSeed.secondaryPage.title, 'selected');
+});
+
+test('excluding a page from one module preserves another selected module', async ({
+  page,
+}) => {
+  const sourceRepo = await toEmptyRepository(page, 'Source');
+  const sourceOutline = new ActivityOutline(page);
+  const moduleA = await sourceOutline.addFirstItem(outlineLevel.GROUP, 'Module A');
+  await moduleA.addInto(outlineLevel.LEAF, 'Page A1');
+  await moduleA.addInto(outlineLevel.LEAF, 'Page A2');
+  const moduleB = await sourceOutline.addRootItem(outlineLevel.GROUP, 'Module B');
+  await moduleB.addInto(outlineLevel.LEAF, 'Page B1');
+  await toEmptyRepository(page, 'Target');
+  const targetOutline = new ActivityOutline(page);
+  const targetModule = await targetOutline.addFirstItem(
+    outlineLevel.GROUP,
+    'Target Module',
+  );
+  const linkDialog = await targetModule.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  await linkDialog.selectActivity('Module A');
+  await linkDialog.selectActivity('Module B');
+  await linkDialog.expectSelectionState('Page B1', 'included');
+  await linkDialog.selectActivity('Page A1');
+  await linkDialog.expectSelectionState('Page A1', 'unselected');
+  await linkDialog.expectSelectionState('Page A2', 'selected');
+  await linkDialog.expectSelectionState('Module B', 'selected');
+  await linkDialog.expectSelectionState('Page B1', 'included');
+  // The now explicitly-selected Page A2 must stay independently togglable
+  await linkDialog.selectActivity('Page A2');
+  await linkDialog.expectSelectionState('Page A2', 'unselected');
+  await linkDialog.expectSelectionState('Module B', 'selected');
+  await linkDialog.expectSelectionState('Page B1', 'included');
+  // Module A is now fully evacuated (neither it nor any of its pages are
+  // selected) while Module B (a different level) remains selected.
+  await linkDialog.selectActivity('Page A1');
+  await linkDialog.expectSelectionState('Page A1', 'selected');
+  await linkDialog.expectSelectionState('Module B', 'selected');
+  await linkDialog.expectSelectionState('Page B1', 'included');
+  // Re-selecting Module A (widening back from its individually-selected
+  // Page A1) must consolidate only Module A's own pages; Module B, an
+  // unrelated selection, must not be dropped in the process
+  await linkDialog.selectActivity('Module A');
+  await linkDialog.expectSelectionState('Module A', 'selected');
+  await linkDialog.expectSelectionState('Page A1', 'included');
+  await linkDialog.expectSelectionState('Page A2', 'included');
+  await linkDialog.expectSelectionState('Module B', 'selected');
+  await linkDialog.expectSelectionState('Page B1', 'included');
+});
+
+test('excluding a deeply nested page leaves the rest of the tree included', async ({
+  page,
+}) => {
+  const sourceRepo = await toEmptyRepository(page, 'Source');
+  const sourceOutline = new ActivityOutline(page);
+  // Level 1 > Level 2 > Level 3 > Level 4 > [Deep Page, Deep Sibling]
+  // Level 1 also has an unrelated branch: Level 2 Sibling, off the path
+  await sourceOutline.addFirstItem(outlineLevel.GROUP, 'Level 1');
+  const level1 = await sourceOutline.getOutlineItemByName('Level 1');
+  await level1.addInto(outlineLevel.GROUP, 'Level 2');
+  await level1.addInto(outlineLevel.GROUP, 'Level 2 Sibling');
+  const level2 = await sourceOutline.getOutlineItemByName('Level 2');
+  await level2.addInto(outlineLevel.GROUP, 'Level 3');
+  const level3 = await sourceOutline.getOutlineItemByName('Level 3');
+  await level3.addInto(outlineLevel.GROUP, 'Level 4');
+  const level4 = await sourceOutline.getOutlineItemByName('Level 4');
+  await level4.addInto(outlineLevel.LEAF, 'Deep Page');
+  await level4.addInto(outlineLevel.LEAF, 'Deep Sibling');
+  await toEmptyRepository(page, 'Target');
+  const targetOutline = new ActivityOutline(page);
+  const targetModule = await targetOutline.addFirstItem(
+    outlineLevel.GROUP,
+    'Target Module',
+  );
+  const linkDialog = await targetModule.optionsMenu.linkContentInto();
+  await linkDialog.selectRepository(sourceRepo.name);
+  // Selecting the root includes every descendant, however deep
+  await linkDialog.selectActivity('Level 1');
+  await linkDialog.expectSelectionState('Deep Page', 'included');
+  await linkDialog.expectSelectionState('Deep Sibling', 'included');
+  await linkDialog.expectSelectionState('Level 2 Sibling', 'included');
+  // Excluding a page 4 levels down must still take effect, not just when
+  // it's a direct child of the selected root
+  await linkDialog.selectActivity('Deep Page');
+  await linkDialog.expectSelectionState('Deep Page', 'unselected');
+  await linkDialog.expectSelectionState('Level 1', 'unselected');
+  // Its sibling and the unrelated branch both stay selected
+  await linkDialog.expectSelectionState('Deep Sibling', 'selected');
+  await linkDialog.expectSelectionState('Level 2 Sibling', 'selected');
+});
+
 test('can link a group activity below via options menu', async ({ page }) => {
   const {
     data: { repository: sourceRepo },
