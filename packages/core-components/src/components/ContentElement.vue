@@ -301,11 +301,13 @@ const onSelect = (e: any) => {
 };
 
 const focus = () => {
+  if (props.isDisabled) return;
   const { element, parent } = props;
   editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onSave = (data: ContentElement['data']) => {
+  if (props.isDisabled) return;
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',
