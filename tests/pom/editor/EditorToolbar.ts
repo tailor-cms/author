@@ -54,6 +54,14 @@ export class EditorToolbar {
     await this.page.waitForLoadState('networkidle');
   }
 
+  // Publishes the activity and asserts the success toast
+  async publishAndVerify() {
+    await this.publishBtn.click();
+    const dialog = this.page.locator('div[role="dialog"]');
+    await dialog.getByRole('button', { name: 'confirm' }).click();
+    await this.toast.hasText(/has been published/i);
+  }
+
   async compareWithPublished() {
     await this.compareBtn.click();
   }
