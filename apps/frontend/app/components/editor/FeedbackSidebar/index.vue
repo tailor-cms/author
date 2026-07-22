@@ -90,7 +90,7 @@
       <div class="sidebar-body px-5 pb-5 d-flex flex-column ga-3">
         <div
           v-if="reviewStore.isRunning"
-          class="d-flex flex-column align-center ga-4 pa-6 mt-8"
+          class="d-flex flex-column align-center justify-center ga-4 pa-6 flex-grow-1"
         >
           <VProgressCircular color="tertiary" size="54" width="5" indeterminate />
           <div class="text-title-small text-medium-emphasis text-center mt-4">
@@ -138,6 +138,8 @@
         </template>
         <TailorEmptyState
           v-else
+          class="flex-grow-1"
+          height="100%"
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"

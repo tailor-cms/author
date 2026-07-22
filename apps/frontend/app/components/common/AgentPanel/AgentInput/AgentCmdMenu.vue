@@ -29,7 +29,7 @@
             {{ slashQuery ? `/${slashQuery}` : 'Commands' }}
           </span>
         </div>
-        <VList class="cmd-list" nav>
+        <VList bg-color="surface" class="cmd-list" nav>
           <VListItem
             v-for="(command, i) in visibleCommands"
             :key="command.id"
