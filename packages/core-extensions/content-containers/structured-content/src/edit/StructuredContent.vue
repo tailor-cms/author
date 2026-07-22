@@ -11,7 +11,7 @@
       />
       <VBtn
         append-icon="mdi-shimmer"
-        color="tertiary"
+        color="secondary"
         size="small"
         text="Do the magic"
         variant="tonal"

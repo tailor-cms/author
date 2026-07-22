@@ -5,7 +5,7 @@
         <div class="d-flex align-center mb-4">
           <VSpacer />
           <VBtn
-            :color="showSuccess ? 'success' : 'tertiary'"
+            :color="showSuccess ? 'success' : 'secondary'"
             :loading="isPublishing"
             :prepend-icon="
               showSuccess ? 'mdi-check-circle-outline' : 'mdi-cloud-upload-outline'

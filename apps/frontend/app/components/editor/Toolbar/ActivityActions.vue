@@ -15,7 +15,7 @@
       v-tooltip:bottom="{ text: title, offset: 12 }"
       :active="active"
       :aria-label="title"
-      :color="color ?? (active ? 'tertiary' : '')"
+      :color="color ?? (active ? 'secondary' : '')"
       :disabled="disabled"
       :loading="loading"
       class="action-btn"

@@ -32,6 +32,7 @@
       <VList density="compact" min-width="180" nav>
         <VListSubheader class="text-truncate">{{ item.name }}</VListSubheader>
         <VListItem
+          append-icon="mdi-arrow-right"
           prepend-icon="mdi-account-cog"
           title="Manage"
           :to="{ name: 'user-group', params: { userGroupId: item.id } }"

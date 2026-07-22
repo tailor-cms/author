@@ -177,9 +177,9 @@ export function getRevisionColor(rev: Revision) {
       return !isEmpty(config) ? config.color : DEFAULT_COLOR;
     }
     case Entity.Repository:
-      return 'tertiary';
+      return 'secondary';
     case Entity.ContentElement:
-      return 'primary';
+      return 'tertiary';
     default:
       return DEFAULT_COLOR;
   }

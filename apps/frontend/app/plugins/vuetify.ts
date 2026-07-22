@@ -55,27 +55,25 @@ const lightTheme: ThemeDefinition = {
     'primary-container': '#A6F0C5',
     'on-primary-container': '#00210E',
 
-    // Secondary — muted jade: primary hue 157 at primary's tone (~55) but
-    // chroma ~30 (vs primary's 53), so it reads as a desaturated sibling at the
-    // same lightness. A quiet "dim primary" for supporting actions/filter chips.
-    'secondary': '#5F8E6D',
+    // Secondary — ocean (cool supporting accent)
+    'secondary': '#2F6F8F',
     'on-secondary': '#FFFFFF',
-    'secondary-container': '#BBEFC8',
-    'on-secondary-container': '#002611',
+    'secondary-container': '#C9E6F5',
+    'on-secondary-container': '#001E2E',
 
-    // Tertiary — ocean (the distinct cool accent ~hue 235; AI brand + lineage).
-    'tertiary': '#2F6F8F',
+    // Tertiary — honey gold (warm accent, used sparingly)
+    'tertiary': '#A67C00',
     'on-tertiary': '#FFFFFF',
-    'tertiary-container': '#C9E6F5',
-    'on-tertiary-container': '#001E2E',
+    'tertiary-container': '#FBE39A',
+    'on-tertiary-container': '#241A00',
 
-    // Warning — amber-orange (warmer/oranger than the old honey amber)
-    'warning': '#C57A00',
+    // Warning — orange (caution status)
+    'warning': '#B85311',
     'on-warning': '#FFFFFF',
-    'warning-container': '#FFDEB0',
-    'on-warning-container': '#2A1800',
+    'warning-container': '#FFDBC7',
+    'on-warning-container': '#331100',
 
-    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
+    // Error — crimson (critical status)
     'error': '#C8112A',
     'on-error': '#FFFFFF',
     'error-container': '#FFDADC',
@@ -124,7 +122,7 @@ const lightTheme: ThemeDefinition = {
 const darkTheme: ThemeDefinition = {
   dark: true,
   colors: {
-    // Surfaces — even MD3 tone steps (4 / 10 / 12 / 17 / 22)
+    // Surfaces — MD3 tone steps (5 / 12 / 15 / 20 / 26)
     'surface': '#15181D',
     'on-surface': '#C5CCDA',
     'surface-variant': '#454A52',
@@ -168,27 +166,26 @@ const darkTheme: ThemeDefinition = {
     'primary-container': '#00522A',
     'on-primary-container': '#8FF0B7',
 
-    // Secondary — muted jade (MD3 spec: primary hue 157, low chroma ~24).
-    // A quiet "dim primary" for supporting actions/filter chips, not a brand accent.
-    'secondary': '#AAD0B2',
-    'on-secondary': '#1A3B26',
-    'secondary-container': '#31533C',
-    'on-secondary-container': '#C5ECCD',
+    // Secondary — ocean (cool supporting accent)
+    'secondary': '#9CCAE2',
+    'on-secondary': '#003549',
+    'secondary-container': '#004F69',
+    'on-secondary-container': '#CDE6F5',
 
-    // Tertiary — ocean (the distinct cool accent ~hue 235; AI brand + lineage).
-    'tertiary': '#9CCAE2',
-    'on-tertiary': '#003549',
-    'tertiary-container': '#004F69',
-    'on-tertiary-container': '#CDE6F5',
+    // Tertiary — honey gold (warm accent, used sparingly)
+    'tertiary': '#EFC64B',
+    'on-tertiary': '#3E2E00',
+    'tertiary-container': '#574400',
+    'on-tertiary-container': '#FBE39A',
 
-    // Warning — amber-orange (warmer/oranger than the old honey amber)
-    'warning': '#FFC080',
-    'on-warning': '#452B00',
-    'warning-container': '#634300',
-    'on-warning-container': '#FFDEB0',
+    // Warning — orange (caution status)
+    'warning': '#FFA766',
+    'on-warning': '#4E2400',
+    'warning-container': '#7A3B12',
+    'on-warning-container': '#FFDBC7',
 
-    // Error — cool crimson (cleanly red, distinct from terracotta tertiary)
-    'error': '#FFB1B7',
+    // Error — crimson (critical status)
+    'error': '#FF9BA3',
     'on-error': '#680016',
     'error-container': '#91002A',
     'on-error-container': '#FFDADC',
@@ -245,12 +242,16 @@ export default defineNuxtPlugin({
       components,
       directives,
       defaults: {
-        VMenu: { VList: { class: 'bg-surface-overlay' } },
         VBtn: { color: undefined },
         // MD3 spec: snackbars/tooltips use the inverse surface so they
         // contrast with the page (dark on light theme, light on dark theme).
         VSnackbar: { color: 'inverse-surface' },
         VTooltip: { color: 'inverse-surface' },
+        VMenu: {
+          // VList rendered inside a menu defaults to this surface; any
+          // explicit bg-color on the <v-list> in a template overrides it.
+          VList: { bgColor: 'surface-overlay' },
+        },
         VSwitch: {
           color: 'primary',
           inset: 'material',

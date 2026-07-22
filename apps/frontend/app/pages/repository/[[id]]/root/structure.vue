@@ -16,12 +16,12 @@
         <BrokenReferencesAlert />
         <CollectionView
           v-if="isCollection"
+          v-model:search="filters.search"
           v-model:selected-entity="selectedEntity"
-          :search="filters.search"
         />
         <OutlineView
           v-else
-          :search="filters.search"
+          v-model:search="filters.search"
           class="mt-4"
           @show="goTo"
         />

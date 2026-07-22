@@ -5,7 +5,7 @@
         class="workflow d-flex flex-column px-md-10 py-md-8"
         max-width="1400"
       >
-        <div v-if="workflow" class="d-flex align-center ga-2 mb-4">
+        <div v-if="workflow" class="d-flex align-end ga-3 mb-4">
           <WorkflowFilters
             v-model:assignee-ids="filters.assigneeIds"
             v-model:recent-only="filters.recentOnly"
@@ -21,8 +21,8 @@
           />
           <VBtnToggle
             v-model="view"
-            class="flex-shrink-0"
-            color="secondary"
+            class="view-toggle flex-shrink-0"
+            color="tertiary"
             density="compact"
             variant="outlined"
             mandatory
@@ -53,21 +53,40 @@
             />
           </VBtnToggle>
         </div>
-        <WorkflowBoard
-          v-if="view === 'board'"
-          :activities="filteredActivities"
-          :statuses="visibleStatuses"
-          class="mt-4 flex-grow-1"
-        />
-        <WorkflowList
-          v-else-if="view === 'list'"
-          :activities="filteredActivities"
-          class="mt-4 flex-grow-1"
-        />
-        <WorkflowTable
-          v-else
-          :activities="filteredActivities"
+        <template v-if="filteredActivities.length">
+          <WorkflowBoard
+            v-if="view === 'board'"
+            :activities="filteredActivities"
+            :statuses="visibleStatuses"
+            class="mt-4 flex-grow-1"
+          />
+          <WorkflowList
+            v-else-if="view === 'list'"
+            :activities="filteredActivities"
+            class="mt-4 flex-grow-1"
+          />
+          <WorkflowTable
+            v-else
+            :activities="filteredActivities"
+            class="mt-4"
+          />
+        </template>
+        <TailorEmptyState
+          v-else-if="hasActiveFilters"
+          action-text="Clear filters"
           class="mt-4"
+          icon="mdi-magnify"
+          prepend-action-icon="mdi-close"
+          text="No activities match the current filters."
+          title="No matches"
+          @click:action="resetFilters"
+        />
+        <TailorEmptyState
+          v-else
+          class="mt-4"
+          icon="mdi-clipboard-text-outline"
+          text="Add content in the outline to start tracking its progress."
+          title="No activities yet"
         />
       </VContainer>
     </VMain>
@@ -80,6 +99,7 @@ import { compact, orderBy, overEvery, uniqBy } from 'lodash-es';
 import { isAfter, sub } from 'date-fns';
 import type { Status, StatusConfig } from '@tailor-cms/interfaces/activity';
 import { activity as activityUtils } from '@tailor-cms/utils';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 import { useLocalStorage } from '@vueuse/core';
 
 import Sidebar from '@/components/repository/Workflow/Sidebar/index.vue';
@@ -104,7 +124,7 @@ interface Filters {
 
 definePageMeta({ name: 'progress' });
 
-const filters = reactive<Filters>({
+const createFilters = (): Filters => ({
   search: null,
   status: [],
   priority: [],
@@ -113,6 +133,9 @@ const filters = reactive<Filters>({
   recentOnly: false,
   unpublishedOnly: false,
 });
+
+const filters = reactive<Filters>(createFilters());
+const resetFilters = () => Object.assign(filters, createFilters());
 
 const store = useCurrentRepository();
 const {
@@ -126,10 +149,14 @@ const view = useLocalStorage<'board' | 'list' | 'table'>(
   'board',
 );
 
+const isSearchActive = computed(() => {
+  const { search } = filters;
+  return Boolean(search && search.length > SEARCH_LENGTH_THRESHOLD);
+});
+
 const filteredActivities = computed(() => {
-  const { assigneeIds, search, status, priority, type } = filters;
+  const { assigneeIds, status, priority, type } = filters;
   const { recentOnly, unpublishedOnly } = filters;
-  const searchFilterEnabled = search && search.length > SEARCH_LENGTH_THRESHOLD;
 
   const statusFilters = compact([
     status.length && filterByStatus,
@@ -141,9 +168,19 @@ const filteredActivities = computed(() => {
   return activities.value.filter(
     (activity) =>
       (!statusFilters.length || overEvery(statusFilters)(activity.currentStatus)) &&
-      (!searchFilterEnabled || filterBySearch(activity)) &&
+      (!isSearchActive.value || filterBySearch(activity)) &&
       (!type.length || type.includes(activity.type)) &&
       (!unpublishedOnly || activityUtils.isChanged(activity)),
+  );
+});
+
+const hasActiveFilters = computed(() => {
+  const { status, priority, type, assigneeIds } = filters;
+  const { recentOnly, unpublishedOnly } = filters;
+  return Boolean(
+    isSearchActive.value
+      || status.length || priority.length || type.length
+      || assigneeIds.length || recentOnly || unpublishedOnly,
   );
 });
 
@@ -192,5 +229,9 @@ onMounted(() => store.getUsers());
 .workflow {
   height: 100%;
   min-height: 0;
+}
+
+.view-toggle {
+  margin: 0.375rem 0;
 }
 </style>

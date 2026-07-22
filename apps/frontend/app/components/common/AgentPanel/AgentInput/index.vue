@@ -149,7 +149,7 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   border-radius: 16px;
   transition: border-color 0.2s ease;
 
-  // Renoir's accent ring (tertiary -> primary): a masked overlay because a
+  // Renoir's accent ring (secondary -> primary): a masked overlay because a
   // 1px gradient ring can't be expressed via border-color. It sits exactly
   // on the border line; the sheet border goes transparent while it shows.
   &::before {
@@ -161,7 +161,7 @@ defineExpose({ focus: () => inputEl.value?.focus() });
     border-radius: inherit;
     background: linear-gradient(
       135deg,
-      rgb(var(--v-theme-tertiary)),
+      rgb(var(--v-theme-secondary)),
       rgb(var(--v-theme-primary))
     );
     -webkit-mask:
@@ -194,9 +194,9 @@ defineExpose({ focus: () => inputEl.value?.focus() });
   &.input-running::before {
     background: linear-gradient(
       90deg,
-      rgb(var(--v-theme-tertiary)),
+      rgb(var(--v-theme-secondary)),
       rgb(var(--v-theme-primary)),
-      rgb(var(--v-theme-tertiary))
+      rgb(var(--v-theme-secondary))
     );
     background-size: 200% 100%;
     animation: agent-input-ring-flow 2.5s linear infinite;

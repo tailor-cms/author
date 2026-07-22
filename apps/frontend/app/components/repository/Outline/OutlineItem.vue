@@ -34,7 +34,7 @@
             <VIcon
               v-if="activity.isLinkedCopy"
               class="linked-copy-icon mr-2"
-              color="tertiary"
+              color="secondary"
               icon="mdi-link-box"
             />
             <ActivityName :activity="activity" />

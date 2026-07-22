@@ -3,12 +3,10 @@ import type { Locator, Page } from '@playwright/test';
 export class WorkflowTable {
   readonly page: Page;
   readonly el: Locator;
-  readonly emptyState: Locator;
 
   constructor(page: Page, root: Locator) {
     this.page = page;
     this.el = root.getByRole('table');
-    this.emptyState = this.el.getByText('No data available');
   }
 
   items(name?: string) {

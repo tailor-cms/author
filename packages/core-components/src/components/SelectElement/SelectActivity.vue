@@ -21,7 +21,7 @@
       <VChip
         v-if="groupedSelection[item.id]"
         class="ml-2"
-        color="secondary"
+        color="tertiary"
         size="x-small"
         rounded
       >
@@ -30,7 +30,6 @@
       <VBtn
         v-if="item.isEditable"
         class="ml-2"
-        color="primary"
         variant="text"
         density="comfortable"
         icon="mdi-chevron-right"
