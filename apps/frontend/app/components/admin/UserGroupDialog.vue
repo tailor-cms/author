@@ -28,6 +28,7 @@
         :counter="NAME_MAX_LENGTH"
         :error-messages="errors.name"
         :messages="warning"
+        autofocus
         class="mb-3 required"
         label="Group name"
         placeholder="Enter group name..."
