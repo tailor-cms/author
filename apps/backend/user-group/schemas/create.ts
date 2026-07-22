@@ -5,7 +5,7 @@ import { UserGroup } from './entity.ts';
 export const CreateInput = z
   .object({
     name: UserGroup.shape.name,
-    logoUrl: UserGroup.shape.logoUrl.unwrap().optional(),
+    logoUrl: UserGroup.shape.logoUrl.nullish(),
   })
   .describe('Create user group payload.');
 

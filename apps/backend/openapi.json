@@ -13380,8 +13380,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -13501,8 +13516,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "additionalProperties": false,
