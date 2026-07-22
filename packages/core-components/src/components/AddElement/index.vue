@@ -67,7 +67,7 @@
             <VBtnToggle
               v-model="elementWidth"
               density="compact"
-              color="tertiary"
+              color="secondary"
               variant="outlined"
               divided
               mandatory

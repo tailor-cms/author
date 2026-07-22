@@ -315,8 +315,8 @@ defineExpose({ handleKeydown });
 .cmd-id {
   padding: 0.125rem 0.375rem;
   border-radius: 0.25rem;
-  background: rgba(var(--v-theme-secondary), 0.1);
-  color: rgb(var(--v-theme-secondary));
+  background: rgba(var(--v-theme-tertiary), 0.1);
+  color: rgb(var(--v-theme-tertiary));
   font-family: Menlo, Consolas, monospace;
   font-size: 0.75rem;
   font-weight: 600;

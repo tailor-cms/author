@@ -5,7 +5,7 @@
       :key="value"
       :text="label"
       :value="value"
-      color="tertiary"
+      color="secondary"
       role="button"
       size="small"
       rounded="pill"

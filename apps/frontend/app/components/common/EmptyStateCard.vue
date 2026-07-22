@@ -7,7 +7,7 @@
     variant="flat"
     width="230"
   >
-    <VAvatar v-if="icon" color="tertiary" size="64" variant="tonal">
+    <VAvatar v-if="icon" color="secondary" size="64" variant="tonal">
       <VIcon :icon="icon" size="x-large" />
     </VAvatar>
     <div class="text-body-large font-weight-semibold mt-4">{{ title }}</div>

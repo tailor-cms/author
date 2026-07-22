@@ -3,7 +3,7 @@
     <VCard
       v-if="isUserMessage"
       class="user-bubble ml-auto"
-      color="tertiary"
+      color="secondary"
       max-width="85%"
       rounded="lg"
       variant="tonal"
@@ -149,7 +149,7 @@ const renderedContent = computed(() => {
 
   :deep(.agent-md-inline-code) {
     padding: 0.25rem 0.375rem;
-    color: rgb(var(--v-theme-tertiary));
+    color: rgb(var(--v-theme-secondary));
     font-family: Menlo, Consolas, monospace;
     font-size: 0.6875rem;
     background: rgb(var(--v-theme-surface-canvas));
@@ -157,13 +157,13 @@ const renderedContent = computed(() => {
   }
 
   :deep(.agent-md-link) {
-    color: rgb(var(--v-theme-secondary));
+    color: rgb(var(--v-theme-tertiary));
     text-decoration: underline;
   }
 
   :deep(.agent-md-entity) {
     border-bottom: 1px dashed currentColor;
-    color: rgb(var(--v-theme-secondary));
+    color: rgb(var(--v-theme-tertiary));
     text-decoration: none;
   }
 

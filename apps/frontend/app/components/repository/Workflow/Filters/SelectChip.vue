@@ -3,7 +3,7 @@
     <template #activator="{ props: menuProps }">
       <VChip
         v-bind="{ ...menuProps, ...$attrs }"
-        :color="model.length ? 'tertiary' : ''"
+        :color="model.length ? 'secondary' : ''"
         class="pr-2"
         role="button"
         rounded="lg"
@@ -15,7 +15,7 @@
             v-if="model.length"
             :content="model.length"
             class="count-badge ml-1"
-            color="tertiary"
+            color="secondary"
             inline
           />
           <VIcon v-else class="ml-1" icon="mdi-chevron-down" />

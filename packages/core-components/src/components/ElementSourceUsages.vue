@@ -17,7 +17,7 @@
           }"
           v-bind="menuProps"
           aria-label="Source usages"
-          color="tertiary"
+          color="secondary"
           icon="mdi-source-fork"
           size="x-small"
           variant="tonal"
@@ -78,7 +78,7 @@ const emit = defineEmits<{
 const menuOpen = ref(false);
 
 const badgeColor = computed(() =>
-  props.usages?.length ? 'tertiary' : 'inverse-surface',
+  props.usages?.length ? 'secondary' : 'inverse-surface',
 );
 
 const onViewUsage = (usage: ElementSourceInfo) => {

@@ -22,7 +22,7 @@
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
           class="link-icon mr-1"
-          color="tertiary"
+          color="secondary"
           icon="mdi-link-box"
           size="small"
         />
@@ -30,7 +30,7 @@
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-tertiary' : '',
+            activity?.isLinkedCopy ? 'text-secondary' : '',
           ]"
         />
         <template v-if="showPublishDiff">
@@ -162,13 +162,13 @@ const usersWithActivity = computed(() => {
 <style lang="scss" scoped>
 .toolbar-wrapper {
   &.diff-mode {
-    border-bottom-color: rgb(var(--v-theme-tertiary-container));
+    border-bottom-color: rgb(var(--v-theme-secondary-container));
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-color: rgb(var(--v-theme-tertiary-container));
+      background-color: rgb(var(--v-theme-secondary-container));
       opacity: 0.5;
       pointer-events: none;
     }

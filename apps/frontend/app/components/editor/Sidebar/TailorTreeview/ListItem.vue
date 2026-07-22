@@ -23,7 +23,7 @@
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
           class="linked-copy-icon"
-          color="tertiary"
+          color="secondary"
           icon="mdi-link-box"
           size="small"
         />

@@ -11,7 +11,7 @@
   <VSwitch
     v-model="isCoreSource"
     class="mb-4 ml-2"
-    color="tertiary"
+    color="secondary"
     label="Core Source"
     hide-details
   />

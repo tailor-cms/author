@@ -22,7 +22,7 @@
           <VBtnToggle
             v-model="view"
             class="view-toggle flex-shrink-0"
-            color="secondary"
+            color="tertiary"
             density="compact"
             variant="outlined"
             mandatory
