@@ -26,8 +26,11 @@ body {
     font-size: 0.875rem;
   }
 
-  .v-list-item__prepend .v-icon {
-    font-size: 1.125rem;
+  .v-list-item__prepend,
+  .v-list-item__append {
+    .v-icon {
+      font-size: 1.125rem;
+    }
   }
 }
 
