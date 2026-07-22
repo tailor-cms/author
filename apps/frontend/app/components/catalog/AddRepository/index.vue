@@ -129,6 +129,7 @@
           :clearable="!lockedGroupId"
           :error-messages="errors.userGroupIds"
           :items="authStore.groupsWithCreateRepositoryAccess"
+          :menu-props="{ maxWidth: 460 }"
           class="user-group-select mb-3"
           item-title="name"
           item-value="id"
@@ -143,9 +144,17 @@
         >
           <template #chip="{ internalItem, props: chipProps }">
             <VChip
+              v-tooltip:top="{
+                text: internalItem.title,
+                openDelay: 400,
+                maxWidth: 400,
+              }"
               v-bind="chipProps"
               :closable="internalItem.value !== lockedGroupId"
-            />
+              class="user-group-chip"
+            >
+              <span class="text-truncate">{{ internalItem.title }}</span>
+            </VChip>
           </template>
         </VSelect>
       </div>
