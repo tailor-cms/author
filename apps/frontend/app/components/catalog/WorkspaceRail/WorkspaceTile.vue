@@ -29,8 +29,13 @@
           size="x-small"
         />
       </template>
-      <VList density="compact" min-width="180" nav>
-        <VListSubheader class="text-truncate">{{ item.name }}</VListSubheader>
+      <VList density="compact" max-width="280" min-width="180" nav>
+        <VListSubheader
+          v-tooltip:end="{ text: item.name, openDelay: 300 }"
+          class="text-truncate"
+        >
+          {{ item.name }}
+        </VListSubheader>
         <VListItem
           append-icon="mdi-arrow-right"
           prepend-icon="mdi-account-cog"

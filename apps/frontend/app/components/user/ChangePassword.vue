@@ -45,9 +45,7 @@
       />
     </template>
     <template #actions>
-      <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
-        Forgot password ?
-      </NuxtLink>
+      <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       <VSpacer />
       <VBtn
         text="Cancel"

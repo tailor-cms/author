@@ -57,9 +57,8 @@ import SchemaCard from '@/components/admin/SchemaCard/index.vue';
 import type { TreeItem } from '@/components/admin/SchemaCard/types';
 import { useConfigStore } from '@/stores/config';
 
-definePageMeta({
-  name: 'installed-schemas',
-});
+definePageMeta({ name: 'installed-schemas' });
+useHead({ title: 'Structure Types' });
 
 const search = ref('');
 const config = useConfigStore();

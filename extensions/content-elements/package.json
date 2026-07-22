@@ -65,8 +65,8 @@
     "@tailor-cms/ce-table-server": "^2.0.0",
     "@tailor-cms/ce-text-response-edit": "^2.0.0",
     "@tailor-cms/ce-text-response-server": "^2.0.0",
-    "@tailor-cms/ce-true-false-edit": "^2.0.0",
-    "@tailor-cms/ce-true-false-server": "^2.0.0",
+    "@tailor-cms/ce-true-false-edit": "^2.0.1",
+    "@tailor-cms/ce-true-false-server": "^2.0.1",
     "@tailor-cms/ce-video-edit": "^2.0.1",
     "@tailor-cms/ce-video-server": "^2.0.1"
   }
