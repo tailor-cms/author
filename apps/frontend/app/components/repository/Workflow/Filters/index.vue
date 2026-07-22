@@ -40,7 +40,7 @@
       />
       <VChip
         :aria-pressed="recentOnly"
-        :color="recentOnly ? 'tertiary' : ''"
+        :color="recentOnly ? 'secondary' : ''"
         :prepend-icon="recentOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
         role="button"
         rounded="lg"
@@ -50,7 +50,7 @@
       />
       <VChip
         :aria-pressed="unpublishedOnly"
-        :color="unpublishedOnly ? 'tertiary' : ''"
+        :color="unpublishedOnly ? 'secondary' : ''"
         :prepend-icon="unpublishedOnly ? 'mdi-check-circle' : 'mdi-circle-outline'"
         role="button"
         rounded="lg"

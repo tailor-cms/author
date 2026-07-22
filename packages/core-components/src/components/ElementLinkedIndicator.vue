@@ -16,7 +16,7 @@
         v-bind="menuProps"
         :class="{ 'opacity-60': !isEntryPoint }"
         aria-label="Linked content"
-        color="tertiary"
+        color="secondary"
         icon="mdi-link-variant"
         size="x-small"
         variant="tonal"

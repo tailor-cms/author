@@ -51,7 +51,7 @@
               location="bottom"
             />
             <template v-if="tab.badgeData" #append>
-              <VBadge :content="tab.badgeData" color="tertiary" inline />
+              <VBadge :content="tab.badgeData" color="secondary" inline />
             </template>
           </VTab>
         </VTabs>
@@ -107,7 +107,7 @@
       :icon="activeTabIcon"
       aria-label="Open sidebar"
       class="sidebar-toggle"
-      color="secondary-container"
+      color="primary-container"
       density="comfortable"
       size="small"
       @click="modelValue = true"

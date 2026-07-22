@@ -57,7 +57,7 @@
                 v-if="ai"
                 v-tooltip:bottom="{ text: 'AI Powered', openDelay: 500 }"
                 aria-label="AI Powered"
-                color="tertiary"
+                color="secondary"
                 icon="mdi-creation"
                 size="18"
               />

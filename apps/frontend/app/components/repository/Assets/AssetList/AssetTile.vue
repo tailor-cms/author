@@ -50,7 +50,7 @@
           <VIcon
             v-if="(asset.meta as any)?.isCoreSource"
             class="ml-1"
-            color="tertiary"
+            color="secondary"
             icon="mdi-star"
             size="14"
           />

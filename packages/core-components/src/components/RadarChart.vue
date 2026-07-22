@@ -45,7 +45,7 @@ const chartOptions = computed(() => ({
   maintainAspectRatio: false,
   plugins: {
     datalabels: {
-      color: colors.value['on-secondary'],
+      color: colors.value['on-primary'],
       backgroundColor: (context: any) => {
         const value = context.dataset.data[context.dataIndex];
         if (value >= 3) return colors.value.success;

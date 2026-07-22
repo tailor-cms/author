@@ -31,7 +31,7 @@
         <VBtn
           :disabled="!hasIndexable || isIndexing"
           :loading="isIndexing"
-          color="tertiary"
+          color="secondary"
           prepend-icon="mdi-brain"
           size="small"
           text="Index"

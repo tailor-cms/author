@@ -26,7 +26,7 @@
       @change="validateAndUpload($event.target as HTMLInputElement)"
     />
     <VBtn v-if="fileInput" :loading="uploading" @click="fileInput.click()">
-      <VIcon color="tertiary" icon="mdi-cloud-upload-outline" start />
+      <VIcon color="secondary" icon="mdi-cloud-upload-outline" start />
       {{ props.label }}
     </VBtn>
   </template>

@@ -8,7 +8,7 @@
       class="d-flex align-center text-label-medium text-uppercase font-weight-bold"
     >
       <VIcon
-        color="tertiary"
+        color="secondary"
         icon="mdi-comment-off-outline"
         size="small"
         start

@@ -29,7 +29,7 @@ const PARTICLES = [
     '--a': '0deg',
     '--dur': '7s',
     '--delay': '0s',
-    '--c': 'rgb(var(--v-theme-secondary))',
+    '--c': 'rgb(var(--v-theme-tertiary))',
     'width': '5px',
     'height': '5px',
   },
@@ -47,7 +47,7 @@ const PARTICLES = [
     '--a': '250deg',
     '--dur': '8s',
     '--delay': '-4s',
-    '--c': 'rgb(var(--v-theme-tertiary))',
+    '--c': 'rgb(var(--v-theme-secondary))',
     'width': '3px',
     'height': '3px',
   },
@@ -65,7 +65,7 @@ const PARTICLES = [
     '--a': '200deg',
     '--dur': '11s',
     '--delay': '-6s',
-    '--c': 'rgb(var(--v-theme-secondary))',
+    '--c': 'rgb(var(--v-theme-tertiary))',
     'width': '5px',
     'height': '5px',
   },
@@ -98,8 +98,8 @@ const PARTICLES = [
   position: absolute;
   inset: 0;
   border-radius: 50%;
-  background: var(--c, rgb(var(--v-theme-secondary)));
-  box-shadow: 0 0 6px 1px var(--c, rgb(var(--v-theme-secondary)));
+  background: var(--c, rgb(var(--v-theme-tertiary)));
+  box-shadow: 0 0 6px 1px var(--c, rgb(var(--v-theme-tertiary)));
 }
 
 @keyframes launcher-particles-orbit {

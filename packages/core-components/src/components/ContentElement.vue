@@ -507,7 +507,7 @@ onMounted(() => {
     position: absolute;
     inset: 0;
     border-radius: inherit;
-    background: rgba(var(--v-theme-tertiary-container), 0.2);
+    background: rgba(var(--v-theme-secondary-container), 0.2);
     pointer-events: none;
   }
 }

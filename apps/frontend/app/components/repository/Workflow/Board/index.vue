@@ -19,7 +19,7 @@
         <VChip
           :text="columns[status.id]?.length ?? 0"
           class="ml-1 font-weight-bold"
-          color="tertiary"
+          color="secondary"
           size="x-small"
           rounded="lg"
         />

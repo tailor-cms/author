@@ -41,7 +41,7 @@
         />
         <VBtn
           v-if="suggestion.agentPrompt && isAgentAvailable"
-          color="tertiary"
+          color="secondary"
           prepend-icon="mdi-creation"
           size="x-small"
           text="Fix with AI"
