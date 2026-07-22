@@ -10,8 +10,13 @@
         @click="router.back()"
       />
       <UserGroupAvatar :logo-url="userGroup?.logoUrl" size="40" />
-      <div class="text-left">
-        <h1 class="text-title-large">{{ userGroup?.name }}</h1>
+      <div class="group-title text-left overflow-hidden">
+        <h1
+          v-tooltip:bottom="{ text: userGroup?.name, openDelay: 500 }"
+          class="text-title-large text-truncate"
+        >
+          {{ userGroup?.name }}
+        </h1>
       </div>
       <VSpacer />
       <VBtn
@@ -246,6 +251,10 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
+.group-title {
+  min-width: 0;
+}
+
 .member-search {
   max-width: 18rem;
 
