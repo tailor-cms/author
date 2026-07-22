@@ -79,9 +79,8 @@ import { computed, ref } from 'vue';
 import { isEmpty, partition, pickBy, startCase } from 'lodash-es';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
-definePageMeta({
-  name: 'installed-elements',
-});
+definePageMeta({ name: 'installed-elements' });
+useHead({ title: 'Installed Elements' });
 
 const DEFAULT_ICON = 'mdi-help-rhombus';
 

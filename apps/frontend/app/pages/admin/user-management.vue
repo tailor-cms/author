@@ -131,13 +131,8 @@ import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import UserDialog from '@/components/admin/UserDialog.vue';
 
-definePageMeta({
-  name: 'system-user-management',
-});
-
-useHead({
-  title: 'Admin',
-});
+definePageMeta({ name: 'system-user-management' });
+useHead({ title: 'System Users' });
 
 const authStore = useAuthStore();
 
