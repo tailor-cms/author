@@ -126,7 +126,7 @@ const preview = () => {
   return api.activity
     .createPreview({ params: { repositoryId, activityId: id } })
     .then(({ location }: any) => {
-      window.location.href = location;
+      window.open(location);
     });
 };
 
