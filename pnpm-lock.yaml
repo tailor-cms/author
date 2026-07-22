@@ -809,11 +809,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-true-false-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-true-false-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-video-edit':
         specifier: ^2.0.1
         version: 2.0.1(vue@3.5.34(typescript@6.0.3))
@@ -4846,18 +4846,18 @@ packages:
     resolution: {integrity: sha512-XoDJYqXD/4w9LFqmrPAiG6htyqNxUUM+8dVoO+VX4n0ZakXUk6953karDUG2ZQAaqXO9wFkbv1iQjJrO7eBcGw==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-true-false-edit@2.0.0':
-    resolution: {integrity: sha512-OaG6kcCDVIDPretGKuLZ2IIE0c/JWp22maIic9MeAvLXGfKWAcmQIfnWGaDP889GKPcjGlfPRnoq9twitMHw6A==}
+  '@tailor-cms/ce-true-false-edit@2.0.1':
+    resolution: {integrity: sha512-ubBv9kVlxBnxnMamO0vS0Q9T8bQr8GzQK5Y3K5l2Rysu0pEEVzTUD1YBvDuy62ltoA8MnVZA2n1Knj8v1SbqSg==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-true-false-manifest@2.0.0':
-    resolution: {integrity: sha512-WFFyDKXU0I3rfDH5FpcCd76a6ecLEMiw1YdaV7S0KqY3EUb9exhb2BdnI4n2+qB9ooY72TCXr/SnwDsoCwWDHQ==}
+  '@tailor-cms/ce-true-false-manifest@2.0.1':
+    resolution: {integrity: sha512-0lnbGjpjqdS9j71bgB2O/tkCokBpQleKTFSYwf40WYpEc8ZHJ2jcqBVqAhhOwA018iSAkuPIssv+dCVDud9WEg==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-true-false-server@2.0.0':
-    resolution: {integrity: sha512-RufDebG65ZmBk6gFtudfZAO1dqW7auYiTyxQPGMcgzrWloQSZhDfvFQYDtJS/hhOvfZkS4+FOfVsYS9qOZBcig==}
+  '@tailor-cms/ce-true-false-server@2.0.1':
+    resolution: {integrity: sha512-PbqpLG4YKjeWxMmzPnzrgWItZG5vGPdEC42PTdLAHPQrPd1+IgOos8+KHZaS4blOlSIRlJq3LOpBtrrJdGxOvA==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-video-edit@2.0.1':
@@ -15304,21 +15304,21 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-true-false-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-true-false-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-true-false-manifest@2.0.0':
+  '@tailor-cms/ce-true-false-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       uuid: 14.0.0
 
-  '@tailor-cms/ce-true-false-server@2.0.0':
+  '@tailor-cms/ce-true-false-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-true-false-manifest': 2.0.0
+      '@tailor-cms/ce-true-false-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
