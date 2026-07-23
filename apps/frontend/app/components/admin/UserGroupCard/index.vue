@@ -20,7 +20,6 @@
     <VMenu v-if="hasActions" location="bottom end" offset="4">
       <template #activator="{ props: menuProps }">
         <VBtn
-          v-tooltip:top="{ text: 'User group actions', openDelay: 400 }"
           v-bind="menuProps"
           aria-label="User group actions"
           class="ml-2"

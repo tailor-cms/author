@@ -75,7 +75,6 @@
           >
             <template #activator="{ props: menuProps }">
               <VBtn
-                v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
                 class="tinted-btn"
