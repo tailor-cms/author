@@ -689,11 +689,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-embed-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-embed-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-file-edit':
         specifier: ^2.0.2
         version: 2.0.2(vue@3.5.34(typescript@6.0.3))
@@ -725,11 +725,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-image-edit':
-        specifier: ^2.0.1
-        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.2
+        version: 2.0.2(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-image-server':
-        specifier: ^2.0.1
-        version: 2.0.1
+        specifier: ^2.0.2
+        version: 2.0.2
       '@tailor-cms/ce-jodit-html-edit':
         specifier: ^2.0.1
         version: 2.0.1(vue@3.5.34(typescript@6.0.3))
@@ -743,11 +743,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-modal-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-modal-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-multiple-choice-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.34(typescript@6.0.3))
@@ -797,11 +797,11 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@tailor-cms/ce-table-edit':
-        specifier: ^2.0.0
-        version: 2.0.0(vue@3.5.34(typescript@6.0.3))
+        specifier: ^2.0.1
+        version: 2.0.1(vue@3.5.34(typescript@6.0.3))
       '@tailor-cms/ce-table-server':
-        specifier: ^2.0.0
-        version: 2.0.0
+        specifier: ^2.0.1
+        version: 2.0.1
       '@tailor-cms/ce-text-response-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.34(typescript@6.0.3))
@@ -4567,18 +4567,18 @@ packages:
     resolution: {integrity: sha512-ai910VQQL/NRvqQ7V96IXZyy8Ue/KUwwuO3ZOYFDxasIvWWkCZimcdeCBvLTJcpt/C5coP9dYdUJ+2SYqP2K9w==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-embed-edit@2.0.0':
-    resolution: {integrity: sha512-NEEVPPE53qZmoYhv8adwt24oD7giESA35OhOebWQNxxRk1SlDMwQf6Tf765wxt8wyWrZqBZ8w3H8ihsnArIkpA==}
+  '@tailor-cms/ce-embed-edit@2.0.1':
+    resolution: {integrity: sha512-8O6SOwoUNUCbGkniOVBM8a5/emjKeB0RHIWzo9ZUfrGDFv39nNl4WpL0ZVyrFN/i5cmD/7RkaHb/Pksf5tDBpw==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-embed-manifest@2.0.0':
-    resolution: {integrity: sha512-2Ja+iJzdQQiY1/FRkCjlYoZJXbOynMEtPSAETdtSaO1bBBFRl1mwOgIqx+RdCqbRvl4zIPhIFmTLorIzGLgHWQ==}
+  '@tailor-cms/ce-embed-manifest@2.0.1':
+    resolution: {integrity: sha512-G+ALy7iXmH62XQsq5+dhCARFeC2LTpp6ZS+lTYaLkVBpkxYkB7Yo40WP/sMJvoGUuwWwa9b4XT10NXhBhAHvlg==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-embed-server@2.0.0':
-    resolution: {integrity: sha512-RsyeeH0dVsupWR3GL7lvWYSr+HXn/ItFrK69lMHUvK7JGPLDMDO9+ccIA3z5v3M0CLqswjtKtP/R5G2vjQJ9wQ==}
+  '@tailor-cms/ce-embed-server@2.0.1':
+    resolution: {integrity: sha512-SUr97T+mBlolJp1EeIb6D/hqtpv2pm/YvutgAyGy/djskybGXxCaIVqgPcvVgziPg7v9/03rddVr6cx6nGrnBg==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-file-edit@2.0.2':
@@ -4651,18 +4651,18 @@ packages:
     resolution: {integrity: sha512-SLL1ITOwEl/NaH6zRAF0MYLa97el1GDeAxvNx9+lK/tC5CHpgTvZNWMV+bIfJ4wqLBXTK1+fTSpvETIlraXx8g==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-image-edit@2.0.1':
-    resolution: {integrity: sha512-n2sQU+sT1wLVxf79KYbZNrDcCI46e49K2EZ6H/15AMqzW7CbR5qy946aLufdZ5ax4M6tidQ0z51iGNBT14Ug3Q==}
+  '@tailor-cms/ce-image-edit@2.0.2':
+    resolution: {integrity: sha512-w+SjU3SV1Y8G7IdMMKcHwJUTHs5E79c+zpglrHTo6OmvHYKfD431uLYyvlh1FOy5jFytlaQgvYy6pCfA4XStfw==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-image-manifest@2.0.1':
-    resolution: {integrity: sha512-hnQZNRN3F8aUXqa1gz2SIe81bUUNulDtdffQwrJr31Caf/hbGXJzyvrsSvJypIO5c7Fm/d0hX8uHp0LPPreSng==}
+  '@tailor-cms/ce-image-manifest@2.0.2':
+    resolution: {integrity: sha512-Zx8LE04voM67NoQ1er3XKSatK+hi2ja0JX3n5XoZKHeuw/bh6ZLqfPYBm3hcVc6KqOUgVutFNnQ4vaUK5icDgQ==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-image-server@2.0.1':
-    resolution: {integrity: sha512-8TNyAjM3lMm+hYhsR7ruZojW8rxJ8F6rEWWSKMJPVtDnQex1gW42OxTo5InCGjTOI57+beTE725u6yDVmuQomQ==}
+  '@tailor-cms/ce-image-server@2.0.2':
+    resolution: {integrity: sha512-IKXcKZ+DpH1Ezku4i9yQZ++ll10/G7gDyDa2MWtROAzQ/xmGuZbWRap8GbCwchbLDSP8VPMJJBWGqneyQG57Ng==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-jodit-html-edit@2.0.1':
@@ -4693,18 +4693,18 @@ packages:
     resolution: {integrity: sha512-KEZy675hLWyfpeUVm0OxfaB9TX+G+SvWXAhY3n1XoJC1OM+321w7LrRfsEsmerdVO8e9VhA/7VT9X01T6iY7wA==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-modal-edit@2.0.0':
-    resolution: {integrity: sha512-GH9engmQLr+kRCUPD2wH+0BNxlHvwvcCng2Ujgdu00CcoUX3QcORhEx9yyq/u6iv1gE9LTtP/1X1pxZKcj8ZpQ==}
+  '@tailor-cms/ce-modal-edit@2.0.1':
+    resolution: {integrity: sha512-ifUF2yYNbrTYxIOvtRkf8dMADVGziDxUEOdaH980Mn9PajyVRgIlxO2buP2gj/xV85YUQw75JjISju9wdQfAuA==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-modal-manifest@2.0.0':
-    resolution: {integrity: sha512-CWyRDwnau6ZgmRnH+Rz6l2f4SLLX/aIy49qJyENsH/UY8TKnOu5WHsgCt2AT0Xyqv6f15q1O+YwXsbA4BbKf2w==}
+  '@tailor-cms/ce-modal-manifest@2.0.1':
+    resolution: {integrity: sha512-1NNym8lJjt0HiXCnJeRhUVts9SM8Zw3d/Mx5xe08qAy1EB7vR+9/4d3GfJGcNlZMAMCHSeem9TuipGRGoRjZrA==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-modal-server@2.0.0':
-    resolution: {integrity: sha512-4zMc0EycJeKZ4HsaGDqGGy2bXqu3qnHUIAZPw4sPlWv7VjPXqfroab46pZcAd/jknheBzUZ5R57Run5oHQSYjw==}
+  '@tailor-cms/ce-modal-server@2.0.1':
+    resolution: {integrity: sha512-g8LhSVOJYQ9XmqT8RbTNdyCht3SVJIy2UO4vW0KK9/jTMTYq37fejmjxny/WqsxEQ5AoVCf9aMA5Xwb0ThHDAQ==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-multiple-choice-edit@2.0.0':
@@ -4818,18 +4818,18 @@ packages:
   '@tailor-cms/ce-single-choice-server@2.0.1':
     resolution: {integrity: sha512-Gqt3R+48zKFTGfJWYDqrMSGGJbhMf/bKaglwVe0hcMG93dZUz7cQYVNpqSWEelsEhnD8RoZCvBJolNR7tnx0iA==}
 
-  '@tailor-cms/ce-table-edit@2.0.0':
-    resolution: {integrity: sha512-+vRz0EhxDCFDNus+4S6u2ed0CPyCR4QqO+mN/IAzjh6wks202k21AF21cKUbWusSs88eX1N3XGiC5txyWZK53w==}
+  '@tailor-cms/ce-table-edit@2.0.1':
+    resolution: {integrity: sha512-I7v/E2+Kny+A2nsx9NyHhncscgVcmmpWdm47Sg8jJ2acn3et+VIYeIb5mBShae4c9yh5FCecaAmeJF/REpHTbg==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-table-manifest@2.0.0':
-    resolution: {integrity: sha512-H52zGQExRNvdXVOJLialViW5lZ73Bb6AvMsRXYoGL0DUiVX8JQVUlbnCcMWe4xc1HT/QONLA/Mj2rmXjBPIcEg==}
+  '@tailor-cms/ce-table-manifest@2.0.1':
+    resolution: {integrity: sha512-9dHGsA2zowDeRbE2JKhYNMypVwfnl+6zlnDVhvyQivwEeNC8Obo/RzfQbCufL7orbCfG/c/vmbg3/zJenj7bHQ==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-table-server@2.0.0':
-    resolution: {integrity: sha512-EUB/Mb3rGn5Odm3sa38S6/UzsD2olHfFhmIcta2hZdq1Bwulp7JYcRg1NSM2I5mQW3KCnhg2Rq8tnguG5pUrWA==}
+  '@tailor-cms/ce-table-server@2.0.1':
+    resolution: {integrity: sha512-n3N1H/jVWgFuE1ZlI5RF6AD3sP94ZFDBzl62CSqIjXIHti46kx0DHf1IxmBw+DF8PiWbYR5KPwlyk/TWICIvQg==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-text-response-edit@2.0.0':
@@ -14941,20 +14941,20 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-embed-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-embed-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       validator: 13.15.35
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-embed-manifest@2.0.0':
+  '@tailor-cms/ce-embed-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-embed-server@2.0.0':
+  '@tailor-cms/ce-embed-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-embed-manifest': 2.0.0
+      '@tailor-cms/ce-embed-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-file-edit@2.0.2(vue@3.5.34(typescript@6.0.3))':
@@ -15066,18 +15066,18 @@ snapshots:
       '@tailor-cms/ce-html-manifest': 2.0.0
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-image-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-image-edit@2.0.2(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-image-manifest@2.0.1':
+  '@tailor-cms/ce-image-manifest@2.0.2':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-image-server@2.0.1':
+  '@tailor-cms/ce-image-server@2.0.2':
     dependencies:
-      '@tailor-cms/ce-image-manifest': 2.0.1
+      '@tailor-cms/ce-image-manifest': 2.0.2
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-jodit-html-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
@@ -15114,20 +15114,20 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-modal-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-modal-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-modal-manifest@2.0.0':
+  '@tailor-cms/ce-modal-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       uuid: 14.0.0
 
-  '@tailor-cms/ce-modal-server@2.0.0':
+  '@tailor-cms/ce-modal-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-modal-manifest': 2.0.0
+      '@tailor-cms/ce-modal-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-multiple-choice-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
@@ -15285,22 +15285,22 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-table-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
+  '@tailor-cms/ce-table-edit@2.0.1(vue@3.5.34(typescript@6.0.3))':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       uuid: 14.0.0
       vue: 3.5.34(typescript@6.0.3)
 
-  '@tailor-cms/ce-table-manifest@2.0.0':
+  '@tailor-cms/ce-table-manifest@2.0.1':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
       uuid: 14.0.0
 
-  '@tailor-cms/ce-table-server@2.0.0':
+  '@tailor-cms/ce-table-server@2.0.1':
     dependencies:
-      '@tailor-cms/ce-table-manifest': 2.0.0
+      '@tailor-cms/ce-table-manifest': 2.0.1
       '@tailor-cms/cek-common': 2.0.1
 
   '@tailor-cms/ce-text-response-edit@2.0.0(vue@3.5.34(typescript@6.0.3))':
