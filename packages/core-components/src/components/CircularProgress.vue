@@ -1,12 +1,11 @@
 <template>
   <VProgressCircular size="68" indeterminate color="outline">
     <template #default>
-      <img
-        alt="Tailor logo"
-        class="pt-1"
-        src="https://avatars.githubusercontent.com/u/142484057"
-        width="32"
-      />
+      <img :src="logoUrl" alt="Tailor logo" width="34" />
     </template>
   </VProgressCircular>
 </template>
+
+<script lang="ts" setup>
+const logoUrl = new URL('../assets/logo.svg', import.meta.url).href;
+</script>
