@@ -19,7 +19,7 @@
       <div class="catalog-scroll">
         <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
           <div
-            v-if="!isEmptyCatalog"
+            v-if="hasRepositories || hasAnyQueryConstraint"
             class="catalog-actions ga-3 mb-4"
           >
             <SearchInput
