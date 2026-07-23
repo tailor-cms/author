@@ -11,6 +11,9 @@
       {{ content }}
     </VCard>
     <div v-else class="message-column">
+      <!-- renderMarkdown() strips raw HTML and escapes/whitelists link hrefs,
+           so this content is safe. -->
+      <!-- eslint-disable-next-line vue/no-v-html -->
       <div v-if="content" class="message-content" v-html="renderedContent" />
       <div
         v-if="toolCalls?.length"
