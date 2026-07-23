@@ -40,6 +40,10 @@ minimumReleaseAgeExclude:
   # Our own org's content-element packages; trusted by name so new
   # versions don't need a fresh version-pin on every release.
   - '@tailor-cms/*'
+  - '@aws-sdk/client-s3@3.1093.0'
+  - '@aws-sdk/lib-storage@3.1093.0'
+  - '@aws-sdk/s3-request-presigner@3.1093.0'
+  - sass@1.101.6
 # Allowlist of packages whose postinstall / build scripts pnpm 11 may run.
 # pnpm 11 blocks build scripts by default (supply-chain defense); each
 # entry below opts a specific package back in because we need its
