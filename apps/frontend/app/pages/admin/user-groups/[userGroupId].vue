@@ -141,6 +141,7 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
+const auth = useAuthStore();
 const notify = useNotification();
 const notifyError = (message: string) => notify(message, { color: 'error' });
 
@@ -210,15 +211,27 @@ async function upsertUser(email: string, role: string) {
 
 async function removeUser(userId: number) {
   const showDialog = useConfirmationDialog();
+  const willLoseAccess = userId === auth.user?.id && !auth.isAdmin;
+  const hasOtherAdminGroups = auth.groupsWithAdminAccess.length > 1;
   const confirmation = {
-    title: 'Remove user',
+    title: willLoseAccess ? 'Remove yourself' : 'Remove user',
     color: 'error',
-    message: 'Are you sure you want to remove user from a group?',
+    message: willLoseAccess
+      ? `You are about to remove yourself from this group and will lose access
+        to it. Are you sure?`
+      : 'Are you sure you want to remove user from a group?',
     action: async () => {
       await api.userGroup.removeUser({
         params: { id: userGroupId, userId },
       });
+      if (willLoseAccess) {
+        notify('You removed yourself from the group.');
+        if (hasOtherAdminGroups) return navigateTo({ name: 'user-groups' });
+        await auth.fetchUserInfo();
+        return navigateTo('/');
+      }
       await fetchUsers();
+      notify('User removed');
     },
   };
   showDialog(confirmation);
