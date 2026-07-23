@@ -26,7 +26,7 @@ const isSecretEnvName = (name) =>
 
 const { tool_name: tool, tool_input: input = {} } = readStdin();
 
-let blocked = false;
+let blocked;
 if (tool === 'Bash') {
   const cmd = input.command || '';
   const refs = cmd.match(/\.env(?:\.[A-Za-z0-9_-]+)?(?![A-Za-z0-9_-])/g) || [];
