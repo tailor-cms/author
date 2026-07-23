@@ -13107,14 +13107,44 @@
                     "description": "Account email; lower-cased + trimmed."
                   },
                   "firstName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "First name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "lastName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Last name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "role": {
                     "type": "string",

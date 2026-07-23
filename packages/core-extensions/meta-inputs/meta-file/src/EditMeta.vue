@@ -5,7 +5,6 @@
     :readonly="readonly"
     @upload="$emit('update', meta.key, $event)"
     @input="$emit('update', meta.key, $event)"
-    @delete="$emit('update', meta.key, null)"
   />
 </template>
 
