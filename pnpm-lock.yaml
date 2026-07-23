@@ -755,11 +755,11 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-mux-video-edit':
-        specifier: ^2.0.1
-        version: 2.0.1(react@19.2.8)(vue@3.5.40(typescript@6.0.3))
+        specifier: ^2.0.2
+        version: 2.0.2(react@19.2.8)(vue@3.5.40(typescript@6.0.3))
       '@tailor-cms/ce-mux-video-server':
-        specifier: ^2.0.1
-        version: 2.0.1(pg@8.22.0)(supports-color@10.2.2)
+        specifier: ^2.0.2
+        version: 2.0.2(pg@8.22.0)(supports-color@10.2.2)
       '@tailor-cms/ce-numerical-response-edit':
         specifier: ^2.0.0
         version: 2.0.0(vue@3.5.40(typescript@6.0.3))
@@ -4618,18 +4618,18 @@ packages:
     resolution: {integrity: sha512-OF0pbpVf2ZO0O9sjV7WgzTV67muYK8Fgt2Px97I37d2jGRp02cQxkMiXCYfvJvMb68c81olAdApgeBJ9JMRH/w==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-mux-video-edit@2.0.1':
-    resolution: {integrity: sha512-+VWc5cRqT/FjJZsWEYt3lez0Rf7HgUfx+i0gu7r2DkxXtvPda95rFiqg5lWvZkL66Q4ORmEdNzZKja9YZ5HzoA==}
+  '@tailor-cms/ce-mux-video-edit@2.0.2':
+    resolution: {integrity: sha512-aJ9T3wjiqiE7PPBsiyWneDBjYnmwJHdK2Eh0kw4UJ0KwoOBPRhccOWg9RReOqUtN9QqtD7U2/wtTjl/nbyi0rQ==}
     engines: {node: '>=24'}
     peerDependencies:
       vue: ^3.5.29
 
-  '@tailor-cms/ce-mux-video-manifest@2.0.1':
-    resolution: {integrity: sha512-GcZ0aLePvvmDYbh8Oo6yk3noHvoXPKIGFltj8cV1bjOyYm0od9hJPzjXjmYExT7q7SUr9RKHc9POK/3VgYSopQ==}
+  '@tailor-cms/ce-mux-video-manifest@2.0.2':
+    resolution: {integrity: sha512-dgDft6W+maY7KpPxVMNOLnq3FfkDYWp7XHwZTCsGfGEt4lJ9RQRhgGRqSndMZ0tHrNTEXj05MGXOY0VuuvA8CQ==}
     engines: {node: '>=24'}
 
-  '@tailor-cms/ce-mux-video-server@2.0.1':
-    resolution: {integrity: sha512-QduI04U0/i/ntb+QQx0FiA3doa2vSTwE3KYRUpCiViLI/T17aA2DQ4xamzY9Aordbk9SsNnjWlp3FYpllEHegw==}
+  '@tailor-cms/ce-mux-video-server@2.0.2':
+    resolution: {integrity: sha512-xn5sQLr4HLx6AXYu0SRI7k4CO7L7uROhXNHRgVzIDTj4y2lCJu+KXFGiJYtgfMZEv8ae0jQvQd6EPdz4pZue6A==}
     engines: {node: '>=24'}
 
   '@tailor-cms/ce-numerical-response-edit@2.0.0':
@@ -15129,7 +15129,7 @@ snapshots:
       '@tailor-cms/cek-common': 2.0.1
       lodash-es: 4.18.1
 
-  '@tailor-cms/ce-mux-video-edit@2.0.1(react@19.2.8)(vue@3.5.40(typescript@6.0.3))':
+  '@tailor-cms/ce-mux-video-edit@2.0.2(react@19.2.8)(vue@3.5.40(typescript@6.0.3))':
     dependencies:
       '@mux/mux-player': 3.13.0(react@19.2.8)
       '@mux/upchunk': 3.5.0
@@ -15139,14 +15139,14 @@ snapshots:
     transitivePeerDependencies:
       - react
 
-  '@tailor-cms/ce-mux-video-manifest@2.0.1':
+  '@tailor-cms/ce-mux-video-manifest@2.0.2':
     dependencies:
       '@tailor-cms/cek-common': 2.0.1
 
-  '@tailor-cms/ce-mux-video-server@2.0.1(pg@8.22.0)(supports-color@10.2.2)':
+  '@tailor-cms/ce-mux-video-server@2.0.2(pg@8.22.0)(supports-color@10.2.2)':
     dependencies:
       '@mux/mux-node': 14.1.1
-      '@tailor-cms/ce-mux-video-manifest': 2.0.1
+      '@tailor-cms/ce-mux-video-manifest': 2.0.2
       '@tailor-cms/cek-common': 2.0.1
       is-localhost-ip: 3.0.1
       sequelize: 6.37.8(pg@8.22.0)(supports-color@10.2.2)
