@@ -27,9 +27,9 @@
     "cleanup:detached-activities": "node --import ./script/preflight.js ./script/cleanupDetachedActivities.js"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.1093.0",
-    "@aws-sdk/lib-storage": "^3.1093.0",
-    "@aws-sdk/s3-request-presigner": "^3.1093.0",
+    "@aws-sdk/client-s3": "^3.1092.0",
+    "@aws-sdk/lib-storage": "^3.1092.0",
+    "@aws-sdk/s3-request-presigner": "^3.1092.0",
     "@faker-js/faker": "^10.5.0",
     "@keyv/redis": "^5.1.6",
     "@paralleldrive/cuid2": "^3.3.0",
