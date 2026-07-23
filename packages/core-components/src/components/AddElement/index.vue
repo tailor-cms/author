@@ -234,7 +234,7 @@ const generateContent = async (element: ContentElement) => {
 const buildElement = async (el: any) => {
   const { position, data = {}, initState = () => ({}), config } = el;
   const element = {
-    ...pick(el, ['type', 'refs']),
+    ...pick(el, ['type', 'refs', 'contentId']),
     data: { ...initState(), ...data, width: processedWidth.value },
     position,
   };
