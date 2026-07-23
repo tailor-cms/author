@@ -1,6 +1,6 @@
 {
   "name": "tailor-cms",
-  "version": "10.0.0-beta.2",
+  "version": "10.0.0-beta.3",
   "codename": "Quilt",
   "description": "Next-gen Tailor",
   "license": "MIT",
@@ -14,7 +14,6 @@
     "lint": "eslint .",
     "seed": "cd ./apps/backend && pnpm db:seed",
     "e2e:functional": "cd tests && pnpm e2e:functional",
-  "seed:showcase": "cd tests && pnpm seed:showcase",
     "e2e:visual": "cd tests && pnpm e2e:visual",
     "e2e:a11y": "cd tests && pnpm e2e:a11y",
     "setup:dev": "pnpm i && node ./scripts/setup/index.js",
@@ -56,5 +55,5 @@
     "fkill": "^10.0.3",
     "pid-port": "^2.1.1"
   },
-  "packageManager": "pnpm@11.16.0"
+  "packageManager": "pnpm@11.16.0+sha512.b767e9a98fc87aec0f42daefcd0e84941c2cdb45d73c4e1e68860fb2bdfdbe032ab592105479e5e05c237f740c8a5ffdbbb52385797ddc2296745a1bbb883e8d"
 }
