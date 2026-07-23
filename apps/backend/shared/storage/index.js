@@ -110,7 +110,7 @@ async function loadProvider(name) {
     return Provider;
   } catch (err) {
     if (err.code === 'MODULE_NOT_FOUND')
-      throw new Error('Unsupported provider');
+      throw new Error('Unsupported provider', { cause: err });
     throw err;
   }
 }
