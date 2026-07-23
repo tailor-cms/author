@@ -689,10 +689,10 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-embed-edit':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1(vue@3.5.40(typescript@6.0.3))
       '@tailor-cms/ce-embed-server':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1
       '@tailor-cms/ce-file-edit':
         specifier: ^2.0.2
@@ -725,10 +725,10 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-image-edit':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: 2.0.2(vue@3.5.40(typescript@6.0.3))
       '@tailor-cms/ce-image-server':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: 2.0.2
       '@tailor-cms/ce-jodit-html-edit':
         specifier: ^2.0.1
@@ -743,10 +743,10 @@ importers:
         specifier: ^2.0.0
         version: 2.0.0
       '@tailor-cms/ce-modal-edit':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1(vue@3.5.40(typescript@6.0.3))
       '@tailor-cms/ce-modal-server':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1
       '@tailor-cms/ce-multiple-choice-edit':
         specifier: ^2.0.0
@@ -797,10 +797,10 @@ importers:
         specifier: ^2.0.1
         version: 2.0.1
       '@tailor-cms/ce-table-edit':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1(vue@3.5.40(typescript@6.0.3))
       '@tailor-cms/ce-table-server':
-        specifier: ^2.0.0
+        specifier: ^2.0.1
         version: 2.0.1
       '@tailor-cms/ce-text-response-edit':
         specifier: ^2.0.0
