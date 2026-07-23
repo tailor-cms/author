@@ -8,8 +8,8 @@ import { User } from './entity.ts';
 export const UpsertInput = z
   .object({
     email: User.shape.email,
-    firstName: User.shape.firstName.unwrap().optional(),
-    lastName: User.shape.lastName.unwrap().optional(),
+    firstName: User.shape.firstName.nullish(),
+    lastName: User.shape.lastName.nullish(),
     role: User.shape.role.optional(),
     userGroupIds: z.array(Int()).optional().describe(oneLine`
       Replace the user's user-group memberships with this exact set.
