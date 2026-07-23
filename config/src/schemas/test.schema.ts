@@ -235,6 +235,15 @@ const SectionConfig: ContentContainerConfig = {
       ],
     },
     {
+      name: 'Deprecated Elements',
+      items: [
+        ContentElementType.JoditHtml,
+        ContentElementType.Html,
+        ContentElementType.BrightcoveVideo,
+        ContentElementType.Table,
+      ],
+    },
+    {
       name: 'Assessments',
       config: { isGradable: true },
       items: [
