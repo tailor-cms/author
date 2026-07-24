@@ -12,8 +12,9 @@
         v-bind="menuProps"
         aria-label="Comments disabled"
         icon="mdi-comment-off-outline"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
