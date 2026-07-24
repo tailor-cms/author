@@ -1,7 +1,7 @@
 <template>
   <div class="element-actions">
     <VExpandXTransition>
-      <div v-if="element.isLinkedCopy" class="pinned">
+      <div v-if="isRegistered && element.isLinkedCopy" class="pinned">
         <ElementLinkedIndicator
           :is-entry-point="isEntryPoint"
           :is-loading="isLoadingSourceInfo"
@@ -51,7 +51,7 @@
       />
     </VExpandXTransition>
     <VExpandXTransition>
-      <div v-if="isHighlighted" class="action-reset">
+      <div v-if="isHighlighted && isRegistered" class="action-reset">
         <VBtn
           v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
           aria-label="Reset element"
@@ -102,6 +102,7 @@ interface Props {
   isLoadingSourceInfo?: boolean;
   isLoadingUsages?: boolean;
   showDiscussion?: boolean;
+  isRegistered?: boolean;
   showDelete?: boolean;
 }
 
@@ -114,6 +115,7 @@ const props = withDefaults(defineProps<Props>(), {
   isLoadingSourceInfo: false,
   isLoadingUsages: false,
   showDiscussion: false,
+  isRegistered: true,
   showDelete: true,
 });
 
@@ -129,12 +131,17 @@ const emit = defineEmits([
 
 const hasComments = computed(() => !!props.element.comments?.length);
 const showUsages = computed(
-  () => !props.element.isLinkedCopy && !props.element.embedded,
+  () =>
+    props.isRegistered &&
+    !props.element.isLinkedCopy &&
+    !props.element.embedded,
 );
 
 const hasDivider = computed(
   () =>
-    props.element.isLinkedCopy || showUsages.value || props.showDiscussion,
+    (props.isRegistered && props.element.isLinkedCopy) ||
+    showUsages.value ||
+    props.showDiscussion,
 );
 </script>
 

@@ -3,7 +3,7 @@
     class="text-center pa-8"
     color="transparent"
   >
-    <VAvatar size="x-large" variant="tonal">
+    <VAvatar :color="color" size="x-large" variant="tonal">
       <VIcon :icon="icon" :size="isFocused ? 34 : 28" />
     </VAvatar>
     <div class="mt-4 mb-2 text-title-large">{{ name }}</div>
@@ -21,6 +21,7 @@
 interface Props {
   icon: string;
   name: string;
+  color?: string;
   placeholder?: string;
   activePlaceholder?: string;
   activeIcon?: string | null;
@@ -29,6 +30,7 @@ interface Props {
 }
 
 withDefaults(defineProps<Props>(), {
+  color: undefined,
   placeholder: 'Select to edit',
   activePlaceholder: 'Use toolbar to edit',
   activeIcon: null,

@@ -1,6 +1,5 @@
 <template>
   <VCol
-    :class="[{ disabled: isDisabled, hovered: isHovered }]"
     :cols="elementWidth"
     class="contained-content"
     @dragend="emit('dragend')"
@@ -11,9 +10,6 @@
     @mouseleave="isHovered = false"
     @mouseover="isHovered = true"
   >
-    <span v-if="!isDisabled && !isCard" class="drag-handle">
-      <span class="mdi mdi-drag-vertical"></span>
-    </span>
     <ContentElementWrapper
       v-bind="bindings"
       @add="$emit('add', $event)"
@@ -25,13 +21,12 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { get, throttle } from 'lodash-es';
 
 import ContentElementWrapper from './ContentElement.vue';
-import { isCardElement } from '../utils';
 
 interface Props {
   element: ContentElement;
@@ -65,13 +60,7 @@ const emit = defineEmits([
   'save:meta',
 ]);
 
-const ceRegistry = inject<any>('$ceRegistry');
-
 const isHovered = ref(false);
-
-const isCard = computed(() =>
-  isCardElement(props.element, ceRegistry?.getByEntity(props.element)),
-);
 
 const bindings = computed(() => {
   const {
@@ -111,29 +100,6 @@ const scrollContainer = throttle((e) => {
 </script>
 
 <style lang="scss" scoped>
-.drag-handle {
-  position: absolute;
-  left: -0.1875rem;
-  z-index: 2;
-  width: 1.625rem;
-  opacity: 0;
-
-  .mdi {
-    color: rgba(var(--v-theme-on-surface), 0.4);
-    font-size: 1.75rem;
-  }
-}
-
-.hovered .drag-handle {
-  opacity: 1;
-  transition: opacity 0.6s ease-in-out;
-  cursor: pointer;
-}
-
-.disabled .drag-handle {
-  display: none;
-}
-
 .contained-content {
   position: relative;
   margin: 7px 0;

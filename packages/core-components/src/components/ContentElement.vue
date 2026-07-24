@@ -3,161 +3,116 @@
   vuejs-accessibility/no-static-element-interactions -->
 <template>
   <div
-    ref="rootEl"
     :class="[
       element.diffChange,
-      isCard ? 'card rounded-lg' : 'rounded',
       {
         selected: activeUsers.length,
         focused: isFocused,
         diff: showDiff,
-        frame: frame && !isCard,
         linked: element.isLinkedCopy && !showDiff,
       },
     ]"
-    class="content-element"
+    class="content-element card rounded-lg"
     @click="onSelect"
   >
-    <div
-      v-if="!isQuestion && !isCard"
-      :class="{ visible: showDiff && element.diffChange }"
-      class="header d-flex"
-    >
-      <DiffChip :change-type="element.diffChange" class="ml-auto" />
-    </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <template v-if="!!manifest">
-      <QuestionElement
-        v-if="isQuestion && !isCard"
-        v-bind="{ ...editBindings, componentName, autosave, isDirty }"
-        @add="emit('add', $event)"
-        @delete="emit('delete')"
-        @focus="onSelect"
-        @link="onLinkRelationship"
-        @save="onSave"
-      />
-      <template v-else-if="isCard">
-        <div
-          :class="{ expanded: isExpanded }"
-          class="card-header d-flex align-center"
-          @click="toggleExpanded"
+    <div
+      :class="{ expanded: isExpanded }"
+      class="card-header d-flex align-center"
+      @click="toggleExpanded"
+    >
+      <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
+        <span class="mdi mdi-drag-vertical"></span>
+      </span>
+      <div
+        :class="{ 'ml-2': isDisabled || !isDraggable }"
+        class="type-label d-flex align-center flex-shrink-0"
+      >
+        <VIcon
+          :color="isRegistered ? 'secondary' : 'warning'"
+          :icon="typeIcon"
+          size="x-small"
+          start
+        />
+        <span class="text-label-small font-weight-semibold text-uppercase">
+          {{ typeName }}
+        </span>
+      </div>
+      <template v-if="!isExpanded">
+        <span
+          v-if="preview"
+          class="mx-3 text-medium-emphasis text-body-medium text-truncate"
         >
-          <span
-            v-if="!isDisabled && isDraggable"
-            class="drag-handle"
-            @click.stop
+          {{ preview }}
+        </span>
+        <span
+          v-else-if="isElementEmpty"
+          class="mx-3 font-italic text-disabled text-body-medium"
+        >
+          Empty
+        </span>
+      </template>
+      <VSpacer />
+      <DiffChip :change-type="element.diffChange" />
+      <div v-if="!props.isDisabled" @click.stop>
+        <ElementActions
+          v-bind="actionBindings"
+          @delete="emit('delete')"
+          @discussion:open="focus"
+          @navigate="onNavigateToElement"
+          @reset="reset"
+          @source:fetch="onFetchSource"
+          @unlink="onUnlink"
+          @usages:fetch="onFetchCopies"
+        />
+      </div>
+      <VBtn
+        :aria-label="isExpanded ? 'Collapse element' : 'Expand element'"
+        :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+        class="ml-1 flex-shrink-0 chevron"
+        density="comfortable"
+        size="small"
+        variant="text"
+        @click.stop="toggleExpanded"
+      />
+    </div>
+    <VExpandTransition>
+      <div v-show="isExpanded">
+        <div class="card-body">
+          <QuestionElement
+            v-if="isQuestion"
+            v-bind="{ ...editBindings, componentName, autosave, isDirty }"
+            @add="emit('add', $event)"
+            @delete="emit('delete')"
+            @focus="onSelect"
+            @link="onLinkRelationship"
+            @save="onSave"
           >
-            <span class="mdi mdi-drag-vertical"></span>
-          </span>
-          <div
-            :class="{ 'ml-2': isDisabled || !isDraggable }"
-            class="type-label d-flex align-center flex-shrink-0"
-          >
-            <VIcon :icon="manifest.ui.icon" color="secondary" size="x-small" start />
-            <span class="text-label-small font-weight-semibold text-uppercase">
-              {{ manifest.name }}
-            </span>
-          </div>
-          <template v-if="!isExpanded">
-            <span
-              v-if="preview"
-              class="mx-3 text-medium-emphasis text-body-medium text-truncate"
-            >
-              {{ preview }}
-            </span>
-            <span
-              v-else-if="isElementEmpty"
-              class="mx-3 font-italic text-disabled text-body-medium"
-            >
-              Empty
-            </span>
-          </template>
-          <VSpacer />
-          <DiffChip :change-type="element.diffChange" />
-          <div v-if="!props.isDisabled" @click.stop>
-            <ElementActions
-              v-bind="actionBindings"
+            <slot></slot>
+          </QuestionElement>
+          <template v-else-if="isRegistered">
+            <slot></slot>
+            <component
+              :is="componentName"
+              v-bind="editBindings"
+              :id="`element_${id}`"
+              @add="emit('add', $event)"
               @delete="emit('delete')"
-              @discussion:open="focus"
-              @navigate="onNavigateToElement"
-              @reset="reset"
-              @source:fetch="onFetchSource"
-              @unlink="onUnlink"
-              @usages:fetch="onFetchCopies"
+              @focus="onSelect"
+              @link="onLinkRelationship"
+              @save="onSave"
             />
-          </div>
-          <VBtn
-            :aria-label="isExpanded ? 'Collapse element' : 'Expand element'"
-            :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
-            class="ml-1 flex-shrink-0 chevron"
-            density="comfortable"
-            size="small"
-            variant="text"
-            @click.stop="toggleExpanded"
+          </template>
+          <ElementPlaceholder
+            v-else
+            color="warning"
+            icon="mdi-alert-circle-outline"
+            name="Component is not available"
+            placeholder="No editor is registered for this element type."
           />
         </div>
-        <VExpandTransition>
-          <div v-show="isExpanded">
-            <div class="card-body">
-              <QuestionElement
-                v-if="isQuestion"
-                v-bind="{ ...editBindings, componentName, autosave, isDirty }"
-                @add="emit('add', $event)"
-                @delete="emit('delete')"
-                @focus="onSelect"
-                @link="onLinkRelationship"
-                @save="onSave"
-              >
-                <slot></slot>
-              </QuestionElement>
-              <template v-else>
-                <slot></slot>
-                <component
-                  :is="componentName"
-                  v-bind="editBindings"
-                  :id="`element_${id}`"
-                  @add="emit('add', $event)"
-                  @delete="emit('delete')"
-                  @focus="onSelect"
-                  @link="onLinkRelationship"
-                  @save="onSave"
-                />
-              </template>
-            </div>
-          </div>
-        </VExpandTransition>
-      </template>
-      <component
-        :is="componentName"
-        v-else
-        v-bind="editBindings"
-        :id="`element_${id}`"
-        @add="emit('add', $event)"
-        @delete="emit('delete')"
-        @focus="onSelect"
-        @link="onLinkRelationship"
-        @save="onSave"
-      />
-    </template>
-    <VSheet v-else class="py-10">
-      <div class="text-title-large">
-        {{ (element.type || 'Unknown').replace('_', ' ') }}
       </div>
-      <div class="pt-4 text-title-small">Component is not available!</div>
-    </VSheet>
-    <ElementActionsColumn
-      v-if="!props.isDisabled && !isCard"
-      v-bind="actionBindings"
-      :comfortable="isComfortable"
-      @delete="emit('delete')"
-      @discussion:open="focus"
-      @navigate="onNavigateToElement"
-      @reset="reset"
-      @source:fetch="onFetchSource"
-      @unlink="onUnlink"
-      @usages:fetch="onFetchCopies"
-    />
-
+    </VExpandTransition>
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
@@ -188,16 +143,18 @@ import {
   ref,
   useAttrs,
 } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
 import { isEqual } from 'lodash-es';
-import { getElementId, getQuestionPromptPreview } from '@tailor-cms/utils';
+import {
+  getElementId,
+  getQuestionPromptPreview,
+  titleCase,
+} from '@tailor-cms/utils';
 
 import ActiveUsers from './ActiveUsers.vue';
 import DiffChip from './DiffChip.vue';
 import ElementActions from './ElementActions.vue';
-import ElementActionsColumn from './ElementActionsColumn.vue';
+import ElementPlaceholder from './ElementPlaceholder.vue';
 import QuestionElement from './QuestionElement.vue';
-import { isCardElement } from '../utils';
 import { useConfirmationDialog } from '../composables/useConfirmationDialog';
 
 interface Props {
@@ -213,7 +170,6 @@ interface Props {
   // External dirty state (e.g. edited element refs); shows the save
   // controls and lets a save through even when element data is unchanged.
   isDirty?: boolean;
-  frame?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
@@ -230,7 +186,6 @@ const props = withDefaults(defineProps<Props>(), {
   isDraggable: true,
   isDisabled: false,
   isDirty: false,
-  frame: true,
   dense: false,
   showDiscussion: false,
   autosave: false,
@@ -266,10 +221,10 @@ const isFocused = ref(false);
 const isSaving = ref(false);
 const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
-const rootEl = ref<HTMLElement | null>(null);
 
 const id = computed(() => getElementId(props.element));
 const manifest = computed(() => ceRegistry.getByEntity(props.element));
+const isRegistered = computed(() => !!manifest.value);
 const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
@@ -289,10 +244,12 @@ const toggleExpanded = () => {
   emit('update:expanded', !isExpanded.value);
 };
 
-const isCard = computed(() => isCardElement(props.element, manifest.value));
+const typeIcon = computed(() => manifest.value?.ui?.icon ?? 'mdi-alert-circle-outline');
+const typeName = computed(
+  () => manifest.value?.name ?? titleCase(props.element.type || 'Unknown'),
+);
 
 const preview = computed(() => {
-  if (!isCard.value) return '';
   if (isQuestion.value) return questionPreview.value;
   const content = props.element.data?.content;
   if (typeof content !== 'string') return '';
@@ -336,6 +293,7 @@ const actionBindings = computed(() => ({
   linkedSourceInfo: linkedSourceInfo.value,
   showDelete: !props.parent,
   showDiscussion: props.showDiscussion,
+  isRegistered: isRegistered.value,
   usages: sourceUsages.value,
 }));
 
@@ -347,17 +305,6 @@ const linkedSourceInfo = ref<ElementSourceInfo | null>(null);
 // Source usages state (for non-linked elements that could have copies)
 const isLoadingSourceUsages = ref(false);
 const sourceUsages = ref<ElementSourceInfo[] | null>(null);
-
-// The action column relaxes its vertical spacing once the host
-// element is tall enough.
-const COMFORTABLE_MIN_HEIGHT = 130;
-const isComfortable = ref(false);
-useResizeObserver(rootEl, ([entry]) => {
-  if (!entry) return;
-  const height = entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height;
-  const comfortable = height >= COMFORTABLE_MIN_HEIGHT;
-  if (comfortable !== isComfortable.value) isComfortable.value = comfortable;
-});
 
 const onSelect = (e: any) => {
   if (!props.isDisabled && !showDiff.value && !e.component) {
@@ -396,7 +343,7 @@ const onSave = (data: ContentElement['data']) => {
 };
 
 const reset = () => {
-  if (!ceRegistry) return;
+  if (!ceRegistry || !isRegistered.value) return;
   confirmationDialog({
     title: 'Reset element?',
     color: 'warning',
@@ -564,11 +511,6 @@ onMounted(() => {
     background: rgba(var(--v-theme-secondary-container), 0.2);
     pointer-events: none;
   }
-}
-
-.frame {
-  padding: 10px 20px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.2);
 }
 
 .card {
