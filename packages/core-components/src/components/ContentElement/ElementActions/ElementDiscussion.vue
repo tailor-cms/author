@@ -48,7 +48,7 @@ import { Events } from '@tailor-cms/utils';
 import { get } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import Discussion from './Discussion/index.vue';
+import Discussion from '../../Discussion/index.vue';
 
 const getActivatorOptions = (unseenComments: Comment[]) => ({
   unseen: {

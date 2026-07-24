@@ -150,12 +150,12 @@ import {
   titleCase,
 } from '@tailor-cms/utils';
 
-import ActiveUsers from './ActiveUsers.vue';
-import DiffChip from './DiffChip.vue';
-import ElementActions from './ElementActions.vue';
-import ElementPlaceholder from './ElementPlaceholder.vue';
-import QuestionElement from './QuestionElement.vue';
-import { useConfirmationDialog } from '../composables/useConfirmationDialog';
+import ActiveUsers from '../ActiveUsers.vue';
+import DiffChip from '../DiffChip.vue';
+import ElementActions from './ElementActions/index.vue';
+import ElementPlaceholder from '../ElementPlaceholder.vue';
+import QuestionElement from '../QuestionElement/index.vue';
+import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
 interface Props {
   element: ContentElement;
@@ -463,7 +463,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '../mixins';
+@use '../../mixins';
 
 .content-element {
   $accent-focused: #1de9b6;

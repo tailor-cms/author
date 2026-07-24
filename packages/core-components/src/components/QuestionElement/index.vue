@@ -62,7 +62,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import QuestionContainer from './QuestionContainer/index.vue';
-import { useValidation } from '../composables/useValidation';
+import { useValidation } from '../../composables/useValidation';
 
 const isLegacyQuestion = (type: string) => ceRegistry.isLegacyQuestion(type);
 

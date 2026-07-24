@@ -24,7 +24,7 @@ import { cloneDeep } from 'lodash-es';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
-import ContentElementWrapper from './ContentElement.vue';
+import ContentElementWrapper from './ContentElement/index.vue';
 
 interface Props {
   element: ContentElement;
