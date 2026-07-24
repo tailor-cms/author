@@ -86,7 +86,7 @@ const props = withDefaults(defineProps<Props>(), {
   hasUnresolvedComments: false,
 });
 
-const isVisible = ref(false);
+const isVisible = defineModel<boolean>('open', { default: false });
 const isConfirmationActive = ref(false);
 
 const editorBus = inject<any>('$editorBus');

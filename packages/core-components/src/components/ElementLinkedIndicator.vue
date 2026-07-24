@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
   sourceInfo?: ElementSourceInfo | null;
@@ -73,7 +73,7 @@ const emit = defineEmits<{
   'source:view': [sourceInfo: ElementSourceInfo];
 }>();
 
-const menuOpen = ref(false);
+const menuOpen = defineModel<boolean>('open', { default: false });
 
 const tooltipText = computed(() =>
   props.isEntryPoint

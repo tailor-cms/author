@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import type {
   ContentElement,
   ElementSourceInfo,
@@ -75,7 +75,7 @@ const emit = defineEmits<{
   'usage:view': [usage: ElementSourceInfo];
 }>();
 
-const menuOpen = ref(false);
+const menuOpen = defineModel<boolean>('open', { default: false });
 
 const badgeColor = computed(() =>
   props.usages?.length ? 'secondary' : 'inverse-surface',

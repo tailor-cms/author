@@ -3,6 +3,7 @@
     <VExpandXTransition>
       <div v-if="isRegistered && element.isLinkedCopy" class="pinned">
         <ElementLinkedIndicator
+          v-model:open="linkedMenu"
           :is-entry-point="isEntryPoint"
           :is-loading="isLoadingSourceInfo"
           :source-info="linkedSourceInfo"
@@ -13,8 +14,9 @@
       </div>
     </VExpandXTransition>
     <VExpandXTransition>
-      <div v-if="showUsages && isHighlighted">
+      <div v-if="showUsages && isActive">
         <ElementSourceUsages
+          v-model:open="usagesMenu"
           :element="element"
           :is-loading="isLoadingUsages"
           :usages="usages"
@@ -25,11 +27,12 @@
     </VExpandXTransition>
     <VExpandXTransition>
       <div
-        v-if="showDiscussion && (isHighlighted || hasComments)"
+        v-if="showDiscussion && (isActive || hasComments)"
         class="pinned"
       >
         <ElementLinkedDiscussion
           v-if="element.isLinkedCopy"
+          v-model:open="discussionMenu"
           :is-loading="isLoadingSourceInfo"
           :source-info="linkedSourceInfo"
           @source:fetch="emit('source:fetch')"
@@ -37,6 +40,7 @@
         />
         <ElementDiscussion
           v-else
+          v-model:open="discussionMenu"
           v-bind="element"
           :user="currentUser"
           @open="emit('discussion:open')"
@@ -44,7 +48,7 @@
       </div>
     </VExpandXTransition>
     <VExpandXTransition>
-      <div v-if="isHighlighted && isRegistered" class="action-reset">
+      <div v-if="isActive && isRegistered" class="action-reset">
         <VBtn
           v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
           aria-label="Reset element"
@@ -58,7 +62,7 @@
       </div>
     </VExpandXTransition>
     <VExpandXTransition>
-      <div v-if="showDelete && isHighlighted" class="action-delete">
+      <div v-if="showDelete && isActive" class="action-delete">
         <VBtn
           v-tooltip:bottom="{ text: 'Delete element', openDelay: 1000 }"
           aria-label="Delete element"
@@ -80,7 +84,7 @@ import type {
   ElementSourceInfo,
 } from '@tailor-cms/interfaces/content-element';
 import type { User } from '@tailor-cms/interfaces/user';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 
 import ElementDiscussion from './ElementDiscussion.vue';
 import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
@@ -123,6 +127,19 @@ const emit = defineEmits([
   'unlink',
   'usages:fetch',
 ]);
+
+// Keep the row (and its anchored menus) visible while any menu is open, so
+// moving the pointer off the card doesn't collapse the action that owns it.
+const linkedMenu = ref(false);
+const usagesMenu = ref(false);
+const discussionMenu = ref(false);
+const isActive = computed(
+  () =>
+    props.isHighlighted ||
+    linkedMenu.value ||
+    usagesMenu.value ||
+    discussionMenu.value,
+);
 
 const hasComments = computed(() => !!props.element.comments?.length);
 const showUsages = computed(
