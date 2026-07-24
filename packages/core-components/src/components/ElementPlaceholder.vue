@@ -1,20 +1,13 @@
 <template>
   <VSheet
-    :class="dense ? 'pt-3' : 'pa-12'"
-    class="text-center"
+    class="text-center pa-8"
     color="transparent"
   >
-    <VAvatar color="inverse-surface" :size="dense ? 40 : 60">
-      <VIcon
-        :color="isFocused ? activeColor : 'surface-container'"
-        :icon="icon"
-        :size="iconSize"
-      />
+    <VAvatar size="x-large" variant="tonal">
+      <VIcon :icon="icon" :size="isFocused ? 34 : 28" />
     </VAvatar>
-    <div :class="[dense ? 'my-2 text-title-small' : 'my-4 text-headline-small']">
-      {{ name }}
-    </div>
-    <div v-if="!dense && !isDisabled" class="text-body-large">
+    <div class="mt-4 mb-2 text-title-large">{{ name }}</div>
+    <div v-if="!isDisabled" class="text-body-medium">
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>
         {{ activePlaceholder }}
@@ -25,32 +18,21 @@
 </template>
 
 <script lang="ts" setup>
-import { computed } from 'vue';
-
 interface Props {
   icon: string;
   name: string;
   placeholder?: string;
   activePlaceholder?: string;
   activeIcon?: string | null;
-  activeColor?: string;
-  dense?: boolean;
   isFocused?: boolean;
   isDisabled?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), {
+withDefaults(defineProps<Props>(), {
   placeholder: 'Select to edit',
   activePlaceholder: 'Use toolbar to edit',
   activeIcon: null,
-  activeColor: 'surface-container-lowest',
-  dense: false,
   isFocused: false,
   isDisabled: false,
-});
-
-const iconSize = computed(() => {
-  if (props.dense) return props.isFocused ? 24 : 20;
-  return props.isFocused ? 38 : 30;
 });
 </script>

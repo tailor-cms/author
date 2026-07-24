@@ -92,14 +92,3 @@ watch(menuOpen, (open) => {
   }
 });
 </script>
-
-<style lang="scss" scoped>
-// Compact count badge
-:deep(.v-badge__badge) {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.1875rem;
-  font-size: 0.625rem;
-  transform: translate(0.5625rem, 0.125rem);
-}
-</style>

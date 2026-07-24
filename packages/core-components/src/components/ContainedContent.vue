@@ -11,7 +11,7 @@
     @mouseleave="isHovered = false"
     @mouseover="isHovered = true"
   >
-    <span v-if="!isDisabled" class="drag-handle">
+    <span v-if="!isDisabled && !isCard" class="drag-handle">
       <span class="mdi mdi-drag-vertical"></span>
     </span>
     <ContentElementWrapper
@@ -25,12 +25,13 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed, inject, ref } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { get, throttle } from 'lodash-es';
 
 import ContentElementWrapper from './ContentElement.vue';
+import { isCardElement } from '../utils';
 
 interface Props {
   element: ContentElement;
@@ -64,7 +65,13 @@ const emit = defineEmits([
   'save:meta',
 ]);
 
+const ceRegistry = inject<any>('$ceRegistry');
+
 const isHovered = ref(false);
+
+const isCard = computed(() =>
+  isCardElement(props.element, ceRegistry?.getByEntity(props.element)),
+);
 
 const bindings = computed(() => {
   const {
