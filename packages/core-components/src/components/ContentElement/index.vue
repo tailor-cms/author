@@ -78,6 +78,11 @@
         @click.stop="toggleExpanded"
       />
     </div>
+    <DeprecationWarning
+      v-if="!isDisabled && isDeprecated(element.type)"
+      :element="element"
+      class="ma-3"
+    />
     <VExpandTransition>
       <div v-show="isExpanded">
         <div class="card-body">
@@ -154,8 +159,10 @@ import {
 
 import ActiveUsers from '../ActiveUsers.vue';
 import DiffChip from './DiffChip.vue';
+import DeprecationWarning from '../DeprecationWarning.vue';
 import ElementActions from './ElementActions/index.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
+import { isDeprecated } from '../../utils/deprecated-elements';
 import QuestionElement from '../QuestionElement/index.vue';
 import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
