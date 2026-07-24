@@ -2,8 +2,7 @@
   <button :class="{ disabled }" class="inline-activator d-block">
     <VDivider content-offset="-16" opacity="0.5">
       <VAvatar
-        class="elevation-1"
-        color="surface-container"
+        color="surface-container-highest"
         icon="mdi-plus"
         size="x-small"
       />

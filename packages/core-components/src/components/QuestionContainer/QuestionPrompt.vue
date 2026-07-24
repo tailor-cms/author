@@ -7,7 +7,7 @@
     >
       <div
         ref="question"
-        class="question rounded w-100 pa-3"
+        class="question rounded w-100"
         :class="{ focused: isFocused }"
       >
         <VAlert
@@ -93,8 +93,6 @@ editorChannel.on('element:focus', (element: any = {}) => {
 }
 
 :deep(.list-group) {
-  padding: 1rem 2.5rem;
-
   .contained-content {
     margin: 0;
   }
