@@ -151,7 +151,7 @@ import {
 } from '@tailor-cms/utils';
 
 import ActiveUsers from '../ActiveUsers.vue';
-import DiffChip from '../DiffChip.vue';
+import DiffChip from './DiffChip.vue';
 import ElementActions from './ElementActions/index.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
 import QuestionElement from '../QuestionElement/index.vue';
