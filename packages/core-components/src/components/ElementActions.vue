@@ -44,21 +44,15 @@
       </div>
     </VExpandXTransition>
     <VExpandXTransition>
-      <VDivider
-        v-if="hasDivider && isHighlighted"
-        class="action-divider"
-        vertical
-      />
-    </VExpandXTransition>
-    <VExpandXTransition>
       <div v-if="isHighlighted && isRegistered" class="action-reset">
         <VBtn
           v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
           aria-label="Reset element"
           color="warning"
           icon="mdi-restore"
+          rounded="lg"
           size="x-small"
-          variant="tonal"
+          variant="text"
           @click="emit('reset')"
         />
       </div>
@@ -70,8 +64,9 @@
           aria-label="Delete element"
           color="error"
           icon="mdi-trash-can-outline"
+          rounded="lg"
           size="x-small"
-          variant="tonal"
+          variant="text"
           @click="emit('delete')"
         />
       </div>
@@ -136,13 +131,6 @@ const showUsages = computed(
     !props.element.isLinkedCopy &&
     !props.element.embedded,
 );
-
-const hasDivider = computed(
-  () =>
-    (props.isRegistered && props.element.isLinkedCopy) ||
-    showUsages.value ||
-    props.showDiscussion,
-);
 </script>
 
 <style lang="scss" scoped>
@@ -155,50 +143,12 @@ const hasDivider = computed(
     flex-shrink: 0;
   }
 
-  // Quiet ghost buttons; the row whispers, semantic color appears only on
-  // the hovered action itself.
-  :deep(.v-btn) {
-    border-radius: 8px;
-    background: transparent;
-    color: rgba(var(--v-theme-on-surface), 0.65);
-
-    .v-btn__underlay {
-      opacity: 0;
-    }
-
-    &:hover {
-      background: rgba(var(--v-theme-on-surface), 0.06);
-      color: rgba(var(--v-theme-on-surface), 0.95);
-    }
-  }
-
   :deep(.v-btn--icon.v-btn--size-x-small) {
     --v-btn-height: 1rem;
   }
 
   :deep(.v-btn--size-x-small .v-icon) {
     font-size: 1.125rem;
-  }
-
-  :deep(.v-badge__badge) {
-    height: 0.875rem;
-    min-width: 0.875rem;
-    padding: 0 0.25rem;
-    font-size: 0.5625rem;
-  }
-
-  .action-reset :deep(.v-btn:hover) {
-    color: rgb(var(--v-theme-warning));
-  }
-
-  .action-delete :deep(.v-btn:hover) {
-    color: rgb(var(--v-theme-error));
-  }
-
-  .action-divider {
-    align-self: center;
-    height: 1rem;
-    margin-inline: 0.25rem;
   }
 }
 </style>

@@ -11,12 +11,13 @@
   >
     <template #activator="{ props: menuProps }">
       <VBtn
-        v-tooltip:left="{ text: activator.tooltip, openDelay: 1000 }"
+        v-tooltip:bottom="{ text: activator.tooltip, openDelay: 1000 }"
         v-bind="menuProps"
         :icon="activator?.icon"
         aria-label="View comments"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" class="pa-4" rounded="lg">

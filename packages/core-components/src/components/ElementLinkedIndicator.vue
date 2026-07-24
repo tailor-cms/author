@@ -8,7 +8,7 @@
   >
     <template #activator="{ props: menuProps }">
       <VBtn
-        v-tooltip:left="{
+        v-tooltip:bottom="{
           text: tooltipText,
           disabled: menuOpen,
           openDelay: 1000,
@@ -16,10 +16,10 @@
         v-bind="menuProps"
         :class="{ 'opacity-60': !isEntryPoint }"
         aria-label="Linked content"
-        color="secondary"
         icon="mdi-link-variant"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
