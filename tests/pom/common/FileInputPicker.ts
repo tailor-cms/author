@@ -12,6 +12,8 @@ export class FileInputPicker {
 
   // Upload tab
   readonly uploadFileInput: Locator;
+  readonly uploadProgress: Locator;
+  readonly uploadError: Locator;
 
   // Library tab
   readonly librarySearch: Locator;
@@ -41,6 +43,8 @@ export class FileInputPicker {
     this.uploadFileInput = this.dialog.getByRole('button', {
       name: 'Browse files',
     });
+    this.uploadProgress = this.dialog.locator('.upload-progress');
+    this.uploadError = this.dialog.locator('.v-alert[role="alert"]');
 
     // Library tab
     this.librarySearch = this.dialog.getByPlaceholder('Search assets...');
@@ -88,14 +92,26 @@ export class FileInputPicker {
   }
 
   // Upload tab actions
-  async uploadFile(filePath: string) {
+  // Pick a file on the upload tab without waiting for the upload to
+  // finish (the dialog stays open showing progress until it does)
+  async selectUploadFile(filePath: string) {
     await this.switchToUpload();
     const [fileChooser] = await Promise.all([
       this.page.waitForEvent('filechooser'),
       this.uploadFileInput.click(),
     ]);
     await fileChooser.setFiles(filePath);
+  }
+
+  async uploadFile(filePath: string) {
+    await this.selectUploadFile(filePath);
     await this.waitForClose();
+  }
+
+  async expectUploading(fileName: string) {
+    await expect(this.uploadProgress).toBeVisible();
+    await expect(this.uploadProgress).toContainText(fileName);
+    await expect(this.cancelBtn).toBeDisabled();
   }
 
   // Library tab actions

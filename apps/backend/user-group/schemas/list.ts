@@ -1,6 +1,7 @@
 // Wire shape for the user-group listing endpoint.
 import { z } from 'zod';
 import {
+  Int,
   Paginated,
   Pagination,
   Sort,
@@ -22,7 +23,20 @@ export const ListFilter = z
 
 export type ListFilter = z.infer<typeof ListFilter>;
 
-export const ListResult = Paginated(UserGroup, 'UserGroupListResult')
+// List rows carry aggregate counts (computed via subqueries) so the
+// listing UI can show group size without extra requests.
+export const UserGroupWithCounts = UserGroup.extend({
+  memberCount: Int().describe('Number of members in the group.'),
+  repositoryCount: Int().describe(
+    'Number of repositories shared with the group.',
+  ),
+})
+  .meta({ id: 'UserGroupWithCounts' })
+  .describe('A user group decorated with member and repository counts.');
+
+export type UserGroupWithCounts = z.infer<typeof UserGroupWithCounts>;
+
+export const ListResult = Paginated(UserGroupWithCounts, 'UserGroupListResult')
   .describe('Paginated user-group list response.');
 
 export type ListResult = z.infer<typeof ListResult>;

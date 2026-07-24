@@ -21,6 +21,9 @@ export class AssetLibrary {
   readonly assetRows: Locator;
   readonly bulkActionBar: BulkActionBar;
   readonly emptyState: Locator;
+  readonly emptyLibrary: Locator;
+  readonly emptyUploadCard: Locator;
+  readonly emptyAddLinkCard: Locator;
   readonly pagination: Locator;
 
   constructor(page: Page) {
@@ -35,6 +38,9 @@ export class AssetLibrary {
     this.addLinkDialog = new AddLinkDialog(page);
     this.moveDialog = new MoveToFolderDialog(page);
     this.emptyState = page.getByTestId('assetEmptyState');
+    this.emptyLibrary = page.getByText('No assets yet');
+    this.emptyUploadCard = page.getByTestId('assets__emptyUpload');
+    this.emptyAddLinkCard = page.getByTestId('assets__emptyLink');
   }
 
   async goto(repositoryId: number) {
@@ -46,7 +52,11 @@ export class AssetLibrary {
 
   async waitForLoad() {
     await expect(
-      this.assetRows.or(this.folders.rows).or(this.emptyState).first(),
+      this.assetRows
+        .or(this.folders.rows)
+        .or(this.emptyState)
+        .or(this.emptyLibrary)
+        .first(),
     ).toBeVisible();
   }
 
@@ -73,12 +83,22 @@ export class AssetLibrary {
     await this.waitForLoad();
   }
 
+  async uploadFirst(filePaths: string[]) {
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent('filechooser'),
+      this.emptyUploadCard.click(),
+    ]);
+    await fileChooser.setFiles(filePaths);
+    await this.page.waitForLoadState('networkidle');
+    await this.waitForLoad();
+  }
+
   async uploadAndVerify(
     filePath: string,
     expectedName: string,
     expectedType: string,
   ) {
-    await this.uploadFiles([filePath]);
+    await this.uploadFirst([filePath]);
     const row = this.getRow(expectedName);
     await expect(row.el).toBeVisible();
     await expect(row.typeChip).toContainText(expectedType);
@@ -89,9 +109,17 @@ export class AssetLibrary {
   }
 
   async addLink(url: string) {
+    await this.submitLink(() => this.toolbar.openAddLink(), url);
+  }
+
+  async addFirstLink(url: string) {
+    await this.submitLink(() => this.emptyAddLinkCard.click(), url);
+  }
+
+  private async submitLink(open: () => Promise<void>, url: string) {
     await this.waitForLoad();
     const countBefore = await this.getRowCount();
-    await this.toolbar.openAddLink();
+    await open();
     await expect(this.addLinkDialog.el).toBeVisible();
     await this.addLinkDialog.addLink(url);
     // Wait for the new asset row to appear

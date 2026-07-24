@@ -23,7 +23,9 @@ const readBackendSpec = async (): Promise<OpenApiDoc> => {
     return JSON.parse(raw) as OpenApiDoc;
   } catch (err: any) {
     if (err?.code !== 'ENOENT') throw err;
-    throw new Error(`Backend spec not found at ${BACKEND_SPEC_PATH}.`);
+    throw new Error(`Backend spec not found at ${BACKEND_SPEC_PATH}.`, {
+      cause: err,
+    });
   }
 };
 

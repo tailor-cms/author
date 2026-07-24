@@ -1,28 +1,27 @@
 <template>
-  <div class="repo-search">
-    <div :style="{ width: mdAndDown || isExpanded ? '100%' : '85%' }">
-      <VTextField
-        v-model="internalValue"
-        :bg-color="isExpanded ? 'surface-container-high' : 'surface-container' "
-        aria-label="Search repositories"
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        rounded="pill"
-        variant="solo"
-        clearable
-        flat
-        hide-details
-        @blur="isExpanded = false"
-        @focus="isExpanded = true"
-        @update:model-value="emitChange"
-      />
-    </div>
-  </div>
+  <VTextField
+    v-model="internalValue"
+    bg-color="surface-container"
+    class="repo-search"
+    aria-label="Search repositories"
+    placeholder="Search..."
+    prepend-inner-icon="mdi-magnify"
+    rounded="pill"
+    variant="solo-filled"
+    density="comfortable"
+    :max-width="isExpanded ? 512 : 384"
+    min-width="220"
+    clearable
+    flat
+    hide-details
+    @blur="isExpanded = false"
+    @focus="isExpanded = true"
+    @update:model-value="emitChange"
+  />
 </template>
 
 <script lang="ts" setup>
 import { debounce } from 'lodash-es';
-import { useDisplay } from 'vuetify';
 
 export interface Props {
   searchInput?: string;
@@ -33,8 +32,6 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits(['update']);
-
-const { mdAndDown } = useDisplay();
 
 const isExpanded = ref(false);
 const internalValue = ref(props.searchInput);
@@ -54,10 +51,7 @@ watch(
 
 <style lang="scss" scoped>
 .repo-search {
-  > div {
-    margin: 0 auto;
-    transition: width 0.3s ease;
-  }
+  transition: max-width 0.3s ease;
 }
 
 :deep(input::placeholder) {

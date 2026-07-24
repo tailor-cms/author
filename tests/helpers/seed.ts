@@ -1,10 +1,70 @@
-import { faker } from '@faker-js/faker';
 import type { Page } from '@playwright/test';
+import { expect } from '@playwright/test';
+import { faker } from '@faker-js/faker';
 
 import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
 
 const REPOSITORY_API = new ApiClient('/api/repositories/');
+const USER_GROUP_API = new ApiClient('/api/user-group/');
+
+// localStorage key backing the repository switcher's recents (see
+// `useRecentRepositories`): repository id -> last-visit timestamp.
+const RECENT_REPOSITORIES_KEY = 'tailor-cms-recent-repositories';
+
+// Mirrors `RECENT_MIN_VISIT_MS` in the current-repository store: a visit only
+// becomes recent after the user stays this long. Advance an installed clock
+// past it to record a visit deterministically.
+export const RECENT_MIN_VISIT_MS = 10_000;
+
+// Seeds the recents store directly so the switcher lists these repositories as
+// recent, bypassing the minimum visit. Ids are ordered most-recent first.
+export const seedRecentRepositories = (page: Page, ids: number[]) => {
+  const store = Object.fromEntries(ids.map((id, i) => [id, ids.length - i]));
+  return page.addInitScript(
+    ([key, value]) => window.localStorage.setItem(key, value),
+    [RECENT_REPOSITORIES_KEY, JSON.stringify(store)] as [string, string],
+  );
+};
+
+// Creates a workspace (user group) via the REST API; returns the new group.
+export const createUserGroup = async (
+  name: string,
+): Promise<{ id: number; name: string }> => {
+  const { data } = await USER_GROUP_API.create({ name } as any);
+  return data;
+};
+
+// Deletes a workspace (user group) via the REST API.
+export const deleteUserGroup = (id: number) => USER_GROUP_API.remove(id);
+
+// Adds members to a workspace (inviting missing users) via the REST API.
+export const addUserGroupMembers = async (
+  groupId: number,
+  emails: string[],
+  role: 'ADMIN' | 'USER' | 'COLLABORATOR' = 'USER',
+) => {
+  const { status } = await USER_GROUP_API.post(`${groupId}/users`, {
+    emails,
+    role,
+    skipInvite: true,
+  });
+  expect(status).toBe(200);
+};
+
+// Grants (or updates) a repository role for the given user
+export const addRepositoryMember = async (
+  repositoryId: number,
+  email: string,
+  role: 'ADMIN' | 'AUTHOR',
+) => {
+  const { status, data } = await REPOSITORY_API.post(
+    `${repositoryId}/users`,
+    { email, role },
+  );
+  expect(status).toBe(200);
+  return data;
+};
 
 export const createCleanRepository = async (
   name?: string,

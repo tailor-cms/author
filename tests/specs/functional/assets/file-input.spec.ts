@@ -5,9 +5,11 @@ import { AssetLibrary } from '../../../pom/repository/AssetLibrary';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import SeedClient from '../../../api/SeedClient';
 import { DOCUMENT, IMAGE } from '../../../fixtures/assets';
+import { deferred } from '../../../helpers/deferred';
 import { toFileMetaInput } from './helpers';
 
 const INPUT_PLACEHOLDER = 'Click to add a thumbnail image';
+const UPLOAD_ROUTE = '**/repositories/*/assets';
 
 test.describe('FileInput - upload tab', () => {
   test('can upload a file via the upload tab', async ({ page }) => {
@@ -19,6 +21,45 @@ test.describe('FileInput - upload tab', () => {
     await fileInput.expectFileSet(IMAGE.name);
     // Verify persistence
     await page.reload({ waitUntil: 'networkidle' });
+    await fileInput.expectFileSet(IMAGE.name);
+  });
+
+  test('keeps the dialog open with progress while uploading', async ({
+    page,
+  }) => {
+    await toFileMetaInput(page);
+    // Hold the upload request so the in-flight state is observable
+    const { promise: uploadGate, resolve: releaseUpload } = deferred();
+    await page.route(UPLOAD_ROUTE, async (route) => {
+      if (route.request().method() !== 'POST') return route.continue();
+      await uploadGate;
+      return route.continue();
+    });
+    const sidebar = new OutlineSidebar(page);
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.selectUploadFile(IMAGE.path);
+    await fileInput.picker.expectUploading(IMAGE.name);
+    releaseUpload();
+    await fileInput.picker.waitForClose();
+    await fileInput.expectFileSet(IMAGE.name);
+  });
+
+  test('shows an error and allows retry when the upload fails', async ({
+    page,
+  }) => {
+    await toFileMetaInput(page);
+    await page.route(UPLOAD_ROUTE, (route) => {
+      if (route.request().method() !== 'POST') return route.continue();
+      return route.fulfill({ status: 500, body: 'Upload error' });
+    });
+    const sidebar = new OutlineSidebar(page);
+    const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
+    await fileInput.picker.selectUploadFile(IMAGE.path);
+    await expect(fileInput.picker.uploadError).toContainText('Upload failed');
+    await expect(fileInput.picker.dialog).toBeVisible();
+    // Retry succeeds once the failure is lifted
+    await page.unroute(UPLOAD_ROUTE);
+    await fileInput.picker.uploadFile(IMAGE.path);
     await fileInput.expectFileSet(IMAGE.name);
   });
 

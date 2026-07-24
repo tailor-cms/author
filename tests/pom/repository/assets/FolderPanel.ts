@@ -14,12 +14,14 @@ export class FolderPanel {
   readonly dialog: NewFolderDialog;
   readonly removeAction: Locator;
   readonly deleteAction: Locator;
+  readonly emptyNewFolderCard: Locator;
 
   constructor(page: Page, toolbar: AssetToolbar) {
     this.page = page;
     this.toolbar = toolbar;
     this.rows = page.locator('.folder-row');
     this.breadcrumbs = page.locator('.folder-breadcrumbs');
+    this.emptyNewFolderCard = page.getByTestId('assets__emptyNewFolder');
     this.dialog = new NewFolderDialog(page);
     const menuItems = page.locator('.v-list .v-list-item');
     this.removeAction = menuItems.filter({ hasText: 'Discard folder' });
@@ -36,6 +38,11 @@ export class FolderPanel {
 
   async create(name: string) {
     await this.toolbar.openNewFolder();
+    await this.dialog.create(name);
+  }
+
+  async createFirst(name: string) {
+    await this.emptyNewFolderCard.click();
     await this.dialog.create(name);
   }
 

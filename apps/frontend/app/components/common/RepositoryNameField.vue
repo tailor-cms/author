@@ -3,7 +3,8 @@
     <VTextField
       v-model="nameInput"
       v-bind="$attrs"
-      :error-messages="errors"
+      :counter="meta.validate.max"
+      :error-messages="props.showValidation ? errors : []"
       :label="props.label"
       :messages="warning"
       class="required"
@@ -50,6 +51,8 @@ interface Props {
   label?: string;
   repositoryId?: number | null;
   entityData?: Record<string, any>;
+  // Show validation errors. Set false to defer them until the first submit.
+  showValidation?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -57,6 +60,7 @@ const props = withDefaults(defineProps<Props>(), {
   label: 'Name',
   repositoryId: null,
   entityData: undefined,
+  showValidation: true,
 });
 const emit = defineEmits(['change']);
 
@@ -74,19 +78,21 @@ const meta = computed(() => ({
 }));
 
 const appendPlugins = computed(() => $pluginRegistry.getAppendComponents());
-const parsedRepos = computed(() => existingRepositories.value.map((repo) => {
-  const { name, description, data } = repo;
-  return $pluginRegistry.filter('data:value', name, {
-    data: { name, description, ...data },
-    key: 'name',
-  });
-}));
+const parsedRepos = computed(() => existingRepositories.value
+  .filter((repo) => repo.id !== props.repositoryId)
+  .map((repo) => {
+    const { name, description, data } = repo;
+    return $pluginRegistry.filter('data:value', name, {
+      data: { name, description, ...data },
+      key: 'name',
+    });
+  }));
 
 const {
   value: nameInput,
   errors,
   validate,
-} = useField('name', string().required().min(2).max(250), {
+} = useField('name', string().trim().required().min(2).max(250), {
   initialValue: props.value,
 });
 

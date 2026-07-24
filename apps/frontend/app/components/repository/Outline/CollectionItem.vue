@@ -61,7 +61,7 @@
 import { activity as activityUtils } from '@tailor-cms/utils';
 import { formatDate } from 'date-fns/format';
 import { formatDistanceToNow } from 'date-fns/formatDistanceToNow';
-import { first, sortBy } from 'lodash-es';
+import { sortBy } from 'lodash-es';
 import { storeToRefs } from 'pinia';
 
 import type { StoreActivity } from '@/stores/activity';
@@ -109,8 +109,10 @@ const openActivity = () => {
 
 const deleteActivity = () =>
   requestDeletion(props.activity, () => {
-    const focusNode = first(sortBy(repositoryStore.rootActivities, 'position'));
-    if (focusNode) repositoryStore.selectActivity(focusNode.id);
+    const roots = sortBy(repositoryStore.rootActivities, 'position');
+    const focusNode = roots.find((it) => it.id !== props.activity.id);
+    if (focusNode) return repositoryStore.selectActivity(focusNode.id);
+    repositoryStore.deselectActivity();
   });
 
 onMounted(() => {

@@ -1,6 +1,6 @@
 <template>
   <div ref="scrollerEl" class="revisions-page overflow-auto h-100">
-    <VContainer max-width="1300">
+    <VContainer max-width="1400">
       <VInfiniteScroll
         v-if="bundledRevisions.length > 0"
         class="revisions"
@@ -164,7 +164,7 @@ onMounted(() => fetchRevisions());
 }
 
 .revision-day-header {
-  background: rgb(var(--v-theme-surface-container-low));
+  background: rgb(var(--v-theme-surface-canvas));
   position: sticky;
   top: 0;
   z-index: 1;

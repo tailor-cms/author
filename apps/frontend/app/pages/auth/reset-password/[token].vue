@@ -3,7 +3,7 @@
     <VAlert
       v-if="notificationText"
       :text="notificationText"
-      :color="isError ? 'error' : 'secondary'"
+      :color="isError ? 'error' : 'success'"
       class="mb-8"
       variant="tonal"
     />

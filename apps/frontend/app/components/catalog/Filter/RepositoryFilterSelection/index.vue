@@ -13,7 +13,7 @@
     <VBtn
       v-show="repositoryFilter.length"
       prepend-icon="mdi-close"
-      color="tertiary"
+      color="secondary"
       size="small"
       text="Clear all"
       variant="tonal"

@@ -40,6 +40,18 @@ export interface ImportFileOptions extends AssetAttribution {
   file: BufferedFile;
 }
 
+// Resolved signed asset URLs
+export interface ResolvedStorageKey {
+  // Signed URL of the original file.
+  publicUrl: string | null;
+  // Signed URL of the thumbnail; null when the asset has no image
+  // representation to build one from (audio, documents), or while a first
+  // one is still generating in the background.
+  thumbnailUrl: string | null;
+  // Backing library asset id.
+  assetId: number;
+}
+
 // Controls how video-provider links (YouTube, Vimeo, ...) are classified
 // in list queries. Set by the `ListFilter` Zod transform; consumed by the
 // service to add the right Sequelize WHERE fragment.

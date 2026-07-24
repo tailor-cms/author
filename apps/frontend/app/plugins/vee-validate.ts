@@ -1,13 +1,27 @@
-import { sentenceCase } from '@tailor-cms/utils';
+import { all, max as baseMax, min as baseMin } from '@vee-validate/rules';
 import { configure, defineRule } from 'vee-validate';
-import { all } from '@vee-validate/rules';
-import en from '@vee-validate/i18n/dist/locale/en.json';
 import { localize } from '@vee-validate/i18n';
+import { sentenceCase } from '@tailor-cms/utils';
+import en from '@vee-validate/i18n/dist/locale/en.json';
 
 export default defineNuxtPlugin(() => {
   Object.entries(all).forEach(([name, rule]) => {
     defineRule(name, rule);
   });
+
+  /**
+   * Trim strings before delegating to the built-in length validators.
+   */
+  const trimForLength = (value: unknown) =>
+    typeof value === 'string' ? value.trim() : value;
+
+  defineRule('min', (value: any, params: any) =>
+    baseMin(trimForLength(value), params),
+  );
+
+  defineRule('max', (value: any, params: any) =>
+    baseMax(trimForLength(value), params),
+  );
 
   defineRule('decimal', (value: any, [decimals = '*', separator = '.']) => {
     // null and undefined are valid values, should be handled by required rule

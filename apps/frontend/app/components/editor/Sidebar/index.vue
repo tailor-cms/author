@@ -4,7 +4,7 @@
     :class="{ resizing: isResizing }"
     :width="width"
     class="editor-sidebar-main sidebar"
-    color="surface-container-low"
+    color="surface-canvas"
     elevation="0"
     location="left"
     mobile-breakpoint="md"
@@ -51,7 +51,7 @@
               location="bottom"
             />
             <template v-if="tab.badgeData" #append>
-              <VBadge :content="tab.badgeData" color="tertiary" inline />
+              <VBadge :content="tab.badgeData" color="secondary" inline />
             </template>
           </VTab>
         </VTabs>
@@ -107,7 +107,7 @@
       :icon="activeTabIcon"
       aria-label="Open sidebar"
       class="sidebar-toggle"
-      color="secondary-container"
+      color="primary-container"
       density="comfortable"
       size="small"
       @click="modelValue = true"

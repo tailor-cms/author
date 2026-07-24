@@ -1,5 +1,5 @@
 import { extractData } from './helpers';
-import request from './request';
+import request, { uploadProgress } from './request';
 
 const urls = {
   repository: (repositoryId) => `/repositories/${repositoryId}`,
@@ -37,11 +37,7 @@ function upload(repositoryId, files, { onProgress, folder } = {}) {
       // Unset default application/json so the browser sets multipart/form-data
       // with the correct boundary for FormData serialization
       headers: { 'Content-Type': undefined },
-      ...(onProgress && {
-        onUploadProgress: ({ loaded, total }) => {
-          if (total) onProgress(Math.round((loaded / total) * 100));
-        },
-      }),
+      onUploadProgress: uploadProgress(onProgress),
     })
     .then(extractData);
 }

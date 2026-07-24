@@ -1,8 +1,10 @@
-import { expect, test } from '@playwright/test';
-
-import SeedClient from '../../../api/SeedClient';
-import { addFirstItem, ENTITY, toCollection } from './helpers';
 import type { CollectionView } from '../../../pom/repository/collection/CollectionView';
+
+import { expect, test } from '@playwright/test';
+import { addFirstItem, ENTITY, toCollection } from './helpers';
+import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
+import { Toast } from '../../../pom/common/Toast';
+import SeedClient from '../../../api/SeedClient';
 
 // Wide viewport so the editor's right sidebar docks beside the card instead of
 // overlaying it (its resize handle would otherwise intercept clicks).
@@ -49,11 +51,23 @@ test.describe('Collection - item metadata editing', () => {
     expect(await collection.titles()).toEqual(['Original']);
   });
 
-  test('deletes an item', async () => {
+  test('deletes an item', async ({ page }) => {
     await addFirstItem(collection, ENTITY.TAG, 'obsolete');
     await collection.entityFilter.select(ENTITY.TAG.label);
     const item = await collection.getItemByName('obsolete');
     await item.remove();
+    await new Toast(page).expectDeleted('Tag');
+    await expect(collection.emptyAlert).toBeVisible();
+  });
+
+  test('deletes an item from the sidebar', async ({ page }) => {
+    await addFirstItem(collection, ENTITY.AUTHOR, 'Tomás Rivera');
+    await collection.entityFilter.select(ENTITY.AUTHOR.label);
+    const item = await collection.getItemByName('Tomás Rivera');
+    await item.select();
+    const sidebar = new OutlineSidebar(page);
+    await sidebar.remove();
+    await new Toast(page).expectDeleted('Author');
     await expect(collection.emptyAlert).toBeVisible();
   });
 });

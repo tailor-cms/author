@@ -9,11 +9,11 @@ test.describe('Asset library', () => {
   test('displays empty state when no assets exist', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
     await lib.waitForLoad();
-    await expect(lib.emptyState).toBeVisible();
-    await expect(lib.emptyState).toContainText('No assets uploaded yet.');
-    await expect(lib.emptyState).toContainText(
-      'Upload files, add links, or use Discover.',
-    );
+    await expect(lib.emptyLibrary).toBeVisible();
+    await expect(lib.toolbar.el).toBeHidden();
+    await expect(lib.emptyUploadCard).toBeVisible();
+    await expect(lib.emptyAddLinkCard).toBeVisible();
+    await expect(lib.folders.emptyNewFolderCard).toBeVisible();
   });
 
   test('can upload an image file', async ({ page }) => {
@@ -38,7 +38,7 @@ test.describe('Asset library', () => {
 
   test('can upload multiple files at once', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.uploadFiles([IMAGE.path, DOCUMENT.path]);
+    await lib.uploadFirst([IMAGE.path, DOCUMENT.path]);
     await expect(lib.assetRows).toHaveCount(2);
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
@@ -47,7 +47,7 @@ test.describe('Asset library', () => {
 
   test('can add a link', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.addLink('https://docs.tailor-cms.com');
+    await lib.addFirstLink('https://docs.tailor-cms.com');
     const row = lib.getRow('Tailor Author');
     await expect(row.el).toBeVisible();
     await expect(row.typeChip).toContainText('Link');
@@ -60,7 +60,7 @@ test.describe('Asset library', () => {
 
   test('can add a YouTube link (classified as video)', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.addLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+    await lib.addFirstLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
     await lib.waitForLoad();
     const rows = await lib.getRows();
     expect(rows.length).toBeGreaterThanOrEqual(1);
@@ -110,10 +110,10 @@ test.describe('Asset library', () => {
     );
     await lib.getRow(IMAGE.name).delete();
     await lib.waitForLoad();
-    await expect(lib.emptyState).toBeVisible();
+    await expect(lib.emptyLibrary).toBeVisible();
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
-    await expect(lib.emptyState).toBeVisible();
+    await expect(lib.emptyLibrary).toBeVisible();
   });
 
   test('can select and deselect assets', async ({ page }) => {
@@ -143,10 +143,10 @@ test.describe('Asset library', () => {
     await lib.bulkActionBar.selectAll();
     await lib.bulkActionBar.deleteSelected();
     await lib.waitForLoad();
-    await expect(lib.emptyState).toBeVisible();
+    await expect(lib.emptyLibrary).toBeVisible();
     await page.reload({ waitUntil: 'networkidle' });
     await lib.waitForLoad();
-    await expect(lib.emptyState).toBeVisible();
+    await expect(lib.emptyLibrary).toBeVisible();
   });
 
   test('can open asset detail sidebar', async ({ page }) => {
@@ -219,7 +219,7 @@ test.describe('Asset library', () => {
 
   test('add link dialog rejects invalid URL', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.toolbar.openAddLink();
+    await lib.emptyAddLinkCard.click();
     await expect(lib.addLinkDialog.el).toBeVisible();
     await lib.addLinkDialog.urlInput.fill('not-a-url');
     await lib.addLinkDialog.addBtn.click();

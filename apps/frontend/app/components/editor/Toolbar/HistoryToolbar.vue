@@ -88,7 +88,7 @@ const restore = async () => {
         timestamp: revision.value.createdAt,
       },
     });
-    notify('Activity restored', { immediate: true });
+    notify('Activity restored');
     editorStore.exitHistoryMode();
   } catch {
     notify('Failed to restore activity', { color: 'error' });

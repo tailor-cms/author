@@ -23,7 +23,7 @@
         v-clipboard:copy="activity.shortId"
         v-clipboard:error="() => notify('Not able to copy the ID')"
         v-clipboard:success="
-          () => notify('ID copied to the clipboard', { immediate: true })
+          () => notify('ID copied to the clipboard')
         "
         class="mr-2 px-4"
         size="small"
@@ -37,7 +37,7 @@
         v-clipboard:copy="activityUrl"
         v-clipboard:error="() => notify('Not able to copy the link')"
         v-clipboard:success="
-          () => notify('Link copied to the clipboard', { immediate: true })
+          () => notify('Link copied to the clipboard')
         "
         class="px-4"
         size="small"
@@ -142,6 +142,6 @@ const updateActivity = async (
   // Use processed data if provided, otherwise fallback to simple update
   const data = updatedData ?? { ...props.activity.data, [key]: value };
   await store.update({ id: props.activity.id, uid: props.activity.uid, data });
-  notify(`${config.value.label} saved`, { immediate: true });
+  notify(`${config.value.label} saved`);
 };
 </script>

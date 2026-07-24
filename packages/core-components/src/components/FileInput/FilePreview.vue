@@ -8,6 +8,7 @@
     <template #activator="{ props: dialogProps }">
       <VTextField
         v-bind="$attrs"
+        :class="{ 'cursor-pointer': !readonly }"
         :density="density"
         :label="label"
         :max-width="maxWidth"
@@ -15,6 +16,7 @@
         :model-value="fileName"
         :variant="variant"
         readonly
+        @click="!readonly && emit('replace')"
       >
         <template #prepend-inner>
           <VProgressCircular v-if="isLoading" indeterminate size="24" />
@@ -36,6 +38,7 @@
             size="x-small"
             variant="tonal"
             icon
+            @click.stop
           >
             <VIcon icon="mdi-magnify" size="large" />
           </VBtn>
@@ -44,6 +47,7 @@
             aria-label="Remove file"
             size="x-small"
             variant="tonal"
+            color="error"
             icon
             @click.stop="emit('delete')"
           >
@@ -98,12 +102,17 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<{
   download: [];
   delete: [];
+  replace: [];
 }>();
 
 const expanded = ref(false);
 </script>
 
 <style lang="scss" scoped>
+.v-text-field.cursor-pointer :deep(input) {
+  cursor: pointer;
+}
+
 .v-overlay {
   transition: all 0.3s ease;
 

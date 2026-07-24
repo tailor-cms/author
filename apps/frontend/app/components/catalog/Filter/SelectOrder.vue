@@ -8,6 +8,7 @@
           aria-label="Order by"
           class="text-medium-emphasis my-1"
           icon="mdi-sort-variant"
+          size="small"
           variant="text"
         />
       </template>
@@ -26,6 +27,7 @@
       :icon="sortIcon"
       aria-label="Order direction"
       class="text-medium-emphasis my-1"
+      size="small"
       variant="text"
       @click="toggleOrder"
     />

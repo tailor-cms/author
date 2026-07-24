@@ -16,7 +16,7 @@
     >
       <VAvatar
         class="flex-shrink-0"
-        color="tertiary"
+        color="secondary"
         rounded="lg"
         variant="tonal"
         size="40"

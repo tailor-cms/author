@@ -4,8 +4,9 @@ import pMinDelay from 'p-min-delay';
 import api from '@/api/repositoryAsset';
 
 const MIN_LOADING_MS = 1000;
-export const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
-export const DEFAULT_PAGE_SIZE = 25;
+// Composite sizes so full grid pages end in complete rows at 2/3/4/6 columns.
+export const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
+export const DEFAULT_PAGE_SIZE = 24;
 
 export function useAssets(repositoryId: Ref<number | undefined>) {
   const assets = ref<Asset[]>([]);

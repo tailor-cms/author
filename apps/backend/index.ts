@@ -1,18 +1,26 @@
-import type { Options as BoxenOptions } from 'boxen';
 import BluebirdPromise from 'bluebird';
-import boxen from 'boxen';
 
 import { createLogger } from '#logger';
+import { printBanner } from '#shared/banner.ts';
+import { registerProcessHandlers } from '#shared/lifecycle.ts';
 import { writeOpenApiSnapshot } from '#shared/openapi/index.ts';
 import app from './app.ts';
 import config from '#config';
 import contentPluginRegistry from '#shared/content-plugins/index.js';
 import db from '#shared/database/index.js';
 
-// Bluebird long-stack-trace config (global for all bluebird instances).
-BluebirdPromise.config({ longStackTraces: !config.isProduction });
+// Bluebird dev diagnostics (long stack traces; off in production).
+// `shared/database` casts every Sequelize result to a Bluebird promise (see
+// wrapMethods), so when those flow into Express 5's native-promise router,
+// Bluebird misfires a "promise created in a handler but not returned" warning.
+// It is benign, so `wForgottenReturn` is disabled.
+BluebirdPromise.config({
+  longStackTraces: !config.isProduction,
+  warnings: { wForgottenReturn: false },
+});
 
 const logger = createLogger();
+registerProcessHandlers(logger);
 
 db.initialize()
   .then(() => logger.info('Database initialized'))
@@ -26,28 +34,13 @@ db.initialize()
         server.requestTimeout = 30 * 60 * 1000;
       }),
   )
-  .then(() => {
-    logger.info(`Server listening on port ${config.port}`);
-    welcome(config.packageName, config.packageVersion);
-  })
+  .then(() => logger.info(`Server listening on port ${config.port}`))
   .then(() => writeOpenApiSnapshot())
+  .then(() => {
+    printBanner({
+      version: config.packageVersion,
+      port: config.port,
+      env: config.env.NODE_ENV,
+    });
+  })
   .catch((err: unknown) => logger.error({ err }));
-
-const message = (name: string | undefined, version: string | undefined) =>
-  `
-    ${name} v${version}
-
-    It's aliveeeee 🚀 📄
-
-    `.trim();
-
-function welcome(name: string | undefined, version: string | undefined) {
-  const options = {
-    padding: 2,
-    margin: 1,
-    borderStyle: 'double',
-    borderColor: 'blue',
-    align: 'left',
-  } as BoxenOptions;
-  console.log(boxen(message(name, version), options));
-}

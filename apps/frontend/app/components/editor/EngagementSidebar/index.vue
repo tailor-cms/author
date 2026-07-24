@@ -23,7 +23,7 @@
         >
           <template #prepend>
             <VBadge
-              color="tertiary"
+              color="secondary"
               icon="mdi-check-bold"
               :model-value="progress?.[it.id] ?? false"
             >
@@ -39,7 +39,7 @@
               >
                 <VAvatar
                   class="font-weight-bold mr-2"
-                  :color="progress?.[it.id] ? 'tertiary' : 'inverse-surface'"
+                  :color="progress?.[it.id] ? 'secondary' : 'inverse-surface'"
                   :text="`+${metric}`"
                   variant="tonal"
                   size="x-small"

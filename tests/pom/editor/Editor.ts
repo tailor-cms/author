@@ -103,6 +103,12 @@ export class Editor {
     await page.waitForLoadState('networkidle');
   }
 
+  async linkContentElements(pageTitle: string, elementContent?: string) {
+    const dialog = await this.addElementDialog.openLinkDialog();
+    await dialog.select(pageTitle, elementContent);
+    await this.toast.isSaved();
+  }
+
   async removeContentElements() {
     const containers = await this.containerList.getContainers();
     for (const container of containers) {

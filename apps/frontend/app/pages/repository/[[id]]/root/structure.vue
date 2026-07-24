@@ -4,7 +4,7 @@
       <VContainer
         ref="structureEl"
         class="structure d-flex flex-column justify-start px-md-10 py-md-8"
-        max-width="1300"
+        max-width="1400"
       >
         <div v-if="hasToolbar" class="d-flex align-center ga-2 mb-4">
           <OutlineToolbar
@@ -16,12 +16,12 @@
         <BrokenReferencesAlert />
         <CollectionView
           v-if="isCollection"
+          v-model:search="filters.search"
           v-model:selected-entity="selectedEntity"
-          :search="filters.search"
         />
         <OutlineView
           v-else
-          :search="filters.search"
+          v-model:search="filters.search"
           class="mt-4"
           @show="goTo"
         />

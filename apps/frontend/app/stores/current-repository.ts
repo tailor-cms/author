@@ -4,12 +4,20 @@ import type { RepositoryMember } from '@tailor-cms/interfaces/repository';
 import type { RepositoryRole } from '@tailor-cms/interfaces/role';
 
 import {
+  calculatePosition,
+  canAccessRepositorySettings,
+  canCloneRepository,
+  canDeleteRepository,
+  canExportRepository,
+  canPublishRepository,
+  InsertLocation,
+} from '@tailor-cms/utils';
+import {
   schema as schemaApi,
   workflow as workflowConfig,
 } from '@tailor-cms/config';
-import { calculatePosition, InsertLocation } from '@tailor-cms/utils';
-
 import { api } from '@/api';
+import { useTimeoutFn } from '@vueuse/core';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
 import { filter } from 'lodash-es';
@@ -21,6 +29,10 @@ type Id = number | string;
 interface OutlineState {
   expanded: Map<string, boolean>;
 }
+
+// Only record a repository as "recent" after the user has stayed this long,
+// so accidental opens the user immediately bounces from never enter the list.
+const RECENT_MIN_VISIT_MS = 10_000;
 
 const getOutlineKey = (repositoryId: Id) =>
   `tailor-cms-outline:${repositoryId}`;
@@ -43,6 +55,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   const route = useRoute();
   const Repository = useRepositoryStore();
   const Activity = useActivityStore();
+  const recentRepositories = useRecentRepositories();
 
   const $users = reactive(new Map<string, RepositoryMember>());
   const users = computed(() => Array.from($users.values()));
@@ -53,8 +66,28 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const repositoryId = ref<number | null>(null);
 
+  const { start: startRecentTimer, stop: stopRecentTimer } = useTimeoutFn(
+    () => repositoryId.value && recentRepositories.touch(repositoryId.value),
+    RECENT_MIN_VISIT_MS,
+    { immediate: false },
+  );
+
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
+  });
+
+  const accessPolicy = computed(() => repository.value?.accessPolicy);
+
+  // Per-action rights of the acting user on the active repository
+  const access = computed(() => {
+    const policy = accessPolicy.value;
+    return {
+      canAccessSettings: !!policy && canAccessRepositorySettings(policy),
+      canClone: !!policy && canCloneRepository(policy),
+      canDelete: !!policy && canDeleteRepository(policy),
+      canExport: !!policy && canExportRepository(policy),
+      canPublish: !!policy && canPublishRepository(policy),
+    };
   });
 
   const schema = computed(() => {
@@ -209,6 +242,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     await Activity.fetch(repoId, { outlineOnly: true });
     // Notify plugins about repository change (e.g., i18n initialization)
     if (repository.value) {
+      startRecentTimer();
       $pluginRegistry.filter('repository:change', null, {
         schema: schema.value,
         repository: repository.value,
@@ -217,6 +251,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   };
 
   function $reset() {
+    stopRecentTimer();
     if (repositoryId.value) saveOutline(repositoryId.value, outlineState);
     repositoryId.value = null;
     outlineState.expanded.clear();
@@ -267,6 +302,8 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     initialize,
     repositoryId,
     repository,
+    access,
+    accessPolicy,
     $users,
     users,
     outlineState,

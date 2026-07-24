@@ -6,6 +6,7 @@ import urlJoin from 'url-join';
 import { renderHtml, renderText } from './render.js';
 import { createLogger } from '#logger';
 import { mail as config, origin } from '#config';
+import { isProduction } from '#config/runtime.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const logger = createLogger('mailer');
@@ -13,8 +14,10 @@ const logger = createLogger('mailer');
 const from = `${config.sender.name} <${config.sender.address}>`;
 const client = new SMTPClient(config);
 
-// NOTE: Enable SMTP tracing if DEBUG is set.
-client.smtp.debug(Number(Boolean(process.env.DEBUG)));
+// SMTP tracing prints the raw protocol exchange - credentials included -
+// straight to stdout, bypassing logger redaction, so it stays dev-only.
+const smtpDebug = !isProduction && config.debug;
+client.smtp.debug(Number(smtpDebug));
 logger.info(getConfig(client), '📧  SMTP client created');
 
 const send = async (...args) => {

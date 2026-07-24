@@ -1,9 +1,13 @@
+import pMinDelay from 'p-min-delay';
 import { inject, ref } from 'vue';
 
 import { useConfirmationDialog } from './useConfirmationDialog';
-import { useLoader } from './useLoader';
 
 type Emit = (event: 'upload' | 'delete', ...args: any[]) => void;
+
+// Floor the visible upload time so the progress panel doesn't flash on fast
+// (small-file / localhost) uploads.
+const MIN_LOADING_MS = 800;
 
 const download = (url: string, fileName: string) => {
   const anchor = document.createElement('a');
@@ -12,9 +16,12 @@ const download = (url: string, fileName: string) => {
 };
 
 export const useUpload = (emit: Emit) => {
+  const uploading = ref(false);
+  // Percent complete, or null when no progress has been reported yet (or the
+  // upload reports none at all); null renders as an indeterminate bar.
+  const progress = ref<number | null>(null);
   const error = ref('');
 
-  const { loading: uploading, loader } = useLoader();
   const storageService = inject<any>('$storageService');
   const showConfirmationDialog = useConfirmationDialog();
 
@@ -26,22 +33,36 @@ export const useUpload = (emit: Emit) => {
     });
   };
 
-  const upload = (file: File) => {
-    if (!file) return;
+  /**
+   * Uploads the file and emits the `upload` event on success.
+   * Resolves with the uploaded asset payload, or null on failure
+   */
+  const upload = async (file: File) => {
+    if (!file) return null;
+    uploading.value = true;
+    progress.value = null;
+    error.value = '';
     const form = new FormData();
     form.append('file', file, file.name);
-    return storageService
-      .upload(form)
-      .then((data: any) => {
-        const { name } = form.get('file') as File;
-        emit('upload', {
-          key: data.key,
-          name,
-          url: data.url,
-          publicUrl: data.publicUrl,
-        });
-      })
-      .catch(() => (error.value = 'An error has occurred!'));
+    try {
+      const uploadRequest: Promise<any> = storageService.upload(form, {
+        onProgress: (percent: number) => { progress.value = percent; },
+      });
+      const data = await pMinDelay(uploadRequest, MIN_LOADING_MS);
+      const payload = {
+        key: data.key,
+        name: file.name,
+        url: data.url,
+        publicUrl: data.publicUrl,
+      };
+      emit('upload', payload);
+      return payload;
+    } catch {
+      error.value = 'Upload failed. Please try again.';
+      return null;
+    } finally {
+      uploading.value = false;
+    }
   };
 
   const downloadFile = async (key: string, name: string) => {
@@ -50,10 +71,11 @@ export const useUpload = (emit: Emit) => {
   };
 
   return {
-    upload: loader(upload),
+    upload,
     downloadFile,
     deleteFile,
     uploading,
+    progress,
     error,
   };
 };

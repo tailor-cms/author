@@ -14,9 +14,9 @@ export const ENTITY = collectionSeed.entities;
 
 // Reset, create an empty ARTICLE collection repository and land on its
 // structure page. Returns the repository plus a ready CollectionView.
-export async function toCollection(page: Page) {
+export async function toCollection(page: Page, name?: string) {
   await SeedClient.resetDatabase();
-  const repository = await toEmptyCollection(page);
+  const repository = await toEmptyCollection(page, name);
   const collection = new CollectionView(page, repository.id);
   return { repository, collection };
 }

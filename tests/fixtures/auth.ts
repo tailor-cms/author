@@ -1,5 +1,5 @@
 import { find } from 'lodash-es';
-import seed from 'tailor-seed/user.json' assert { type: 'json' };
+import seed from 'tailor-seed/user.json' with { type: 'json' };
 
 const adminTestUser = find(seed, { email: 'admin@gostudion.com' });
 if (!adminTestUser) throw new Error('Admin test user not found');

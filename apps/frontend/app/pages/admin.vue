@@ -1,7 +1,12 @@
 <template>
   <NuxtLayout name="main">
-    <div class="admin-page overflow-auto h-100">
-      <VContainer class="pt-14" max-width="1400">
+    <VSheet
+      color="surface-canvas"
+      rounded="t-xl"
+      border
+      class="admin-page mx-3 h-100 overflow-auto"
+    >
+      <VContainer class="px-md-10 py-md-8 text-left" max-width="1400">
         <VRow>
           <VCol cols="12" md="3">
             <AdminSidebar />
@@ -11,7 +16,7 @@
           </VCol>
         </VRow>
       </VContainer>
-    </div>
+    </VSheet>
   </NuxtLayout>
 </template>
 

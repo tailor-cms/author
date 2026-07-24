@@ -57,7 +57,7 @@ export class LinkedIndicator {
       .locator('.v-list-item')
       .filter({ hasText: 'Unlink' })
       .click();
-    await this.toast.containsText('unlinked');
+    await this.toast.hasText('unlinked');
     await this.expectNotVisible();
   }
 

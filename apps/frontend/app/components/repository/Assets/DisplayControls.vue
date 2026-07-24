@@ -30,7 +30,7 @@
     />
     <VBtnToggle
       v-model="viewMode"
-      color="secondary"
+      color="tertiary"
       variant="outlined"
       density="compact"
       mandatory

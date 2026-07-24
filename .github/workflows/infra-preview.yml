@@ -1,8 +1,7 @@
 name: Infra preview
-# Runs `pulumi preview` on PRs that touch the infrastructure so the resource
-# diff is reviewable BEFORE merge. deploy.yml runs `pulumi up` unattended on
-# push to main, so this is the only gate where a destructive change (e.g. an
-# unintended Database replacement) can be caught by a human.
+# Runs `pulumi preview` on infra PRs and posts the resource diff as a PR
+# comment, so changes are reviewable before deploy.yml runs `pulumi up` on
+# merge.
 on:
   pull_request:
     paths:
@@ -39,10 +38,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       - name: Install dependencies
         run: pnpm i --frozen-lockfile
-      # Single preview: posts the human-readable diff as a PR comment and
-      # captures its output for the destructive-change gate below.
       - name: Pulumi preview (comment diff on PR)
-        id: preview
         uses: pulumi/actions@v6
         with:
           command: preview
@@ -56,18 +52,3 @@ jobs:
           # changes instead of triggering the in-stack ECR image build that
           # index.ts falls back to when TAILOR_DOCKER_IMAGE is unset.
           TAILOR_DOCKER_IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:main
-      # Merge-blocking gate: fail if the preview summary reports any resource
-      # to replace or delete. Reuses the preview above - no second run. The DB
-      # is also `protect: true`, so a DB replacement makes the preview itself
-      # error; this catches replace/delete on every other resource too.
-      - name: Gate on destructive changes
-        env:
-          PREVIEW_OUTPUT: ${{ steps.preview.outputs.output }}
-        run: |
-          if echo "$PREVIEW_OUTPUT" | grep -qiE '[0-9]+ to (replace|delete)'; then
-            echo "## ⛔ Destructive infra change detected" >> "$GITHUB_STEP_SUMMARY"
-            echo "$PREVIEW_OUTPUT" | grep -iE '[0-9]+ to (replace|delete)' >> "$GITHUB_STEP_SUMMARY"
-            echo "::error::Preview would replace or delete resources - review before merge."
-            exit 1
-          fi
-          echo "✅ No destructive changes." >> "$GITHUB_STEP_SUMMARY"

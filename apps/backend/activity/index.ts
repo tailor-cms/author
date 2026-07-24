@@ -1,5 +1,6 @@
 import express from 'express';
 import processQuery from '#shared/util/processListQuery.js';
+import AccessService from '#app/shared/auth/access.service.js';
 
 import * as actions from './actions/index.ts';
 import { createActionMounter } from '#shared/request/action.ts';
@@ -66,7 +67,9 @@ lifecycle
 
 publishing
   .get('/:activityId/preview', actions.preview)
-  .get('/:activityId/publish', actions.publish);
+  .get('/:activityId/publish', actions.publish, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  });
 
 linked
   .post('/:activityId/unlink', actions.unlink)

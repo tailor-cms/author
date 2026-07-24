@@ -113,6 +113,42 @@ test('should be able to reset password', async ({ page }) => {
   await expect(page).toHaveTitle('Catalog');
 });
 
+test('forgot password shows a persistent confirmation', async ({ page }) => {
+  const forgotPasswordPage = new ForgotPassword(page);
+  await forgotPasswordPage.visit();
+  await forgotPasswordPage.requestPasswordReset(USER.email);
+  await expect(forgotPasswordPage.successAlert).toBeVisible();
+  await expect(forgotPasswordPage.successAlert).toContainText(USER.email);
+  // No auto-redirect; the confirmation stays on-screen
+  await expect(page).toHaveTitle('Request password reset');
+  await forgotPasswordPage.backToSignInBtn.click();
+  await expect(page).toHaveTitle(/Sign in/);
+});
+
+test('forgot password shows the same confirmation for an unknown email', async ({
+  page,
+}) => {
+  const email = faker.internet.email({ provider: 'gostudion.com' });
+  const forgotPasswordPage = new ForgotPassword(page);
+  await forgotPasswordPage.visit();
+  await forgotPasswordPage.requestPasswordReset(email);
+  await expect(forgotPasswordPage.successAlert).toBeVisible();
+  await expect(forgotPasswordPage.successAlert).toContainText(email);
+});
+
+test('forgot password shows an error with retry on failure', async ({
+  page,
+}) => {
+  const forgotPasswordPage = new ForgotPassword(page);
+  await forgotPasswordPage.visit();
+  await page.route('**/users/forgot-password', (route) => route.abort());
+  await forgotPasswordPage.submit(USER.email);
+  await expect(forgotPasswordPage.errorAlert).toBeVisible();
+  await page.unroute('**/users/forgot-password');
+  await forgotPasswordPage.retryBtn.click();
+  await expect(forgotPasswordPage.submitBtn).toBeVisible();
+});
+
 test('reset password should reject a weak password', async ({ page }) => {
   const signInPage = new SignIn(page);
   await signInPage.visit();

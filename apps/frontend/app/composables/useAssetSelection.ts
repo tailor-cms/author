@@ -7,6 +7,17 @@ export function useAssetSelection(items: Ref<Asset[]>) {
     () => items.value.length > 0 && items.value.every((a) => selected.has(a.id)),
   );
 
+  // Keep selected item state fresh (in case of user editing the item)
+  watch(
+    items,
+    (list) => {
+      list.forEach((asset) => {
+        if (selected.has(asset.id)) selected.set(asset.id, asset);
+      });
+    },
+    { deep: true },
+  );
+
   function toggle(asset: Asset) {
     if (selected.has(asset.id)) selected.delete(asset.id);
     else selected.set(asset.id, asset);

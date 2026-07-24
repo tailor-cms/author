@@ -3,11 +3,14 @@
     <template #activator="{ props: menuProps }">
       <VBtn
         v-bind="isCollection ? {} : menuProps"
+        :color="showSuccess ? 'success' : undefined"
         :loading="publishing.isPublishing.value"
+        :prepend-icon="
+          showSuccess ? 'mdi-check-circle-outline' : 'mdi-cloud-upload-outline'
+        "
+        :text="showSuccess ? 'Published' : 'Publish'"
         size="small"
-        text="Publish"
         variant="tonal"
-        prepend-icon="mdi-cloud-upload-outline"
         @click="isCollection && publishing.confirmPublishing([activity])"
       />
     </template>
@@ -42,6 +45,7 @@ const { getDescendants } = activityUtils;
 const { isCollection } = storeToRefs(useCurrentRepository());
 
 const config = computed(() => $schemaService.getLevel(props.activity.type));
+const showSuccess = computed(() => props.publishing.showPublishSuccess.value);
 
 const activityWithDescendants = computed(() => {
   const descendants = getDescendants(

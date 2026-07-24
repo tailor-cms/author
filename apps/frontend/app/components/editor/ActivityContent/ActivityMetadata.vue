@@ -56,10 +56,9 @@ const updateActivity = async (
   const data = updatedData ?? { ...props.activity.data, [key]: value };
   try {
     await activityStore.update({ id: props.activity.id, data });
-    notify(`${activityLabel.value} saved`, { immediate: true });
+    notify(`${activityLabel.value} saved`);
   } catch {
     notify(`Failed to save ${activityLabel.value.toLowerCase()}`, {
-      immediate: true,
       color: 'error',
     });
   }

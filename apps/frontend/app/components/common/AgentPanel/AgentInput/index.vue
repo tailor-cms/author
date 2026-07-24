@@ -1,6 +1,11 @@
 <template>
   <div class="ma-4 mt-0">
-    <VSheet class="agent-input" border>
+    <VSheet
+      :class="{ 'input-running': disabled }"
+      class="agent-input"
+      color="surface-canvas"
+      border
+    >
       <VTextarea
         ref="inputEl"
         v-model="text"
@@ -18,6 +23,14 @@
         @focus="emit('focus')"
         @keydown="onKeydown"
       />
+      <div
+        v-if="isLensRunning"
+        class="d-flex align-center ga-2 px-4 text-label-small text-medium-emphasis"
+        role="status"
+      >
+        <VIcon icon="mdi-camera-iris" size="14" />
+        Lens review running - send is available once it completes.
+      </div>
       <div ref="controlsEl" class="d-flex align-center pa-4 pt-0 ga-2">
         <AgentCmdMenu
           ref="cmdMenuEl"
@@ -64,12 +77,16 @@ interface FocusChip {
 
 interface Props {
   disabled?: boolean;
+  // A Lens review is reading the content; only sending is blocked (the
+  // agent must not edit mid-scan) - typing stays available.
+  isLensRunning?: boolean;
   placeholder?: string;
   focusChip?: FocusChip | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   disabled: false,
+  isLensRunning: false,
   placeholder:
     'Ask Renoir - generate, refine, restructure. Press / for shortcuts.',
   focusChip: null,
@@ -98,8 +115,9 @@ const effort = defineModel<ReasoningEffortLiteral>('effort', {
   required: true,
 });
 
+const isEmpty = computed(() => text.value.trim().length === 0);
 const canSubmit = computed(
-  () => text.value.trim().length > 0 && !props.disabled,
+  () => !isEmpty.value && !props.disabled && !props.isLensRunning,
 );
 
 function onKeydown(e: KeyboardEvent) {
@@ -124,18 +142,76 @@ defineExpose({ focus: () => inputEl.value?.focus() });
 
 <style lang="scss" scoped>
 .agent-input {
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 0.625rem;
   border-radius: 16px;
   transition: border-color 0.2s ease;
 
+  // Renoir's accent ring (secondary -> primary): a masked overlay because a
+  // 1px gradient ring can't be expressed via border-color. It sits exactly
+  // on the border line; the sheet border goes transparent while it shows.
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 1;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--v-theme-secondary)),
+      rgb(var(--v-theme-primary))
+    );
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+  }
+
   &:hover {
     border-color: rgba(var(--v-border-color), 0.38);
   }
 
-  &:focus-within {
-    border-color: rgba(var(--v-border-color), 0.6);
+  &:focus-within,
+  &.input-running {
+    border-color: transparent;
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  // While Renoir runs, energy flows along the ring.
+  &.input-running::before {
+    background: linear-gradient(
+      90deg,
+      rgb(var(--v-theme-secondary)),
+      rgb(var(--v-theme-primary)),
+      rgb(var(--v-theme-secondary))
+    );
+    background-size: 200% 100%;
+    animation: agent-input-ring-flow 2.5s linear infinite;
+  }
+}
+
+@keyframes agent-input-ring-flow {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-input.input-running::before {
+    animation: none;
   }
 }
 </style>

@@ -13,7 +13,8 @@ export class AddRepositoryDialog {
   readonly nameInput: Locator;
   readonly descriptionInput: Locator;
   readonly archiveInput: Locator;
-  readonly createRepositoryBtn: Locator;
+  readonly submitBtn: Locator;
+  readonly userGroupSelect: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -30,7 +31,21 @@ export class AddRepositoryDialog {
     this.nameInput = dialog.getByLabel('Name');
     this.descriptionInput = dialog.getByLabel('Description');
     this.archiveInput = dialog.locator('input[name="archive"]');
-    this.createRepositoryBtn = dialog.getByRole('button', { name: 'Create' });
+    // Submit follows the active tab: "Create" on New, "Import" on Import
+    this.submitBtn = dialog.getByRole('button', {
+      name: /^(Create|Import)$/,
+    });
+    this.userGroupSelect = dialog.locator('.user-group-select');
+  }
+
+  // A selected user-group chip in the create form, by group name.
+  groupChip(name: string): Locator {
+    return this.userGroupSelect.locator('.v-chip').filter({ hasText: name });
+  }
+
+  // The chip's remove affordance - absent when the group is locked.
+  groupChipRemove(name: string): Locator {
+    return this.groupChip(name).locator('.v-chip__close');
   }
 
   async open() {
@@ -39,7 +54,7 @@ export class AddRepositoryDialog {
     return this.emptyCreateCard.click();
   }
 
-  async createRepository(
+  async submitCreate(
     type = 'Course',
     name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description = faker.lorem.words(4),
@@ -48,12 +63,11 @@ export class AddRepositoryDialog {
     await this.selectRepositoryType(type);
     await this.nameInput.fill(name);
     await this.descriptionInput.fill(description);
-    await this.createRepositoryBtn.click();
-    await expect(this.page.getByText(name)).toBeVisible();
+    await this.submitBtn.click();
     return { type, name, description };
   }
 
-  async importRepository(
+  async submitImport(
     name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
     description = faker.lorem.words(4),
     archive = './fixtures/pizza.tgz',
@@ -64,9 +78,28 @@ export class AddRepositoryDialog {
     await this.archiveInput.setInputFiles(archive);
     await this.nameInput.fill(name);
     await this.descriptionInput.fill(description);
-    await this.createRepositoryBtn.click();
-    await this.page.waitForTimeout(5000);
+    await this.submitBtn.click();
     return { name, description };
+  }
+
+  async createRepository(
+    type = 'Course',
+    name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    description = faker.lorem.words(4),
+  ) {
+    const result = await this.submitCreate(type, name, description);
+    await expect(this.page.getByText(name)).toBeVisible();
+    return result;
+  }
+
+  async importRepository(
+    name = `${faker.lorem.words(2)} ${new Date().getTime()}`,
+    description = faker.lorem.words(4),
+    archive = './fixtures/pizza.tgz',
+  ) {
+    const result = await this.submitImport(name, description, archive);
+    await this.page.waitForTimeout(5000);
+    return result;
   }
 
   async selectRepositoryType(type: string) {

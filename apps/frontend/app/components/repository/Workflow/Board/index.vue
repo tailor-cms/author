@@ -4,8 +4,7 @@
       v-for="status in statuses"
       :key="status.id"
       class="board-column d-flex flex-column"
-      color="surface-container-high"
-      elevation="1"
+      color="surface-sunken"
       min-height="0"
       min-width="270"
       max-width="416"
@@ -20,7 +19,7 @@
         <VChip
           :text="columns[status.id]?.length ?? 0"
           class="ml-1 font-weight-bold"
-          color="tertiary"
+          color="secondary"
           size="x-small"
           rounded="lg"
         />
@@ -86,9 +85,9 @@ async function onChange(event: ChangeEvent<StoreActivity>, statusId: string) {
   const isStatusChange = activity.currentStatus.status !== statusId;
   try {
     await activityStore.saveStatus(activity.id, { status: statusId, position });
-    if (isStatusChange) notify('Status saved', { immediate: true });
+    if (isStatusChange) notify('Status saved');
   } catch {
-    notify('Failed to update status', { immediate: true });
+    notify('Failed to update status');
   }
 }
 </script>

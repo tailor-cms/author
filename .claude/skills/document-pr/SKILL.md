@@ -34,7 +34,10 @@ user the body plus a command to apply it themselves.
    refactors/chores under a lower "Internal" bullet so reviewers spend
    their attention on behaviour.
 
-3. **Draft the body** (save to a scratch file for `--body-file`). Keep it
+3. **Draft the body** (save to a scratch file for `--body-file`). Do NOT
+   hard-wrap lines (the repo's 80-col rule is for code): GitHub renders
+   newlines in PR bodies as line breaks, so keep each paragraph/bullet
+   on one source line. Keep it
    tight - about 5 sections, ~200-400 words, tradeoffs surfaced early.
    Drop any section that does not apply rather than padding it:
    - **Summary** - 1-2 sentences: what this PR delivers and why now.

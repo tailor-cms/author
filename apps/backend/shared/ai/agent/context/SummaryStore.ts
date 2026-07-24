@@ -17,13 +17,15 @@
 //
 // TTL (7 days): only garbage-collects orphaned keys (e.g.
 // deleted activities). Correctness comes from freshnessKey.
-import Keyv from 'keyv';
+import { createAiLogger } from '../../logger.ts';
 import { kvStore as kvConfig } from '#config';
+import Keyv from 'keyv';
 
 const SUMMARY_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 // Keyv namespace prefix.
 const NAMESPACE = 'agent:ctx:summary';
+const logger = createAiLogger(NAMESPACE);
 
 export interface CachedSummary {
   // AI-generated summary text.
@@ -59,7 +61,7 @@ class SummaryStore {
       ttl: SUMMARY_TTL_MS,
     });
     this.store.on('error', (err) =>
-      console.warn(`[${NAMESPACE}]`, err?.message ?? err),
+      logger.warn({ err }, 'KV store error'),
     );
   }
 

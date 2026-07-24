@@ -1,5 +1,5 @@
 <template>
-  <VSheet
+  <VCard
     ref="rootEl"
     :class="{ selected: isSelected }"
     class="list-item text-left"
@@ -22,7 +22,7 @@
         />
         <VChip
           :text="activity.shortId"
-          color="secondary"
+          color="tertiary"
           class="mr-2 font-weight-semibold"
           size="x-small"
         />
@@ -38,7 +38,7 @@
       </div>
       <PublishingBadge :activity="activity" />
     </div>
-  </VSheet>
+  </VCard>
 </template>
 
 <script lang="ts" setup>

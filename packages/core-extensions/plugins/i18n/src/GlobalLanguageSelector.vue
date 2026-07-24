@@ -26,7 +26,7 @@
         @click="currentLanguage = code"
       >
         <template #prepend>
-          <VIcon v-if="isDefault(code)" color="tertiary" icon="mdi-star" size="small" />
+          <VIcon v-if="isDefault(code)" color="secondary" icon="mdi-star" size="small" />
           <VIcon v-else icon="mdi-translate-variant" size="small" />
         </template>
         <template v-if="isCurrent(code)" #append>

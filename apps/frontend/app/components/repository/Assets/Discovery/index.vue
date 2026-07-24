@@ -178,6 +178,7 @@ function toImportMeta(result?: DiscoveryResult) {
     title: result.title,
     description: result.description || result.snippet,
     downloadUrl: result.downloadUrl,
+    thumbnailUrl: result.thumbnailUrl,
     author: result.author,
     license: result.license,
     tags,

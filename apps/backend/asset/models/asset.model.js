@@ -1,6 +1,6 @@
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import { Model } from 'sequelize';
-import { getThumbnailUrl } from '../utils/thumbnail-url.ts';
+import { resolveThumbnailUrl } from '../thumbnail.service.ts';
 import { storage as storageConfig } from '#config';
 import Storage from '../../repository/storage.ts';
 
@@ -83,12 +83,9 @@ class Asset extends Model {
           a.url = `${storageConfig.protocol}${a.storageKey}`;
           a.publicUrl = await Storage.getFileUrl(a.storageKey).catch(() => null);
         }
-        // Fast path for the grid/list: once a thumbnail has been generated
-        // (meta.hasThumbnail)
-        if (a.meta?.hasThumbnail) {
-          a.thumbnailUrl = await getThumbnailUrl(a.repositoryId, a.uid)
-            .catch(() => null);
-        }
+        const thumbnailUrl = await resolveThumbnailUrl(a, { generate: false })
+          .catch(() => null);
+        if (thumbnailUrl) a.thumbnailUrl = thumbnailUrl;
       }),
     );
     return assets;

@@ -6,7 +6,6 @@
         openDelay: 800,
       }"
       v-bind="$attrs"
-      color="secondary"
       prepend-icon="mdi-checkbox-outline"
       size="small"
       text="Resolve All"

@@ -1,6 +1,6 @@
 name: PR checks
 env:
-  PLAYWRIGHT_VERSION: 1.60.0
+  PLAYWRIGHT_VERSION: 1.61.1
   APP_URL: http://localhost:3000
   MINIO_URL: http://localhost:4566
   # Pinned MinIO image, pulled once by the `minio-image` job and cached; each

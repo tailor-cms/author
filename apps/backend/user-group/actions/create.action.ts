@@ -26,6 +26,7 @@ export default defineAction({
         description: 'Created group.',
         schema: dataEnvelope(schemas.UserGroup),
       },
+      403: { description: 'Caller is not a system admin' },
       409: { description: 'Group name already exists' },
     },
   },

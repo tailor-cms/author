@@ -76,19 +76,24 @@ router
   .param('repositoryId', getRepository)
   .use('/:repositoryId', AccessService.hasRepositoryAccess);
 
-// CRUD
+// CRUD. Updating and deleting are settings-level operations, so both
+// require repository admin standing (see @tailor-cms/utils).
 crud
   .get('/', actions.list, { after: [processQuery({ limit: 100 })] })
   .post('/', actions.create, {
     before: [AccessService.hasCreateRepositoryAccess],
   })
   .get('/:repositoryId', actions.get)
-  .patch('/:repositoryId', actions.patch)
-  .delete('/:repositoryId', actions.remove);
+  .patch('/:repositoryId', actions.patch, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  })
+  .delete('/:repositoryId', actions.remove, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  });
 
-// Publishing: ship the repo's content to consumers via the publish
-// pipeline (manifest + catalog update + throttled webhook).
-publishing.post('/:repositoryId/publish', actions.publish);
+publishing.post('/:repositoryId/publish', actions.publish, {
+  before: [AccessService.hasRepositoryAdminAccess],
+});
 
 // Pinning: per-user bookmark; flips `repositoryUser.pinned`, doesn't
 // touch repository state.
@@ -97,7 +102,7 @@ pinning.post('/:repositoryId/pin', actions.pin);
 // Cloning: deep-copies the repo (activities + elements + refs) into a
 // new repository; the source is unchanged.
 cloning.post('/:repositoryId/clone', actions.clone, {
-  before: [AccessService.hasCreateRepositoryAccess],
+  before: [AccessService.hasRepositoryAdminAccess],
 });
 
 // Members: per-user and per-group access management
@@ -126,11 +131,18 @@ references
   .get('/:repositoryId/references/validate', actions.validateReferences)
   .post('/:repositoryId/references/cleanup', actions.cleanupInvalidReferences);
 
-// Transfer: import + export jobs
+// Transfer: import + export jobs. Exporting hands out a full content
+// archive, so it is admin-gated like the other settings-level actions.
 transfer
-  .get('/:repositoryId/export/setup', actions.initiateExportJob)
-  .get('/:repositoryId/export/:jobId/status', actions.getExportStatus)
-  .get('/:repositoryId/export/:jobId', actions.exportRepository);
+  .get('/:repositoryId/export/setup', actions.initiateExportJob, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  })
+  .get('/:repositoryId/export/:jobId/status', actions.getExportStatus, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  })
+  .get('/:repositoryId/export/:jobId', actions.exportRepository, {
+    before: [AccessService.hasRepositoryAdminAccess],
+  });
 
 // Dynamic-import Repository-group sub-routers;
 // importing them here for docs sidbar order

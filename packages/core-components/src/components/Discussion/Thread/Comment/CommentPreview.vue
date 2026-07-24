@@ -9,7 +9,7 @@
         <VBtn
           v-tooltip:right="{ text: 'Unresolve comment', openDelay: 800 }"
           class="ml-1"
-          color="tertiary"
+          color="secondary"
           size="x-small"
           text="Undo"
           variant="tonal"

@@ -25,24 +25,6 @@ class Tag extends Model {
     });
   }
 
-  static getAssociated(user) {
-    const Repository = this.sequelize.model('Repository');
-    const User = this.sequelize.model('User');
-    const Tag = this.sequelize.model('Tag');
-    const includeRepository = {
-      model: Repository,
-      as: 'repositories',
-      attributes: ['id'],
-      required: true,
-    };
-    if (user && !user.isAdmin()) {
-      includeRepository.include = [
-        { model: User, attributes: ['id'], where: { id: user.id } },
-      ];
-    }
-    return Tag.findAll({ include: [includeRepository] });
-  }
-
   static options() {
     return {
       modelName: 'tag',

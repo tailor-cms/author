@@ -1,7 +1,7 @@
 <template>
   <VAppBar
     :class="{ 'diff-mode': isHistoryMode || showPublishDiff }"
-    color="surface-container-low"
+    color="surface-canvas"
     border="b"
     class="toolbar-wrapper"
     order="1"
@@ -22,7 +22,7 @@
           v-if="activity?.isLinkedCopy"
           v-tooltip:bottom="'Linked from another repository'"
           class="link-icon mr-1"
-          color="tertiary"
+          color="secondary"
           icon="mdi-link-box"
           size="small"
         />
@@ -30,7 +30,7 @@
           :activity="activity"
           :class="[
             'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-tertiary' : '',
+            activity?.isLinkedCopy ? 'text-secondary' : '',
           ]"
         />
         <template v-if="showPublishDiff">
@@ -40,6 +40,7 @@
             v-if="activity.publishedAt"
             :text="formatDate(activity.publishedAt, 'MM/dd/yy HH:mm')"
             class="ml-2"
+            data-percy="hide"
             size="x-small"
             label
           />
@@ -134,7 +135,7 @@ const viewSource = (sourceInfo: SourceInfo) => {
 const unlinkActivity = async (activityId: number) => {
   try {
     await editorStore.unlinkActivity(activityId);
-    notify('Activity unlinked', { immediate: true });
+    notify('Activity unlinked');
   } catch {
     notify('Failed to unlink activity', { color: 'error' });
   }
@@ -161,13 +162,13 @@ const usersWithActivity = computed(() => {
 <style lang="scss" scoped>
 .toolbar-wrapper {
   &.diff-mode {
-    border-bottom-color: rgb(var(--v-theme-tertiary-container));
+    border-bottom-color: rgb(var(--v-theme-secondary-container));
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-color: rgb(var(--v-theme-tertiary-container));
+      background-color: rgb(var(--v-theme-secondary-container));
       opacity: 0.5;
       pointer-events: none;
     }

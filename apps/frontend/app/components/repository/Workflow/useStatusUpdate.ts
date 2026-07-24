@@ -6,6 +6,6 @@ export function useStatusUpdate() {
   const notify = useNotification();
   return async (activity: StoreActivity, key: string, value: any = null) => {
     await activityStore.saveStatus(activity.id, { [key]: value });
-    return notify('Status saved', { immediate: true });
+    return notify('Status saved');
   };
 }

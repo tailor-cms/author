@@ -2,8 +2,8 @@
   <TailorDialog
     v-model="isVisible"
     :color="context.color"
+    :header-icon="context.icon"
     :title="context.title"
-    header-icon="mdi-alert"
     @click:outside="close"
   >
     <template #body>
@@ -35,6 +35,7 @@ const createContext = () => ({
   title: '',
   message: '',
   color: 'primary',
+  icon: 'mdi-alert',
   action: () => {},
 });
 

@@ -20,7 +20,7 @@
           height="auto"
           rounded="lg"
           variant="tonal"
-          color="tertiary"
+          color="secondary"
           block
         >
           <div class="d-flex flex-column flex-grow-1 text-start">
@@ -47,7 +47,7 @@
           v-for="rubric in rubrics"
           :key="rubric.id"
           :active="rubric.id === modelValue"
-          color="tertiary"
+          color="secondary"
           class="mx-2"
           rounded="lg"
           @click="$emit('update:modelValue', rubric.id)"
@@ -65,7 +65,7 @@
           <template #append>
             <VIcon
               v-if="rubric.id === modelValue"
-              color="tertiary"
+              color="secondary"
               icon="mdi-check-circle"
               size="18"
             />

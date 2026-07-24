@@ -9,6 +9,7 @@ import { MetaInputType } from '@tailor-cms/meta-element-collection/types.js';
 
 import { OUTLINE_COLOR } from '../colors';
 import { DEFAULT_WORKFLOW } from '../workflows/default.workflow';
+import { IMAGE_INPUT_EXT } from '../file-extensions';
 
 const SchemaId = 'COURSE_SCHEMA';
 
@@ -39,7 +40,7 @@ const ModuleConfig: ActivityConfig = {
       label: 'Thumbnail',
       placeholder: 'Click to add a thumbnail image',
       showPreview: true,
-      validate: { ext: ['jpg', 'jpeg', 'png'] },
+      validate: { ext: IMAGE_INPUT_EXT },
     },
   ],
   relationships: [
@@ -199,7 +200,7 @@ export const SCHEMA: Schema = {
       placeholder: 'Click to add a poster image',
       icon: 'mdi-image',
       validate: {
-        ext: ['jpg', 'jpeg', 'png'],
+        ext: IMAGE_INPUT_EXT,
       },
       hideOnCreate: true,
       showPreview: true,

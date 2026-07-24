@@ -1,4 +1,5 @@
 import { StatusCodes } from 'http-status-codes';
+import { audit } from '#shared/audit.ts';
 import { createError } from '#shared/error/helpers.js';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { WeakPasswordError } from '../lib/password-strength.ts';
@@ -17,6 +18,7 @@ async function handler({
 }: Ctx<{ body: typeof schemas.ResetPasswordInput }>) {
   try {
     await service.resetPassword(req.user!, body.password);
+    audit('auth:password-reset', 'success', { userId: req.user!.id });
   } catch (err) {
     if (err instanceof WeakPasswordError) {
       return createError(StatusCodes.UNPROCESSABLE_ENTITY, err.message);

@@ -19,17 +19,18 @@
     <template #prepend="{ item }">
       <VIcon
         v-if="item.selectable"
-        :class="[
-          'activity-select-checkbox',
-          isSelectable(item) ? 'opacity-100' : 'opacity-50',
-        ]"
-        :icon="isSelected(item)
-          ? 'mdi-checkbox-marked'
-          : 'mdi-checkbox-blank-outline'
-        "
-        :disabled="!isSelectable(item)"
-        @click.stop="toggleSelection(item)"
+        :icon="checkboxIcon(item)"
+        class="activity-select-checkbox checkbox-clickable"
+        @click.stop="onRowClick(item)"
       />
+    </template>
+    <template #title="{ item, title }">
+      <span
+        :class="{ 'title-clickable': item.selectable }"
+        @click.stop="onRowClick(item)"
+      >
+        {{ title }}
+      </span>
     </template>
   </VTreeview>
   <TailorEmptyState
@@ -109,16 +110,98 @@ const searchRecursive = (item: TreeItem) => {
 };
 
 const toggleSelection = (activity: TreeItem) => {
+  // Excludes just this item from a selected ancestor, however deeply
+  // nested; everything else stays selected, including unrelated
+  // selections elsewhere in the tree (e.g. a different module).
+  if (isIncludedViaParent(activity)) {
+    const ancestors = activityUtils.getAncestors(props.activities, activity);
+    // Only one ancestor can be selected at a time, so this is the root
+    const selectedAncestor = ancestors.find((it) => isSelected(it as TreeItem));
+    const pathDown = [
+      ...ancestors.slice(
+        ancestors.findIndex(({ id }) => id === selectedAncestor?.id) + 1,
+      ),
+      activity,
+    ];
+    const replacement: TreeItem[] = [];
+    let parentId = selectedAncestor?.id;
+    for (const node of pathDown) {
+      replacement.push(
+        ...(activityUtils
+          .getChildren(props.activities, parentId!)
+          .filter(({ id }) => id !== node.id) as TreeItem[]),
+      );
+      parentId = node.id;
+    }
+    selected.value = selected.value
+      .filter(({ id }) => id !== selectedAncestor?.id)
+      .concat(replacement);
+    emit('change', selected.value);
+    return;
+  }
+  // Already explicitly selected: toggle it off outright.
+  if (isSelected(activity)) {
+    selected.value = selected.value.filter(({ id }) => id !== activity.id);
+    emit('change', selected.value);
+    return;
+  }
+  // Selecting an ancestor of something already selected widens to it:
+  // drop its descendants (now covered by it) and add it. Everything
+  // else selected stays untouched.
+  if (containsSelectedDescendant(activity)) {
+    const descendantIds = new Set(
+      activityUtils.getDescendants(props.activities, activity).map(({ id }) => id),
+    );
+    selected.value = selected.value
+      .filter(({ id }) => !descendantIds.has(id))
+      .concat([activity]);
+    emit('change', selected.value);
+    return;
+  }
+  // Any other fresh pick; a whole module, a standalone page from an
+  // unrelated branch, whatever level is simply added
   selected.value = xorBy(selected.value, [activity], 'id');
   emit('change', selected.value);
 };
 
-const isSelected = (item: TreeItem) => {
-  return selected.value.find(({ id }) => id === item.id);
+const onRowClick = (item: TreeItem) => {
+  if (!item.selectable) return;
+  toggleSelection(item);
 };
 
-const isSelectable = (item: TreeItem) => {
-  return !selected.value.length || selected.value[0]!.level === item.level;
+const isSelected = (item: TreeItem) => {
+  return !!selected.value.find(({ id }) => id === item.id);
+};
+
+// Ids of every descendant of a selected item
+const includedViaParentIds = computed(() => {
+  const ids = new Set<number>();
+  const collectDescendants = (item: TreeItem) => {
+    item.children?.forEach((child) => {
+      ids.add(child.id);
+      collectDescendants(child);
+    });
+  };
+  selected.value.forEach(collectDescendants);
+  return ids;
+});
+
+const isIncludedViaParent = (item: TreeItem) => {
+  return includedViaParentIds.value.has(item.id);
+};
+
+const checkboxIcon = (item: TreeItem) => {
+  if (isSelected(item)) return 'mdi-checkbox-marked';
+  if (isIncludedViaParent(item)) return 'mdi-checkbox-multiple-marked-outline';
+  return 'mdi-checkbox-blank-outline';
+};
+
+// True if item is an ancestor of something already selected.
+const containsSelectedDescendant = (item: TreeItem): boolean => {
+  if (!item.children) return false;
+  return item.children.some(
+    (child) => isSelected(child) || containsSelectedDescendant(child),
+  );
 };
 
 const attachActivityAttrs = (activity: Activity) => {
@@ -136,5 +219,27 @@ const attachActivityAttrs = (activity: Activity) => {
 <style lang="scss" scoped>
 .v-treeview {
   max-height: 31.25rem;
+}
+
+:deep(.v-list-item) {
+  cursor: default;
+}
+
+.checkbox-clickable {
+  display: inline-flex;
+  align-items: center;
+  opacity: 1;
+  padding-right: 0.75rem;
+  margin-right: -0.75rem;
+  cursor: pointer;
+}
+
+.title-clickable {
+  display: inline-flex;
+  align-items: center;
+  width: calc(100% + 0.75rem);
+  margin-left: -0.75rem;
+  padding-left: 0.75rem;
+  cursor: pointer;
 }
 </style>

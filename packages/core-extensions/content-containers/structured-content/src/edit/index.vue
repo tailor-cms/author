@@ -72,7 +72,7 @@
         v-for="subcontainerType in subcontainerTypes"
         :key="subcontainerType"
         :text="`Add ${subcontainerConfig[subcontainerType].label}`"
-        color="secondary"
+        color="tertiary"
         variant="tonal"
         prepend-icon="mdi-plus"
         :append-icon="subcontainerConfig[subcontainerType].icon"

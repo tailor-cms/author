@@ -6,6 +6,7 @@
         :color="color"
         :rounded="rounded"
         :size="size"
+        border
         class="user-avatar-container"
       >
         <!--
@@ -35,7 +36,7 @@ const props = withDefaults(defineProps<Props>(), {
   imgUrl: '',
   label: '',
   size: 36,
-  color: 'surface-container-highest',
+  color: 'surface-raised',
   rounded: 'xxl',
 });
 
@@ -46,7 +47,7 @@ const style = computed(() =>
 
 <style lang="scss" scoped>
 .user-avatar-container {
-  padding: 0.125rem;
+  padding: 0;
   overflow: hidden;
 
   .user-avatar {

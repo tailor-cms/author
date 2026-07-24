@@ -26,7 +26,7 @@ export default defineAction({
         description: 'Updated group.',
         schema: dataEnvelope(schemas.UserGroup),
       },
-      403: { description: 'Caller is not an admin or group admin' },
+      403: { description: 'Caller is not a system admin' },
       404: { description: 'User group not found' },
       409: { description: 'Group name already exists' },
     },

@@ -1,7 +1,7 @@
+import type { RepositoryRole, UserRole } from './role';
 import type { Activity } from './activity';
 import type { Revision } from './revision';
 import type { UserGroup } from './user-group';
-import type { RepositoryRole } from './role';
 
 // System-managed slot inside Repository.data.
 // Stripped from publish manifests and export archives - never persist
@@ -54,12 +54,38 @@ export interface RepositoryData {
   [key: string]: unknown;
 }
 
+// A FILE-type meta value on a Repository. Stored as { key, name }; repository
+// listings enrich it with signed URLs (derived on read, never persisted) so
+// the catalog can render a cover image without a round-trip per card.
+export interface RepositoryFileMeta {
+  // Storage key of the uploaded file.
+  key: string;
+  // Original file name.
+  name: string;
+  // Signed URL of the original file (present on list payloads).
+  publicUrl?: string | null;
+  // Signed URL of the cached thumbnail, if one has been generated.
+  thumbnailUrl?: string | null;
+  // Backing library asset id (lets the client reach the /thumbnail route).
+  assetId?: number;
+}
+
 // Join row connecting a Repository to a Tag (many-to-many through table).
 export interface RepositoryTag {
   // Repository side of the join
   repositoryId: number;
   // Tag side of the join
   tagId: number;
+}
+
+// User repository access context
+export interface RepositoryAccessContext {
+  // System-level role of the acting user
+  userRole: UserRole;
+  // Direct per-repository role, when the user is an individual member
+  repositoryRole?: RepositoryRole | null;
+  // Roles the user holds in user groups the repository is shared with
+  groupRoles?: UserRole[];
 }
 
 // User-defined label that can be attached to repositories for filtering
@@ -153,6 +179,9 @@ export interface Repository {
   // true if the current user can administer this repository
   // Convenience, FE derived
   hasAdminAccess?: boolean;
+  // Current user's resolved access-policy context for this repository
+  // Convenience, FE derived
+  accessPolicy?: RepositoryAccessContext;
   createdAt: string;
   updatedAt: string;
   // Soft-delete timestamp; null if active

@@ -4,6 +4,11 @@ import type {
   Request,
   Response,
 } from 'express';
+import {
+  bindRequestContext,
+  createHttpLogger,
+  createLogger,
+} from '#logger';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import bodyParser from 'body-parser';
@@ -18,12 +23,12 @@ import router from './router.ts';
 import origin from '#shared/origin.js';
 
 import config, { env } from '#config';
-import { createHttpLogger } from '#logger';
 import auth from '#shared/auth/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const { STORAGE_PATH } = process.env;
 const app = express();
+const logger = createLogger('app');
 
 // NUXT_PUBLIC_* config shipped to the frontend via the `config` cookie.
 // Undeclared keys (OIDC login text, Statsig key, ...) pass through from the
@@ -103,8 +108,9 @@ app.use(
 );
 if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
 
-// Mount main router.
-app.use('/api', createHttpLogger(), router);
+// Mount main router. `bindRequestContext` makes the request id available
+// to every log line written while handling the request (see #logger).
+app.use('/api', createHttpLogger(), bindRequestContext, router);
 
 // Global error handler. Express identifies error middleware by its
 // 4-argument signature; the `_next` is required for the dispatch table
@@ -121,7 +127,11 @@ const errorHandler: ErrorRequestHandler = (err, req, res, _next) => {
     return;
   }
   if (!err.status || err.status === 500) {
-    (req as any).log?.error({ err });
+    // `req.log` only exists once a request has passed through the http
+    // logger; requests that error out earlier (cookie/body parsing, static
+    // serving) or never hit `/api` at all never get one. Fall back to the
+    // app logger so every 500 still gets logged.
+    ((req as any).log ?? logger).error({ err });
     res.status(500).end();
     return;
   }

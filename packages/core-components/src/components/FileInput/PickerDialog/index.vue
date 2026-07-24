@@ -2,6 +2,7 @@
   <TailorDialog
     :model-value="modelValue"
     :header-icon="icon"
+    :persistent="isUploading"
     :theme="$vuetify.theme.global.name"
     :title="heading"
     width="800"
@@ -11,6 +12,7 @@
       <div class="px-5 pb-2">
         <VTabs
           v-model="activeTab"
+          :disabled="isUploading"
           selected-class="bg-surface-container-high"
           color=""
           grow
@@ -36,7 +38,13 @@
     <template #body>
       <VTabsWindow :key="sessionKey" v-model="activeTab">
         <VTabsWindowItem value="upload">
-          <UploadTab :accept="accept" @select="onFileSelect" />
+          <UploadTab
+            :accept="accept"
+            :error-message="uploadError"
+            :is-uploading="isUploading"
+            :progress="uploadProgress"
+            @select="emit('upload', $event)"
+          />
         </VTabsWindowItem>
         <VTabsWindowItem value="library" eager>
           <LibraryTab
@@ -52,7 +60,12 @@
     </template>
     <template #actions>
       <div class="px-2 pb-3">
-        <VBtn text="Cancel" variant="text" @click="onClose" />
+        <VBtn
+          :disabled="isUploading"
+          text="Cancel"
+          variant="text"
+          @click="onClose"
+        />
         <VBtn
           v-if="activeTab === 'library'"
           :disabled="!hasSelection"
@@ -96,6 +109,12 @@ interface Props {
   allowedExtensions?: string[];
   allowUrlSource?: boolean;
   multiple?: boolean;
+  // Upload in progress; keeps the dialog open and shows progress
+  isUploading?: boolean;
+  // Upload percent complete; null renders an indeterminate bar
+  uploadProgress?: number | null;
+  // Upload failure message shown on the Upload tab
+  uploadError?: string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -105,6 +124,9 @@ const props = withDefaults(defineProps<Props>(), {
   allowedExtensions: () => [],
   allowUrlSource: false,
   multiple: false,
+  isUploading: false,
+  uploadProgress: null,
+  uploadError: '',
 });
 
 const emit = defineEmits<{
@@ -137,14 +159,8 @@ const selectLabel = computed(() => {
 });
 
 const onClose = () => {
+  if (props.isUploading) return;
   emit('update:modelValue', false);
-  activeTab.value = 'upload';
-  selectedAssets.value = props.multiple ? [] : null;
-};
-
-const onFileSelect = (file: File) => {
-  emit('upload', file);
-  onClose();
 };
 
 const toPayload = (asset: any) => ({
@@ -169,11 +185,15 @@ const onUrlSubmit = (data: { url: string; title?: string }) => {
   onClose();
 };
 
-// Fresh tab content on each dialog open
+// Fresh tab content, tab selection, and library selection on each
+// dialog open (close may be programmatic, so reset happens here)
 watch(
   () => props.modelValue,
   (open) => {
-    if (open) sessionKey.value++;
+    if (!open) return;
+    sessionKey.value++;
+    activeTab.value = 'upload';
+    selectedAssets.value = props.multiple ? [] : null;
   },
 );
 </script>

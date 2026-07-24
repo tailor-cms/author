@@ -21,8 +21,8 @@ export class CollectionView {
   readonly sortBtn: Locator;
   readonly createBtn: Locator;
   readonly emptyAlert: Locator;
-  readonly emptyCreateBtn: Locator;
-  readonly emptyCopyBtn: Locator;
+  readonly emptyCreateCard: Locator;
+  readonly emptyCopyCard: Locator;
   readonly noMatchesAlert: Locator;
 
   constructor(page: Page, repositoryId: number) {
@@ -38,8 +38,8 @@ export class CollectionView {
     this.sortBtn = this.el.locator('.sort-btn');
     this.createBtn = this.el.getByRole('button', { name: 'Add', exact: true });
     this.emptyAlert = this.el.getByText('No items yet');
-    this.emptyCreateBtn = this.el.getByTestId('repository__emptyCreate');
-    this.emptyCopyBtn = this.el.getByTestId('repository__emptyCopy');
+    this.emptyCreateCard = this.el.getByTestId('repository__emptyCreate');
+    this.emptyCopyCard = this.el.getByTestId('repository__emptyCopy');
     this.noMatchesAlert = this.el.getByText('No matches found');
   }
 
@@ -64,7 +64,7 @@ export class CollectionView {
   }
 
   async createFirstItem(entity: Entity, title: string) {
-    await this.emptyCreateBtn.click();
+    await this.emptyCreateCard.click();
     const dialog = new CreateItemDialog(this.page);
     await dialog.create(title, entity.titleLabel, entity.label);
     return new CollectionItemEditor(this.page).waitReady();

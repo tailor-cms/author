@@ -1,6 +1,9 @@
 import { ClientCredentials } from 'simple-oauth2';
-import request from 'axios';
+import { createLogger } from '#logger';
 import oAuthConfig from '#config/consumer.ts';
+import request from 'axios';
+
+const logger = createLogger('consumer:oauth2');
 
 function createOAuth2Provider() {
   if (!oAuthConfig.isAuthConfigured) {
@@ -25,7 +28,7 @@ function createOAuth2Provider() {
           Authorization: `Bearer ${accessToken.token.access_token}`,
         },
       })
-      .catch((error) => console.error(error.message));
+      .catch((err) => logger.error({ err, url }, 'Webhook call failed'));
   }
 
   function getAccessToken() {
@@ -34,7 +37,7 @@ function createOAuth2Provider() {
       .then((token) => {
         accessToken = token;
       })
-      .catch((error) => console.error('Access Token Error', error.message));
+      .catch((err) => logger.error({ err }, 'Failed to obtain access token'));
   }
 
   return { send, isConfigured: true };

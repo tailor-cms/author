@@ -3,12 +3,13 @@ import type {
   RepositoryCreateReq,
   RepositoryUpdateReq,
 } from '@tailor-cms/api-client';
-import { intersectionBy } from 'lodash-es';
 import { register as registerSchema } from '@tailor-cms/config';
-import { UserRole } from '@tailor-cms/interfaces/role';
+import { hasRepositoryAdminAccess } from '@tailor-cms/utils';
+import { useLocalStorage } from '@vueuse/core';
 
 import { useAuthStore } from './auth';
 import { api } from '@/api';
+import { some } from 'lodash-es';
 
 export type SortField = 'name' | 'description' | 'createdAt' | 'updatedAt';
 export type SortDirection = 'ASC' | 'DESC';
@@ -42,11 +43,27 @@ export const useRepositoryStore = defineStore('repositories', () => {
   const areAllItemsFetched = ref(false);
   const queryParams = reactive(getDefaultQueryParams());
 
+  const storedUserGroupId = useLocalStorage<number>(
+    'tailor:selected-user-group',
+    0,
+  );
+
   const userGroupOptions = computed(() => [
     { id: 0, name: 'All workspaces' },
     ...authStore.userGroups,
   ]);
-  const selectedUserGroupId = ref<number>(userGroupOptions.value[0]!.id);
+
+  // Falls back to "All workspaces" when the persisted id isn't one of the
+  // user's groups (deleted / access revoked). Trust it until user info loads,
+  // else a valid selection would flash to "All" before groups arrive.
+  const selectedUserGroupId = computed({
+    get: () => {
+      const stored = storedUserGroupId.value;
+      if (!authStore.user) return stored;
+      return some(userGroupOptions.value, { id: stored }) ? stored : 0;
+    },
+    set: (value) => (storedUserGroupId.value = value ?? 0),
+  });
 
   const query = computed(() => {
     const { sortBy, pinned, filter, ...rest } = queryParams;
@@ -122,10 +139,15 @@ export const useRepositoryStore = defineStore('repositories', () => {
     await api.repository.delete({ params: { repositoryId: id } });
   }
 
-  const clone = (id: number, name: string, description: string) =>
+  const clone = (
+    id: number,
+    name: string,
+    description: string,
+    shareWithSamePeople = false,
+  ) =>
     api.repository.clone({
       params: { repositoryId: id },
-      body: { name, description },
+      body: { name, description, shareWithSamePeople },
     });
 
   async function fetchTags(
@@ -189,14 +211,12 @@ export const useRepositoryStore = defineStore('repositories', () => {
 
   function processRepository(repository: Repository) {
     repository.lastChange = repository.revisions![0];
+    // Must be derived before resolving the policy below, which reads
+    // the acting user's membership from `repository.repositoryUser`
     repository.repositoryUser = repository.repositoryUsers?.[0];
-    // If repository or global admin
-    const { groupsWithAdminAccess: userAdminGroups } = authStore;
-    const repositoryGroups = repository?.userGroups || [];
-    repository.hasAdminAccess =
-      authStore.isAdmin ||
-      repository.repositoryUser?.role === UserRole.ADMIN ||
-      !!intersectionBy(userAdminGroups, repositoryGroups, 'id').length;
+    const accessPolicy = authStore.getRepositoryAccess(repository);
+    repository.accessPolicy = accessPolicy;
+    repository.hasAdminAccess = hasRepositoryAdminAccess(accessPolicy);
   }
 
   return {

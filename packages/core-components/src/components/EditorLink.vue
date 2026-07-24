@@ -5,7 +5,6 @@
       v-bind="$attrs"
       :to="editorRoute"
       :text="label"
-      color="secondary"
       append-icon="mdi-arrow-top-right-thick"
       size="x-small"
       variant="text"

@@ -2,20 +2,22 @@
   <VCard
     :data-testid="`repositoryCard_${repository.id}`"
     :ripple="false"
-    :class="{ selected: isSelected }"
+    :class="{ 'selected': isSelected, 'has-artwork': !!thumbnailUrl }"
     class="repository-card d-flex flex-column text-left"
     rounded="xl"
-    elevation="0"
-    color="surface-container-low"
+    elevation="1"
+    color="surface-raised"
     @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
   >
+    <PosterArtwork v-if="thumbnailUrl" :src="thumbnailUrl" />
     <div class="card-body">
-      <div class="card-header d-flex align-center mt-4 mx-4 mb-1">
+      <div class="card-header d-flex align-center ma-3 ml-4 mb-2">
         <div
+          v-if="hasAdminAccess"
           :aria-checked="isSelected"
-          :class="{ 'is-selected': isSelected }"
+          :class="{ 'is-selected': isSelected, 'selection-active': isSelectionActive }"
           aria-label="Select repository"
-          class="select-checkbox d-flex align-center"
+          class="select-checkbox d-flex align-center justify-center"
           role="checkbox"
           tabindex="0"
           @click.stop="$emit('toggle-selection', repository.id)"
@@ -25,9 +27,18 @@
           <VIcon
             :color="isSelected ? 'primary' : undefined"
             :icon="isSelected ? 'mdi-checkbox-marked' : 'mdi-checkbox-blank-outline'"
+            class="checkbox"
             size="24"
           />
         </div>
+        <VIcon
+          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
+          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
+          :color="hasUnpublishedChanges ? 'warning' : 'success'"
+          class="status-dot mr-2"
+          icon="mdi-circle"
+          size="14"
+        />
         <div
           ref="schema"
           v-tooltip="{
@@ -39,82 +50,104 @@
         >
           {{ schemaName }}
         </div>
-        <VBadge
-          v-tooltip:top="{ text: publishingInfo, openDelay: 100 }"
-          :aria-label="hasUnpublishedChanges ? 'Has unpublished changes' : 'Published'"
-          :color="hasUnpublishedChanges ? 'warning' : 'success'"
-          class="mr-2"
-          dot
-          inline
-        />
-        <VMenu v-if="repository?.hasAdminAccess" location="bottom end" offset="4">
-          <template #activator="{ props: menuProps }">
-            <VBtn
-              v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
-              v-bind="menuProps"
-              aria-label="Repository actions"
-              class="repo-info text-medium-emphasis"
-              density="comfortable"
-              icon="mdi-dots-vertical"
-              size="small"
-              variant="text"
-              @click.stop
-            />
-          </template>
-          <VList density="compact" min-width="200" nav>
-            <VListItem
-              v-for="action in actions"
-              :key="action.name"
-              :base-color="action.color"
-              :prepend-icon="`mdi-${action.icon}`"
-              :title="action.label"
-              rounded="lg"
-              @click.stop="onAction(action.name)"
-            />
-          </VList>
-        </VMenu>
+        <div
+          v-if="hasAdminAccess || repositoryActions.length"
+          class="d-flex align-center ga-1"
+        >
+          <VBtn
+            v-if="hasAdminAccess"
+            v-tooltip:top="{ text: 'Open settings', openDelay: 400 }"
+            aria-label="Repository settings"
+            class="tinted-btn"
+            density="comfortable"
+            icon="mdi-cog"
+            size="small"
+            variant="text"
+            @click.stop="navigateTo({
+              name: 'repository-settings-general',
+              params: { id: repository.id },
+            })"
+          />
+          <VMenu
+            v-if="repositoryActions.length"
+            location="bottom end"
+            offset="4"
+          >
+            <template #activator="{ props: menuProps }">
+              <VBtn
+                v-bind="menuProps"
+                aria-label="Repository actions"
+                class="tinted-btn"
+                density="comfortable"
+                icon="mdi-dots-vertical"
+                size="small"
+                variant="text"
+                @click.stop
+              />
+            </template>
+            <VList density="compact" min-width="200" nav>
+              <VListItem
+                v-for="action in repositoryActions"
+                :key="action.name"
+                :base-color="action.color"
+                :prepend-icon="`mdi-${action.icon}`"
+                :title="action.label"
+                rounded="lg"
+                @click.stop="onRepositoryAction(action.name)"
+              />
+            </VList>
+          </VMenu>
+        </div>
       </div>
-      <VCardTitle class="pt-0 text-break">
-        {{ truncate(repository.name, { length: lgAndUp ? 60 : 40 }) }}
+      <VCardTitle class="text-break font-weight-medium mb-2 py-0">
+        {{ repository.name }}
       </VCardTitle>
-      <div class="d-flex justify-start px-4">
-        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="38" />
-        <div class="ml-3 overflow-hidden">
-          <div class="text-body-small">Edited {{ lastActivityTimeago }} by</div>
-          <div class="text-body-medium text-truncate">
+      <div class="d-flex justify-start align-center px-4 py-2">
+        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="34" />
+        <div class="ml-3 overflow-hidden ">
+          <div class="text-label-small">Edited {{ lastActivityTimeago }} by</div>
+          <div class="text-label-large text-truncate">
             {{ lastActivity.user.label }}
           </div>
         </div>
       </div>
     </div>
     <VSpacer />
-    <VCardActions class="pb-2 px-2 align-start">
+    <VCardActions class="px-3 py-3 align-center">
       <VBtn
         v-tooltip:bottom="{
           text: `${isPinned ? 'Unpin' : 'Pin'} ${schemaName}`,
           openDelay: 400,
         }"
-        :color="isPinned ? 'tertiary' : ''"
-        :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'"
-        class="text-medium-emphasis"
+        variant="text"
         aria-label="Pin repository"
+        size="x-small"
+        :color="isPinned ? 'tertiary' : ''"
+        icon
         @click.stop="store.pin({ id: repository.id, pin: !isPinned })"
-      />
+      >
+        <VIcon :icon="isPinned ? 'mdi-pin mdi-rotate-45' : 'mdi-pin'" size="20" />
+      </VBtn>
       <Tags :repository="repository" />
     </VCardActions>
   </VCard>
 </template>
 
 <script lang="ts" setup>
-import { first, get, truncate } from 'lodash-es';
-import type { Repository } from '@tailor-cms/interfaces/repository';
+import type {
+  Repository,
+  RepositoryFileMeta,
+} from '@tailor-cms/interfaces/repository';
+import type { RepositoryAction } from '@/composables/useRepositoryActions';
 import type { Revision } from '@tailor-cms/interfaces/revision';
+import { first, get } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 import { UserAvatar } from '@tailor-cms/core-components';
 import { useTimeAgo } from '@vueuse/core';
 
-import Tags from './Tags/index.vue';
 import { useRepositoryStore } from '@/stores/repository';
+import PosterArtwork from './PosterArtwork.vue';
+import Tags from './Tags/index.vue';
 
 const { $schemaService } = useNuxtApp() as any;
 const store = useRepositoryStore();
@@ -122,7 +155,10 @@ const store = useRepositoryStore();
 const props = defineProps<{
   repository: Repository;
   isSelected?: boolean;
+  // Any repository selected -> reveal every checkbox (bulk-select mode).
+  isSelectionActive?: boolean;
 }>();
+
 const emit = defineEmits([
   'toggle-selection',
   'clone',
@@ -131,38 +167,17 @@ const emit = defineEmits([
   'delete',
 ]);
 
-interface CardAction {
-  name: 'settings' | 'clone' | 'publish' | 'export' | 'delete';
-  label: string;
-  icon: string;
-  color?: string;
-}
-
-const actions = computed<CardAction[]>(() => [
-  { name: 'settings', label: 'Settings', icon: 'cog-outline' },
-  { name: 'clone', label: 'Clone', icon: 'content-copy' },
-  { name: 'publish', label: 'Publish', icon: 'cloud-upload-outline' },
-  { name: 'export', label: 'Export', icon: 'archive-arrow-down-outline' },
-  { name: 'delete', label: 'Delete', icon: 'trash-can-outline', color: 'error' },
-]);
-
-const onAction = (name: CardAction['name']) => {
-  if (name === 'settings') {
-    return navigateTo({
-      name: 'repository-settings-general',
-      params: { id: props.repository.id },
-    });
-  }
-  emit(name, props.repository);
-};
-
 // Template ref
 const schema = ref(null);
-
 const isSchemaNameTruncated = ref(false);
-const schemaName = computed(
-  () => $schemaService.getSchema(props.repository.schema).name,
-);
+const schemaName = computed(() => $schemaService.getLabel(props.repository));
+
+// Signed URLs are delivered on the list payload (RepositoryFileMeta);
+// prefer the cached thumbnail and fall back to the original file.
+const thumbnailUrl = computed(() => {
+  const poster = props.repository.data.posterImage as RepositoryFileMeta | undefined;
+  return poster?.thumbnailUrl ?? poster?.publicUrl ?? '';
+});
 
 const lastActivity = computed(
   () => first(props.repository.revisions) as Revision,
@@ -180,12 +195,20 @@ const publishingInfo = computed(() => hasUnpublishedChanges.value
   : 'Published.',
 );
 
+const repositoryActions = useRepositoryActions(
+  () => props.repository.accessPolicy,
+);
+const hasAdminAccess = computed(() => !!props.repository.hasAdminAccess);
+
+const onRepositoryAction = (name: RepositoryAction['name']) =>
+  emit(name, props.repository);
+
 const detectSchemaTruncation = () => {
   const { clientWidth, scrollWidth } = schema.value as any;
   isSchemaNameTruncated.value = clientWidth < scrollWidth;
 };
 
-const { width: innerWidth, lgAndUp } = useDisplay();
+const { width: innerWidth } = useDisplay();
 watch(() => innerWidth.value, detectSchemaTruncation);
 
 onMounted(() => nextTick(detectSchemaTruncation));
@@ -193,7 +216,9 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 <style lang="scss" scoped>
 .repository-card {
-  height: 12.75rem;
+  position: relative;
+  height: 13rem;
+  overflow: hidden;
   transition:
     border-color 0.2s ease,
     transform 0.2s ease,
@@ -203,9 +228,33 @@ onMounted(() => nextTick(detectSchemaTruncation));
   &:hover {
     transform: translateY(-2px);
   }
+
+  // Keep foreground content above the poster artwork.
+  .card-body,
+  :deep(.v-card-actions) {
+    position: relative;
+    z-index: 1;
+  }
+}
+
+.tinted-btn {
+  background: rgba(var(--v-theme-surface-raised), 0.8);
+  border: thin solid rgba(var(--v-theme-on-surface), 0.08);
 }
 
 .card-body {
+  // Width-aware truncation: clamp to two lines instead of a character cap.
+  .v-card-title {
+    max-width: 65%;
+    line-height: 1;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    overflow: hidden;
+    white-space: normal;
+  }
+
   .schema-name {
     font-size: 0.75rem;
     font-weight: 600;
@@ -223,35 +272,47 @@ onMounted(() => nextTick(detectSchemaTruncation));
 
 .repository-card.selected {
   outline: 2px solid rgb(var(--v-theme-primary));
-  outline-offset: -2px;
 }
 
+// Select checkbox occupies zero width at rest and expands on
+// hover/focus/selection, nudging the status dot and schema name right
+// instead of covering them — the dot (and its tooltip) stays visible.
 .select-checkbox {
-  max-width: 0;
-  opacity: 0;
+  flex: none;
+  width: 0;
+  height: 1.75rem;
   overflow: hidden;
+  opacity: 0;
   cursor: pointer;
   border-radius: 4px;
   transition:
-    max-width 0.3s ease,
-    opacity 0.3s ease,
-    margin-right 0.3s ease;
+    width 0.28s ease-in-out,
+    margin 0.28s ease-in-out,
+    opacity 0.28s ease-in-out;
+}
 
-  &:focus-visible {
-    outline: 2px solid rgb(var(--v-theme-primary));
-    outline-offset: 2px;
-  }
+.status-dot {
+  flex: none;
 }
 
 .repository-card:hover .select-checkbox,
 .select-checkbox:focus-visible,
-.select-checkbox.is-selected {
-  max-width: 1.75rem;
+.select-checkbox.is-selected,
+.select-checkbox.selection-active {
+  width: 1.75rem;
+  margin-left: -0.25rem;
+  margin-right: 0.25rem;
   opacity: 1;
-  margin-right: 0.5rem;
 }
 
-.repository-card:hover .select-checkbox {
-  transition-delay: 150ms;
+// Touch devices have no hover: keep the checkbox expanded so bulk-select is
+// discoverable and the tap target isn't a hidden toggle.
+@media (hover: none) {
+  .select-checkbox {
+    width: 1.75rem;
+    margin-left: -0.25rem;
+    margin-right: 0.25rem;
+    opacity: 1;
+  }
 }
 </style>

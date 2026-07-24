@@ -4,18 +4,42 @@ import { expect } from '@playwright/test';
 import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
+export const getGeneralRoute = (id: number) =>
+  `/repository/${id}/root/settings/general`;
+
 export const getMembersRoute = (id: number) =>
   `/repository/${id}/root/settings/members`;
 
 export const getGroupsRoute = (id: number) =>
   `/repository/${id}/root/settings/groups`;
 
+// Left navigation drawer shown on every repository settings page.
+export class SettingsSidebar {
+  readonly page: Page;
+  readonly el: Locator;
+
+  constructor(page: Page) {
+    this.page = page;
+    this.el = page.locator('.repository-settings').getByRole('navigation');
+  }
+
+  open(section: 'General' | 'Members' | 'Groups') {
+    return this.el.getByRole('link', { name: section }).click();
+  }
+}
+
 export class GeneralSettings {
+  static getRoute = getGeneralRoute;
+
   readonly page: Page;
   readonly el: Locator;
   readonly rail: NavigationRail;
   readonly nameInput: Locator;
+  readonly nameWarning: Locator;
   readonly descriptionInput: Locator;
+  readonly publishInfoBtn: Locator;
+  readonly infoPublishedToast: Locator;
+  readonly publishBlockedToast: Locator;
   readonly toast: Toast;
 
   constructor(page: Page) {
@@ -25,11 +49,21 @@ export class GeneralSettings {
     this.page = page;
     this.el = el;
     this.nameInput = el.getByLabel('Name');
+    this.nameWarning = el.getByText('a Repository with that name already exists');
     this.descriptionInput = el.getByLabel('Description');
+    this.publishInfoBtn = el.getByRole('button', { name: 'Publish info' });
+    this.infoPublishedToast = page.getByText('Info successfully published');
+    this.publishBlockedToast = page.getByText(
+      'Please fix the highlighted errors before publishing',
+    );
   }
 
   getName() {
     return this.page.getByLabel('Name').inputValue();
+  }
+
+  publishInfo() {
+    return this.publishInfoBtn.click();
   }
 
   async updateName(name: string) {
@@ -109,8 +143,8 @@ export class RepositoryMembers {
   constructor(page: Page) {
     const el = page.locator('.repository-settings');
     this.rail = new NavigationRail(page);
-    this.userList = el.locator('.user-list');
-    this.userEntriesLocator = el.locator('.user-row');
+    this.userList = el.locator('.member-list');
+    this.userEntriesLocator = el.locator('.member-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
     this.pagination = el.locator('.v-pagination');
     this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
@@ -127,9 +161,12 @@ export class RepositoryMembers {
     return this.userEntriesLocator.filter({ hasText: email });
   }
 
+  getRoleButton(email: string) {
+    return this.getEntryByEmail(email).locator('.member-role-btn');
+  }
+
   async setUserRole(email: string, role: 'Admin' | 'Author') {
-    const entry = this.getEntryByEmail(email);
-    await entry.locator('.user-role-btn').click();
+    await this.getRoleButton(email).click();
     const menu = this.page.locator('.v-overlay.v-menu').last();
     await menu.locator('.role-option').filter({ hasText: role }).click();
   }

@@ -119,6 +119,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     filterOutlineActivities,
     isTrackedInWorkflow,
     getRepositoryMetadata,
+    getLabel,
     getActivityLabel,
     getActivityMetadata,
     getElementMetadata,
@@ -254,6 +255,11 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
 
   function getActivityLabel(activity: Activity) {
     return getActivityConfig(activity.type).label;
+  }
+
+  // The repository's user-facing type label (e.g. "Course")
+  function getLabel(repository: Repository) {
+    return getSchema(repository.schema).name;
   }
 
   function getActivityMetadata(activity: Activity) {

@@ -41,8 +41,8 @@ Cross-cutting libs in `lib/`; the content-plugin registries live in
   single-purpose subcomponents rather than one growing file.
 - **Boolean props** use `is`/`has` prefixes (`isOpen`, `hasError`).
 - **Events** are namespaced `ns:action` (`save:element`, `delete:element`).
-- **Reuse** `packages/utils`, `@tailor-cms/common`, `core-components`, and
-  `lodash-es` instead of hand-rolling helpers.
+- **Reuse** `@vueuse/core`, `packages/utils`, `@tailor-cms/common`,
+  `core-components`, and `lodash-es` instead of hand-rolling helpers.
 - **Shallow nesting** - guard clauses / early returns, not deep if/else.
 
 ## Gotchas

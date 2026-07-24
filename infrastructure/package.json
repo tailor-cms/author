@@ -7,12 +7,12 @@
     "up": "pulumi up --stack extensionengine/tailor-cms/prod"
   },
   "devDependencies": {
-    "@types/node": "^25.9.1"
+    "@types/node": "^26.1.1"
   },
   "dependencies": {
-    "@pulumi/aws": "^7.32.0",
-    "@pulumi/awsx": "^3.5.0",
-    "@pulumi/pulumi": "^3.244.0",
+    "@pulumi/aws": "^7.38.0",
+    "@pulumi/awsx": "^3.7.0",
+    "@pulumi/pulumi": "^3.253.0",
     "@studion/infra-code-blocks": "2.0.0"
   }
 }

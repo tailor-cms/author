@@ -15,9 +15,11 @@
 // duplicate run, which the freshness check upstream makes rare.
 import type { FeedbackResult, TrendPoint } from './schemas/index.ts';
 import type Keyv from 'keyv';
+import { createAiLogger } from '../logger.ts';
 import { createKvStore } from '#shared/kvStore.ts';
 
 const NAMESPACE = 'ai:review';
+const logger = createAiLogger('review');
 
 // Garbage collection only - correctness comes from the freshness key.
 const ENTRY_TTL_MS = 30 * 24 * 60 * 60 * 1000;
@@ -66,8 +68,7 @@ class ReviewStore {
       namespace: `${NAMESPACE}:lock`,
       ttl: LOCK_TTL_MS,
     });
-    const warn = (err: any) =>
-      console.warn(`[${NAMESPACE}]`, err?.message ?? err);
+    const warn = (err: unknown) => logger.warn({ err }, 'KV store error');
     this.store.on('error', warn);
     this.locks.on('error', warn);
   }

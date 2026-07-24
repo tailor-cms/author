@@ -15,19 +15,6 @@ import getVal from 'lodash/get.js';
 import groupBy from 'lodash/groupBy.js';
 import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
-import sample from 'lodash/sample.js';
-
-import { createLogger } from '#logger';
-import publishingService from '#shared/publishing/publishing.service.js';
-import db from '#shared/database/index.js';
-import { stripServerManaged } from './lib/data-attr.ts';
-import { removeInvalidReferences } from '#shared/util/modelReference.js';
-import { subQuery } from '#shared/database/helpers.js';
-import TransferService from '#shared/transfer/transfer.service.js';
-import UserGroup from '#app/user-group/models/user-group.model.js';
-import type { Repository } from './models/repository.model.js';
-import type { User } from '../user/models/user.model.js';
-import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 import type {
   BrokenActivityReference,
@@ -39,6 +26,19 @@ import type {
   RepositoryListItem,
   RepositoryMember,
 } from './schemas/index.ts';
+import type { Repository } from './models/repository.model.js';
+import type { ResolvedStorageKey } from '../asset/types.ts';
+import type { User } from '../user/models/user.model.js';
+import { createLogger } from '#logger';
+import { stripServerManaged } from './lib/data-attr.ts';
+import { resolveByStorageKey } from '../asset/asset.service.ts';
+import { removeInvalidReferences } from '#shared/util/modelReference.js';
+import { subQuery } from '#shared/database/helpers.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
+import db from '#shared/database/index.js';
+import publishingService from '#shared/publishing/publishing.service.js';
+import TransferService from '#shared/transfer/transfer.service.js';
+import UserGroup from '#app/user-group/models/user-group.model.js';
 
 const {
   Activity,
@@ -55,7 +55,6 @@ const {
 
 const logger = createLogger('repository:svc');
 
-const DEFAULT_COLORS = ['#689F38', '#FF5722', '#2196F3'];
 const lowercaseName = sequelize.fn('lower', sequelize.col('repository.name'));
 
 // Sequelize include builder for the user attached to a revision/membership
@@ -103,6 +102,15 @@ const selectGroupRepositories = (groupId: number | number[]) =>
     where: { group_id: groupId },
   });
 
+// OR-combined WHERE conditions restricting repositories to those a non-admin
+// user may see: direct membership with access, or access via a user group.
+// Exported so tag scoping stays identical to the catalog list; otherwise the
+// two visibility rules drift and non-admins get a mismatched tag filter.
+export const visibleRepositoryConditions = (user: User) => [
+  { id: { [Op.in]: selectUserRepositories(user.id) } },
+  { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
+];
+
 // Lists repositories visible to the acting user with last-revision
 // annotation per repo. Applies search/name/userGroup/compatibleWith
 // filters; pagination + sort key come from `opts` (built by processQuery).
@@ -111,7 +119,7 @@ export async function list(
   user: User,
   query: ListFilter,
 ): Promise<ListResult> {
-  const { search, name, userGroupId, compatibleWith } = query;
+  const { search, name, ids, userGroupId, compatibleWith } = query;
   let { schemas } = query;
   if (compatibleWith) {
     schemas = schemaApi.getCompatibleSchemaIds(compatibleWith);
@@ -119,21 +127,22 @@ export async function list(
   opts.distinct = true;
   opts.include = [
     includeRepositoryUser(user, query),
-    { model: RepositoryUserGroup },
+    { model: UserGroup },
     ...includeRepositoryTags(query),
   ];
   if (search) opts.where.name = { [Op.iLike]: `%${search}%` };
   if (name) opts.where.name = name;
   if (schemas && schemas.length) opts.where.schema = schemas;
   if (getVal(opts, 'order.0.0') === 'name') opts.order[0][0] = lowercaseName;
+  if (ids?.length) opts.where.id = { [Op.in]: ids };
   if (userGroupId) {
-    opts.where.id = { [Op.in]: selectGroupRepositories(userGroupId) };
+    const inGroup = { [Op.in]: selectGroupRepositories(userGroupId) };
+    opts.where.id = opts.where.id
+      ? { [Op.and]: [opts.where.id, inGroup] }
+      : inGroup;
   }
   if (!user.isAdmin()) {
-    opts.where[Op.or] = [
-      { id: { [Op.in]: selectUserRepositories(user.id) } },
-      { id: { [Op.in]: selectGroupRepositories(map(user.userGroups, 'id')) } },
-    ];
+    opts.where[Op.or] = visibleRepositoryConditions(user);
   }
   const { rows: repositories, count } =
     await RepositoryModel.findAndCountAll(opts);
@@ -148,19 +157,48 @@ export async function list(
     group: ['repositoryId', 'user.id'],
   });
   const revisionsByRepository = groupBy(revisions, 'repositoryId');
-  const items: RepositoryListItem[] = repositories.map((repository: any) => ({
-    ...repository.toJSON(),
-    revisions: revisionsByRepository[repository.id],
-  }));
+  const fileMetaUrls = await resolveFileMetaUrls(repositories);
+  const items: RepositoryListItem[] = repositories.map((repository: any) => {
+    const item = repository.toJSON();
+    fileMetaUrls.get(repository.id)?.forEach((resolved, metaKey) => {
+      if (item.data?.[metaKey]) {
+        item.data[metaKey] = { ...item.data[metaKey], ...resolved };
+      }
+    });
+    return { ...item, revisions: revisionsByRepository[repository.id] };
+  });
   return { total: count, items };
 }
 
-// Creates a repository seeded with schema-default meta + a sampled label
-// color, then optionally shares it with the supplied user groups.
+/**
+ * Resolves signed URLs (original file + cached thumbnail) for every
+ * FILE-type meta value across the given repositories. Every file meta key
+ * gets an entry; null when no library asset backs the storage key (e.g.
+ * uploads predating the asset library).
+ */
+async function resolveFileMetaUrls(repositories: any[]) {
+  const inputs = repositories.flatMap((repo) =>
+    repo
+      .getFileMetaInputs()
+      .map((input: any) => ({ repoId: repo.id, ...input })),
+  );
+  const byRepo = new Map<number, Map<string, ResolvedStorageKey | null>>();
+  if (!inputs.length) return byRepo;
+  const urlsByKey = await resolveByStorageKey(
+    inputs.map((input) => input.storageKey),
+  );
+  inputs.forEach(({ repoId, metaKey, storageKey }) => {
+    if (!byRepo.has(repoId)) byRepo.set(repoId, new Map());
+    byRepo.get(repoId)!.set(metaKey, urlsByKey.get(storageKey) ?? null);
+  });
+  return byRepo;
+}
+
+// Creates a repository seeded with schema-default meta, then optionally
+// shares it with the supplied user groups.
 export async function create(payload: CreateInput, user: User) {
   const defaultMeta = getVal(schemaApi.getSchema(payload.schema), 'defaultMeta', {});
   const data = {
-    color: sample(DEFAULT_COLORS),
     ...defaultMeta,
     ...stripServerManaged(payload.data),
   };

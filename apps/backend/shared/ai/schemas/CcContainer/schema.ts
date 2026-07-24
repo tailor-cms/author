@@ -234,7 +234,7 @@ function buildPropsSchema(
   const dataProps: Record<string, any> = {};
   const required: string[] = [];
   for (const p of cfg.props) {
-    let propSchema: any = null;
+    let propSchema: any;
     if (p.isContentElement) {
       const schemaDef = getCeAiSpec(p.type)?.Schema as OpenAISchema | undefined;
       if (!schemaDef?.schema) continue;

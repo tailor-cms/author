@@ -4507,6 +4507,79 @@
         ],
         "additionalProperties": false
       },
+      "UserGroupWithCounts": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Numeric primary key."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 250,
+            "description": "Display name (2..250 chars; unique across groups)."
+          },
+          "logoUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 200000
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+          },
+          "memberCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of members in the group."
+          },
+          "repositoryCount": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of repositories shared with the group."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "logoUrl",
+          "memberCount",
+          "repositoryCount"
+        ],
+        "additionalProperties": false
+      },
+      "UserGroupListResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "A user group decorated with member and repository counts.",
+              "$ref": "#/components/schemas/UserGroupWithCounts"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
       "UserGroup": {
         "type": "object",
         "properties": {
@@ -4539,30 +4612,6 @@
           "id",
           "name",
           "logoUrl"
-        ],
-        "additionalProperties": false
-      },
-      "UserGroupListResult": {
-        "type": "object",
-        "properties": {
-          "items": {
-            "type": "array",
-            "items": {
-              "description": "A workspace user group; repositories are shared with groups.",
-              "$ref": "#/components/schemas/UserGroup"
-            },
-            "description": "Page of rows."
-          },
-          "total": {
-            "type": "integer",
-            "minimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Total rows matching the query (ignoring pagination)."
-          }
-        },
-        "required": [
-          "items",
-          "total"
         ],
         "additionalProperties": false
       },
@@ -4737,6 +4786,51 @@
           "updatedAt",
           "deletedAt",
           "userGroupMember"
+        ],
+        "additionalProperties": false
+      },
+      "UpsertMembersResult": {
+        "type": "object",
+        "properties": {
+          "total": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total emails processed in the request."
+          },
+          "created": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Members newly added to the group."
+          },
+          "updated": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Existing members whose role changed."
+          },
+          "skipped": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Emails already members with an unchanged role."
+          },
+          "failed": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "email"
+            },
+            "description": "Emails that could not be invited or assigned."
+          }
+        },
+        "required": [
+          "total",
+          "created",
+          "updated",
+          "skipped",
+          "failed"
         ],
         "additionalProperties": false
       },
@@ -7888,6 +7982,10 @@
                         "type": "string",
                         "format": "uri"
                       },
+                      "thumbnailUrl": {
+                        "description": "Caller-resolved preview (e.g. discovery's Google/Unsplash thumbnail); wins over the page's own Open Graph image when present.",
+                        "type": "string"
+                      },
                       "altText": {
                         "description": "Alt text for image-like content.",
                         "type": "string"
@@ -10732,6 +10830,20 @@
             }
           },
           {
+            "name": "ids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to specific repository ids; visibility rules still apply, so ids the user cannot see are silently dropped.",
+              "type": "array",
+              "items": {
+                "type": "integer",
+                "minimum": -9007199254740991,
+                "maximum": 9007199254740991
+              }
+            }
+          },
+          {
             "name": "userGroupId",
             "in": "query",
             "required": false,
@@ -11395,6 +11507,10 @@
                     "minLength": 2,
                     "maxLength": 2000,
                     "description": "Long-form description (2..2000 chars)."
+                  },
+                  "shareWithSamePeople": {
+                    "description": "Share the clone with the same users and user groups as the source.",
+                    "type": "boolean"
                   }
                 },
                 "required": [
@@ -12251,7 +12367,7 @@
         "x-tailor-slice": "seedTestOnly",
         "x-tailor-method": "seedComment",
         "summary": "Seed a comment",
-        "description": "Creates a comment authored by the default seed user.",
+        "description": "Creates a comment authored by the default seed user, or by `authorEmail` when provided.",
         "parameters": [],
         "responses": {
           "200": {
@@ -12296,6 +12412,18 @@
                     "minLength": 1,
                     "maxLength": 2000,
                     "description": "Comment body."
+                  },
+                  "authorEmail": {
+                    "description": "Email of an existing user to attribute the comment to.",
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "format": "email"
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -12979,14 +13107,44 @@
                     "description": "Account email; lower-cased + trimmed."
                   },
                   "firstName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "First name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "lastName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Last name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "role": {
                     "type": "string",
@@ -13230,6 +13388,9 @@
               }
             }
           },
+          "403": {
+            "description": "Caller is not a system admin"
+          },
           "409": {
             "description": "Group name already exists"
           }
@@ -13249,8 +13410,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -13346,7 +13522,7 @@
             }
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
@@ -13370,8 +13546,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "additionalProperties": false,
@@ -13400,7 +13591,7 @@
             "description": "No content"
           },
           "403": {
-            "description": "Caller is not an admin or group admin"
+            "description": "Caller is not a system admin"
           },
           "404": {
             "description": "User group not found"
@@ -13471,8 +13662,26 @@
         "summary": "Invite or update members of a user group",
         "parameters": [],
         "responses": {
-          "204": {
-            "description": "No content"
+          "200": {
+            "description": "Summary of created/updated/skipped members.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Per-request summary of a bulk member upsert.",
+                      "$ref": "#/components/schemas/UpsertMembersResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "403": {
             "description": "Caller is not an admin or group admin"

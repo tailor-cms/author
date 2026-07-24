@@ -10,7 +10,6 @@
       <VBtn
         v-bind="props"
         class="mt-6"
-        color="secondary"
         prepend-icon="mdi-lock"
         text="Change Password"
         variant="tonal"
@@ -46,9 +45,7 @@
       />
     </template>
     <template #actions>
-      <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
-        Forgot password ?
-      </NuxtLink>
+      <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       <VSpacer />
       <VBtn
         text="Cancel"
@@ -108,7 +105,7 @@ function handleError(err: any) {
     setFieldError('currentPassword', msg);
     return;
   }
-  notify('Failed to change password!', { immediate: true, color: 'error' });
+  notify('Failed to change password!', { color: 'error' });
 }
 
 const submit = handleSubmit(() => {
@@ -118,7 +115,7 @@ const submit = handleSubmit(() => {
       newPassword: newPasswordInput.value,
     })
     .then(() => {
-      notify('Password changed!', { immediate: true });
+      notify('Password changed!');
       store.logout();
       navigateTo('/auth');
     })

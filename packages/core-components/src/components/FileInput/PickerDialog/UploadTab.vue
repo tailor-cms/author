@@ -1,29 +1,62 @@
 <template>
   <div class="upload-tab-wrapper">
-    <VDefaultsProvider :defaults="{ VBtn: { color: 'primary' } }">
-      <VFileUpload
-        :filter-by-type="accept"
-        browse-text="Browse files"
-        class="upload-tab"
-        icon="mdi-cloud-upload-outline"
-        title="Drag & drop a file here"
-        @update:model-value="onSelect"
+    <UploadProgress v-if="isUploading" :file-name="fileName" :progress="progress" />
+    <template v-else>
+      <VAlert
+        v-if="errorMessage"
+        :text="errorMessage"
+        class="mb-4"
+        density="compact"
+        type="error"
+        variant="tonal"
       />
-    </VDefaultsProvider>
+      <VDefaultsProvider :defaults="{ VBtn: { color: 'primary' } }">
+        <VFileUpload
+          :filter-by-type="accept"
+          browse-text="Browse files"
+          class="upload-tab"
+          icon="mdi-cloud-upload-outline"
+          title="Drag & drop a file here"
+          @update:model-value="onSelect"
+        />
+      </VDefaultsProvider>
+    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-defineProps<{ accept?: string }>();
+import { ref } from 'vue';
+
+import UploadProgress from './UploadProgress.vue';
+
+interface Props {
+  accept?: string;
+  isUploading?: boolean;
+  // Upload percent complete; null renders an indeterminate bar
+  progress?: number | null;
+  errorMessage?: string;
+}
+
+withDefaults(defineProps<Props>(), {
+  accept: '',
+  isUploading: false,
+  progress: null,
+  errorMessage: '',
+});
 
 const emit = defineEmits<{
   select: [file: File];
 }>();
 
+// Name of the picked file; shown by the progress panel while uploading.
+const fileName = ref('');
+
 const onSelect = (files: File | File[] | null) => {
   if (!files) return;
   const file = Array.isArray(files) ? files[0] : files;
-  if (file) emit('select', file);
+  if (!file) return;
+  fileName.value = file.name;
+  emit('select', file);
 };
 </script>
 

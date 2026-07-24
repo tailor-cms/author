@@ -31,6 +31,7 @@
         :items="activityTreeData"
         :search="searchInput"
         @edit="navigateToActivity"
+        @clear:search="searchInput = ''"
       />
     </div>
   </div>
@@ -97,8 +98,6 @@ const scrollSelectedItemIntoView = async () => {
 
 onMounted(scrollSelectedItemIntoView);
 watch(() => props.selected.id, scrollSelectedItemIntoView);
-
-// Implement alert if there are no search results
 </script>
 
 <style lang="scss" scoped>

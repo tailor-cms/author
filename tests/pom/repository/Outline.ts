@@ -2,11 +2,15 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { AddItemDialog } from './AddItemDialog';
+import { CopyActivityDialog } from './CopyActivityDialog';
 import { LinkContentDialog } from './LinkContentDialog';
 import { OutlineItem } from './OutlineItem';
 import { OutlineSidebar } from './OutlineSidebar';
 
 export class ActivityOutline {
+  static getRoute = (repositoryId: number) =>
+    `/repository/${repositoryId}/root/structure`;
+
   readonly page: Page;
   readonly el: Locator;
   readonly searchInput: Locator;
@@ -89,5 +93,17 @@ export class ActivityOutline {
   async linkFirst() {
     await this.emptyLinkCard.click();
     return new LinkContentDialog(this.page);
+  }
+
+  async copyExisting() {
+    await this.addMenuBtn.waitFor({ state: 'visible' });
+    await this.addMenuBtn.click();
+    await this.page.getByText('Copy existing', { exact: true }).click();
+    return new CopyActivityDialog(this.page);
+  }
+
+  async copyFirst() {
+    await this.emptyCopyCard.click();
+    return new CopyActivityDialog(this.page);
   }
 }

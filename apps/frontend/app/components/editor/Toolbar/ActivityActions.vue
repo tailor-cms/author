@@ -1,19 +1,29 @@
 <template>
   <div class="activity-actions d-flex align-center ga-1">
     <VBtn
-      v-for="{ active, title, icon, action, disabled } in actions"
+      v-for="{
+        active,
+        title,
+        icon,
+        action,
+        disabled,
+        loading,
+        color,
+        iconSize,
+      } in actions"
       :key="title"
       v-tooltip:bottom="{ text: title, offset: 12 }"
       :active="active"
       :aria-label="title"
-      :color="active ? 'tertiary' : ''"
+      :color="color ?? (active ? 'secondary' : '')"
       :disabled="disabled"
+      :loading="loading"
       class="action-btn"
       density="comfortable"
       icon
       @click.stop="action"
     >
-      <VIcon :icon="`mdi-${icon}`" size="small" />
+      <VIcon :icon="`mdi-${icon}`" :size="iconSize ?? 'small'" />
     </VBtn>
   </div>
 </template>
@@ -29,6 +39,7 @@ const { $schemaService } = useNuxtApp() as any;
 const currentRepositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
 const contentElementStore = useContentElementStore();
+const publishingUtils = usePublishActivity();
 
 const showPublishDiff = computed(() => editorStore.showDiff);
 
@@ -46,8 +57,19 @@ const hasMetadata = computed(() => {
     ?.length;
 });
 
+interface ToolbarAction {
+  title: string;
+  icon: string;
+  action: () => unknown;
+  active?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  color?: string;
+  iconSize?: string | number;
+}
+
 const actions = computed(() => {
-  const items = [
+  const items: ToolbarAction[] = [
     {
       title: 'Back',
       icon: 'arrow-left',
@@ -85,10 +107,15 @@ const actions = computed(() => {
       action: () => editorStore.toggleDiff(),
     },
   ];
-  if (!currentRepositoryStore.repository?.hasAdminAccess) return items;
+  if (!currentRepositoryStore.access.canPublish) return items;
   return items.concat({
     title: 'Publish',
-    icon: 'cloud-upload-outline',
+    icon: publishingUtils.showPublishSuccess.value
+      ? 'check-circle-outline'
+      : 'cloud-upload-outline',
+    color: publishingUtils.showPublishSuccess.value ? 'success' : undefined,
+    iconSize: publishingUtils.showPublishSuccess.value ? '1.7em' : undefined,
+    loading: publishingUtils.isPublishing.value,
     action: () => confirmPublishing(),
   });
 });
@@ -99,7 +126,7 @@ const preview = () => {
   return api.activity
     .createPreview({ params: { repositoryId, activityId: id } })
     .then(({ location }: any) => {
-      window.location.href = location;
+      window.open(location);
     });
 };
 
@@ -113,7 +140,6 @@ const hasContentElements = computed(() => {
 
 const confirmPublishing = () => {
   if (!editorStore.selectedActivity) return;
-  const publishingUtils = usePublishActivity();
   publishingUtils.confirmPublishing([editorStore.selectedActivity]);
 };
 </script>

@@ -13,7 +13,7 @@
       variant="text"
     >
       <template #prepend>
-        <VIcon color="tertiary" icon="mdi-link-box" start />
+        <VIcon color="secondary" icon="mdi-link-box" start />
       </template>
     </VChip>
     <span
@@ -56,9 +56,7 @@ const source = ref<SourceInfo | null>(null);
 const sourceLabel = computed(() => {
   const repo = source.value?.repository;
   if (!repo?.name) return '';
-  const schemaName = repo.schema
-    ? $schemaService.getSchema(repo.schema).name
-    : '';
+  const schemaName = repo.schema ? $schemaService.getLabel(repo) : '';
   const label = schemaName ? `${repo.name} ${schemaName}` : repo.name;
   return `from ${label}`;
 });
@@ -115,7 +113,7 @@ const handleUnlink = async () => {
       params: { repositoryId, activityId: id },
     });
     store.add(unlinked);
-    notify('Activity unlinked', { immediate: true });
+    notify('Activity unlinked');
   } catch {
     notify('Failed to unlink activity', { color: 'error' });
   }

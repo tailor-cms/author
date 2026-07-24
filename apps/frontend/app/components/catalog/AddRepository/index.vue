@@ -16,7 +16,6 @@
           class="add-repository-btn"
           color="primary"
           prepend-icon="mdi-plus"
-          size="large"
           text="New"
           variant="flat"
         />
@@ -107,6 +106,7 @@
           v-model="descriptionInput"
           class="mb-2"
           :class="{ required: isCreate }"
+          :counter="DESCRIPTION_MAX_LENGTH"
           :error-messages="errors.description"
           :placeholder="
             isCreate ? 'Enter description...' : 'Leave blank to inherit from the archive'
@@ -126,20 +126,38 @@
         <VSelect
           v-show="showUserGroupInput"
           v-model="groupInput"
+          :clearable="isGroupSelectClearable"
           :error-messages="errors.userGroupIds"
           :items="authStore.groupsWithCreateRepositoryAccess"
+          :menu-props="{ maxWidth: 460 }"
           class="user-group-select mb-3"
+          no-data-text="No more user groups to add"
           item-title="name"
           item-value="id"
           label="User Group"
           placeholder="Select user group..."
           variant="outlined"
           hide-details
+          hide-selected
           chips
-          clearable
           closable-chips
           multiple
-        />
+        >
+          <template #chip="{ internalItem, props: chipProps }">
+            <VChip
+              v-tooltip:top="{
+                text: internalItem.title,
+                openDelay: 400,
+                maxWidth: 400,
+              }"
+              v-bind="chipProps"
+              :closable="internalItem.value !== lockedGroupId"
+              class="user-group-chip"
+            >
+              <span class="text-truncate">{{ internalItem.title }}</span>
+            </VChip>
+          </template>
+        </VSelect>
       </div>
     </template>
     <template #actions>
@@ -151,8 +169,8 @@
       />
       <VBtn
         :loading="isSubmitting"
+        :text="isCreate ? 'Create' : 'Import'"
         color="primary"
-        text="Create"
         type="submit"
         variant="flat"
       />
@@ -161,17 +179,18 @@
 </template>
 
 <script lang="ts" setup>
-import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
-import { formDataBodySerializer } from '@tailor-cms/api-client';
 import { pick, startCase } from 'lodash-es';
-import pMinDelay from 'p-min-delay';
-import { SCHEMAS } from '@tailor-cms/config';
+import { formDataBodySerializer } from '@tailor-cms/api-client';
+import { schema as schemaApi } from '@tailor-cms/config';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useForm } from 'vee-validate';
+import pMinDelay from 'p-min-delay';
 
 import { api } from '@/api';
 import MetaInput from '@/components/common/MetaInput.vue';
 import RepositoryNameField from '@/components/common/RepositoryNameField.vue';
+
+const notify = useNotification();
 
 const authStore = useAuthStore();
 const repositoryStore = useRepositoryStore();
@@ -179,6 +198,7 @@ const config = useConfigStore();
 
 const NEW_TAB = 'schema';
 const IMPORT_TAB = 'import';
+const DESCRIPTION_MAX_LENGTH = 2000;
 
 const props = withDefaults(
   defineProps<{
@@ -201,6 +221,19 @@ const showUserGroupInput = computed(() => {
   return !!authStore.groupsWithCreateRepositoryAccess?.length;
 });
 
+// The workspace selected in the catalog rail, when it's a real group the user
+// can create in. Repos created while inside a workspace are pinned to it (a
+// non-removable chip), so they don't vanish from the workspace-filtered
+// catalog. `0` (All workspaces) means no context to pin.
+const lockedGroupId = computed<number | null>(() => {
+  if (!showUserGroupInput.value) return null;
+  const id = repositoryStore.selectedUserGroupId;
+  const canCreateHere = authStore.groupsWithCreateRepositoryAccess.some(
+    (group) => group.id === id,
+  );
+  return id && canCreateHere ? id : null;
+});
+
 const metaValidation = reactive<Record<string, any>>({});
 
 const { defineField, handleSubmit, resetForm, errors } = useForm({
@@ -220,7 +253,9 @@ const { defineField, handleSubmit, resetForm, errors } = useForm({
     // archive (see the archiveInput watch). Description stays optional on
     // Import: blank inherits the archive's own value via the backend fallback.
     name: 'required|min:2|max:250',
-    description: isCreate.value ? 'required|min:2|max:2000' : 'min:2|max:2000',
+    description: isCreate.value
+      ? `required|min:2|max:${DESCRIPTION_MAX_LENGTH}`
+      : `min:2|max:${DESCRIPTION_MAX_LENGTH}`,
     archive: { required: selectedTab.value === IMPORT_TAB },
     ...metaValidation,
   })),
@@ -232,8 +267,12 @@ const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 const [groupInput] = defineField('userGroupIds');
 
-const schema = computed<ActivityConfig>(
-  () => SCHEMAS.find((it) => it.id === schemaInput.value) as any,
+const isGroupSelectClearable = computed(
+  () => !lockedGroupId.value && (groupInput.value?.length ?? 0) > 1,
+);
+
+const schema = computed(() =>
+  schemaInput.value ? schemaApi.getSchema(schemaInput.value) : undefined,
 );
 
 const schemaMeta = computed(() =>
@@ -256,6 +295,11 @@ const createRepository = handleSubmit(async (formPayload: any) => {
   const action = isCreate.value ? create : importRepository;
   try {
     await pMinDelay(action(formPayload), 2000);
+    notify(
+      isCreate.value
+        ? `A new ${schema.value!.name} has been created`
+        : 'Import successful',
+    );
     emit('created');
     hide();
   } catch {
@@ -308,9 +352,11 @@ watch(
 
 watch(isVisible, (val) => {
   if (!val) return emit('close');
-  groupInput.value = authStore.hasDefaultUserGroup
-    ? [authStore.userGroups[0]!.id]
-    : [];
+  if (authStore.hasDefaultUserGroup) {
+    groupInput.value = [authStore.userGroups[0]!.id];
+    return;
+  }
+  groupInput.value = lockedGroupId.value ? [lockedGroupId.value] : [];
 });
 </script>
 

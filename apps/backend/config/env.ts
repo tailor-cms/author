@@ -170,6 +170,9 @@ const Shape = z.object({
   EMAIL_SSL: bool.default(false),
   // Upgrade to TLS via STARTTLS (usually port 587).
   EMAIL_TLS: bool.default(false),
+  // Trace the raw SMTP exchange on stdout to debug delivery issues. The
+  // trace includes credentials, so production ignores this flag.
+  EMAIL_DEBUG: bool.default(false),
   // Display name shown in the From header.
   EMAIL_SENDER_NAME: z.string().default('Tailor'),
   // Address shown in the From header.

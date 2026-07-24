@@ -6,7 +6,7 @@ Axios.prototype.submitForm = function (url, fields, options) {
   return Promise.resolve(submitForm(action, fields, options));
 };
 
-const isAuthError = (err) => [401, 403].includes(err.response?.status);
+const isAuthError = (err) => err.response?.status === 401;
 
 // Response interceptor that bumps unauthenticated users back to /auth.
 // Exported so other axios instances can apply the same behaviour without
@@ -28,6 +28,17 @@ export function applyAuthInterceptor(target) {
       throw err;
     },
   );
+}
+
+// Adapts axios upload-progress events into a 0..100 percent callback, the
+// single progress contract shared by every upload caller. Returns undefined
+// (which axios ignores) when no callback is given, so it can be passed through
+// unconditionally.
+export function uploadProgress(onProgress) {
+  if (!onProgress) return undefined;
+  return ({ loaded, total }) => {
+    if (total) onProgress(Math.round((loaded / total) * 100));
+  };
 }
 
 const config = {

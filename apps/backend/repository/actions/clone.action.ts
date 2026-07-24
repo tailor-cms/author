@@ -17,7 +17,10 @@ async function handler({
 }>) {
   const repository = req.repository!;
   logger.debug({ repositoryId: repository.id }, 'Cloning repository');
-  return repository.clone(body.name, body.description, { userId: user.id });
+  return repository.clone(body.name, body.description, {
+    context: { userId: user.id },
+    shareWithSamePeople: body.shareWithSamePeople,
+  });
 }
 
 export default defineAction({

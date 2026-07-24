@@ -28,7 +28,7 @@
 import { AssetType, ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import type { Asset } from '@tailor-cms/interfaces/asset';
 
-import { isIndexable } from './utils';
+import { canIndex } from './utils';
 
 const props = defineProps<{ asset: Asset }>();
 
@@ -48,9 +48,7 @@ const canDeindex = computed(
   () => props.asset.processingStatus === ProcessingStatus.Completed,
 );
 
-const canIndex = computed(
-  () => !canDeindex.value && isIndexable(props.asset),
-);
+const showIndex = computed(() => canIndex(props.asset));
 
 const menuOptions = computed(() => {
   const items = [];
@@ -67,7 +65,7 @@ const menuOptions = computed(() => {
       icon: 'mdi-text-search-variant',
       action: () => emit('deindex', props.asset),
     });
-  } else if (canIndex.value) {
+  } else if (showIndex.value) {
     items.push({
       name: 'Index',
       icon: 'mdi-brain',

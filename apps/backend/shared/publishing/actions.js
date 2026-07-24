@@ -20,7 +20,7 @@ async function updateRepositoryCatalog(
   log(oneLine`
     [updateRepositoryCatalog] initiated,
     repository id: ${repository.id},
-    publishedAt: ${publishedAt}
+    publishedAt: ${publishedAt.toISOString()}
   `);
   const catalog = await getRepositoryCatalog();
   const existing = catalog.find((it) => it.id === repository.id);

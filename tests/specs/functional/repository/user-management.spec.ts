@@ -60,8 +60,7 @@ test('should be able to update user role', async ({ page }) => {
   await page.goto(RepositoryUsers.getRoute(repository.id));
   const repositoryUsers = new RepositoryUsers(page);
   await expect(repositoryUsers.el).toContainText('admin@gostudion.com');
-  const entry = repositoryUsers.getEntryByEmail('admin@gostudion.com');
-  const roleBtn = entry.locator('.user-role-btn');
+  const roleBtn = repositoryUsers.getRoleButton('admin@gostudion.com');
   await repositoryUsers.setUserRole('admin@gostudion.com', 'Author');
   await expect(page.getByText('User updated')).toBeVisible();
   await expect(roleBtn).toHaveText('Author');
