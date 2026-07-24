@@ -6,7 +6,7 @@ hero:
   name: Tailor Author
   text: Create complex content structures with joy
   tagline: With unparalleled configurability and extensibility, Tailor Author puts you in control. Enjoy an intuitive authoring experience that makes managing your content a breeze.
-  image: logo-new.png
+  image: logo-new.svg
   actions:
     - theme: brand
       text: Get started ->
