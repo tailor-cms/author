@@ -38,6 +38,7 @@ interface Props {
   setWidth?: boolean;
   dense?: boolean;
   autosave?: boolean;
+  variant?: 'card' | 'field';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -49,6 +50,7 @@ const props = withDefaults(defineProps<Props>(), {
   setWidth: true,
   dense: false,
   autosave: false,
+  variant: 'card',
 });
 
 const emit = defineEmits([
@@ -72,6 +74,7 @@ const bindings = computed(() => {
     dense,
     showDiscussion,
     autosave,
+    variant,
   } = props;
   return {
     element,
@@ -83,6 +86,7 @@ const bindings = computed(() => {
     showDiscussion,
     dense,
     autosave,
+    variant,
   };
 });
 

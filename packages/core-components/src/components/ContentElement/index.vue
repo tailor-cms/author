@@ -5,6 +5,7 @@
   <div
     :class="[
       element.diffChange,
+      isField ? 'field rounded' : 'card rounded-lg',
       {
         selected: activeUsers.length,
         focused: isFocused,
@@ -12,11 +13,12 @@
         linked: element.isLinkedCopy && !showDiff,
       },
     ]"
-    class="content-element card rounded-lg"
+    class="content-element"
     @click="onSelect"
   >
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <div
+      v-if="!isField"
       :class="{ expanded: isExpanded }"
       class="card-header d-flex align-center"
       @click="toggleExpanded"
@@ -174,6 +176,10 @@ interface Props {
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
   autosave?: boolean;
+  // 'card' is the standard editor card; 'field' is a header-less render for
+  // fixed, externally-labelled slots (e.g. collection item fields) — just the
+  // editor body in a plain frame, no header/drag/actions/collapse.
+  variant?: 'card' | 'field';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -189,6 +195,7 @@ const props = withDefaults(defineProps<Props>(), {
   dense: false,
   showDiscussion: false,
   autosave: false,
+  variant: 'card',
 });
 
 const emit = defineEmits([
@@ -235,9 +242,11 @@ const attrs = useAttrs();
 
 const localExpanded = ref(true);
 const isControlled = computed(() => props.expanded !== null);
-const isExpanded = computed(() =>
-  isControlled.value ? !!props.expanded : localExpanded.value,
-);
+const isField = computed(() => props.variant === 'field');
+const isExpanded = computed(() => {
+  if (isField.value) return true;
+  return isControlled.value ? !!props.expanded : localExpanded.value;
+});
 
 const toggleExpanded = () => {
   if (!isControlled.value) localExpanded.value = !isExpanded.value;
@@ -516,6 +525,15 @@ onMounted(() => {
 .card {
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
   background: rgb(var(--v-theme-surface-raised));
+}
+
+.field {
+  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  padding: 1rem;
+
+  .card-body, :deep(.tiptap) {
+    padding: 0;
+  }
 }
 
 .card-header {
