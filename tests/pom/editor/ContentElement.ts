@@ -40,10 +40,11 @@ export class ContentElement {
   }
 
   async remove() {
-    await this.el.hover();
+    await this.focus();
     await this.deleteBtn.click();
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
+    await this.el.waitFor({ state: 'detached' });
   }
 
   async openComments() {
@@ -88,11 +89,10 @@ export class ContentElement {
   }
 
   async dragToReorder(offsetY: number) {
-    // Drag handle is in ancestor .contained-content, not inside .content-element
-    const xpath = 'ancestor::div[contains(@class, "contained-content")]';
-    const container = this.el.locator(`xpath=${xpath}`);
-    await container.hover();
-    const dragHandle = container.locator('.drag-handle');
+    // Drag handle lives in the card header inside .content-element and is
+    // always visible.
+    await this.el.hover();
+    const dragHandle = this.el.locator('.card-header .drag-handle');
     await expect(dragHandle).toBeVisible();
     const box = await dragHandle.boundingBox();
     if (!box) throw new Error('Could not get drag handle bounding box');
