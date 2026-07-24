@@ -44,7 +44,6 @@ export class ContentElement {
     await this.deleteBtn.click();
     const dialog = this.page.locator('div[role="dialog"]');
     await dialog.getByRole('button', { name: 'confirm' }).click();
-    await this.el.waitFor({ state: 'detached' });
   }
 
   async openComments() {
