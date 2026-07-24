@@ -143,6 +143,10 @@ const showUsages = computed(
     flex-shrink: 0;
   }
 
+  :deep(.v-btn) {
+    --v-hover-opacity: 0.12;
+  }
+
   :deep(.v-btn--icon.v-btn--size-x-small) {
     --v-btn-height: 1rem;
   }
