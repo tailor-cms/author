@@ -14,7 +14,6 @@
         <VCol
           :key="getElementId(element)"
           :cols="getVal(element, 'data.width', 12)"
-          class="pr-5"
           @dragend="onDragEnd(element)"
           @dragstart="onDragStart(index)"
         >
@@ -111,11 +110,6 @@ const reorder = ({ newIndex: newPosition }: { newIndex: number }) => {
 </script>
 
 <style lang="scss" scoped>
-/* Do not remove! Makes sure vuedraggable detects correct scrollable parent */
-.list-group {
-  padding: 0.625rem 1.5rem;
-}
-
 :deep(.sortable-ghost) {
   .drag-handle {
     display: none;

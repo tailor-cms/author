@@ -3,164 +3,118 @@
   vuejs-accessibility/no-static-element-interactions -->
 <template>
   <div
-    ref="rootEl"
     :class="[
       element.diffChange,
+      isField ? 'field rounded' : 'card rounded-lg',
       {
         selected: activeUsers.length,
         focused: isFocused,
         diff: showDiff,
-        frame,
         linked: element.isLinkedCopy && !showDiff,
       },
     ]"
-    class="content-element rounded"
+    class="content-element"
     @click="onSelect"
   >
-    <div
-      v-if="!isQuestion"
-      :class="{ visible: showDiff && element.diffChange }"
-      class="header d-flex"
-    >
-      <DiffChip :change-type="element.diffChange" class="ml-auto" />
-    </div>
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
-    <VSheet
-      v-if="loading"
-      class="py-16 text-title-small text-center"
-      rounded="lg"
-    >
-      <CircularProgress />
-      <div class="pt-3 font-weight-bold">
-        <span>Content generation in progress...</span>
-      </div>
-    </VSheet>
-    <template v-else>
-      <template v-if="!!manifest">
-        <QuestionElement
-          v-if="isQuestion"
-          :icon="manifest.ui.icon"
-          :type="manifest.name"
-          v-bind="{
-            ...$attrs,
-            componentName,
-            embedElementConfig,
-            element,
-            references,
-            isFocused,
-            isDragged,
-            isDisabled,
-            isReadonly: props.isDisabled,
-            dense,
-            autosave,
-          }"
-          @add="emit('add', $event)"
-          @delete="emit('delete')"
-          @focus="onSelect"
-          @generate="generateContent"
-          @link="onLinkRelationship"
-          @reset="reset"
-          @save="onSave"
-        />
-        <component
-          :is="componentName"
-          v-else
-          v-bind="{
-            ...$attrs,
-            embedElementConfig,
-            element,
-            references,
-            isFocused,
-            isDragged,
-            isDisabled,
-            isReadonly: props.isDisabled,
-            dense,
-          }"
-          :id="`element_${id}`"
-          @add="emit('add', $event)"
-          @delete="emit('delete')"
-          @focus="onSelect"
-          @link="onLinkRelationship"
-          @save="onSave"
-        />
-      </template>
-      <VSheet v-else class="py-10">
-        <div class="text-title-large">
-          {{ (element.type || 'Unknown').replace('_', ' ') }}
-        </div>
-        <div class="pt-4 text-title-small">Component is not available!</div>
-      </VSheet>
-    </template>
     <div
-      v-if="!props.isDisabled"
-      :class="['element-actions', { comfortable: isComfortable }]"
+      v-if="!isField"
+      :class="{ expanded: isExpanded }"
+      class="card-header d-flex align-center"
+      @click="toggleExpanded"
     >
+      <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
+        <span class="mdi mdi-drag-vertical"></span>
+      </span>
       <div
-        v-if="element.isLinkedCopy"
-        :class="{ 'is-visible': isHighlighted || element.isLinkedCopy }"
+        :class="{ 'ml-2': isDisabled || !isDraggable }"
+        class="type-label d-flex align-center flex-shrink-0"
       >
-        <ElementLinkedIndicator
-          :is-entry-point="isElementEntryPoint"
-          :is-loading="isLoadingSourceInfo"
-          :source-info="linkedSourceInfo"
+        <VIcon
+          :color="isRegistered ? 'secondary' : 'warning'"
+          :icon="typeIcon"
+          size="x-small"
+          start
+        />
+        <span class="text-label-small font-weight-semibold text-uppercase">
+          {{ typeName }}
+        </span>
+      </div>
+      <template v-if="!isExpanded">
+        <span
+          v-if="preview"
+          class="mx-3 text-medium-emphasis text-body-medium text-truncate"
+        >
+          {{ preview }}
+        </span>
+        <span
+          v-else-if="isElementEmpty"
+          class="mx-3 font-italic text-disabled text-body-medium"
+        >
+          Empty
+        </span>
+      </template>
+      <VSpacer />
+      <DiffChip :change-type="element.diffChange" />
+      <div v-if="!props.isDisabled" @click.stop>
+        <ElementActions
+          v-bind="actionBindings"
+          @delete="emit('delete')"
+          @discussion:open="focus"
+          @navigate="onNavigateToElement"
+          @reset="reset"
           @source:fetch="onFetchSource"
-          @source:view="onNavigateToElement"
           @unlink="onUnlink"
-        />
-      </div>
-      <div v-if="showSourceUsages" :class="{ 'is-visible': isHighlighted }">
-        <ElementSourceUsages
-          :element="element"
-          :usages="sourceUsages"
-          :is-loading="isLoadingSourceUsages"
           @usages:fetch="onFetchCopies"
-          @usage:view="onNavigateToElement"
         />
       </div>
-      <div
-        v-if="showDiscussion"
-        :class="{
-          'is-visible': isHighlighted || hasComments,
-          'pinned-first': hasComments,
-        }"
-      >
-        <ElementLinkedDiscussion
-          v-if="props.element.isLinkedCopy"
-          :is-loading="isLoadingSourceInfo"
-          :source-info="linkedSourceInfo"
-          @source:fetch="onFetchSource"
-          @source:view="onNavigateToElement"
-        />
-        <ElementDiscussion
-          v-else
-          v-bind="element"
-          :user="currentUser"
-          @open="focus"
-        />
-      </div>
-      <div :class="{ 'is-visible': isHighlighted }">
-        <VBtn
-          v-tooltip:left="{ text: 'Reset element', openDelay: 1000 }"
-          aria-label="Reset element"
-          color="warning"
-          icon="mdi-restore"
-          size="x-small"
-          variant="tonal"
-          @click="reset"
-        />
-      </div>
-      <div v-if="!parent" :class="{ 'is-visible': isHighlighted }">
-        <VBtn
-          v-tooltip:left="{ text: 'Delete element', openDelay: 1000 }"
-          aria-label="Delete element"
-          color="error"
-          icon="mdi-trash-can-outline"
-          size="x-small"
-          variant="tonal"
-          @click="emit('delete')"
-        />
-      </div>
+      <VBtn
+        :aria-label="isExpanded ? 'Collapse element' : 'Expand element'"
+        :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+        class="ml-1 flex-shrink-0 chevron"
+        density="comfortable"
+        size="small"
+        variant="text"
+        @click.stop="toggleExpanded"
+      />
     </div>
+    <VExpandTransition>
+      <div v-show="isExpanded">
+        <div class="card-body">
+          <QuestionElement
+            v-if="isQuestion"
+            v-bind="{ ...editBindings, componentName, autosave, isDirty }"
+            @add="emit('add', $event)"
+            @delete="emit('delete')"
+            @focus="onSelect"
+            @link="onLinkRelationship"
+            @save="onSave"
+          >
+            <slot></slot>
+          </QuestionElement>
+          <template v-else-if="isRegistered">
+            <slot></slot>
+            <component
+              :is="componentName"
+              v-bind="editBindings"
+              :id="`element_${id}`"
+              @add="emit('add', $event)"
+              @delete="emit('delete')"
+              @focus="onSelect"
+              @link="onLinkRelationship"
+              @save="onSave"
+            />
+          </template>
+          <ElementPlaceholder
+            v-else
+            color="warning"
+            icon="mdi-alert-circle-outline"
+            name="Component is not available"
+            placeholder="No editor is registered for this element type."
+          />
+        </div>
+      </div>
+    </VExpandTransition>
     <VProgressLinear
       v-if="isSaving"
       class="save-indicator"
@@ -189,61 +143,76 @@ import {
   onMounted,
   provide,
   ref,
+  useAttrs,
 } from 'vue';
-import { useResizeObserver } from '@vueuse/core';
-import { AiRequestType } from '@tailor-cms/interfaces/ai';
-import { cloneDeep, isEqual } from 'lodash-es';
-import { getElementId } from '@tailor-cms/utils';
+import { isEqual } from 'lodash-es';
+import {
+  getElementId,
+  getQuestionPromptPreview,
+  titleCase,
+} from '@tailor-cms/utils';
 
-import ActiveUsers from './ActiveUsers.vue';
-import CircularProgress from './CircularProgress.vue';
+import ActiveUsers from '../ActiveUsers.vue';
 import DiffChip from './DiffChip.vue';
-import ElementDiscussion from './ElementDiscussion.vue';
-import ElementLinkedDiscussion from './ElementLinkedDiscussion.vue';
-import ElementLinkedIndicator from './ElementLinkedIndicator.vue';
-import ElementSourceUsages from './ElementSourceUsages.vue';
-import QuestionElement from './QuestionElement.vue';
-import { useConfirmationDialog } from '../composables/useConfirmationDialog';
-import { useLoader } from '../composables/useLoader';
+import ElementActions from './ElementActions/index.vue';
+import ElementPlaceholder from '../ElementPlaceholder.vue';
+import QuestionElement from '../QuestionElement/index.vue';
+import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
 interface Props {
   element: ContentElement;
   references?: Record<string, ContentElement[]> | null;
   parent?: Activity | null;
+  // Controlled card expansion; null keeps it locally managed.
+  expanded?: boolean | null;
   isHovered?: boolean;
   isDragged?: boolean;
+  isDraggable?: boolean;
   isDisabled?: boolean;
-  frame?: boolean;
+  // External dirty state (e.g. edited element refs); shows the save
+  // controls and lets a save through even when element data is unchanged.
+  isDirty?: boolean;
   dense?: boolean;
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
   autosave?: boolean;
+  // 'card' is the standard editor card; 'field' is a header-less render for
+  // fixed, externally-labelled slots (e.g. collection item fields) — just the
+  // editor body in a plain frame, no header/drag/actions/collapse.
+  variant?: 'card' | 'field';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
   parent: null,
+  expanded: null,
   isHovered: false,
   isDragged: false,
+  isDraggable: true,
   isDisabled: false,
-  frame: true,
+  isDirty: false,
   dense: false,
   showDiscussion: false,
   autosave: false,
+  variant: 'card',
 });
 
-const emit = defineEmits(['add', 'delete', 'save', 'save:meta']);
+const emit = defineEmits([
+  'add',
+  'delete',
+  'save',
+  'save:meta',
+  'update:expanded',
+]);
 
 const ceRegistry = inject<any>('$ceRegistry');
 const editorBus = inject<any>('$editorBus');
 const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
 const getCurrentUser = inject<any>('$getCurrentUser');
-const doTheMagic = inject<any>('$doTheMagic');
 const rpc = inject<any>('$rpc', null);
 
-const { loading, loader } = useLoader();
 const confirmationDialog = useConfirmationDialog();
 
 const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
@@ -259,16 +228,83 @@ const isFocused = ref(false);
 const isSaving = ref(false);
 const currentUser = getCurrentUser?.();
 const activeUsers = ref<User[]>([]);
-const rootEl = ref<HTMLElement | null>(null);
 
 const id = computed(() => getElementId(props.element));
 const manifest = computed(() => ceRegistry.getByEntity(props.element));
+const isRegistered = computed(() => !!manifest.value);
 const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
 const isHighlighted = computed(() => isFocused.value || props.isHovered);
-const hasComments = computed(() => !!props.element.comments?.length);
 const showDiff = computed(() => editorState?.showDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
+
+const attrs = useAttrs();
+
+const localExpanded = ref(true);
+const isControlled = computed(() => props.expanded !== null);
+const isField = computed(() => props.variant === 'field');
+const isExpanded = computed(() => {
+  if (isField.value) return true;
+  return isControlled.value ? !!props.expanded : localExpanded.value;
+});
+
+const toggleExpanded = () => {
+  if (!isControlled.value) localExpanded.value = !isExpanded.value;
+  emit('update:expanded', !isExpanded.value);
+};
+
+const typeIcon = computed(() => manifest.value?.ui?.icon ?? 'mdi-alert-circle-outline');
+const typeName = computed(
+  () => manifest.value?.name ?? titleCase(props.element.type || 'Unknown'),
+);
+
+const preview = computed(() => {
+  if (isQuestion.value) return questionPreview.value;
+  const content = props.element.data?.content;
+  if (typeof content !== 'string') return '';
+  return content
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+});
+
+const questionPreview = computed(() => {
+  const { embeds, question } = props.element.data as any;
+  if (!Array.isArray(question) || !embeds) return '';
+  const prompt = question.map((id: string) => embeds[id]).filter(Boolean);
+  return getQuestionPromptPreview(prompt);
+});
+
+const isElementEmpty = computed(
+  () => !!manifest.value?.isEmpty?.(props.element.data),
+);
+
+const editBindings = computed(() => ({
+  ...attrs,
+  embedElementConfig: props.embedElementConfig,
+  element: props.element,
+  references: props.references,
+  isFocused: isFocused.value,
+  isDragged: props.isDragged,
+  isDisabled: props.isDisabled,
+  isReadonly: props.isDisabled,
+  dense: props.dense,
+}));
+
+const actionBindings = computed(() => ({
+  currentUser,
+  element: props.element,
+  isEntryPoint: isElementEntryPoint.value,
+  isHighlighted: isHighlighted.value,
+  isLoadingSourceInfo: isLoadingSourceInfo.value,
+  isLoadingUsages: isLoadingSourceUsages.value,
+  linkedSourceInfo: linkedSourceInfo.value,
+  showDelete: !props.parent,
+  showDiscussion: props.showDiscussion,
+  isRegistered: isRegistered.value,
+  usages: sourceUsages.value,
+}));
 
 // Linked element state
 const isElementEntryPoint = ref(true);
@@ -278,20 +314,6 @@ const linkedSourceInfo = ref<ElementSourceInfo | null>(null);
 // Source usages state (for non-linked elements that could have copies)
 const isLoadingSourceUsages = ref(false);
 const sourceUsages = ref<ElementSourceInfo[] | null>(null);
-const showSourceUsages = computed(
-  () => !props.element.isLinkedCopy && !props.element.embedded,
-);
-
-// The action column relaxes its vertical spacing once the host
-// element is tall enough.
-const COMFORTABLE_MIN_HEIGHT = 130;
-const isComfortable = ref(false);
-useResizeObserver(rootEl, ([entry]) => {
-  if (!entry) return;
-  const height = entry.borderBoxSize[0]?.blockSize ?? entry.contentRect.height;
-  const comfortable = height >= COMFORTABLE_MIN_HEIGHT;
-  if (comfortable !== isComfortable.value) isComfortable.value = comfortable;
-});
 
 const onSelect = (e: any) => {
   if (!props.isDisabled && !showDiff.value && !e.component) {
@@ -310,7 +332,7 @@ const onSave = (data: ContentElement['data']) => {
   if (props.isDisabled) return;
   // Editors re-emit `save` on blur even when nothing changed; skip persisting
   // (and its "saved" toast) when the payload matches the stored data.
-  if (isEqual(data, props.element.data)) return;
+  if (!props.isDirty && isEqual(data, props.element.data)) return;
   if (props.element.isLinkedCopy && !isEmbed.value) {
     confirmationDialog({
       title: 'Edit linked element?',
@@ -330,7 +352,7 @@ const onSave = (data: ContentElement['data']) => {
 };
 
 const reset = () => {
-  if (!ceRegistry) return;
+  if (!ceRegistry || !isRegistered.value) return;
   confirmationDialog({
     title: 'Reset element?',
     color: 'warning',
@@ -341,18 +363,6 @@ const reset = () => {
     },
   });
 };
-
-const generateContent = loader(async function (text) {
-  const data = cloneDeep(props.element.data);
-  const inputs = [{
-    type: AiRequestType.Modify,
-    text: text ?? 'Generate content element for this page.',
-    responseSchema: props.element.type,
-    content: JSON.stringify(props.element.data),
-  }];
-  const generatedContent = await doTheMagic({ inputs });
-  return onSave({ ...data, ...generatedContent });
-});
 
 // Element relationships (refs between elements)
 const onLinkRelationship = (key?: string) => editorBus.emit('element:link', key);
@@ -462,7 +472,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-@use '../mixins';
+@use '../../mixins';
 
 .content-element {
   $accent-focused: #1de9b6;
@@ -512,53 +522,53 @@ onMounted(() => {
   }
 }
 
-.frame {
-  padding: 10px 20px;
+.card {
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  background: rgb(var(--v-theme-surface-raised));
 }
 
-.element-actions {
-  display: flex;
-  flex-direction: column;
-  gap: 0.125rem;
-  position: absolute;
-  top: -0.0625rem;
-  right: -2.5rem;
-  width: 3rem;
-  height: 100%;
-  padding-left: 0.75rem;
+.field {
+  border: 1px solid rgba(var(--v-theme-outline), 0.3);
+  padding: 1rem;
 
-  > * {
+  .card-body, :deep(.tiptap) {
+    padding: 0;
+  }
+}
+
+.card-header {
+  min-height: 2.75rem;
+  padding: 0.375rem 0.5rem 0.375rem 0.25rem;
+  cursor: pointer;
+
+  &.expanded {
+    border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);
+  }
+
+  .drag-handle {
     flex-shrink: 0;
-    min-height: 1.5rem;
-    opacity: 0;
-    transition: opacity 0.1s linear;
+    width: 1.5rem;
+    cursor: grab;
+
+    .mdi {
+      color: rgba(var(--v-theme-on-surface), 0.4);
+      font-size: 1.25rem;
+    }
   }
 
-  > .is-visible {
-    opacity: 1;
-    transition: opacity 0.5s linear;
+  .chevron {
+    border-radius: 8px;
+    color: rgba(var(--v-theme-on-surface), 0.65);
   }
 
-  // With comments the icon stays visible while the row isn't hovered, so
-  // pin it to the top instead of leaving it below hidden hover-only actions.
-  > .pinned-first {
-    order: -1;
+  .type-label {
+    color: rgb(var(--v-theme-on-surface));
+    letter-spacing: 0.05em;
   }
+}
 
-  // More of vertical spacing when the host element has room; compact hosts
-  // keep the tight stack.
-  &.comfortable {
-    gap: 0.625rem;
-  }
-
-  :deep(.v-btn--icon.v-btn--size-x-small) {
-    --v-btn-height: 0.875rem;
-  }
-
-  :deep(.v-btn--size-x-small .v-icon) {
-    font-size: 1.25rem;
-  }
+.card-body {
+  padding: 0.625rem 1.25rem 1rem;
 }
 
 .active-users {

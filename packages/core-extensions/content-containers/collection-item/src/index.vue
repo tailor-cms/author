@@ -36,6 +36,7 @@
                 :element="containerState[input.key]"
                 :embed-element-config="embedElementConfig"
                 :is-disabled="disabled"
+                variant="field"
                 autosave
                 @save="(e) => updateSlot(input.key, e)"
               />
@@ -366,14 +367,6 @@ watch(
     border: none;
     position: relative;
     border-radius: 4px;
-
-    &.frame {
-      padding: 1rem;
-
-      .tiptap {
-        padding: 0;
-      }
-    }
 
     &::after {
       background: none;
