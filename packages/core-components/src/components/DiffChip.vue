@@ -5,7 +5,7 @@
     :text="changeType"
     class="diff-chip"
     density="comfortable"
-    rounded="lg"
+    rounded="md"
     size="small"
   />
 </template>
