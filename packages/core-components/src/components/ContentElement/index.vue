@@ -3,6 +3,7 @@
   vuejs-accessibility/no-static-element-interactions -->
 <template>
   <div
+    :id="`element_${id}`"
     :class="[
       element.diffChange,
       isField ? 'field rounded' : 'card rounded-lg',
@@ -102,7 +103,6 @@
             <component
               :is="componentName"
               v-bind="editBindings"
-              :id="`element_${id}`"
               @add="emit('add', $event)"
               @delete="emit('delete')"
               @focus="onSelect"
