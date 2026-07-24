@@ -42,19 +42,26 @@
       <CircularProgress />
       <div class="pt-3 font-weight-bold">Content generation in progress...</div>
     </VSheet>
-    <div v-else class="d-flex flex-column ga-2">
-      <AssessmentItem
-        v-for="it in assessments"
-        :key="it.uid"
-        :element="it"
-        :embed-element-config="embedElementConfig"
-        :expanded="isSelected(it.uid)"
-        :is-disabled="disabled"
-        @selected="toggleSelect(it.uid)"
-        @save="saveAssessment"
-        @delete="$emit('delete:element', it)"
-      />
-    </div>
+    <VThemeProvider
+      v-else
+      style="background: transparent"
+      theme="light"
+      with-background
+    >
+      <div class="d-flex flex-column ga-2">
+        <AssessmentItem
+          v-for="it in assessments"
+          :key="it.uid"
+          :element="it"
+          :embed-element-config="embedElementConfig"
+          :expanded="isSelected(it.uid)"
+          :is-disabled="disabled"
+          @selected="toggleSelect(it.uid)"
+          @save="saveAssessment"
+          @delete="$emit('delete:element', it)"
+        />
+      </div>
+    </VThemeProvider>
     <AddElement
       v-if="!disabled && !isAiGeneratingContent"
       :activity="container"
