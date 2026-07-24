@@ -199,6 +199,7 @@ const KnowledgeCheckConfig: ActivityConfig = {
       understanding of the material covered in the lesson. They help reinforce
       learning and provide immediate feedback to the learner.`,
   },
+  subLevels: [ActivityType.Page],
   color: OUTLINE_COLOR.ACCENT_5,
   contentContainers: [ContentContainerType.Exam],
 };
