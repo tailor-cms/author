@@ -1,6 +1,6 @@
 <template>
   <VAlert
-    class="deprecation-warning text-body-small"
+    class="deprecation-warning text-body-small flex-0-1"
     color="warning"
     density="compact"
     variant="tonal"
