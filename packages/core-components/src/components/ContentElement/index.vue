@@ -3,6 +3,7 @@
   vuejs-accessibility/no-static-element-interactions -->
 <template>
   <div
+    :id="`element_${id}`"
     :class="[
       element.diffChange,
       isField ? 'field rounded' : 'card rounded-lg',
@@ -78,6 +79,11 @@
         @click.stop="toggleExpanded"
       />
     </div>
+    <DeprecationWarning
+      v-if="!isDisabled && isDeprecated(element.type)"
+      :element="element"
+      class="ma-3"
+    />
     <VExpandTransition>
       <div v-show="isExpanded">
         <div class="card-body">
@@ -97,7 +103,6 @@
             <component
               :is="componentName"
               v-bind="editBindings"
-              :id="`element_${id}`"
               @add="emit('add', $event)"
               @delete="emit('delete')"
               @focus="onSelect"
@@ -154,8 +159,10 @@ import {
 
 import ActiveUsers from '../ActiveUsers.vue';
 import DiffChip from './DiffChip.vue';
+import DeprecationWarning from '../DeprecationWarning.vue';
 import ElementActions from './ElementActions/index.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
+import { isDeprecated } from '../../utils/deprecated-elements';
 import QuestionElement from '../QuestionElement/index.vue';
 import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 
