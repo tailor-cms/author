@@ -5,15 +5,11 @@
     density="compact"
     variant="tonal"
   >
-    <VIcon icon="mdi-alert-outline" />
-    <span>
-      <strong>{{ currentComponentMeta?.name || 'This element' }}</strong>
-      is deprecated — migrate to {{ updatedComponentMeta?.name }}.
-    </span>
+    <span>Deprecated — migrate to {{ updatedComponentMeta?.name }}.</span>
     <VSpacer />
     <VBtn
       color="warning"
-      prepend-icon="mdi-select-compare"
+      prepend-icon="mdi-eye-outline"
       size="small"
       text="Preview"
       variant="text"
@@ -23,7 +19,7 @@
       v-model="showDialog"
       :retain-focus="false"
       title="Element Preview"
-      header-icon="mdi-select-compare"
+      header-icon="mdi-eye-outline"
       width="1100"
     >
       <template #body>
@@ -42,7 +38,7 @@
         </VSheet>
       </template>
       <template #actions>
-        <VBtn variant="text" @click="closeDialog">Close</VBtn>
+        <VBtn text="Close" variant="text" @click="closeDialog" />
       </template>
     </TailorDialog>
   </VAlert>
@@ -56,17 +52,13 @@ import type { ElementRegistry } from '@tailor-cms/interfaces/schema';
 import { MIGRATIONS } from '../utils/deprecated-elements';
 import TailorDialog from './TailorDialog.vue';
 
-const props = defineProps<{
-  element: ContentElement;
-}>();
+const props = defineProps<{ element: ContentElement }>();
 
 const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
 const showDialog = ref(false);
 
 const updatedElement = computed(() => MIGRATIONS[props.element.type](props.element));
-
-const currentComponentMeta = computed(() => ceRegistry?.get(props.element.type));
 const updatedComponentMeta = computed(() => ceRegistry?.get(updatedElement.value.type));
 
 const closeDialog = () => {
