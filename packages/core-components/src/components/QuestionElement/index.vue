@@ -26,7 +26,6 @@
             isDisabled,
             isReadonly: props.isDisabled,
           }"
-          :id="`element_${element.id}`"
           @add="emit('add', $event)"
           @delete="emit('delete')"
           @focus="emit('select', $event)"
