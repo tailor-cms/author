@@ -11,7 +11,7 @@
     @selected="expanded = !expanded"
   >
     <template #header>
-      <div v-if="objectives.length || objectiveId" class="d-flex px-6 py-4">
+      <div v-if="objectives.length || objectiveId" class="d-flex py-2">
         <VRow justify="end" no-gutters class="mt-2">
           <VCol cols="5">
             <VAutocomplete
@@ -19,6 +19,7 @@
               :disabled="isDisabled"
               :items="objectives"
               :placeholder="objectiveLabel"
+              density="comfortable"
               item-title="data.name"
               item-value="id"
               variant="outlined"

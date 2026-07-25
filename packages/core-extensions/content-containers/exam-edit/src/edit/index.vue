@@ -1,5 +1,5 @@
 <template>
-  <VCard color="surface-sunken" elevation="0" rounded="lg">
+  <VCard color="surface-container" elevation="0" rounded="lg" border>
     <VCard
       color="transparent"
       elevation="0"
