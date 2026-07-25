@@ -12,5 +12,4 @@ export default defineNuxtPlugin((nuxt) => {
   nuxt.vueApp.component('TailorAssetInput', FileInputLegacy);
   nuxt.vueApp.component('TailorFileInput', FileInput);
   nuxt.vueApp.component('TailorElementPlaceholder', ElementPlaceholder);
-  nuxt.vueApp.component('TailorContentElement', ContentElement);
 });

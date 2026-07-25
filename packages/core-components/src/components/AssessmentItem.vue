@@ -1,7 +1,7 @@
 <template>
   <VHover v-slot="{ isHovering, props: hoverProps }">
     <ContentElementWrapper
-      v-bind="hoverProps"
+      v-bind="{ ...$attrs, ...hoverProps }"
       :element="element"
       :embed-element-config="embedElementConfig"
       :expanded="expanded"
@@ -25,6 +25,8 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
 import ContentElementWrapper from './ContentElement/index.vue';
+
+defineOptions({ inheritAttrs: false });
 
 interface Props {
   element: ContentElement;
