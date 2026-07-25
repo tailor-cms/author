@@ -7,6 +7,7 @@
       element.diffChange,
       isField ? 'field rounded' : 'card rounded-lg',
       {
+        quiet: isQuiet,
         selected: activeUsers.length,
         focused: isFocused,
         diff: showDiff,
@@ -19,64 +20,70 @@
     <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
     <div
       v-if="!isField"
-      :class="{ expanded: isExpanded }"
-      class="card-header d-flex align-center"
-      @click="toggleExpanded"
+      :class="{ revealed: isHighlighted }"
+      class="header-reveal"
     >
-      <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
-        <span class="mdi mdi-drag-vertical"></span>
-      </span>
       <div
-        :class="{ 'ml-2': isDisabled || !isDraggable }"
-        class="type-label d-flex align-center flex-shrink-0"
+        :class="{ expanded: isExpanded }"
+        class="card-header d-flex align-center"
+        @click="toggleExpanded"
       >
-        <VIcon
-          :color="isRegistered ? 'secondary' : 'warning'"
-          :icon="typeIcon"
-          size="x-small"
-          start
-        />
-        <span class="text-label-small font-weight-semibold text-uppercase">
-          {{ typeName }}
+        <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
+          <span class="mdi mdi-drag-vertical"></span>
         </span>
-      </div>
-      <template v-if="!isExpanded">
-        <span
-          v-if="preview"
-          class="mx-3 text-medium-emphasis text-body-medium text-truncate"
+        <div
+          :class="{ 'ml-2': isDisabled || !isDraggable }"
+          class="type-label d-flex align-center flex-shrink-0"
         >
-          {{ preview }}
-        </span>
-        <span
-          v-else-if="isElementEmpty"
-          class="mx-3 font-italic text-disabled text-body-medium"
-        >
-          Empty
-        </span>
-      </template>
-      <VSpacer />
-      <DiffChip :change-type="element.diffChange" />
-      <div v-if="!props.isDisabled" @click.stop>
-        <ElementActions
-          v-bind="actionBindings"
-          @delete="emit('delete')"
-          @discussion:open="focus"
-          @navigate="onNavigateToElement"
-          @reset="reset"
-          @source:fetch="onFetchSource"
-          @unlink="onUnlink"
-          @usages:fetch="onFetchCopies"
+          <VIcon
+            :color="isRegistered ? 'secondary' : 'warning'"
+            :icon="typeIcon"
+            size="x-small"
+            start
+          />
+          <span class="text-label-small font-weight-semibold text-uppercase">
+            {{ typeName }}
+          </span>
+        </div>
+        <template v-if="!isExpanded">
+          <span
+            v-if="preview"
+            class="mx-3 text-medium-emphasis text-body-medium text-truncate"
+          >
+            {{ preview }}
+          </span>
+          <span
+            v-else-if="isElementEmpty"
+            class="mx-3 font-italic text-disabled text-body-medium"
+          >
+            Empty
+          </span>
+        </template>
+        <VSpacer />
+        <DiffChip :change-type="element.diffChange" />
+        <div v-if="!props.isDisabled" @click.stop>
+          <ElementActions
+            v-bind="actionBindings"
+            @delete="emit('delete')"
+            @discussion:open="focus"
+            @navigate="onNavigateToElement"
+            @reset="reset"
+            @source:fetch="onFetchSource"
+            @unlink="onUnlink"
+            @usages:fetch="onFetchCopies"
+          />
+        </div>
+        <VBtn
+          v-if="!isQuiet"
+          :aria-label="isExpanded ? 'Collapse element' : 'Expand element'"
+          :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
+          class="ml-1 flex-shrink-0 chevron"
+          density="comfortable"
+          size="small"
+          variant="text"
+          @click.stop="toggleExpanded"
         />
       </div>
-      <VBtn
-        :aria-label="isExpanded ? 'Collapse element' : 'Expand element'"
-        :icon="`mdi-chevron-${isExpanded ? 'up' : 'down'}`"
-        class="ml-1 flex-shrink-0 chevron"
-        density="comfortable"
-        size="small"
-        variant="text"
-        @click.stop="toggleExpanded"
-      />
     </div>
     <VExpandTransition>
       <div v-show="isExpanded">
@@ -172,14 +179,13 @@ interface Props {
   // External dirty state (e.g. edited element refs); shows the save
   // controls and lets a save through even when element data is unchanged.
   isDirty?: boolean;
-  dense?: boolean;
   showDiscussion?: boolean;
   embedElementConfig?: ContentElementCategory[];
   autosave?: boolean;
-  // 'card' is the standard editor card; 'field' is a header-less render for
-  // fixed, externally-labelled slots (e.g. collection item fields) — just the
-  // editor body in a plain frame, no header/drag/actions/collapse.
-  variant?: 'card' | 'field';
+  // 'card': standard editor card. 'field': header-less body for
+  // externally-labelled slots. 'quiet': header hidden until hover/focus;
+  // always expanded, no chevron.
+  variant?: 'card' | 'field' | 'quiet';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -192,7 +198,6 @@ const props = withDefaults(defineProps<Props>(), {
   isDraggable: true,
   isDisabled: false,
   isDirty: false,
-  dense: false,
   showDiscussion: false,
   autosave: false,
   variant: 'card',
@@ -243,8 +248,9 @@ const attrs = useAttrs();
 const localExpanded = ref(true);
 const isControlled = computed(() => props.expanded !== null);
 const isField = computed(() => props.variant === 'field');
+const isQuiet = computed(() => props.variant === 'quiet');
 const isExpanded = computed(() => {
-  if (isField.value) return true;
+  if (isField.value || isQuiet.value) return true;
   return isControlled.value ? !!props.expanded : localExpanded.value;
 });
 
@@ -289,7 +295,6 @@ const editBindings = computed(() => ({
   isDragged: props.isDragged,
   isDisabled: props.isDisabled,
   isReadonly: props.isDisabled,
-  dense: props.dense,
 }));
 
 const actionBindings = computed(() => ({
@@ -533,6 +538,16 @@ onMounted(() => {
 
   .card-body, :deep(.tiptap) {
     padding: 0;
+  }
+}
+
+.quiet .header-reveal {
+  height: 0;
+  overflow: hidden;
+  transition: height 0.2s ease;
+
+  &.revealed {
+    height: 2.75rem;
   }
 }
 

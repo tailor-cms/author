@@ -25,7 +25,6 @@
             isDragged,
             isDisabled,
             isReadonly: props.isDisabled,
-            dense,
           }"
           :id="`element_${element.id}`"
           @add="emit('add', $event)"
@@ -99,7 +98,6 @@ interface Props {
   isReadonly?: boolean;
   isFocused?: boolean;
   isDragged?: boolean;
-  dense?: boolean;
   isDirty?: boolean;
   autosave?: boolean;
 }
@@ -111,7 +109,6 @@ const props = withDefaults(defineProps<Props>(), {
   isReadonly: false,
   isDragged: false,
   isFocused: false,
-  dense: false,
   isDirty: false,
   autosave: false,
 });

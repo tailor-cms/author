@@ -36,9 +36,8 @@ interface Props {
   isDragged?: boolean;
   showDiscussion?: boolean;
   setWidth?: boolean;
-  dense?: boolean;
   autosave?: boolean;
-  variant?: 'card' | 'field';
+  variant?: 'card' | 'field' | 'quiet';
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -48,7 +47,6 @@ const props = withDefaults(defineProps<Props>(), {
   isDragged: false,
   showDiscussion: false,
   setWidth: true,
-  dense: false,
   autosave: false,
   variant: 'card',
 });
@@ -71,7 +69,6 @@ const bindings = computed(() => {
     isDisabled,
     references,
     isDragged,
-    dense,
     showDiscussion,
     autosave,
     variant,
@@ -84,7 +81,6 @@ const bindings = computed(() => {
     isDragged,
     isHovered: isHovered.value,
     showDiscussion,
-    dense,
     autosave,
     variant,
   };

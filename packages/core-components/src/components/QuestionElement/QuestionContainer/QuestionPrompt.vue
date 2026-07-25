@@ -28,7 +28,6 @@
           :is-readonly="isReadonly"
           :allowed-element-config="allowedElementConfig"
           class="text-center"
-          dense
           @delete="deleteEmbed($event.id)"
           @save="saveQuestion($event.embeds)"
         />
