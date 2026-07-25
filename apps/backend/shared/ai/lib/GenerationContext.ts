@@ -38,7 +38,6 @@ export default class GenerationContext implements AiRepositoryContext {
 
   async resolve() {
     const { repositoryId, outlineActivityId } = this;
-    if (!repositoryId) return;
     await Promise.all([
       this.resolveOutlineContext(repositoryId, outlineActivityId),
       this.resolveVectorStore(repositoryId),
