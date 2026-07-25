@@ -15,8 +15,8 @@
     "@tailor-cms/extension-installer": "workspace:^"
   },
   "dependencies": {
-    "@tailor-cms/ce-accordion-edit": "^2.0.1",
-    "@tailor-cms/ce-accordion-server": "^2.0.1",
+    "@tailor-cms/ce-accordion-edit": "^2.0.2",
+    "@tailor-cms/ce-accordion-server": "^2.0.2",
     "@tailor-cms/ce-audio-edit": "^2.0.1",
     "@tailor-cms/ce-audio-server": "^2.0.1",
     "@tailor-cms/ce-brightcove-video-edit": "^2.0.1",
@@ -57,8 +57,8 @@
     "@tailor-cms/ce-pdf-server": "^2.0.1",
     "@tailor-cms/ce-quill-html-edit": "^2.0.1",
     "@tailor-cms/ce-quill-html-server": "^2.0.1",
-    "@tailor-cms/ce-sequence-edit": "^0.0.2",
-    "@tailor-cms/ce-sequence-server": "^0.0.2",
+    "@tailor-cms/ce-sequence-edit": "^0.0.3",
+    "@tailor-cms/ce-sequence-server": "^0.0.3",
     "@tailor-cms/ce-single-choice-edit": "^2.0.1",
     "@tailor-cms/ce-single-choice-server": "^2.0.1",
     "@tailor-cms/ce-table-edit": "^2.0.1",
