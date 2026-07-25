@@ -64,7 +64,7 @@ const save = (assessment: Record<string, any>) => {
     const objective = objectiveId.value
       ? { id: objectiveId.value, entity: objectiveEntity }
       : undefined;
-    assessment.refs = { ...assessment.refs, objective };
+    assessment.refs.objective = objective;
   }
   emit('save', assessment);
 };
