@@ -237,6 +237,7 @@ const SectionConfig: ContentContainerConfig = {
     },
     {
       name: 'Deprecated Elements',
+      config: { isDeprecated: true },
       items: [
         ContentElementType.JoditHtml,
         ContentElementType.Html,
