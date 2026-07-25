@@ -16,6 +16,7 @@
         :is-dragged="isDragged"
         v-bind="$attrs"
         class="my-2"
+        :variant="elementVariant"
         @delete="requestDeleteConfirmation(element)"
         @save="save(element, 'data', $event)"
         @save:meta="save(element, 'meta', $event)"
@@ -42,12 +43,15 @@ interface Props {
   isReadonly?: boolean;
   enableAdd?: boolean;
   addElementOptions?: Record<string, any>;
+  // Presentation for each embedded element (see ContentElement `variant`).
+  elementVariant?: 'card' | 'field' | 'quiet';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   isDisabled: false,
   isReadonly: false,
   enableAdd: true,
+  elementVariant: 'quiet',
   allowedElementConfig: () => [{
     name: 'Content Elements',
     items: [{ id: 'TIPTAP_HTML' }, { id: 'IMAGE' }, { id: 'EMBED' }],
