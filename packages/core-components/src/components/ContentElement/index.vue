@@ -17,10 +17,15 @@
     class="content-element"
     @click="onSelect"
   >
-    <ActiveUsers :size="20" :users="activeUsers" class="active-users" />
+    <ActiveUsersGroup
+      v-if="isField && activeUsers.length"
+      :size="24"
+      :users="activeUsers"
+      class="active-users-overlay"
+    />
     <div
       v-if="!isField"
-      :class="{ revealed: isHighlighted }"
+      :class="{ revealed: isHighlighted || activeUsers.length }"
       class="header-reveal"
     >
       <div
@@ -60,6 +65,12 @@
           </span>
         </template>
         <VSpacer />
+        <ActiveUsersGroup
+          v-if="activeUsers.length"
+          :size="24"
+          :users="activeUsers"
+          class="active-users"
+        />
         <DiffChip :change-type="element.diffChange" />
         <div v-if="!props.isDisabled" @click.stop>
           <ElementActions
@@ -159,7 +170,7 @@ import {
   titleCase,
 } from '@tailor-cms/utils';
 
-import ActiveUsers from '../ActiveUsers.vue';
+import ActiveUsersGroup from '../ActiveUsersGroup.vue';
 import DiffChip from './DiffChip.vue';
 import ElementActions from './ElementActions/index.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
@@ -479,10 +490,10 @@ onMounted(() => {
 <style lang="scss" scoped>
 @use '../../mixins';
 
-.content-element {
-  $accent-focused: #1de9b6;
-  $accent-selected: #ff4081;
+$accent-focused: #1de9b6;
+$accent-selected: #ff4081;
 
+.content-element {
   position: relative;
   border: 1px solid transparent;
 
@@ -587,9 +598,18 @@ onMounted(() => {
 }
 
 .active-users {
+  flex-shrink: 0;
+  margin-right: 0.5rem;
+
+  :deep(.v-avatar) {
+    border-color: $accent-selected;
+  }
+}
+
+.active-users-overlay {
   position: absolute;
-  top: 0;
-  left: -1.625rem;
+  top: 0.375rem;
+  right: 0.375rem;
 }
 
 .save-indicator {
