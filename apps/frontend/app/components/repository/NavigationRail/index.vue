@@ -67,6 +67,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { RepositoryAction } from '@/composables/useRepositoryActions';
 import type { RouteLocationRaw } from 'vue-router';
 
@@ -98,18 +99,17 @@ const activeUsers = computed(() =>
 );
 
 const lastEditorActivity = useLastEditorActivity();
-const { $schemaService } = useNuxtApp() as any;
 
-const isEditable = (activity: any) =>
-  !!activity && $schemaService.isEditable(activity.type);
+const isOpenable = (activity?: Activity): activity is Activity =>
+  !!activity && !activity.deletedAt;
 
 const editorActivityId = computed(() => {
-  const { repositoryId: id, outlineActivities } = repoStore;
-  if (!id) return null;
-  const saved = lastEditorActivity.get(id);
-  const activity = id ? outlineActivities.find((a: any) => a.id === id) : null;
-  if (isEditable(activity)) return saved;
-  return repoStore.outlineActivities.find(isEditable)?.id ?? null;
+  const { repositoryId, outlineActivities, rootActivities } = repoStore;
+  if (!repositoryId) return null;
+  const savedId = lastEditorActivity.get(repositoryId);
+  const saved = outlineActivities.find((it: any) => it.id === savedId);
+  if (isOpenable(saved)) return saved.id;
+  return rootActivities.find(isOpenable)?.id ?? null;
 });
 
 const selectedActivityQuery = computed(() => {
