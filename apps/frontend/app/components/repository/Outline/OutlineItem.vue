@@ -87,17 +87,14 @@
       </template>
     </VHover>
     <VExpandTransition>
-      <div
-        v-if="!isSoftDeleted && isExpanded && hasSubtypes"
-        :class="{ 'mt-2': hasChildren }"
-      >
+      <div v-if="!isSoftDeleted && isExpanded && hasSubtypes" class="mt-2">
         <Draggable
           v-bind="{ handle: '.activity' }"
           :data-parent-id="activity.id"
           :list="children"
           :move="currentRepositoryStore.isValidDrop"
           animation="150"
-          class="d-flex flex-column ga-2"
+          class="drop-group d-flex flex-column ga-2"
           group="activities"
           item-key="uid"
           @update="(e: SortableEvent) => reorder(e, children)"
@@ -109,6 +106,18 @@
               :activity="element"
               :index="i + 1"
             />
+          </template>
+          <template #footer>
+            <VSheet
+              class="drop-group__placeholder"
+              color="transparent"
+              border="dotted md"
+            >
+              <div class="d-flex align-center opacity-60">
+                <VIcon icon="mdi-information-outline" size="small" start />
+                <span class="text-title-small">No items yet</span>
+              </div>
+            </VSheet>
           </template>
         </Draggable>
       </div>
@@ -240,5 +249,24 @@ const icon = computed(() => {
 
 .activity-wrapper .activity-wrapper {
   margin-left: 1.25rem;
+}
+
+.drop-group {
+  // The ghost is a real row, so a dragged row tracks drags in and out alike.
+  &:has(> [data-draggable]) .drop-group__placeholder {
+    display: none;
+  }
+
+  // Left margin aligns the zone with where nested rows would sit.
+  &__placeholder {
+    display: flex;
+    align-items: center;
+    min-height: 3.25rem;
+    margin-left: 1.25rem;
+    padding-left: 1rem;
+    border-radius: 0.25rem;
+    pointer-events: none;
+    user-select: none;
+  }
 }
 </style>
