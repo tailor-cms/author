@@ -110,10 +110,7 @@
 </template>
 
 <script lang="ts" setup>
-import type {
-  ContentElement,
-  Relationship,
-} from '@tailor-cms/interfaces/content-element';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -126,7 +123,7 @@ import {
   InlineActivator,
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
-import { filter, reduce, sortBy } from 'lodash-es';
+import { castArray, filter, reduce, sortBy } from 'lodash-es';
 import { computed, inject, ref } from 'vue';
 
 interface Props {
@@ -225,11 +222,11 @@ const saveElement = (element: ContentElement, key: string, data: any) => {
   });
 };
 
-const getRefElements = (refs: Record<string, Relationship[]>) => {
+const getRefElements = (refs: ContentElement['refs']) => {
   return reduce(
     refs,
     (acc: any, it, key: string) => {
-      const elements = it.map(({ uid }) => props.elements[uid]);
+      const elements = castArray(it).map(({ uid }) => props.elements[uid]);
       acc[key] = elements.filter(Boolean) as ContentElement[];
       return acc;
     },
