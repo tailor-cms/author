@@ -2,6 +2,7 @@
   "name": "@tailor-cms/interfaces",
   "description": "Tailor data interfaces",
   "type": "module",
+  "sideEffects": false,
   "version": "0.0.1",
   "files": [
     "dist"
