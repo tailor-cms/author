@@ -185,6 +185,7 @@ const reorder = (id: number, step: number) => {
   const containerIndex = findIndex(subcontainers.value, { id });
   const container = cloneDeep(subcontainers.value[containerIndex]);
   const target = cloneDeep(subcontainers.value[containerIndex + step]);
+  if (!container || !target) return;
   const { position: newPosition } = target;
   target.position = container.position;
   container.position = newPosition;

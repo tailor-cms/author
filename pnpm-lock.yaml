@@ -538,9 +538,6 @@ importers:
       url-join:
         specifier: ^5.0.0
         version: 5.0.0
-      v-clipboard:
-        specifier: 3.0.0-next.1
-        version: 3.0.0-next.1(@typescript/typescript6@6.0.2)
       vee-validate:
         specifier: ^4.15.1
         version: 4.15.1(vue@3.5.34(@typescript/typescript6@6.0.2))
@@ -11162,9 +11159,6 @@ packages:
     resolution: {integrity: sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg==}
     deprecated: uuid@10 and below is no longer supported.  For ESM codebases, update to uuid@latest.  For CommonJS codebases, use uuid@11 (but be aware this version will likely be deprecated in 2028).
     hasBin: true
-
-  v-clipboard@3.0.0-next.1:
-    resolution: {integrity: sha512-UvCnzetQMlVfk9yoiyew8ldGiCzeER5aYdmXXtZp8LC6rt2QXQS0AayEDn1K7rlXpd3M8d+JeYNUV+ZNgtaS4A==}
 
   valibot@1.4.2:
     resolution: {integrity: sha512-gjdCvJ6d3RyHAneqxMYMW9QMCwYMb3jpOO0IyHZV1bnRHFBHrX3VkIILt5XYR0WhwHiH7Mty8ovuPZ/O3gamrg==}
@@ -23175,12 +23169,6 @@ snapshots:
   uuid@8.0.0: {}
 
   uuid@8.3.2: {}
-
-  v-clipboard@3.0.0-next.1(@typescript/typescript6@6.0.2):
-    dependencies:
-      vue: 3.5.34(@typescript/typescript6@6.0.2)
-    transitivePeerDependencies:
-      - typescript
 
   valibot@1.4.2(@typescript/typescript6@6.0.2):
     optionalDependencies:

@@ -1,7 +1,7 @@
 <template>
   <VSelect
     v-model="input"
-    :items="meta.options"
+    :items="options"
     :label="meta.label"
     :multiple="meta.multiple"
     :name="meta.key"
@@ -40,12 +40,18 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
 import type { Metadata } from '@tailor-cms/interfaces/schema';
+import { computed, ref } from 'vue';
 
+interface SelectOption {
+  label?: string;
+  img?: string;
+}
 interface Meta extends Metadata {
   value?: string;
+  options?: SelectOption[];
 }
+
 interface Props {
   meta: Meta;
   dark?: boolean;
@@ -59,8 +65,8 @@ const props = withDefaults(defineProps<Props>(), {
 defineEmits(['update']);
 
 const input = ref(props.meta.value);
-
-const hasImgProp = computed(() => props.meta.options.some((it: any) => it.img));
+const options = computed<SelectOption[]>(() => props.meta.options ?? []);
+const hasImgProp = computed(() => options.value.some((it) => it.img));
 </script>
 
 <style lang="scss" scoped>
