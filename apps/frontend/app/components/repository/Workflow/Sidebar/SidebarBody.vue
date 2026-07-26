@@ -10,7 +10,7 @@
       @change="updateStatus('description', $event)"
     />
     <SelectStatus
-      :items="workflow.statuses"
+      :items="workflow?.statuses ?? []"
       :model-value="activityStatus.status"
       class="my-4"
       data-testid="workflow_statusInput"

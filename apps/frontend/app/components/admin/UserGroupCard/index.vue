@@ -6,7 +6,7 @@
     color="surface-raised"
     elevation="1"
     rounded="lg"
-    @click="navigateTo({ name: 'user-group', params: { userGroupId: group.id } })"
+    @click="openGroup"
   >
     <UserGroupAvatar :logo-url="group.logoUrl" size="36" />
     <div class="ml-4 overflow-hidden flex-grow-1">
@@ -69,6 +69,9 @@ const summary = computed(() => {
   const repos = pluralize('repository', props.group.repositoryCount ?? 0, true);
   return `${members} · ${repos}`;
 });
+
+const openGroup = () =>
+  navigateTo({ name: 'user-group', params: { userGroupId: props.group.id } });
 </script>
 
 <style lang="scss" scoped>

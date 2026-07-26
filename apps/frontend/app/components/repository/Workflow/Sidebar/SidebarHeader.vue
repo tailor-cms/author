@@ -17,7 +17,7 @@
     <ActivityCard
       :id="activity.id"
       :color="activityConfig.color"
-      :name="activity.data.name"
+      :name="activity.data.name ?? ''"
       :short-id="activity.shortId"
       :type-label="activityConfig.label"
       class="mb-6"

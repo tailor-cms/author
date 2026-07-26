@@ -125,7 +125,7 @@ const isSoftDeleted = computed(() =>
 
 const viewCopy = (copy: {
   repositoryId: number;
-  outlineActivityId: number;
+  outlineActivityId?: number;
 }) => {
   navigateTo({
     name: 'repository',
@@ -141,7 +141,7 @@ const updateActivity = async (
 ) => {
   // Use processed data if provided, otherwise fallback to simple update
   const data = updatedData ?? { ...props.activity.data, [key]: value };
-  await store.update({ id: props.activity.id, uid: props.activity.uid, data });
+  await store.update({ id: props.activity.id, data });
   notify(`${config.value.label} saved`);
 };
 </script>

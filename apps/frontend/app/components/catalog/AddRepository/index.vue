@@ -179,6 +179,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { pick, startCase } from 'lodash-es';
 import { formDataBodySerializer } from '@tailor-cms/api-client';
 import { schema as schemaApi } from '@tailor-cms/config';
@@ -276,7 +277,7 @@ const schema = computed(() =>
 );
 
 const schemaMeta = computed(() =>
-  schema.value?.meta?.filter((it) => !it.hideOnCreate),
+  schema.value?.meta?.filter((it: Metadata) => !it.hideOnCreate),
 );
 
 // Export names the download after the repository (see snakeCase(name) in
@@ -345,7 +346,7 @@ watch(
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
     if (!val?.length) return;
-    return val.forEach((it) => (metaValidation[it.key] = it.validate));
+    return val.forEach((it: Metadata) => (metaValidation[it.key] = it.validate));
   },
   { immediate: true },
 );

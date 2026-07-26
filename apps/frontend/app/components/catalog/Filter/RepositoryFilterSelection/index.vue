@@ -7,7 +7,7 @@
       v-for="filter in orderedFilters"
       :key="filter.id"
       v-bind="filter"
-      :icon="filterConfigs[filter.type].icon"
+      :icon="getFilterIcon(filter.type)"
       @close="emit('close', filter)"
     />
     <VBtn
@@ -39,4 +39,7 @@ const orderedFilters = computed(() => {
     filterBy(repositoryFilter.value, { type }),
   ) as any[];
 });
+
+const getFilterIcon = (type: keyof typeof filterConfigs) =>
+  filterConfigs[type].icon;
 </script>

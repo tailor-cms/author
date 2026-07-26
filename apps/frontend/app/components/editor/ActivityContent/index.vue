@@ -121,7 +121,8 @@ import {
   without,
 } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiGenerateRequest, AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiGenerateData } from '@tailor-cms/api-client';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 import { getElementId } from '@tailor-cms/utils';
@@ -183,7 +184,7 @@ const doTheMagic = async ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const context: AiGenerateRequest = {
+  const context: AiGenerateData['body'] = {
     repository: {
       outlineActivityId: props.activity?.id,
       outlineActivityType: props.activity?.type,

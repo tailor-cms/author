@@ -42,12 +42,12 @@ export type ReasoningEffortLiteral = `${ReasoningEffort}`;
 
 export const REASONING_EFFORTS = Object.values(ReasoningEffort);
 
-export interface AiInput {
+export type AiInput = {
   type: AiRequestTypeLiteral;
   text: string;
   responseSchema: AiResponseSchemaLiteral | string;
   targetAudience?: AiTargetAudienceLiteral;
-}
+};
 
 export interface AssetReferenceMeta {
   contentType?: LinkContentType;

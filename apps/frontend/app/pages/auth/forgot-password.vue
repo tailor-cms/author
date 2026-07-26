@@ -92,7 +92,7 @@
             text="Back"
             :disabled="isSubmitting"
             variant="text"
-            @click.stop="$router.back()"
+            @click.stop="router.back()"
           />
         </div>
       </form>
@@ -123,6 +123,7 @@ useHead({
   ],
 });
 
+const router = useRouter();
 const authStore = useAuthStore();
 
 const errorMessage = ref('');
