@@ -183,9 +183,10 @@ const persistElement = async (element: ContentElement) => {
   const elementChannelName = `element:${getElementId(element)}`;
   const elementChannel = eventBus.channel(elementChannelName);
   try {
+    const { deletedAt: _deletedAt, ...rest } = element;
     await contentElementStore.save({
-      ...element,
-      repositoryId: currentRepository.repositoryId,
+      ...rest,
+      repositoryId: currentRepository.repositoryId ?? element.repositoryId,
     });
     elementChannel.emit('saved');
   } catch (err) {

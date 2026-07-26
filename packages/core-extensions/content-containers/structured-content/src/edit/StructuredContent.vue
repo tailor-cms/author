@@ -100,9 +100,12 @@ import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref } from 'vue';
 import { filter, sortBy, transform } from 'lodash-es';
 
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 const props = defineProps<{
   container: Activity;
@@ -189,20 +192,22 @@ const saveElement = (element: any, key: string, data: any) => {
 const references = computed(() => {
   return transform(
     props.elements,
-    (acc, { refs }, uid) => {
+    (acc: Record<string, Record<string, ContentElement[]>>, { refs }, uid) => {
       acc[uid] = getRefElements(refs);
     },
-    {},
+    {} as Record<string, Record<string, ContentElement[]>>,
   );
 });
 
-const getRefElements = (refs: any) => {
+const getRefElements = (refs: Record<string, Relationship[]>) => {
   return transform(
     refs,
-    (acc, ref, key) => {
-      acc[key] = ref.map(({ uid }) => props.elements[uid]);
+    (acc: Record<string, ContentElement[]>, relations, key) => {
+      acc[key] = relations
+        .map(({ uid }) => (uid ? props.elements[uid] : undefined))
+        .filter((it): it is ContentElement => Boolean(it));
     },
-    {},
+    {} as Record<string, ContentElement[]>,
   );
 };
 </script>
