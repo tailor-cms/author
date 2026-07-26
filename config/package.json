@@ -13,9 +13,8 @@
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "tsup --watch src",
-    "build": "tsup",
-    "prebuild": "del-cli dist"
+    "dev": "tsdown --watch src",
+    "build": "tsdown"
   },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:^",
@@ -27,8 +26,7 @@
     "@tailor-cms/content-element-collection": "workspace:^",
     "@tailor-cms/interfaces": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
-    "del-cli": "^7.0.0",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
   },
   "peerDependencies": {
@@ -36,22 +34,5 @@
     "@tailor-cms/content-element-collection": "workspace:^",
     "@tailor-cms/interfaces": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^"
-  },
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "target": [
-      "node14",
-      "es2022"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "bundle": true,
-    "minify": false,
-    "clean": false,
-    "dts": true
   }
 }
