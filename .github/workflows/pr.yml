@@ -70,6 +70,30 @@ jobs:
         if: steps.build-cache.outputs.cache-hit != 'true'
         shell: bash
         run: pnpm build
+  typecheck:
+    needs: [build]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Restore build output
+        uses: actions/cache/restore@v4
+        with:
+          path: |
+            apps/*/.output
+            apps/*/.nuxt
+            packages/*/dist
+            config/dist
+          key: build-${{ runner.os }}-${{ hashFiles('apps/**', 'packages/**', 'config/**', 'extensions/**', 'pnpm-lock.yaml') }}
+          fail-on-cache-miss: true
+      - name: Setup node, pnpm, install dependencies
+        uses: ./.github/actions/setup
+      - name: Backend typecheck
+        shell: bash
+        run: pnpm --filter tailor-server typecheck
+      - name: Frontend typecheck
+        shell: bash
+        run: pnpm --filter tailor-frontend typecheck
   # Pulls the pinned MinIO image once per run and caches
   # it, so the e2e shards load it instead of each pulling from a registry.
   minio-image:
