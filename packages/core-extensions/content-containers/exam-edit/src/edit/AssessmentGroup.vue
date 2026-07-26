@@ -34,7 +34,8 @@
         type="number"
         variant="outlined"
         persistent-hint
-        @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
+        @keydown="(e: KeyboardEvent) =>
+          ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
       <div class="text-title-small text-left">Introduction</div>
       <GroupIntroduction

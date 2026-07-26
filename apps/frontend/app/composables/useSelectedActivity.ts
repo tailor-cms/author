@@ -27,7 +27,7 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
       return repoStore.taxonomy.filter((it: any) => it.rootLevel);
     const { type } = parent.value;
     const parentConfig = repoStore.taxonomy.find((it: any) => it.type === type);
-    const sameLevelTypes = get(parentConfig, 'subLevels', []);
+    const sameLevelTypes: string[] = get(parentConfig, 'subLevels', []);
     return repoStore.taxonomy.filter((it: any) =>
       sameLevelTypes.includes(it.type),
     );
@@ -37,7 +37,7 @@ export const useSelectedActivity = (activity: StoreActivity | null) => {
     if (!repoStore.taxonomy || !activity) return [];
     const { type } = activity;
     const config = repoStore.taxonomy.find((it: any) => it.type === type);
-    const configuredSubLevels = get(config, 'subLevels', []);
+    const configuredSubLevels: string[] = get(config, 'subLevels', []);
     return repoStore.taxonomy.filter((it: any) =>
       configuredSubLevels.includes(it.type),
     );

@@ -55,10 +55,11 @@ import { cloneDeep } from 'lodash-es';
 import { RichTextEditor, TailorDialog } from '@tailor-cms/core-components';
 import { heasParams } from './utils';
 
-const initializeRating = () => heasParams.reduce((acc, { key }) => {
-  acc[key] = 0;
-  return acc;
-}, {});
+const initializeRating = () =>
+  heasParams.reduce((acc: Record<string, number>, { key }) => {
+    acc[key] = 0;
+    return acc;
+  }, {} as Record<string, number>);
 
 interface Props {
   visible: boolean;

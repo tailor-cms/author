@@ -232,7 +232,10 @@ const isDirty = computed(() => {
 const question = computed(() => {
   const embeds = editedElement.data.embeds as Record<string, ContentElement>;
   const questions = editedElement.data.question as string[];
-  return getQuestionPromptPreview(questions.map((it) => embeds[it]));
+  const elements = questions
+    .map((it) => embeds[it])
+    .filter((it): it is ContentElement => Boolean(it));
+  return getQuestionPromptPreview(elements);
 });
 
 const showAI = computed(() => !!config.props.aiUiEnabled && manifest.value?.ai);

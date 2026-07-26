@@ -169,10 +169,8 @@ const generateContent = async (input: AiInput) => {
     inputs: aiInputs.value,
     content: JSON.stringify(containerElements.value),
   });
-  const lastElementPosition =
-    containerElements.value?.length > 0
-      ? containerElements.value[containerElements.value.length - 1].position
-      : 0;
+  const lastElement = containerElements.value.at(-1);
+  const lastElementPosition = lastElement ? lastElement.position : 0;
   if (input.type === AiRequestType.Modify) {
     containerElements.value.forEach((element: ContentElement) => {
       emit('delete:element', element, true);
@@ -229,7 +227,7 @@ const getRefElements = (refs: Record<string, Relationship[]>) => {
   return reduce(
     refs,
     (acc: any, it, key: string) => {
-      const elements = it.map(({ uid }) => props.elements[uid]);
+      const elements = it.map(({ uid }) => (uid ? props.elements[uid] : undefined));
       acc[key] = elements.filter(Boolean) as ContentElement[];
       return acc;
     },

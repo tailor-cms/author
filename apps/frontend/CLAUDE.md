@@ -49,6 +49,11 @@ Cross-cutting libs in `lib/`; the content-plugin registries live in
 
 - **AI**: content generation is exposed via `inject('$doTheMagic')`, provided
   by `components/editor/ActivityContent/index.vue`.
+- **`typescript` is aliased** in `package.json`:
+  `"typescript": "npm:@typescript/typescript6@..."`. The backend runs native
+  TS 7 (`tsc`), but `vue-tsc` needs the JS-API compiler, so the frontend
+  points the bare `typescript` name at the TS 6 bridge. Keep the alias - a
+  plain `typescript` here breaks `vue-tsc` type-checking.
 
 ## Docs
 

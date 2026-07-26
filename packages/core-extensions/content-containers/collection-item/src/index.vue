@@ -78,7 +78,7 @@
               :error-message="errorMessage"
               :is-disabled="disabled"
               :model-value="refsState[rel.type]"
-              :owner-id="container.parentId"
+              :owner-id="container.parentId ?? undefined"
               @update="(ids) => (refsState[rel.type] = ids)"
             />
           </Field>

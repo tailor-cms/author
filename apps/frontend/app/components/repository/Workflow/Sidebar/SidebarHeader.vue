@@ -29,29 +29,19 @@
       {{ activity.shortId }}
     </LabelChip>
     <VBtn
-      :key="`${statusUrl}-identifier`"
-      v-clipboard:copy="activity.shortId"
-      v-clipboard:error="() => notify('Not able to copy the ID')"
-      v-clipboard:success="
-        () => notify('ID copied to the clipboard')
-      "
       class="ml-3 px-4"
       size="small"
       variant="tonal"
+      @click="() => copyToClipboard(activity.shortId, 'ID')"
     >
       <VIcon class="mr-1" icon="mdi-content-copy" />
       <VIcon icon="mdi-identifier" />
     </VBtn>
     <VBtn
-      :key="`${statusUrl}-identifier`"
-      v-clipboard:copy="statusUrl"
-      v-clipboard:error="() => notify('Not able to copy the link')"
-      v-clipboard:success="
-        () => notify('Link copied to the clipboard')
-      "
       class="ml-2 px-4"
       size="small"
       variant="tonal"
+      @click="() => copyToClipboard(statusUrl, 'link')"
     >
       <VIcon class="mr-1" icon="mdi-content-copy" />
       <VIcon icon="mdi-link" />
@@ -77,7 +67,7 @@ const props = defineProps<{
 }>();
 
 const route = useRoute();
-const notify = useNotification();
+const copyToClipboard = useCopyToClipboard();
 const repositoryStore = useCurrentRepository();
 const { $schemaService } = useNuxtApp() as any;
 

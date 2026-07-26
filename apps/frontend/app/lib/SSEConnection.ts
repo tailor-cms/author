@@ -61,12 +61,12 @@ export default class SSEConnection extends EventEmitter {
     return this.emit(e.type, payload);
   };
 
-  addListener(event: string, listener: any): any {
+  override addListener(event: string, listener: any): any {
     super.addListener(event, listener);
     this.connection.addEventListener(event, this._emit);
   }
 
-  removeListener(event: string, listener: any): any {
+  override removeListener(event: string, listener: any): any {
     super.removeListener(event, listener);
     this.connection.removeEventListener(event, this._emit);
   }

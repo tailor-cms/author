@@ -30,9 +30,15 @@ const compact = (msg: string): string => {
   return `${msg.slice(0, dimStart + DIM_START.length)}${names}${DIM_END}`;
 };
 
+// Structurally identical to vite's own `Logger.info` signature.
+interface LogOptions {
+  clear?: boolean;
+  timestamp?: boolean;
+}
+
 interface ViteLoggerConfig {
   customLogger?: {
-    info: (msg: string, opts?: unknown) => void;
+    info: (msg: string, opts?: LogOptions) => void;
   };
 }
 
@@ -46,5 +52,5 @@ export default function compactHmrLog(config: ViteLoggerConfig) {
   const logger = config.customLogger;
   if (!logger) return;
   const info = logger.info.bind(logger);
-  logger.info = (msg: string, opts?: unknown) => info(compact(msg), opts);
+  logger.info = (msg: string, opts?: LogOptions) => info(compact(msg), opts);
 }
