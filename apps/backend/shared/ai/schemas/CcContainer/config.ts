@@ -9,7 +9,7 @@ import type {
   ParsedConfig,
   PropsConfig,
 } from './types.ts';
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 import { describeContainerSchema } from './describer.ts';
 import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine } from 'common-tags';
@@ -25,7 +25,7 @@ import { oneLine } from 'common-tags';
  * detected - AiPrompt's outer catch will log + bubble out as an
  * empty agent result rather than silently produce junk.
  */
-export const getConfigs = (context: AiContext): ParsedConfig => {
+export const getConfigs = (context: AiGenerationContext): ParsedConfig => {
   const { schemaId, outlineActivityType, containerType } = context.repository;
   if (!schemaId || !outlineActivityType || !containerType) {
     throw new Error(oneLine`

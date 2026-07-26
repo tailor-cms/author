@@ -71,9 +71,10 @@ export interface AssetReference {
 }
 
 export interface AiRepositoryContext {
-  repositoryId?: number;
+  // Always resolved server-side from the repository-scoped route
+  repositoryId: number;
   // Activity ID for resolving outline hierarchy context
-  activityId?: number;
+  outlineActivityId?: number;
   schemaId: string;
   name: string;
   description: string;
@@ -83,13 +84,14 @@ export interface AiRepositoryContext {
   containerType?: string;
   // General topic of the content, in case of a outline node title of the leaf
   topic?: string;
-  // Tags for context (used in outline generation before repository exists)
-  tags?: string[];
   // Vector store ID for document-based generation
   vectorStoreId?: string;
 }
 
-export interface AiContext {
+// Resolved server-side generation context passed to the prompt engine.
+// The wire request shape lives in @tailor-cms/api-client (AiGenerateData),
+// generated from the backend Zod GenerateInput.
+export interface AiGenerationContext {
   repository: AiRepositoryContext;
   content?: string;
   inputs: AiInput[];

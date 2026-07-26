@@ -1,7 +1,7 @@
 // Content elements generation schema.
 // Builds an OpenAI structured output schema from the
 // allowed element types on the target activity.
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 
 import type { AiResponseSpec, OpenAISchema } from './interfaces.ts';
 import {
@@ -14,7 +14,7 @@ import {
  * Build the OpenAI schema allowing any of the provided
  * element types.
  */
-export const Schema = (context: AiContext): OpenAISchema => {
+export const Schema = (context: AiGenerationContext): OpenAISchema => {
   const types: string[] = (context as any)?.allowedElementTypes || [];
   const supported = resolveSupportedTypes(types);
   const schemas = supported.map(buildElementSchema);
@@ -35,7 +35,7 @@ export const Schema = (context: AiContext): OpenAISchema => {
   };
 };
 
-export const getPrompt = (context?: AiContext) => {
+export const getPrompt = (context?: AiGenerationContext) => {
   const types: string[] = (context as any)?.allowedElementTypes || [];
   const supported = resolveSupportedTypes(types);
   const typeList = supported.length ? supported.join(', ') : 'any';

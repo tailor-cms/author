@@ -10,7 +10,7 @@ import {
   isVideoLink,
   resolveAssetElementType,
 } from './media.ts';
-import type { AiContext, AssetReference } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext, AssetReference } from '@tailor-cms/interfaces/ai.ts';
 import { getCeAiSpec, resolveSupportedTypes } from './schema.ts';
 import type { FlatConfig, NestedConfig, PropsConfig } from './types.ts';
 import elementRegistry from '../../../content-plugins/elementRegistry.js';
@@ -105,7 +105,7 @@ const buildAssetCatalog = (assets: AssetReference[]): string => {
 // slots. HTML formatting, asset rules, vector store grounding,
 // schema-author ai.outputRules.
 const sharedElementGuidelines = (
-  context: AiContext,
+  context: AiGenerationContext,
   ai: ContainerAi,
   hasAssets: boolean,
   elementTypes: string[],
@@ -179,7 +179,7 @@ const sharedElementGuidelines = (
 
 // Top-level container prompt builder.
 // Dispatches to shape-specific builders.
-export const getPrompt = (context: AiContext): string => {
+export const getPrompt = (context: AiGenerationContext): string => {
   const cfg = getConfigs(context);
   switch (cfg.shape) {
     case 'nested':
@@ -191,7 +191,7 @@ export const getPrompt = (context: AiContext): string => {
   }
 };
 
-function getNestedPrompt(cfg: NestedConfig, context: AiContext): string {
+function getNestedPrompt(cfg: NestedConfig, context: AiGenerationContext): string {
   const { container, subcontainers, defaultSubcontainers } = cfg;
   const { ai: containerAiConfig, contentElementConfig } = container;
   const defaultCeTypes =
@@ -270,7 +270,7 @@ function getNestedPrompt(cfg: NestedConfig, context: AiContext): string {
   ${assetSection}`;
 }
 
-function getFlatPrompt(cfg: FlatConfig, context: AiContext): string {
+function getFlatPrompt(cfg: FlatConfig, context: AiGenerationContext): string {
   const { elementTypes, container } = cfg;
   const { ai: containerAiConfig } = container;
   const containerLabel = container.label || container.type;
@@ -316,7 +316,7 @@ function getFlatPrompt(cfg: FlatConfig, context: AiContext): string {
     ${assetSection}`;
 }
 
-function getPropsPrompt(cfg: PropsConfig, context: AiContext): string {
+function getPropsPrompt(cfg: PropsConfig, context: AiGenerationContext): string {
   const { props, container } = cfg;
   const containerLabel = container.label || container.type;
   const hasAssets = !!context.assets?.length;

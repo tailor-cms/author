@@ -1,4 +1,4 @@
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 import * as schemas from '../api-schemas/index.ts';
 import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
@@ -23,7 +23,7 @@ async function handler({
       description,
     },
   };
-  return AIService.generate(context as unknown as AiContext);
+  return AIService.generate(context as unknown as AiGenerationContext);
 }
 
 export default defineAction({

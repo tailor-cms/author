@@ -4,7 +4,7 @@ import {
 } from '@tailor-cms/meta-element-collection/schema.js';
 import { oneLine } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 import type { ContentSubcontainer } from '@tailor-cms/interfaces/schema';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
@@ -123,7 +123,7 @@ const buildSubcontainerSchema = (
 
 // Top-level entry: dispatches by detected shape. Each builder returns
 // an OpenAISchema with a uniform `cc_container` name; structure differs.
-export const Schema = (context: AiContext): OpenAISchema => {
+export const Schema = (context: AiGenerationContext): OpenAISchema => {
   const cfg = getConfigs(context);
   const hasAssets = !!context.assets?.length;
   logger.info({

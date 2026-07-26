@@ -4,8 +4,7 @@
     "module": "esnext",
     "strict": false,
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
     "skipLibCheck": true,
     "noEmit": true,
     "outDir": "dist"
