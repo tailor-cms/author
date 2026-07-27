@@ -1,15 +1,14 @@
-import { each, find, isEmpty, isEqual, omit, orderBy, pick } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
-import type { UserActivityContext } from '@tailor-cms/interfaces/user-activity';
+import type { LiveUserActivity } from '@tailor-cms/interfaces/user-activity';
+
+import { each, find, isEmpty, isEqual, omit, orderBy, pick } from 'lodash-es';
 import { UserActivity } from '@tailor-cms/common/src/sse.js';
 
 import { api } from '@/api';
-import sseRepositoryFeed from '@/lib/RepositoryFeed';
 import { useAuthStore } from '@/stores/auth';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
-// Locally we always know the sseId
-// (it's the connection that delivered the event)
-type ActivityContext = UserActivityContext & { sseId: string };
+type ActivityContext = LiveUserActivity;
 
 interface UserWithContexts extends User {
   contexts: ActivityContext[];
@@ -168,12 +167,20 @@ export const useUserTracking = defineStore('userTracking', () => {
   };
 });
 
+/**
+ * Indexes a user under each entity scope their context is focused on. The
+ * scope ids are numeric for repository and activity and a string uid for
+ * element.
+ */
 function setUserContext(
   state: ActivityByEntity,
   user: User,
   context: ActivityContext,
 ) {
-  const mappings: Record<keyof ActivityByEntity, number | undefined> = {
+  const mappings: Record<
+    keyof ActivityByEntity,
+    number | string | undefined
+  > = {
     repository: context.repositoryId,
     activity: context.activityId,
     element: context.elementId,

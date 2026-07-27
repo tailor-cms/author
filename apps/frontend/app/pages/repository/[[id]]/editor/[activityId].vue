@@ -1,7 +1,7 @@
 <template>
   <div class="d-flex flex-column h-100 w-100">
     <ActivityContent
-      v-if="editorStore.selectedActivity?.id"
+      v-if="repositoryStore.repository && editorStore.selectedActivity?.id"
       :key="editorStore.selectedActivity.id"
       :activity="editorStore.selectedActivity"
       :content-containers="editorStore.contentContainers"
@@ -59,7 +59,7 @@ const selectElement = (element: any) => {
   const { elementId: queryElementId, ...query } = route.query;
   if (editorStore.selectedContentElementId === queryElementId) return;
   // Can be deselected
-  if (selectedElementId) query.elementId = selectedElementId;
+  if (selectedElementId) query.elementId = String(selectedElementId);
   navigateTo({ query });
 };
 
@@ -75,12 +75,14 @@ appChannel.on('openElement', (props: ElementRouteProps) => {
 const closePublishDiff = () => editorStore.toggleDiff(false);
 
 const preventAccessIfDeleted = () => {
+  const activity = editorStore.selectedActivity;
+  if (!activity) return;
   const predecessors = activityUtils.getAncestors(
     repositoryStore.activities,
-    editorStore.selectedActivity,
+    activity,
   );
-  const isSoftDeleted = [...predecessors, editorStore.selectedActivity].some(
-    (activity) => activity.deletedAt,
+  const isSoftDeleted = [...predecessors, activity].some(
+    (it) => it.deletedAt,
   );
   if (isSoftDeleted) router.replace('/');
 };

@@ -19,6 +19,7 @@ export type { Schema } from './schema';
 export type { User, UserSummary } from './user';
 export type { UserGroup } from './user-group';
 export type {
+  LiveUserActivity,
   UserActivityContext,
   UserActivityContextStored,
 } from './user-activity';
