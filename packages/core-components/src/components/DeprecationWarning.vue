@@ -58,8 +58,14 @@ const ceRegistry = inject<ElementRegistry>('$ceRegistry');
 
 const showDialog = ref(false);
 
-const updatedElement = computed(() => MIGRATIONS[props.element.type](props.element));
-const updatedComponentMeta = computed(() => ceRegistry?.get(updatedElement.value.type));
+const updatedElement = computed(() => {
+  const migrate = MIGRATIONS[props.element.type];
+  return migrate?.(props.element) ?? props.element;
+});
+
+const updatedComponentMeta = computed(() =>
+  ceRegistry?.get(updatedElement.value.type),
+);
 
 const closeDialog = () => {
   showDialog.value = false;

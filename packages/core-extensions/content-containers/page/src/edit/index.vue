@@ -171,10 +171,7 @@ const generateContent = async (input: AiInput) => {
     inputs: aiInputs.value,
     content: JSON.stringify(containerElements.value),
   });
-  const lastElementPosition =
-    containerElements.value?.length > 0
-      ? containerElements.value[containerElements.value.length - 1].position
-      : 0;
+  const lastElementPosition = containerElements.value.at(-1)?.position ?? 0;
   if (input.type === AiRequestType.Modify) {
     containerElements.value.forEach((element: ContentElement) => {
       emit('delete:element', element, true);

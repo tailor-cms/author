@@ -42,7 +42,7 @@
           v-else
           v-model:open="discussionMenu"
           v-bind="element"
-          :user="currentUser"
+          :user="currentUser!"
           @open="emit('discussion:open')"
         />
       </div>

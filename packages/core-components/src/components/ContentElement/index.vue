@@ -233,7 +233,8 @@ const ceRegistry = inject<any>('$ceRegistry');
 const editorBus = inject<any>('$editorBus');
 const editorState = inject<any>('$editorState');
 const eventBus = inject<any>('$eventBus');
-const getCurrentUser = inject<any>('$getCurrentUser');
+const getCurrentUser = inject<() => User | null>('$getCurrentUser', () => null);
+
 const rpc = inject<any>('$rpc', null);
 
 const confirmationDialog = useConfirmationDialog();
@@ -249,7 +250,7 @@ if (rpc) {
 
 const isFocused = ref(false);
 const isSaving = ref(false);
-const currentUser = getCurrentUser?.();
+const currentUser = getCurrentUser();
 const activeUsers = ref<User[]>([]);
 
 const id = computed(() => getElementId(props.element));
