@@ -7,14 +7,14 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
+      "import": "./dist/index.mjs",
       "require": "./dist/index.cjs"
     }
   },
   "types": "./dist/index.d.ts",
   "scripts": {
-    "dev": "tsdown --watch src",
-    "build": "tsdown"
+    "dev": "unbuild --stub",
+    "build": "unbuild"
   },
   "dependencies": {
     "@tailor-cms/config-parser": "workspace:^",
@@ -26,8 +26,8 @@
     "@tailor-cms/content-element-collection": "workspace:^",
     "@tailor-cms/interfaces": "workspace:^",
     "@tailor-cms/meta-element-collection": "workspace:^",
-    "tsdown": "^0.22.14",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "unbuild": "^3.6.1"
   },
   "peerDependencies": {
     "@tailor-cms/content-container-collection": "workspace:^",
