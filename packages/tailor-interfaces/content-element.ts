@@ -14,6 +14,8 @@ export interface Relationship {
   uid?: string;
   containerId?: number;
   outlineId?: number;
+  /** Model the pointer resolves against; omitted for same-entity refs. */
+  entity?: string;
 }
 
 export interface RelationshipType extends ElementRelationship {
@@ -50,9 +52,11 @@ export interface ContentElementAttrs {
   /**
    * Cross-element references keyed by the relationship types the schema
    * declares for this element type via `elementMeta.relationships[]`.
-   * Values are arrays of pointers (see `Relationship`).
+   * Values are arrays of pointers (see `Relationship`); single-valued
+   * relationships store one bare pointer instead (e.g. an exam question's
+   * `objective`, which points at an Activity).
    */
-  refs: Record<string, Relationship[]>;
+  refs: Record<string, Relationship[] | Relationship>;
   /** Parent is soft-deleted */
   detached: boolean;
   /** Whether this element is an active linked copy */

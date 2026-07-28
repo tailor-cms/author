@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="group.uid" class="assessment-group">
+  <VExpansionPanel :value="group.uid" class="assessment-group elevation-1">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
         <div class="text-body-large font-weight-bold">

@@ -4,7 +4,7 @@
       <VAvatar
         color="surface-container-highest"
         icon="mdi-plus"
-        size="20"
+        size="x-small"
       />
     </VDivider>
   </button>
@@ -24,6 +24,7 @@ withDefaults(defineProps<{ disabled?: boolean }>(), {
   border: none;
   opacity: 0;
   transition: opacity 0.3s, padding 0.3s;
+  margin-top: -1.5rem;
 
   :deep(.v-divider__content) {
     line-height: 1;
@@ -31,7 +32,7 @@ withDefaults(defineProps<{ disabled?: boolean }>(), {
 
   &:hover,
   &:focus {
-    padding: 0 0 1.25rem 0;
+    padding: 1rem 0;
     opacity: 1;
     outline: none;
     transition: opacity 0.3s 0.25s, padding 0.3s 0.1s;

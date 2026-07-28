@@ -43,7 +43,7 @@
 import { computed, ref, watch } from 'vue';
 import { isArray, some } from 'lodash-es';
 
-import RichTextEditor from '../RichTextEditor/index.vue';
+import RichTextEditor from '../../RichTextEditor/index.vue';
 
 interface Props {
   answers?: string[];

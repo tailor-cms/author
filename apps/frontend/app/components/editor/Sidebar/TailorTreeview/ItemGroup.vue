@@ -3,7 +3,7 @@
     <template #activator="{ props: activatorProps, isOpen }">
       <ListItem
         v-bind="{ ...bindings, isOpen, activatorProps }"
-        :is-empty="!item.children.length"
+        :is-empty="isEmpty"
         is-group
         @edit="emit('edit', $event)"
       />
@@ -13,6 +13,8 @@
       :list="item.children"
       :move="repositoryStore.isValidDrop"
       animation="150"
+      class="drop-group"
+      filter=".drop-group__placeholder"
       group="activities"
       item-key="uid"
       @update="(data: SortableEvent) => reorder(data, item.children)"
@@ -24,6 +26,11 @@
           :item="element"
           @edit="emit('edit', $event)"
         />
+      </template>
+      <template #footer>
+        <div class="drop-group__placeholder text-body-small text-medium-emphasis">
+          No items yet
+        </div>
       </template>
     </Draggable>
   </VListGroup>
@@ -49,6 +56,8 @@ const emit = defineEmits(['edit']);
 const repositoryStore = useCurrentRepository();
 const reorder = useOutlineReorder();
 
+const isEmpty = computed(() => !props.item.children.length);
+
 const bindings = computed(() => {
   const { id, isEditable, title } = props.item;
   return {
@@ -59,3 +68,22 @@ const bindings = computed(() => {
   };
 });
 </script>
+
+<style lang="scss" scoped>
+.drop-group {
+  // The ghost is a real item, so a dragged item tracks drags in and out alike.
+  &:has(> [data-draggable]) .drop-group__placeholder {
+    display: none;
+  }
+
+  // Mirrors how Vuetify indents nested rows within `.v-list-group__items`.
+  &__placeholder {
+    display: flex;
+    align-items: center;
+    min-height: 2.25rem;
+    padding-inline-start: calc(16px + var(--indent-padding));
+    pointer-events: none;
+    user-select: none;
+  }
+}
+</style>

@@ -280,6 +280,10 @@
             "maximum": 9007199254740991,
             "description": "Referenced entity id."
           },
+          "entity": {
+            "description": "Model the pointer resolves against. Omit for same-entity refs (element -> element); set to `Activity` for an element -> activity ref such as an exam question's objective.",
+            "type": "string"
+          },
           "containerId": {
             "description": "Container activity id (for content-element refs).",
             "type": "integer",
@@ -550,10 +554,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -2223,10 +2234,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -2375,10 +2393,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -3702,10 +3727,17 @@
                   "type": "string"
                 },
                 "additionalProperties": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/Relationship"
+                    }
+                  ]
                 },
                 "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
@@ -3929,10 +3961,17 @@
                   "type": "string"
                 },
                 "additionalProperties": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/Relationship"
+                    }
+                  ]
                 },
                 "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
@@ -5844,10 +5883,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
@@ -6039,10 +6085,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
@@ -9450,10 +9503,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },
@@ -9812,10 +9872,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },

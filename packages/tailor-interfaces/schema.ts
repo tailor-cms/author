@@ -129,6 +129,7 @@ export interface ActivityConfig {
 
 export interface ContentElementConfig {
   isGradable?: boolean;
+  isDeprecated?: boolean;
 }
 
 export interface ContentElementItem extends ContentElementConfig {

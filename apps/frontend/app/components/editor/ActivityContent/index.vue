@@ -389,7 +389,9 @@ const scrollToElement = (id: string, timeout = 500) => {
 const revealElement = () => {
   const elementId = route.query.elementId as string;
   if (!elementId) return;
-  // Select and scroll to element if elementId is set
+  // Already focused; the route just caught up with an in-editor selection
+  const focused = focusedElement.value;
+  if (focused && getElementId(focused) === elementId) return;
   selectElement(elementId);
   scrollToElement(elementId);
 };

@@ -3,10 +3,10 @@
     v-if="changeType"
     :color="chipColor"
     :text="changeType"
-    class="diff-chip font-weight-semibold text-capitalize"
+    class="diff-chip"
     density="comfortable"
+    rounded="md"
     size="small"
-    round
   />
 </template>
 
@@ -28,3 +28,13 @@ const chipColor = computed(() => {
   return 'error';
 });
 </script>
+
+<style scoped lang="scss">
+.diff-chip {
+  font-size: 0.625rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.0625em;
+  flex-shrink: 0;
+}
+</style>

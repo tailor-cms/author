@@ -10,17 +10,17 @@
     <template #activator="{ props: menuProps }">
       <VBadge :color="badgeColor" :content="usages?.length ?? '?'">
         <VBtn
-          v-tooltip:left="{
+          v-tooltip:bottom="{
             text: 'Linked copies',
             disabled: menuOpen,
             openDelay: 1000,
           }"
           v-bind="menuProps"
           aria-label="Source usages"
-          color="secondary"
           icon="mdi-source-fork"
+          rounded="lg"
           size="x-small"
-          variant="tonal"
+          variant="text"
         />
       </VBadge>
     </template>
@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 import type {
   ContentElement,
   ElementSourceInfo,
@@ -75,7 +75,7 @@ const emit = defineEmits<{
   'usage:view': [usage: ElementSourceInfo];
 }>();
 
-const menuOpen = ref(false);
+const menuOpen = defineModel<boolean>('open', { default: false });
 
 const badgeColor = computed(() =>
   props.usages?.length ? 'secondary' : 'inverse-surface',
@@ -94,12 +94,11 @@ watch(menuOpen, (open) => {
 </script>
 
 <style lang="scss" scoped>
-// Compact count badge
+// Compact count badge to match the element action row.
 :deep(.v-badge__badge) {
-  height: 1rem;
-  min-width: 1rem;
-  padding: 0 0.1875rem;
-  font-size: 0.625rem;
-  transform: translate(0.5625rem, 0.125rem);
+  height: 0.875rem;
+  min-width: 0.875rem;
+  padding: 0 0.25rem;
+  font-size: 0.5625rem;
 }
 </style>

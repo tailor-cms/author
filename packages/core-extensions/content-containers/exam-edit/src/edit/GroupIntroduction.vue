@@ -15,7 +15,7 @@
       :elements="elements"
       :is-disabled="isDisabled"
       :supported-element-config="introductionElementConfig"
-      class="pa-4"
+      class="pa-0"
       layout
       @add="$emit('save:element', $event)"
       @update="$emit('reorder:element', $event)"
