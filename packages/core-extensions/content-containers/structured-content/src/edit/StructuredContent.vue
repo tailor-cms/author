@@ -98,7 +98,7 @@ import {
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref } from 'vue';
-import { filter, sortBy, transform } from 'lodash-es';
+import { castArray, filter, sortBy, transform } from 'lodash-es';
 
 import type {
   ContentElement,
@@ -199,11 +199,12 @@ const references = computed(() => {
   );
 });
 
-const getRefElements = (refs: Record<string, Relationship[]>) => {
+// Single-valued relationships store a bare pointer instead of a list.
+const getRefElements = (refs: Record<string, Relationship[] | Relationship>) => {
   return transform(
     refs,
     (acc: Record<string, ContentElement[]>, relations, key) => {
-      acc[key] = relations
+      acc[key] = castArray(relations)
         .map(({ uid }) => (uid ? props.elements[uid] : undefined))
         .filter((it): it is ContentElement => Boolean(it));
     },

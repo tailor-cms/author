@@ -38,7 +38,7 @@ export interface Activity {
   type: string;
   position: number;
   data: Data;
-  refs: Record<string, Relationship[]>;
+  refs: Record<string, Relationship[] | Relationship>;
   status: Status[];
   isTrackedInWorkflow: boolean;
   detached: boolean;

@@ -43,6 +43,9 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [injectConfigHeaders()],
+    // pnpm installs a copy of each per `typescript` peer resolution, and
+    // the workspace has three; these must stay singletons.
+    resolve: { dedupe: ['vue', 'pinia', 'vuetify'] },
   },
   telemetry: false,
   debug: false,
