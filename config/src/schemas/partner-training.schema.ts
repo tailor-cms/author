@@ -48,6 +48,7 @@ const sectionMeta = [
     label: 'Estimated time (minutes)',
     placeholder: 'Enter estimated time to complete the section',
     inputType: 'number',
+    validate: { min_value: 0 },
   },
   {
     key: 'tags',
@@ -279,6 +280,7 @@ const ModuleConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the module',
       inputType: 'number',
+      validate: { min_value: 0 },
     },
   ],
 };
@@ -325,6 +327,7 @@ const LessonConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the page',
       inputType: 'number',
+      validate: { min_value: 0 },
     },
   ],
 };
@@ -360,6 +363,7 @@ export const SCHEMA: Schema = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the course',
       inputType: 'number',
+      validate: { min_value: 0 },
     },
     {
       key: 'author',

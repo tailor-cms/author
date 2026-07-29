@@ -1,7 +1,8 @@
 <template>
   <VTextField
     v-model="input"
-    :counter="meta.validate?.max"
+    v-bind="bounds"
+    :counter="isNumeric ? undefined : meta.validate?.max"
     :label="meta.label"
     :name="meta.key"
     :placeholder="meta.placeholder"
@@ -14,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 
 interface Props {
   meta?: any;
@@ -31,9 +32,22 @@ const emit = defineEmits(['update']);
 
 const input = ref(props.meta.value);
 
+const isNumeric = computed(() => props.meta.inputType === 'number');
+
+/**
+ * Native bounds for number inputs, mirrored from the schema's numeric
+ * validation rules. `min_value`/`max_value` are the numeric vee-validate
+ * rules; plain `min`/`max` are string length rules and drive the counter.
+ */
+const bounds = computed(() => {
+  if (!isNumeric.value) return {};
+  const { min_value: min, max_value: max } = props.meta.validate ?? {};
+  return { min, max };
+});
+
 const onChange = () => {
   if (input.value === props.meta.value) return;
-  const processedValue = props.meta.inputType === 'number'
+  const processedValue = isNumeric.value
     ? (input.value === '' ? undefined : Number(input.value))
     : input.value;
   emit('update', props.meta.key, processedValue);
