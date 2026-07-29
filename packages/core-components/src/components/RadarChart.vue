@@ -34,7 +34,20 @@ const props = defineProps<{
 }>();
 
 const theme = useTheme();
-const colors = computed(() => theme.current.value.colors);
+// Vuetify types palette entries as `Color` (string | number | HSV | ...),
+// but chart.js expects plain string colors; coerce the specific tokens we
+// use so the whole options object stays assignable to `ChartOptions`.
+const colors = computed(() => {
+  const palette = theme.current.value.colors;
+  return {
+    'on-surface': String(palette['on-surface']),
+    'on-primary': String(palette['on-primary']),
+    'outline': String(palette.outline),
+    'success': String(palette.success),
+    'warning': String(palette.warning),
+    'error': String(palette.error),
+  };
+});
 
 const textColor = computed(() => colors.value['on-surface']);
 const lineColor = computed(() => `${colors.value['on-surface']}40`);

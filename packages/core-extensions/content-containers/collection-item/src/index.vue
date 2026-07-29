@@ -79,7 +79,7 @@
               :error-message="errorMessage"
               :is-disabled="disabled"
               :model-value="refsState[rel.type]"
-              :owner-id="container.parentId"
+              :owner-id="container.parentId ?? undefined"
               @update="(ids) => (refsState[rel.type] = ids)"
             />
           </Field>
@@ -196,9 +196,10 @@ const initialRefs = ref<Record<string, any>>(readRefs());
 
 const refsState = ref<Record<string, any>>(cloneDeep(initialRefs.value));
 
-const validateRelationship = (rel: any) => (value: unknown[]) => {
+const validateRelationship = (rel: any) => (value: unknown) => {
   if (rel.allowEmpty !== false) return true;
-  return value?.length ? true : `${rel.label} is a required field`;
+  const isEmpty = !Array.isArray(value) || !value.length;
+  return isEmpty ? `${rel.label} is a required field` : true;
 };
 
 const initElement = (it: any, data: Record<PropertyKey, any> = {}) => {

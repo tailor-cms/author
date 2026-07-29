@@ -136,7 +136,7 @@ const modelValue = defineModel<boolean>({ required: true });
 const props = defineProps<{
   repository: Repository;
   activities: Activity[];
-  selectedActivity: Activity;
+  selectedActivity: StoreActivity;
   selectedElement: ContentElement | null;
 }>();
 

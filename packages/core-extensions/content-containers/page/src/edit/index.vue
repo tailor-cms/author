@@ -5,7 +5,10 @@
     elevation="1"
     theme="light"
   >
-    <div v-if="!isAiGeneratingContent" class="d-flex flex-wrap justify-end ma-3 ga-3">
+    <div
+      v-if="!isAiGeneratingContent"
+      class="d-flex flex-wrap justify-end ma-3 ga-3"
+    >
       <AIPrompt
         v-if="isAiEnabled && !disabled"
         :content-elements="containerElements"
@@ -19,11 +22,13 @@
         size="small"
         text="Do the magic"
         variant="tonal"
-        @click="generateContent({
-          type: AiRequestType.Create,
-          text: 'Generate content for this page.',
-          responseSchema: AiResponseSchema.Html,
-        })"
+        @click="
+          generateContent({
+            type: AiRequestType.Create,
+            text: 'Generate content for this page.',
+            responseSchema: AiResponseSchema.Html,
+          })
+        "
       />
       <VBtn
         v-if="!disabled"
@@ -36,9 +41,9 @@
     </div>
     <VAlert
       v-if="!containerElements.length && !isAiGeneratingContent"
-      :text="disabled
-        ? `Empty ${name}`
-        : 'Click the button below to add content.'"
+      :text="
+        disabled ? `Empty ${name}` : 'Click the button below to add content.'
+      "
       class="mt-7 mb-5 mx-4"
       density="comfortable"
       icon="mdi-information-outline"
@@ -166,10 +171,7 @@ const generateContent = async (input: AiInput) => {
     inputs: aiInputs.value,
     content: JSON.stringify(containerElements.value),
   });
-  const lastElementPosition =
-    containerElements.value?.length > 0
-      ? containerElements.value[containerElements.value.length - 1].position
-      : 0;
+  const lastElementPosition = containerElements.value.at(-1)?.position ?? 0;
   if (input.type === AiRequestType.Modify) {
     containerElements.value.forEach((element: ContentElement) => {
       emit('delete:element', element, true);
@@ -226,7 +228,9 @@ const getRefElements = (refs: ContentElement['refs']) => {
   return reduce(
     refs,
     (acc: any, it, key: string) => {
-      const elements = castArray(it).map(({ uid }) => props.elements[uid]);
+      const elements = castArray(it).map(({ uid }) =>
+        uid ? props.elements[uid] : undefined,
+      );
       acc[key] = elements.filter(Boolean) as ContentElement[];
       return acc;
     },

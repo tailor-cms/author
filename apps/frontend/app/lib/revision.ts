@@ -68,7 +68,7 @@ function describeActivityRevision(
   activity: Activity,
   opts: DescribeOptions = {},
 ) {
-  const state = rev.state as Activity;
+  const state = rev.state as unknown as Activity;
   const typeLabel = lowerCase(getActivityTypeLabel(state));
   const action = getAction(rev.operation, state);
 
@@ -92,7 +92,7 @@ function describeElementRevision(
   activity: Activity,
   opts: DescribeOptions = {},
 ) {
-  const state = rev.state as ContentElement;
+  const state = rev.state as unknown as ContentElement;
   const action = getAction(rev.operation, state);
   const activityText = opts.omitContainer
     ? ''
@@ -155,7 +155,7 @@ export function getFormatDescription(
 export function getRevisionAcronym(rev: Revision) {
   switch (rev.entity) {
     case Entity.Activity: {
-      const state = rev.state as Activity;
+      const state = rev.state as unknown as Activity;
       const typeArray = state.type.split('_', 2);
       return reduce(typeArray, (acc, val) => acc + val.charAt(0), '');
     }
@@ -172,7 +172,7 @@ export function getRevisionColor(rev: Revision) {
   const DEFAULT_COLOR = 'inverse-surface';
   switch (rev.entity) {
     case Entity.Activity: {
-      const state = rev.state as Activity;
+      const state = rev.state as unknown as Activity;
       const config = schema.getLevel(state.type);
       return !isEmpty(config) ? config.color : DEFAULT_COLOR;
     }

@@ -2,11 +2,10 @@
   "compilerOptions": {
     "strict": true,
     "target": "es2016",
-    "module": "commonjs",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "rootDir": "./src",
     "types": ["node"],
-    "ignoreDeprecations": "6.0",
     "sourceMap": true,
     "experimentalDecorators": true,
     "pretty": true,

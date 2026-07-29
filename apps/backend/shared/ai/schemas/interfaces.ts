@@ -1,5 +1,5 @@
 import type {
-  AiContext,
+  AiGenerationContext,
   ReasoningEffortLiteral,
 } from '@tailor-cms/interfaces/ai.ts';
 
@@ -11,18 +11,25 @@ export interface OpenAISchema {
 
 export interface AiResponseSpec {
   // Prompt used to describe the response structure
-  getPrompt: (context?: AiContext) => string;
+  getPrompt: (context: AiGenerationContext) => string;
   // JSON schema for the OpenAI response formatting (static or context-dependent)
   Schema:
     | OpenAISchema
-    | ((context: AiContext) => OpenAISchema)
+    | ((context: AiGenerationContext) => OpenAISchema)
     | undefined;
   // Function for additional response processing & validation.
   // Context passed for specs that need to resolve references
   // (e.g., assetId → URL in structured content).
-  processResponse?: (val: any, context?: AiContext) => any;
+  processResponse?: (val: any, context?: AiGenerationContext) => any;
   // Reasoning effort override for the OpenAI Responses API.
   // Only applied on reasoning-capable models (gpt-5, o-series).
   // Omit to use the model's default ("medium" on reasoning models).
   reasoningEffort?: ReasoningEffortLiteral;
+}
+
+// Content-element AI spec exposed via the element registry. Unlike
+// content-schema specs, element prompts are static descriptions of the
+// element's shape and take no generation context.
+export interface CeAiSpec extends Omit<AiResponseSpec, 'getPrompt'> {
+  getPrompt: () => string;
 }

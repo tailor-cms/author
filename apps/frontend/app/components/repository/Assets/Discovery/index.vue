@@ -91,7 +91,7 @@ import { useOutlineTree } from './TopicPicker/useOutlineTree';
 
 const FETCH_COUNT = 100;
 const MAX_QUERY_WORDS = 15;
-const DOWNLOADABLE_TYPES = new Set([
+const DOWNLOADABLE_TYPES = new Set<ContentType>([
   ContentType.Image,
   ContentType.Pdf,
   ContentType.Video,

@@ -65,8 +65,9 @@ const allowedElementConfig = computed(() => {
 });
 
 const save = (key: string, val: any) => {
-  const refs = { ...props.element.refs };
-  const updatedElement = { ...props.element, refs };
+  const { deletedAt: _deletedAt, ...element } = props.element;
+  const refs = { ...element.refs };
+  const updatedElement = { ...element, refs };
   updatedElement.refs[key] = val;
   return contentElementStore.save(updatedElement);
 };
@@ -86,7 +87,7 @@ editorBus.on('element:link', (key: string) => {
   const firstRelationship = props.relationships[0];
   if (!key) {
     console.log(`No relationship key provided. Defaults to first defined
-      relationship: '${firstRelationship.key}'`);
+      relationship: '${firstRelationship?.key}'`);
   }
   const relationship = key
     ? find(props.relationships, { key })

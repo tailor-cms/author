@@ -3,7 +3,7 @@
 // tools consume.
 import { randomUUID } from 'node:crypto';
 import type {
-  AiContext,
+  AiGenerationContext,
   AssetReference,
 } from '@tailor-cms/interfaces/ai.ts';
 import type { FlatConfig, NestedConfig, PropsConfig } from './types.ts';
@@ -34,7 +34,7 @@ const processElement = (
 
 export const processResponse = (
   data: any = {},
-  context?: AiContext,
+  context?: AiGenerationContext,
 ) => {
   if (!context) return data;
   const cfg = getConfigs(context);
@@ -48,7 +48,7 @@ export const processResponse = (
 function processNested(
   data: any,
   _cfg: NestedConfig,
-  context: AiContext,
+  context: AiGenerationContext,
 ) {
   const assets = context.assets || [];
   const subcontainers = data?.subcontainers || [];
@@ -65,7 +65,7 @@ function processNested(
 function processFlat(
   data: any,
   cfg: FlatConfig,
-  context: AiContext,
+  context: AiGenerationContext,
 ) {
   const assets = context.assets || [];
   const items = data?.items || [];
@@ -89,7 +89,7 @@ function processFlat(
 function processProps(
   data: any,
   cfg: PropsConfig,
-  context: AiContext,
+  context: AiGenerationContext,
 ) {
   const assets = context.assets || [];
   const slotData = data?.data || {};

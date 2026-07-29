@@ -89,9 +89,9 @@ import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { CircularProgress } from '@tailor-cms/core-components';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 
-import type { Activity } from '@tailor-cms/interfaces/activity.js';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element.js';
-import type { Repository } from '@tailor-cms/interfaces/repository.js';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import { parseConfig } from './config.ts';
 import StructuredSubcontainer from './StructuredSubcontainer.vue';
@@ -169,9 +169,8 @@ const toggleAll = () => {
 };
 
 const nextPosition = computed(() => {
-  if (!subcontainers.value.length) return 1;
-  const lastSubcontainer = subcontainers.value[subcontainers.value.length - 1];
-  return lastSubcontainer.position + 1;
+  const lastSubcontainer = subcontainers.value.at(-1);
+  return lastSubcontainer ? lastSubcontainer.position + 1 : 1;
 });
 
 const isFirst = (id: number) => {
@@ -186,6 +185,7 @@ const reorder = (id: number, step: number) => {
   const containerIndex = findIndex(subcontainers.value, { id });
   const container = cloneDeep(subcontainers.value[containerIndex]);
   const target = cloneDeep(subcontainers.value[containerIndex + step]);
+  if (!container || !target) return;
   const { position: newPosition } = target;
   target.position = container.position;
   container.position = newPosition;

@@ -26,7 +26,7 @@ export const getToolbarName = (type: string) =>
 export const getSidebarName = (type: string) =>
   `tce-${kebabCase(type)}-sidebar`;
 
-export const getElementId = (element: ContentElement) =>
+export const getElementId = (element?: ContentElement | null) =>
   element && (element.uid || element.id);
 
 export const getQuestionPromptPreview = (elements: ContentElement[]) => {

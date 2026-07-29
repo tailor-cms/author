@@ -4,16 +4,16 @@ import {
 } from '@tailor-cms/meta-element-collection/schema.js';
 import { oneLine } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 import type { ContentSubcontainer } from '@tailor-cms/interfaces/schema';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 
+import type { CeAiSpec, OpenAISchema } from '../interfaces.ts';
 import type {
   FlatConfig,
   NestedConfig,
   PropsConfig,
 } from './types.ts';
-import type { AiResponseSpec, OpenAISchema } from '../interfaces.ts';
 import { HTML_TYPE } from '../CeHtml.ts';
 import { MEDIA_SCHEMAS } from './media.ts';
 import { createAiLogger } from '../../logger.ts';
@@ -23,8 +23,8 @@ import elementRegistry from '../../../content-plugins/elementRegistry.js';
 const logger = createAiLogger('cc-container');
 
 // Typed accessor for the registry's untyped per-element AI config.
-export const getCeAiSpec = (type: string): AiResponseSpec | undefined =>
-  elementRegistry.getAiConfig(type) as AiResponseSpec | undefined;
+export const getCeAiSpec = (type: string): CeAiSpec | undefined =>
+  elementRegistry.getAiConfig(type) as CeAiSpec | undefined;
 
 const obj = (properties: any, required: string[]) => ({
   type: 'object' as const,
@@ -123,7 +123,7 @@ const buildSubcontainerSchema = (
 
 // Top-level entry: dispatches by detected shape. Each builder returns
 // an OpenAISchema with a uniform `cc_container` name; structure differs.
-export const Schema = (context: AiContext): OpenAISchema => {
+export const Schema = (context: AiGenerationContext): OpenAISchema => {
   const cfg = getConfigs(context);
   const hasAssets = !!context.assets?.length;
   logger.info({

@@ -98,11 +98,14 @@ import {
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref } from 'vue';
-import { filter, sortBy, transform } from 'lodash-es';
+import { castArray, filter, sortBy, transform } from 'lodash-es';
 
+import type {
+  ContentElement,
+  Relationship,
+} from '@tailor-cms/interfaces/content-element';
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { AiInput } from '@tailor-cms/interfaces/ai';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 
 const props = defineProps<{
   container: Activity;
@@ -130,10 +133,8 @@ const generateContent = async (input: AiInput) => {
     inputs: aiInputs.value,
     content: JSON.stringify(containerContent.value),
   });
-  const lastElementPosition =
-    containerContent.value?.length > 0
-      ? containerContent.value[containerContent.value.length - 1].position
-      : 0;
+  const lastElement = containerContent.value.at(-1);
+  const lastElementPosition = lastElement ? lastElement.position : 0;
   if (input.type === AiRequestType.Modify) {
     containerContent.value.forEach((element: ContentElement) => {
       emit('delete:element', element, true);
@@ -191,20 +192,23 @@ const saveElement = (element: any, key: string, data: any) => {
 const references = computed(() => {
   return transform(
     props.elements,
-    (acc, { refs }, uid) => {
+    (acc: Record<string, Record<string, ContentElement[]>>, { refs }, uid) => {
       acc[uid] = getRefElements(refs);
     },
-    {},
+    {} as Record<string, Record<string, ContentElement[]>>,
   );
 });
 
-const getRefElements = (refs: any) => {
+// Single-valued relationships store a bare pointer instead of a list.
+const getRefElements = (refs: Record<string, Relationship[] | Relationship>) => {
   return transform(
     refs,
-    (acc, ref, key) => {
-      acc[key] = ref.map(({ uid }) => props.elements[uid]);
+    (acc: Record<string, ContentElement[]>, relations, key) => {
+      acc[key] = castArray(relations)
+        .map(({ uid }) => (uid ? props.elements[uid] : undefined))
+        .filter((it): it is ContentElement => Boolean(it));
     },
-    {},
+    {} as Record<string, ContentElement[]>,
   );
 };
 </script>

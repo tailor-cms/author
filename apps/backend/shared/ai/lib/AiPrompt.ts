@@ -1,5 +1,5 @@
 import type {
-  AiContext,
+  AiGenerationContext,
   AiInput,
 } from '@tailor-cms/interfaces/ai.ts';
 import type { OpenAI } from 'openai';
@@ -130,12 +130,12 @@ export class AiPrompt {
   private client: OpenAI;
   // Information about the repository, content location, topic, etc.
   private generationContext: GenerationContext;
-  private requestContext: AiContext;
+  private requestContext: AiGenerationContext;
   private inputs: AiInput[];
   private content: string;
   private response: any;
 
-  constructor(client: OpenAI, context: AiContext) {
+  constructor(client: OpenAI, context: AiGenerationContext) {
     if (!context?.inputs?.length) throw new Error('Prompt not provided');
     this.generationContext = new GenerationContext(context.repository);
     this.content = context.content || '';
@@ -148,7 +148,7 @@ export class AiPrompt {
     return this.generationContext.vectorStoreId;
   }
 
-  get context(): AiContext {
+  get context(): AiGenerationContext {
     return {
       ...this.requestContext,
       assets: this.generationContext.assets,

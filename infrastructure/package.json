@@ -2,7 +2,7 @@
   "name": "@tailor-cms/infrastucture",
   "main": "src/index.ts",
   "scripts": {
-    "type-check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "preview": "pulumi preview --stack extensionengine/tailor-cms/prod",
     "up": "pulumi up --stack extensionengine/tailor-cms/prod"
   },

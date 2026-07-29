@@ -21,7 +21,7 @@ export const useEditorStore = defineStore('editor', () => {
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
   const selectedActivityId = ref<number | null>(null);
-  const selectedContentElementId = ref<number | null>(null);
+  const selectedContentElementId = ref<string | number | null>(null);
   const selectedContentElement = ref<StoreContentElement | null>(null);
   const showDiff = ref(false);
   const isDetailsPanelExpanded = ref(false);
