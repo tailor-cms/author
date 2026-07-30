@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { Toast } from '../common/Toast';
+import { ConfirmationDialog } from '../common/ConfirmationDialog';
 
 export class EditorToolbar {
   readonly page: Page;
@@ -12,6 +13,7 @@ export class EditorToolbar {
   readonly publishBtn: Locator;
   readonly compareBtn: Locator;
   readonly toast: Toast;
+  readonly confirmationDialog: ConfirmationDialog;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,6 +24,8 @@ export class EditorToolbar {
     this.publishBtn = this.el.getByRole('button', { name: 'Publish', exact: true });
     this.compareBtn = this.el.getByRole('button', { name: 'Compare' });
     this.toast = new Toast(page);
+    this.confirmationDialog = new ConfirmationDialog(page,
+      'Are you sure you want to publish the Page');
   }
 
   async expectLinkedState() {
@@ -52,6 +56,13 @@ export class EditorToolbar {
     // The confirm dialog closes immediately (fire-and-forget); wait for the
     // publish request to settle so `publishedAt` is set.
     await this.page.waitForLoadState('networkidle');
+  }
+
+  // Publishes the activity and asserts the success toast
+  async publishAndVerify() {
+    await this.publishBtn.click();
+    await this.confirmationDialog.confirm();
+    await this.toast.hasText(/has been published/i);
   }
 
   async compareWithPublished() {

@@ -122,4 +122,15 @@ export class Editor {
     await this.toast.isSaved();
     await this.page.waitForLoadState('networkidle');
   }
+
+  /**
+   * Clears the selected content element by clicking neutral editor space
+   * outside any element (the container wrapper)
+   */
+  async deselectElement() {
+    await this.page
+      .locator('.content-containers-wrapper')
+      .click({ position: { x: 4, y: 4 } });
+    await expect(this.topToolbar).toBeVisible();
+  }
 }
