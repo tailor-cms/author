@@ -172,6 +172,7 @@ import { isEqual } from 'lodash-es';
 import {
   getElementId,
   getQuestionPromptPreview,
+  htmlToText,
   titleCase,
 } from '@tailor-cms/utils';
 
@@ -287,11 +288,7 @@ const preview = computed(() => {
   if (isQuestion.value) return questionPreview.value;
   const content = props.element.data?.content;
   if (typeof content !== 'string') return '';
-  return content
-    .replace(/<[^>]+>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
+  return htmlToText(content);
 });
 
 const questionPreview = computed(() => {

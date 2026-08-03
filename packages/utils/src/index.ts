@@ -1,18 +1,20 @@
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+
 import { filter, kebabCase, map } from 'lodash-es';
+import { htmlToText } from './html';
 
 export * from './access';
 export * from './calculatePosition';
 export * as activity from './activity';
-export { default as InsertLocation } from './insertLocation';
 export * from './changeCase';
+export * from './html';
 export * as Events from './events';
+export { default as InsertLocation } from './insertLocation';
 export { default as numberToLetter } from './numberToLetter';
 export { default as uuid } from './uuid';
 
 const TEXT_CONTAINERS = ['HTML', 'JODIT_HTML', 'TIPTAP_HTML'];
 const blankRegex = /(@blank)/g;
-const htmlRegex = /(<\/?[^>]+(>|$))|&nbsp;/g;
 
 export const getMetaName = (type: string) => `meta-${kebabCase(type)}`;
 
@@ -32,5 +34,5 @@ export const getElementId = (element?: ContentElement | null) =>
 export const getQuestionPromptPreview = (elements: ContentElement[]) => {
   const textAssets = filter(elements, (it) => TEXT_CONTAINERS.includes(it.type));
   const questionText = map(textAssets, 'data.content').join(' ');
-  return questionText.replace(htmlRegex, '').replace(blankRegex, () => '____');
+  return htmlToText(questionText).replace(blankRegex, () => '____');
 };
