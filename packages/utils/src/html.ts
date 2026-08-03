@@ -1,6 +1,6 @@
 import { decode } from 'html-entities';
 
-const tagRegex = /<[^>]+>/g;
+const tagRegex = /<[^<>]+>/g;
 
 /**
  * Flattens an HTML string into single-line plain text: drops tags, decodes
@@ -11,6 +11,9 @@ const tagRegex = /<[^>]+>/g;
  * Tags are stripped before decoding on purpose. Decoding first would turn an
  * escaped, authored `&lt;b&gt;` into a real `<b>`, which the tag pass would
  * then delete along with the text the author actually wrote.
+ *
+ * The tag pattern skips `<` as well as `>` so a tag never spans another
+ * `<`; otherwise text full of unclosed `<` gets rescanned from each one.
  */
 export const htmlToText = (html: string) =>
   decode(html.replace(tagRegex, ' '))
