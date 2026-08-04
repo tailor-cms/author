@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",
+    "html-entities": "^2.6.0",
     "lodash-es": "^4.18.1",
     "uuid": "^14.0.1"
   },

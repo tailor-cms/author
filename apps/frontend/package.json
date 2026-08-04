@@ -52,6 +52,7 @@
     "debug": "^4.4.3",
     "events": "^3.3.0",
     "hashids": "^2.3.0",
+    "html-entities": "^2.6.0",
     "humanize-string": "^3.1.0",
     "lodash-es": "^4.18.1",
     "marked": "^18.0.7",
