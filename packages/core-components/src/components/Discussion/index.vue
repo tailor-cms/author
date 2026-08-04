@@ -129,12 +129,12 @@ const inputEl = ref<HTMLElement>();
 const showAll = ref(false);
 const error = ref(false);
 
-const { defineField, errors, handleSubmit } = useForm({
+const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
-    message: string().required().max(600, 'Max 600 characters'),
+    message: string().max(600, 'Max 600 characters'),
   }),
 });
-const [contentInput] = defineField('message');
+const [contentInput] = defineField('message', { validateOnModelUpdate: true });
 
 const thread = computed(() => {
   const processedThread = props.comments.map((comment) => {
@@ -168,7 +168,7 @@ const post = handleSubmit(() => {
     updatedAt: Date.now(),
   };
   emit('save', payload);
-  contentInput.value = '';
+  resetForm();
   const scrollOptions: ScrollIntoViewOptions = {
     block: 'center',
     behavior: 'smooth',
