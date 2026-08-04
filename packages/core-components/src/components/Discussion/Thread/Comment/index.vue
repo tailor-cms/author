@@ -94,7 +94,7 @@ const { defineField, errors, handleSubmit, resetForm } = useForm({
     message: props.comment.content,
   },
 });
-const [contentInput] = defineField('message');
+const [contentInput] = defineField('message', { validateOnModelUpdate: true });
 
 const save = handleSubmit(() => {
   if (!contentInput.value) return remove();
@@ -111,7 +111,7 @@ const handleResolvementUpdate = () => {
 };
 
 const reset = () => {
-  resetForm();
+  resetForm({ values: { message: props.comment.content } });
   isEditing.value = false;
 };
 

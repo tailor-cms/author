@@ -43,9 +43,23 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [injectConfigHeaders()],
-    // pnpm installs a copy of each per `typescript` peer resolution, and
-    // the workspace has three; these must stay singletons.
-    resolve: { dedupe: ['vue', 'pinia', 'vuetify'] },
+    // This app aliases `typescript` to the TS6 bridge (see package.json), so
+    // its peer set differs from every workspace package and pnpm installs a
+    // second copy of each of these. Two copies never share
+    // module state: a second vee-validate keeps its own rule registry and
+    // ignores plugins/vee-validate.ts, and a second vue/pinia/vuetify breaks
+    // provide/inject outright. Keep this list in sync with runtime libs that
+    // both this app and packages/* import.
+    resolve: {
+      dedupe: [
+        'vue',
+        'pinia',
+        'vuetify',
+        'vee-validate',
+        '@vueuse/core',
+        'vuedraggable',
+      ],
+    },
   },
   telemetry: false,
   debug: false,

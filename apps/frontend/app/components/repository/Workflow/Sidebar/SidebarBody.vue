@@ -53,6 +53,7 @@
       @update:model-value="updateStatus('dueDate', $event)"
     />
     <ActivityDiscussion
+      :key="activity.id"
       :activity="activity"
       panel
       show-heading
