@@ -15,6 +15,7 @@ export class ContentElement {
   readonly sourceUsagesBtn: Locator;
   readonly linkedIndicatorBtn: Locator;
   readonly commentDisabledBtn: Locator;
+  readonly resetBtn: Locator;
 
   constructor(page: Page, el: Locator) {
     this.page = page;
@@ -33,6 +34,7 @@ export class ContentElement {
       name: 'Comments disabled',
     });
     this.sourceUsagesBtn = el.getByRole('button', { name: 'Source usages' });
+    this.resetBtn = el.getByRole('button', { name: 'Reset element' });
   }
 
   async focus() {

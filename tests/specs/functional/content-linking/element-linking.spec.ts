@@ -103,6 +103,21 @@ test('editing individually linked element triggers unlink confirmation', async (
   await updatedElement.expectNotLinked();
 });
 
+test('reset is not offered on a linked element', async ({ page }) => {
+  const { activity } = await toSeededRepository(page);
+  await toEditorPage(page, activity);
+  const editor = new Editor(page);
+  await editor.toSecondaryPage();
+  const linkDialog = await editor.addElementDialog.openLinkDialog();
+  await linkDialog.select(seed.title, seed.textContent);
+  await new Toast(page).isSaved();
+  const element = editor.getElement(seed.textContent);
+  await element.expectLinked();
+  await element.el.hover();
+  await expect(element.linkedIndicatorBtn).toBeVisible();
+  await expect(element.resetBtn).toBeHidden();
+});
+
 test('source usages display on source element', async ({ page }) => {
   const { activity } = await seedLinkedRepositories();
   await toEditorPage(page, activity);
