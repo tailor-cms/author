@@ -77,6 +77,7 @@
       </div>
     </div>
     <ActivityDiscussion
+      :key="activity.id"
       :activity="activity"
       panel
       show-heading

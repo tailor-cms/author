@@ -1157,8 +1157,8 @@ importers:
         specifier: '*'
         version: 4.18.1
       vee-validate:
-        specifier: 4.14.7
-        version: 4.14.7(vue@3.5.34(typescript@7.0.2))
+        specifier: ^4.15.1
+        version: 4.15.1(vue@3.5.34(typescript@7.0.2))
       vue:
         specifier: ^3.5.34
         version: 3.5.34(typescript@7.0.2)
@@ -11368,11 +11368,6 @@ packages:
   vary@1.1.2:
     resolution: {integrity: sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==}
     engines: {node: '>= 0.8'}
-
-  vee-validate@4.14.7:
-    resolution: {integrity: sha512-XVb1gBFJR57equ11HEI8uxNqFJkwvCP/b+p+saDPQYaW7k45cdF5jsYPEJud1o29GD6h2y7Awm7Qfm89yKi74A==}
-    peerDependencies:
-      vue: ^3.4.26
 
   vee-validate@4.15.1:
     resolution: {integrity: sha512-DkFsiTwEKau8VIxyZBGdO6tOudD+QoUBPuHj3e6QFqmbfCRj1ArmYWue9lEp6jLSWBIw4XPlDLjFIZNLdRAMSg==}
@@ -23689,12 +23684,6 @@ snapshots:
   validator@13.15.35: {}
 
   vary@1.1.2: {}
-
-  vee-validate@4.14.7(vue@3.5.34(typescript@7.0.2)):
-    dependencies:
-      '@vue/devtools-api': 7.7.10
-      type-fest: 4.41.0
-      vue: 3.5.34(typescript@7.0.2)
 
   vee-validate@4.15.1(vue@3.5.34(@typescript/typescript6@6.0.2)):
     dependencies:
