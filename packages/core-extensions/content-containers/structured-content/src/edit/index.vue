@@ -56,7 +56,7 @@
         :is-last="isLast(subcontainer.id)"
         @add:element="emit('add:element', $event)"
         @delete:element="(el, force) => emit('delete:element', el, force)"
-        @delete:subcontainer="emit('delete:subcontainer', $event)"
+        @delete:subcontainer="deleteSubcontainer"
         @reorder:element="emit('reorder:element', $event)"
         @reorder:subcontainer="(direction: number) => reorder(subcontainer.id, direction)"
         @save:element="emit('save:element', $event)"
@@ -198,6 +198,10 @@ const createSubcontainer = (type: string) => {
   const position = nextPosition.value;
   const data = subcontainerConfig.value[type]?.initMeta?.();
   emit('add:subcontainer', { type, parentId, position, data });
+};
+
+const deleteSubcontainer = (subcontainer: Activity, opts?: any) => {
+  emit('delete:subcontainer', subcontainer, opts);
 };
 
 const getContentElementConfig = (subcontainerType: string) => {
