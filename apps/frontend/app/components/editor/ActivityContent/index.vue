@@ -251,11 +251,9 @@ const elementsWithComments = computed<any>(() => {
         (commentStore.$seen.contentElement as any)[element.uid] || 0,
         (commentStore.$seen.activity as any)[props.activity?.uid] || 0,
       ]);
-      const hasUnresolvedComments = !!comments.length;
       elementMap[element.uid] = {
         ...element,
         comments,
-        hasUnresolvedComments,
         lastSeen: lastSeen || 0,
       };
     },

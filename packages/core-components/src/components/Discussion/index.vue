@@ -92,7 +92,6 @@ interface Props {
   showHeading?: boolean;
   showNotifications?: boolean;
   isActivityThread?: boolean;
-  hasUnresolvedComments?: boolean;
   isVisible?: boolean;
 }
 
@@ -104,7 +103,6 @@ const props = withDefaults(defineProps<Props>(), {
   showHeading: false,
   showNotifications: false,
   isActivityThread: false,
-  hasUnresolvedComments: false,
   isVisible: false,
 });
 
@@ -152,8 +150,12 @@ const hasHiddenComments = computed(
 
 const isTextEditorEmpty = computed(() => !contentInput.value?.trim());
 
+const hasUnresolvedComments = computed(() =>
+  props.comments.some((it) => !it.resolvedAt && !it.deletedAt),
+);
+
 const showResolveButton = computed(
-  () => props.hasUnresolvedComments && !props.isActivityThread,
+  () => hasUnresolvedComments.value && !props.isActivityThread,
 );
 
 const post = handleSubmit(() => {
