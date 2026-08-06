@@ -48,7 +48,7 @@
       </div>
     </VExpandXTransition>
     <VExpandXTransition>
-      <div v-if="isActive && isRegistered" class="action-reset">
+      <div v-if="showReset && isActive" class="action-reset">
         <VBtn
           v-tooltip:bottom="{ text: 'Reset element', openDelay: 1000 }"
           aria-label="Reset element"
@@ -147,6 +147,11 @@ const showUsages = computed(
     props.isRegistered &&
     !props.element.isLinkedCopy &&
     !props.element.embedded,
+);
+
+// A linked copy always mirrors its source
+const showReset = computed(
+  () => props.isRegistered && !props.element.isLinkedCopy,
 );
 </script>
 
