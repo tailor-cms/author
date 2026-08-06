@@ -85,7 +85,6 @@ export interface ContentElement extends ContentElementAttrs {
   /** Owning outline activity, when loaded via include */
   activity?: Activity;
   comments?: Comment[];
-  hasUnresolvedComments?: boolean;
   embedded?: boolean;
   /** Parent/composite element when focusing an embed (client-only) */
   parent?: ContentElement;
