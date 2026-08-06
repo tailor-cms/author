@@ -25,7 +25,6 @@
         v-bind="{
           comments,
           unseenComments,
-          hasUnresolvedComments,
           user,
           isVisible,
         }"
@@ -76,14 +75,12 @@ interface Props {
   lastSeen?: number | null;
   user: User;
   id?: number | null;
-  hasUnresolvedComments?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   id: null,
   comments: () => [],
   lastSeen: null,
-  hasUnresolvedComments: false,
 });
 
 const isVisible = defineModel<boolean>('open', { default: false });
@@ -119,7 +116,6 @@ const save = (data: Partial<Comment>) => {
       ...data,
       author: props.user,
       contentElementId: props.id,
-      hasUnresolvedComments: props.hasUnresolvedComments,
     },
   });
 };

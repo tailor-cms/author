@@ -86,6 +86,29 @@ test.describe('an element comment authored by the current user', () => {
     await expect(page.getByText(newComment)).toBeVisible();
   });
 
+  test('can resolve all element comments', async ({ page }) => {
+    const editor = new Editor(page);
+    const element = await editor.getElement('The Origins of Pizza');
+    await element.postComment('Second test comment');
+    await expect(element.comments.resolveAllBtn).toBeVisible();
+    await element.comments.resolveAll();
+    // Make sure changes are persisted
+    await page.reload();
+    await element.openComments();
+    await expect(page.getByText('Marked as resolved')).toHaveCount(2);
+  });
+
+  test('hides Resolve All when the only comment is deleted', async ({
+    page,
+  }) => {
+    const editor = new Editor(page);
+    const element = await editor.getElement('The Origins of Pizza');
+    const comment = await element.getComment(COMMENT_CONTENT);
+    await comment.remove();
+    await expect(element.commentsMenu).toBeVisible();
+    await expect(element.comments.resolveAllBtn).not.toBeVisible();
+  });
+
   test('editing an element comment keeps the flyout open', async ({ page }) => {
     const editor = new Editor(page);
     const element = await editor.getElement('The Origins of Pizza');
