@@ -151,7 +151,7 @@ const createGroup = () => {
 
 const deleteGroup = (group: Activity) => {
   const isExpanded = expandedAssessmentGroup.value === group.uid;
-  emit('delete:subcontainer', group, 'group');
+  emit('delete:subcontainer', group, { label: 'group' });
   if (isExpanded) expandedAssessmentGroup.value = undefined;
 };
 
