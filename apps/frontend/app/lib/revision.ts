@@ -1,12 +1,15 @@
-import { get, isEmpty, last, reduce } from 'lodash-es';
+import type {
+  ContentElement,
+  ContentElementAttrs,
+} from '@tailor-cms/interfaces/content-element';
+import type { Activity } from '@tailor-cms/interfaces/activity';
+import type { Revision } from '@tailor-cms/interfaces/revision';
+import { Entity, Operation } from '@tailor-cms/interfaces/revision';
+import { get, isEmpty, isEqual, last, reduce } from 'lodash-es';
 import { lowerCase, titleCase } from '@tailor-cms/utils';
 import { formatDate } from '@vueuse/core';
 import { isToday } from 'date-fns/isToday';
 import { isYesterday } from 'date-fns/isYesterday';
-import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
-import { Entity } from '@tailor-cms/interfaces/revision';
-import type { Revision } from '@tailor-cms/interfaces/revision';
 import { schema } from '@tailor-cms/config';
 
 // A history-list row: a real revision, or a synthetic restore entry standing for
@@ -19,6 +22,12 @@ export interface RestoreEntry {
   transactionId: string;
 }
 export type HistoryEntry = (Revision & { isRestore?: false }) | RestoreEntry;
+
+// A revision annotated with the message explaining why its restore is
+// disabled; null when it isn't.
+export type RestorableRevision = Revision & {
+  restoreDisabledMsg: string | null;
+};
 
 interface DescribeOptions {
   // Drop the "within {parent} {type}" suffix - for views already scoped to one
@@ -142,6 +151,44 @@ export function isSameInstance(a: Revision, b: Revision) {
 
 export function isSameRun(a: Revision, b: Revision) {
   return isSameInstance(a, b) && a.operation === b.operation;
+}
+
+const asElementState = (state: Revision['state']) =>
+  state as unknown as ContentElementAttrs;
+
+/**
+ * The fields a restore writes back onto a content element.
+ */
+export function getCeRestorePayload(state: Revision['state']) {
+  const { position, data, meta, refs } = asElementState(state);
+  return { position, data, meta, refs };
+}
+
+/**
+ * Message explaining why restoring `revision` is disabled, or null when it
+ * can be restored. `current` is the newest revision's state, newest is
+ * not the same as current content e.g.: deleting an element's text makes an older
+ * state current again, so restoring it would write nothing and leave the user
+ * with a silent no-op.
+ */
+export function getRestoreDisabledMsg(
+  revision: Revision,
+  current?: Revision['state'],
+): string | null {
+  if (revision.operation === Operation.Remove) {
+    return 'This version deleted the element';
+  }
+  if (!current) return null;
+  const live = asElementState(current);
+  // A soft-deleted element is always restorable
+  if (live.deletedAt) return null;
+  // The signature is a sha of `data` alone, so it only short-circuits the
+  // common case; position/meta/refs still need comparing.
+  const target = asElementState(revision.state);
+  if (target.contentSignature !== live.contentSignature) return null;
+  return isEqual(getCeRestorePayload(revision.state), getCeRestorePayload(current))
+    ? 'This is the current version'
+    : null;
 }
 
 export function getFormatDescription(

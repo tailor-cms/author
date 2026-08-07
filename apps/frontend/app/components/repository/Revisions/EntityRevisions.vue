@@ -13,9 +13,8 @@
         <EntitySidebar
           ref="sidebar"
           :is-detached="isDetached"
-          :is-rollback-disabled="isAgentRunning"
           :loading="loading"
-          :revisions="revisions"
+          :revisions="restorableRevisions"
           :selected="selectedRevision"
           @preview="previewRevision"
           @rollback="rollback"
@@ -26,15 +25,20 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, onMounted, ref } from 'vue';
-import { find, first, get } from 'lodash-es';
+import type { ComponentPublicInstance } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
+import type { Revision } from '@tailor-cms/interfaces/revision';
+import { find, first, get } from 'lodash-es';
 import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
-import type { Revision } from '@tailor-cms/interfaces/revision';
 
-import EntitySidebar from './EntitySidebar.vue';
+import {
+  getCeRestorePayload,
+  getRestoreDisabledMsg,
+  type RestorableRevision,
+} from '@/lib/revision';
 import { api } from '@/api';
+import EntitySidebar from './EntitySidebar.vue';
 
 interface Props {
   revision: Revision;
@@ -45,7 +49,7 @@ const props = withDefaults(defineProps<Props>(), {
   isDetached: false,
 });
 
-const sidebar = ref<HTMLElement>();
+const sidebar = ref<ComponentPublicInstance>();
 const revisions = ref<Revision[]>([]);
 const loading = ref<Record<string, boolean>>({});
 const resolvedRevisions = ref<Revision[]>([]);
@@ -54,6 +58,18 @@ const selectedRevision = ref<Revision>();
 const { isAgentRunning } = useAgentRunState();
 
 const repositoryId = computed(() => props.revision.repositoryId);
+
+// The newest revision is the content element
+const currentState = computed(() => first(revisions.value)?.state);
+
+const restorableRevisions = computed<RestorableRevision[]>(() =>
+  revisions.value.map((revision) => ({
+    ...revision,
+    restoreDisabledMsg: isAgentRunning.value
+      ? 'Unavailable while Renoir is generating'
+      : getRestoreDisabledMsg(revision, currentState.value),
+  })),
+);
 
 const getRevisions = async () => {
   const { entity, state } = props.revision;
@@ -79,21 +95,22 @@ const previewRevision = async (revision: Revision) => {
 
 const rollback = async (revision: Revision) => {
   if (isAgentRunning.value) return;
+  const elementId = revision.state.id as number;
   loading.value[revision.id] = true;
-  const entity = { ...revision.state, paranoid: false } as any;
-  const { id, repositoryId: entityRepoId, ...body } = entity;
-  await api.contentElement.update({
-    params: { repositoryId: entityRepoId, elementId: id },
-    body,
-  });
-  const items = await getRevisions();
-  const newRevision = first(items);
-  if (newRevision) {
-    revisions.value.unshift(newRevision);
-    previewRevision(newRevision);
+  try {
+    await api.contentElement.update({
+      params: { repositoryId: repositoryId.value, elementId },
+      body: getCeRestorePayload(revision.state),
+    });
+    revisions.value = await getRevisions();
+    sidebar.value?.$el
+      .querySelector('.changes-list')
+      ?.scrollTo({ top: 0, behavior: 'smooth' });
+    const restored = first(revisions.value);
+    if (restored) await previewRevision(restored);
+  } finally {
+    loading.value[revision.id] = false;
   }
-  loading.value[revision.id] = false;
-  if (sidebar.value) sidebar.value.scrollTop = 0;
 };
 
 onMounted(async () => {
