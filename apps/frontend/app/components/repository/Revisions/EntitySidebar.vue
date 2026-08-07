@@ -34,7 +34,7 @@
                     icon="mdi-restore"
                     size="small"
                     variant="tonal"
-                    @click="$emit('rollback', revision)"
+                    @click.stop="$emit('rollback', revision)"
                   />
                 </span>
               </template>

@@ -31,6 +31,7 @@ import type { Revision } from '@tailor-cms/interfaces/revision';
 import { find, first, get } from 'lodash-es';
 import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
+import pMinDelay from 'p-min-delay';
 
 import {
   getCeRestorePayload,
@@ -39,6 +40,8 @@ import {
 } from '@/lib/revision';
 import { api } from '@/api';
 import EntitySidebar from './EntitySidebar.vue';
+
+const MIN_RESTORE_MS = 1000;
 
 interface Props {
   revision: Revision;
@@ -98,19 +101,20 @@ const rollback = async (revision: Revision) => {
   const elementId = revision.state.id as number;
   loading.value[revision.id] = true;
   try {
-    await api.contentElement.update({
+    const restoreAction = api.contentElement.update({
       params: { repositoryId: repositoryId.value, elementId },
       body: getCeRestorePayload(revision.state),
     });
+    await pMinDelay(restoreAction, MIN_RESTORE_MS);
     revisions.value = await getRevisions();
-    sidebar.value?.$el
-      .querySelector('.changes-list')
-      ?.scrollTo({ top: 0, behavior: 'smooth' });
-    const restored = first(revisions.value);
-    if (restored) await previewRevision(restored);
   } finally {
     loading.value[revision.id] = false;
   }
+  sidebar.value?.$el
+    .querySelector('.changes-list')
+    ?.scrollTo({ top: 0, behavior: 'smooth' });
+  const restored = first(revisions.value);
+  if (restored) await previewRevision(restored);
 };
 
 onMounted(async () => {
