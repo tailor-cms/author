@@ -5,7 +5,7 @@
     </VListSubheader>
     <VList class="changes-list py-0" bg-color="transparent">
       <VHover
-        v-for="(revision, index) in revisions"
+        v-for="revision in revisions"
         :key="revision.id"
         v-slot="{ isHovering, props: hoverProps }"
       >
@@ -20,21 +20,21 @@
         >
           <template v-if="isHovering" #append>
             <VTooltip
-              :disabled="!isRollbackDisabled"
+              :disabled="!revision.restoreDisabledMsg"
+              :text="revision.restoreDisabledMsg ?? ''"
               location="bottom"
-              text="Unavailable while Renoir is generating"
             >
               <template #activator="{ props: tooltipProps }">
                 <span v-bind="tooltipProps">
                   <VBtn
-                    v-show="!isDetached && index > 0 && !loading[revision.id]"
-                    :disabled="isRollbackDisabled"
+                    v-show="!isDetached && !loading[revision.id]"
+                    :disabled="!!revision.restoreDisabledMsg"
                     class="rollback"
                     density="comfortable"
                     icon="mdi-restore"
                     size="small"
                     variant="tonal"
-                    @click="$emit('rollback', revision)"
+                    @click.stop="$emit('rollback', revision)"
                   />
                 </span>
               </template>
@@ -48,22 +48,21 @@
 </template>
 
 <script lang="ts" setup>
-import { formatDate as format } from '@vueuse/core';
+import type { RestorableRevision } from '@/lib/revision';
 import type { Revision } from '@tailor-cms/interfaces/revision';
+import { formatDate as format } from '@vueuse/core';
 
 interface Props {
-  revisions?: Revision[];
+  revisions?: RestorableRevision[];
   loading: Record<string, boolean>;
   selected?: Revision | null;
   isDetached?: boolean;
-  isRollbackDisabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   revisions: () => [],
   selected: null,
   isDetached: false,
-  isRollbackDisabled: false,
 });
 defineEmits(['preview', 'rollback']);
 
