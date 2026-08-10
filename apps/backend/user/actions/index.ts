@@ -1,6 +1,7 @@
 // Barrel for the user-slice action modules
 // Admin CRUD on the user collection
 export { default as list } from './list.action.ts';
+export { default as exportUsers } from './export.action.ts';
 export { default as upsert } from './upsert.action.ts';
 export { default as remove } from './remove.action.ts';
 export { default as reinvite } from './reinvite.action.ts';

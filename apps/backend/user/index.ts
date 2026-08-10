@@ -81,6 +81,9 @@ crud
     before: [authorize()],
     after: [processPagination(User, false)],
   })
+  .get('/export', actions.exportUsers, {
+    before: [authorize(), requestLimiter({ limit: 10 })],
+  })
   .post('/', actions.upsert, { before: [authorize()] })
   .delete('/:id', actions.remove, { before: [authorize()] })
   .post('/:id/reinvite', actions.reinvite, { before: [authorize()] });
