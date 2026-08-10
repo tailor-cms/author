@@ -25,6 +25,15 @@
       />
       <VSpacer />
       <VBtn
+        :disabled="!totalItems"
+        color="primary"
+        data-testid="userList_export"
+        prepend-icon="mdi-tray-arrow-down"
+        text="Export users"
+        variant="tonal"
+        @click="isExportDialogVisible = true"
+      />
+      <VBtn
         color="primary"
         prepend-icon="mdi-plus"
         text="Add user"
@@ -119,6 +128,13 @@
       @update:visible="isUserDialogVisible = $event"
       @updated="fetch(defaultPage)"
     />
+    <UserExportDialog
+      :filter="filter"
+      :include-archived="showArchiveToggle"
+      :total="totalItems"
+      :visible="isExportDialogVisible"
+      @update:visible="isExportDialogVisible = $event"
+    />
   </div>
 </template>
 
@@ -130,6 +146,7 @@ import humanize from 'humanize-string';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 import UserDialog from '@/components/admin/UserDialog.vue';
+import UserExportDialog from '@/components/admin/UserExportDialog.vue';
 
 definePageMeta({ name: 'system-user-management' });
 useHead({ title: 'System Users' });
@@ -168,6 +185,7 @@ const dataTable = reactive(defaultPage());
 const totalItems = ref(0);
 const filter = ref('');
 const isUserDialogVisible = ref(false);
+const isExportDialogVisible = ref(false);
 const editedUser = ref<User | null>(null);
 const showArchiveToggle = ref(false);
 
