@@ -10,7 +10,6 @@
     />
     <div v-if="config.props.oidcEnabled">
       <VBtn
-        :prepend-icon="config.oidcLoginText.includes('Google') ? 'mdi-google' : ''"
         :text="config.oidcLoginText"
         data-testid="auth_oidcLoginBtn"
         size="large"
@@ -18,7 +17,11 @@
         block
         rounded
         @click="loginOIDC"
-      />
+      >
+        <template v-if="isGoogleProvider" #prepend>
+          <img alt="" src="/img/google.png" height="18" />
+        </template>
+      </VBtn>
       <VDivider class="my-8">or</VDivider>
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
@@ -106,6 +109,9 @@ const { defineField, handleSubmit, errors } = useForm({
 const [emailInput] = defineField('email');
 const [passwordInput] = defineField('password');
 
+const isGoogleProvider = computed(() =>
+  config.oidcLoginText.includes('Google'),
+);
 const accessDenied = computed(() => route.query.accessDenied);
 const oidcError = computed(() => {
   if (!accessDenied.value) return;
