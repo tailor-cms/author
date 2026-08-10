@@ -13253,6 +13253,93 @@
         ]
       }
     },
+    "/users/export": {
+      "get": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userExportUsers",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "exportUsers",
+        "summary": "Export users as CSV",
+        "description": "Streams the full match set for the given filters as a CSV attachment. Archived users are excluded unless `archived` is set, in which case the Status column distinguishes them.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Substring match across email, firstName, lastName (iLike).",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Exact-equality match against User.email. Kept as a plain string (not validated as a real address) so a typo from the search box returns zero results instead of a 400.",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to a specific role.",
+              "type": "string",
+              "enum": [
+                "USER",
+                "ADMIN",
+                "COLLABORATOR",
+                "INTEGRATION"
+              ]
+            }
+          },
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Include soft-deleted (archived) users in the result.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          },
+          {
+            "name": "includeUserGroups",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Append a \"User groups\" column listing each user's group memberships.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV attachment (text/csv; charset=utf-8)."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/users/{id}": {
       "delete": {
         "tags": [
