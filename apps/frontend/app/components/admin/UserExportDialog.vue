@@ -1,7 +1,6 @@
 <template>
   <TailorDialog
     v-model="isDialogVisible"
-    data-testid="user-export-dialog"
     header-icon="mdi-tray-arrow-down"
     title="Export users"
     @submit="submit"

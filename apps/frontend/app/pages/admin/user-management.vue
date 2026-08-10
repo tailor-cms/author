@@ -27,7 +27,6 @@
       <VBtn
         :disabled="!totalItems"
         color="primary"
-        data-testid="userList_export"
         prepend-icon="mdi-tray-arrow-down"
         text="Export users"
         variant="tonal"
