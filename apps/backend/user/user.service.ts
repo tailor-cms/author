@@ -4,6 +4,7 @@
 // and cross-model coordination live here so the service surface is
 // testable in isolation from Express.
 import type {
+  ExportFilter,
   ListFilter,
   ListResult,
   ProfileUpdateInput,
@@ -24,6 +25,14 @@ const SEARCH_FIELDS = ['email', 'firstName', 'lastName'] as const;
 const buildFilter = (q: string) =>
   map(SEARCH_FIELDS, (field) => ({ [field]: { [Op.iLike]: `%${q}%` } }));
 
+const buildWhere = (query: ListFilter | ExportFilter) => {
+  const where: any = { [Op.and]: [] };
+  if (query.filter) where[Op.or] = buildFilter(query.filter);
+  if (query.email) where[Op.and].push({ email: query.email });
+  if (query.role) where[Op.and].push({ role: query.role });
+  return where;
+};
+
 // Lists users with optional iLike search across email/firstName/lastName,
 // exact email + role filters, and an `archived` toggle that also returns
 // soft-deleted rows.
@@ -31,12 +40,8 @@ export async function list(
   opts: PaginationOptions,
   query: ListFilter,
 ): Promise<ListResult> {
-  const where: any = { [Op.and]: [] };
-  if (query.filter) where[Op.or] = buildFilter(query.filter);
-  if (query.email) where[Op.and].push({ email: query.email });
-  if (query.role) where[Op.and].push({ role: query.role });
   const { rows, count } = await UserModel.findAndCountAll({
-    where,
+    where: buildWhere(query),
     include: [{ model: UserGroup, as: 'userGroups' }],
     ...opts,
     paranoid: !query.archived,
@@ -155,4 +160,48 @@ export async function reinvite(id: number): Promise<User | null> {
   if (!user) return null;
   UserModel.sendInvitation(user);
   return user;
+}
+
+export interface UserExportRow {
+  email: string;
+  firstName: string | null;
+  lastName: string | null;
+  role: string;
+  createdAt: Date;
+  status: 'Active' | 'Archived';
+  userGroups: string[];
+}
+
+/**
+ * Resolves the full (unpaginated) match set for the admin CSV export,
+ * Group memberships are only joined when the caller asked for that column.
+ */
+export async function exportRows(
+  query: ExportFilter,
+): Promise<UserExportRow[]> {
+  const rows = await UserModel.findAll({
+    where: buildWhere(query),
+    attributes: [
+      'email',
+      'firstName',
+      'lastName',
+      'role',
+      'createdAt',
+      'deletedAt',
+    ],
+    ...(query.includeUserGroups && {
+      include: [{ model: UserGroup, as: 'userGroups', attributes: ['name'] }],
+    }),
+    order: [['createdAt', 'DESC']],
+    paranoid: !query.archived,
+  });
+  return rows.map((it: any) => ({
+    email: it.email,
+    firstName: it.firstName ?? null,
+    lastName: it.lastName ?? null,
+    role: it.role,
+    createdAt: it.createdAt,
+    status: it.deletedAt ? 'Archived' : 'Active',
+    userGroups: map(it.userGroups ?? [], 'name'),
+  }));
 }

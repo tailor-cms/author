@@ -72,6 +72,32 @@ export class UserDialog {
   }
 }
 
+export class UserExportDialog {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly userGroupsToggle: Locator;
+  readonly exportBtn: Locator;
+
+  constructor(page: Page) {
+    const el = page.locator('div[role="dialog"]');
+    this.userGroupsToggle = el.getByLabel('Include user groups');
+    this.exportBtn = el.getByRole('button', { name: 'Export' });
+    this.page = page;
+    this.el = el;
+  }
+
+  includeUserGroups() {
+    return this.userGroupsToggle.click();
+  }
+
+  async export() {
+    const download = this.page.waitForEvent('download');
+    await this.exportBtn.click();
+    await expect(this.el).not.toBeVisible();
+    return download;
+  }
+}
+
 export class UserEntry {
   readonly page: Page;
   readonly el: Locator;
@@ -125,6 +151,7 @@ export class UserManagement {
   readonly itemsPerPageBtn: Locator;
   readonly archiveToggle: Locator;
   readonly addBtn: Locator;
+  readonly exportBtn: Locator;
   readonly searchInput: Locator;
 
   constructor(page: Page) {
@@ -132,6 +159,7 @@ export class UserManagement {
     this.userTable = el.locator('.v-table');
     this.archiveToggle = el.getByLabel('Archived');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
+    this.exportBtn = el.getByRole('button', { name: 'Export users' });
     this.searchInput = el.getByTestId('search-users').locator('input');
     this.userEntriesLocator = this.userTable.locator('.user-entry');
     this.prevPage = el.getByRole('button', { name: 'Previous page' });
@@ -167,6 +195,13 @@ export class UserManagement {
     const dialog = new UserDialog(this.page);
     await dialog.edit(email, firstName, lastName, role);
     return this.getEntryByEmail(email);
+  }
+
+  async openExportDialog() {
+    await this.exportBtn.click();
+    const dialog = new UserExportDialog(this.page);
+    await expect(dialog.el).toBeVisible();
+    return dialog;
   }
 
   async archiveUser(email: string) {
