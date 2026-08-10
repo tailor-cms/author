@@ -1,22 +1,19 @@
 <template>
-  <VHover v-slot="{ isHovering, props: hoverProps }">
-    <ContentElementWrapper
-      v-bind="{ ...$attrs, ...hoverProps }"
-      :element="element"
-      :embed-element-config="embedElementConfig"
-      :expanded="expanded"
-      :is-dirty="isDirty"
-      :is-disabled="isDisabled"
-      :is-draggable="draggable"
-      :is-hovered="!!isHovering"
-      @add="emit('add', $event)"
-      @delete="emit('delete')"
-      @save="save"
-      @update:expanded="emit('selected')"
-    >
-      <slot name="header"></slot>
-    </ContentElementWrapper>
-  </VHover>
+  <ContentElementWrapper
+    v-bind="$attrs"
+    :element="element"
+    :embed-element-config="embedElementConfig"
+    :expanded="expanded"
+    :is-dirty="isDirty"
+    :is-disabled="isDisabled"
+    :is-draggable="draggable"
+    @add="emit('add', $event)"
+    @delete="emit('delete')"
+    @save="save"
+    @update:expanded="emit('selected')"
+  >
+    <slot name="header"></slot>
+  </ContentElementWrapper>
 </template>
 
 <script lang="ts" setup>

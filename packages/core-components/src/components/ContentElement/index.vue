@@ -4,6 +4,7 @@
 <template>
   <div
     :id="`element_${id}`"
+    ref="rootEl"
     :class="[
       element.diffChange,
       isField ? 'field rounded' : 'card rounded-lg',
@@ -169,6 +170,7 @@ import {
   useAttrs,
 } from 'vue';
 import { isEqual } from 'lodash-es';
+import { useElementHover, useFocusWithin } from '@vueuse/core';
 import {
   getElementId,
   getQuestionPromptPreview,
@@ -191,7 +193,8 @@ interface Props {
   parent?: Activity | null;
   // Controlled card expansion; null keeps it locally managed.
   expanded?: boolean | null;
-  isHovered?: boolean;
+  // Initial state for locally managed expansion; still user-togglable.
+  defaultExpanded?: boolean;
   isDragged?: boolean;
   isDraggable?: boolean;
   isDisabled?: boolean;
@@ -212,7 +215,7 @@ const props = withDefaults(defineProps<Props>(), {
   references: null,
   parent: null,
   expanded: null,
-  isHovered: false,
+  defaultExpanded: true,
   isDragged: false,
   isDraggable: true,
   isDisabled: false,
@@ -249,6 +252,10 @@ if (rpc) {
   );
 }
 
+const rootEl = ref<HTMLElement | null>(null);
+const isHovered = useElementHover(rootEl);
+const { focused: isFocusWithin } = useFocusWithin(rootEl);
+
 const isFocused = ref(false);
 const isSaving = ref(false);
 const currentUser = getCurrentUser();
@@ -259,13 +266,15 @@ const manifest = computed(() => ceRegistry.getByEntity(props.element));
 const isRegistered = computed(() => !!manifest.value);
 const componentName = computed(() => manifest.value?.componentName);
 const isEmbed = computed(() => !!props.parent || !props.element.uid);
-const isHighlighted = computed(() => isFocused.value || props.isHovered);
+const isHighlighted = computed(
+  () => isFocused.value || isHovered.value || isFocusWithin.value,
+);
 const showDiff = computed(() => editorState?.showDiff.value);
 const isQuestion = computed(() => manifest.value?.isQuestion || false);
 
 const attrs = useAttrs();
 
-const localExpanded = ref(true);
+const localExpanded = ref(props.defaultExpanded);
 const isControlled = computed(() => props.expanded !== null);
 const isField = computed(() => props.variant === 'field');
 const isQuiet = computed(() => props.variant === 'quiet');

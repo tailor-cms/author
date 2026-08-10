@@ -12,6 +12,7 @@
       <ContainedContent
         :key="element.id"
         :element="element"
+        :default-expanded="defaultExpanded"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
@@ -39,6 +40,8 @@ import ElementList from './ElementList.vue';
 interface Props {
   allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
+  // Initial expansion state of each embed (`card` variant only).
+  defaultExpanded?: boolean;
   isDisabled?: boolean;
   isReadonly?: boolean;
   enableAdd?: boolean;
@@ -48,6 +51,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  defaultExpanded: true,
   isDisabled: false,
   isReadonly: false,
   enableAdd: true,
