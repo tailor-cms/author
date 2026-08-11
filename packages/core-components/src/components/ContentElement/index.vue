@@ -168,6 +168,7 @@ import {
   provide,
   ref,
   useAttrs,
+  watch,
 } from 'vue';
 import { isEqual } from 'lodash-es';
 import { useElementHover, useFocusWithin } from '@vueuse/core';
@@ -191,10 +192,7 @@ interface Props {
   element: ContentElement;
   references?: Record<string, ContentElement[]> | null;
   parent?: Activity | null;
-  // Controlled card expansion; null keeps it locally managed.
   expanded?: boolean | null;
-  // Initial state for locally managed expansion; still user-togglable.
-  defaultExpanded?: boolean;
   isDragged?: boolean;
   isDraggable?: boolean;
   isDisabled?: boolean;
@@ -214,8 +212,8 @@ const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
   parent: null,
+  // Controlled card expansion; null keeps it locally managed.
   expanded: null,
-  defaultExpanded: true,
   isDragged: false,
   isDraggable: true,
   isDisabled: false,
@@ -274,19 +272,13 @@ const isQuestion = computed(() => manifest.value?.isQuestion || false);
 
 const attrs = useAttrs();
 
-const localExpanded = ref(props.defaultExpanded);
-const isControlled = computed(() => props.expanded !== null);
+const localExpanded = ref(props.expanded ?? true);
 const isField = computed(() => props.variant === 'field');
 const isQuiet = computed(() => props.variant === 'quiet');
 const isExpanded = computed(() => {
   if (isField.value || isQuiet.value) return true;
-  return isControlled.value ? !!props.expanded : localExpanded.value;
+  return localExpanded.value;
 });
-
-const toggleExpanded = () => {
-  if (!isControlled.value) localExpanded.value = !isExpanded.value;
-  emit('update:expanded', !isExpanded.value);
-};
 
 const typeIcon = computed(() => manifest.value?.ui?.icon ?? 'mdi-alert-circle-outline');
 const typeName = computed(
@@ -344,6 +336,11 @@ const linkedSourceInfo = ref<ElementSourceInfo | null>(null);
 // Source usages state (for non-linked elements that could have copies)
 const isLoadingSourceUsages = ref(false);
 const sourceUsages = ref<ElementSourceInfo[] | null>(null);
+
+const toggleExpanded = () => {
+  localExpanded.value = !localExpanded.value;
+  emit('update:expanded', localExpanded.value);
+};
 
 const onSelect = (e: any) => {
   if (!props.isDisabled && !showDiff.value && !e.component) {
@@ -449,6 +446,13 @@ const initLinking = () => {
     },
   });
 };
+
+watch(
+  () => props.expanded,
+  (val) => {
+    if (val !== null) localExpanded.value = val;
+  },
+);
 
 onBeforeUnmount(() => {
   elementBus.destroy();

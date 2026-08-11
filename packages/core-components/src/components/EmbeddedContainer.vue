@@ -12,7 +12,7 @@
       <ContainedContent
         :key="element.id"
         :element="element"
-        :default-expanded="defaultExpanded"
+        :expanded="defaultExpanded || isAdded(element)"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
@@ -40,7 +40,8 @@ import ElementList from './ElementList.vue';
 interface Props {
   allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
-  // Initial expansion state of each embed (`card` variant only).
+  // Baseline expansion state of each embed (`card` variant only).
+  // Embeds added during the session always start expanded.
   defaultExpanded?: boolean;
   isDisabled?: boolean;
   isReadonly?: boolean;
@@ -71,6 +72,13 @@ const embeds = computed(() => {
   const items = Object.values(props.container.embeds ?? {});
   return sortBy(items, 'position') as ContentElement[];
 });
+
+// Ids of embeds present on mount; embeds created afterwards always
+// mount expanded, even when the container collapses its embeds.
+const initialIds = new Set(Object.keys(props.container.embeds ?? {}));
+
+const isAdded = (element: ContentElement) =>
+  !initialIds.has(String(element.id));
 
 const addItems = (items: ContentElement[]) => {
   items = Array.isArray(items) ? items : [items];

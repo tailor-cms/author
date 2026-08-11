@@ -28,7 +28,8 @@ interface Props {
   element: ContentElement;
   embedElementConfig?: ContentElementCategory[];
   references?: Record<string, ContentElement[]> | null;
-  defaultExpanded?: boolean;
+  // Proxied expansion state (see ContentElement `expanded`).
+  expanded?: boolean | null;
   isDisabled?: boolean;
   isDragged?: boolean;
   showDiscussion?: boolean;
@@ -40,7 +41,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
-  defaultExpanded: true,
+  expanded: null,
   isDisabled: false,
   isDragged: false,
   showDiscussion: false,
@@ -62,7 +63,7 @@ const bindings = computed(() => {
   const {
     embedElementConfig,
     element,
-    defaultExpanded,
+    expanded,
     isDisabled,
     references,
     isDragged,
@@ -74,7 +75,7 @@ const bindings = computed(() => {
     element,
     embedElementConfig,
     references,
-    defaultExpanded,
+    expanded,
     isDisabled,
     isDragged,
     showDiscussion,
