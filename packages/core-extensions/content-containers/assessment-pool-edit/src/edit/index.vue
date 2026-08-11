@@ -49,15 +49,16 @@
       with-background
     >
       <div class="d-flex flex-column ga-2">
-        <AssessmentItem
+        <ContentElementWrapper
           v-for="it in assessments"
           :key="it.uid"
           :element="it"
           :embed-element-config="embedElementConfig"
           :expanded="isSelected(it.uid)"
           :is-disabled="disabled"
-          @selected="toggleSelect(it.uid)"
-          @save="saveAssessment"
+          :is-draggable="false"
+          @update:expanded="toggleSelect(it.uid)"
+          @save="saveAssessment(it, $event)"
           @delete="$emit('delete:element', it)"
         />
       </div>
@@ -87,8 +88,8 @@ import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import {
   AddElement,
-  AssessmentItem,
   CircularProgress,
+  ContentElement as ContentElementWrapper,
 } from '@tailor-cms/core-components';
 import { AiRequestType, AiResponseSchema } from '@tailor-cms/interfaces/ai';
 import { computed, inject, ref, watch } from 'vue';
@@ -174,9 +175,12 @@ const addAssessments = (newAssessments: ContentElement[]) => {
   });
 };
 
-const saveAssessment = (assessment: ContentElement) => {
+const saveAssessment = (
+  assessment: ContentElement,
+  data: ContentElement['data'],
+) => {
   const event = assessment.id ? 'update:element' : 'save:element';
-  return emit(event, assessment);
+  return emit(event, { ...assessment, data });
 };
 
 const isSelected = (uid: string) => selected.value.includes(uid);

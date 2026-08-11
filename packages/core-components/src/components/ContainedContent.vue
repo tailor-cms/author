@@ -5,10 +5,6 @@
     @dragend="emit('dragend')"
     @dragover="scrollContainer"
     @dragstart="emit('dragstart')"
-    @focusin="isHovered = true"
-    @focusout="isHovered = false"
-    @mouseleave="isHovered = false"
-    @mouseover="isHovered = true"
   >
     <ContentElementWrapper
       v-bind="bindings"
@@ -21,7 +17,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { get, throttle } from 'lodash-es';
@@ -32,6 +28,7 @@ interface Props {
   element: ContentElement;
   embedElementConfig?: ContentElementCategory[];
   references?: Record<string, ContentElement[]> | null;
+  defaultExpanded?: boolean;
   isDisabled?: boolean;
   isDragged?: boolean;
   showDiscussion?: boolean;
@@ -43,6 +40,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
+  defaultExpanded: true,
   isDisabled: false,
   isDragged: false,
   showDiscussion: false,
@@ -60,12 +58,11 @@ const emit = defineEmits([
   'save:meta',
 ]);
 
-const isHovered = ref(false);
-
 const bindings = computed(() => {
   const {
     embedElementConfig,
     element,
+    defaultExpanded,
     isDisabled,
     references,
     isDragged,
@@ -77,9 +74,9 @@ const bindings = computed(() => {
     element,
     embedElementConfig,
     references,
+    defaultExpanded,
     isDisabled,
     isDragged,
-    isHovered: isHovered.value,
     showDiscussion,
     autosave,
     variant,

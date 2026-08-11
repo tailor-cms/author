@@ -66,7 +66,7 @@
         @update="$emit('reorder:element', $event)"
       >
         <template #default="{ element }">
-          <AssessmentItem
+          <Assessment
             :assessment="element"
             :is-disabled="isDisabled"
             :objectives="objectives"
@@ -99,7 +99,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ElementList } from '@tailor-cms/core-components';
 import type { ElementRegistry } from '@tailor-cms/interfaces/schema';
 
-import AssessmentItem from './Assessment.vue';
+import Assessment from './Assessment.vue';
 import GroupIntroduction from './GroupIntroduction.vue';
 
 interface Props {
