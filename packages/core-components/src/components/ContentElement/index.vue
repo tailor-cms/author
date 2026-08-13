@@ -252,7 +252,9 @@ if (rpc) {
 }
 
 const rootEl = ref<HTMLElement | null>(null);
-const isHovered = useElementHover(rootEl);
+// Delayed so a pointer passing over a stack of elements does not flash
+// their chrome; quiet headers reveal in flow, shifting the body down.
+const isHovered = useElementHover(rootEl, { delayEnter: 150 });
 const { focused: isFocusWithin } = useFocusWithin(rootEl);
 
 const isFocused = ref(false);
