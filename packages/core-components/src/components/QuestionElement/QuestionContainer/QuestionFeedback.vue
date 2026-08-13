@@ -12,28 +12,45 @@
     </div>
     <VExpandTransition>
       <div v-show="isExpanded">
-        <div
-          v-for="(answer, index) in processedAnswers"
-          :key="index"
-          class="text-title-small mb-6"
-        >
-          <div class="mb-4">
-            {{ answerType }} {{ index + 1 }}:
-            {{ answer || 'Answer not added.' }}
-          </div>
+        <div class="general-feedback text-title-small mb-6">
+          <div class="mb-4">General feedback</div>
           <RichTextEditor
             v-if="!props.isReadonly"
-            :model-value="feedback?.[index]"
+            :model-value="feedback?.general"
             variant="outlined"
             hide-details
-            @update:model-value="update($event, index)"
+            @update:model-value="update($event, 'general')"
           />
           <template v-else>
             <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="feedback?.[index]" v-html="feedback[index]"></div>
+            <div v-if="feedback?.general" v-html="feedback.general"></div>
             <span v-else class="font-italic">Feedback not added.</span>
           </template>
         </div>
+        <template v-if="showAnswerFeedback">
+          <div
+            v-for="(answer, index) in processedAnswers"
+            :key="index"
+            class="text-title-small mb-6"
+          >
+            <div class="mb-4">
+              {{ answerType }} {{ index + 1 }}:
+              {{ answer || 'Answer not added.' }}
+            </div>
+            <RichTextEditor
+              v-if="!props.isReadonly"
+              :model-value="feedback?.[index]"
+              variant="outlined"
+              hide-details
+              @update:model-value="update($event, index)"
+            />
+            <template v-else>
+              <!-- eslint-disable-next-line vue/no-v-html -->
+              <div v-if="feedback?.[index]" v-html="feedback[index]"></div>
+              <span v-else class="font-italic">Feedback not added.</span>
+            </template>
+          </div>
+        </template>
       </div>
     </VExpandTransition>
   </div>
@@ -49,12 +66,16 @@ interface Props {
   answers?: string[];
   isReadonly: boolean;
   isGradable: boolean;
-  feedback?: Record<number, string>;
+  showAnswerFeedback?: boolean;
+  // Numeric keys hold per-answer feedback, indexed by answer position. The
+  // reserved 'general' key holds feedback shown regardless of the answer.
+  feedback?: Record<number, string> & { general?: string };
 }
 
 const props = withDefaults(defineProps<Props>(), {
   answers: () => [],
   feedback: () => ({}),
+  showAnswerFeedback: true,
 });
 const emit = defineEmits(['update']);
 
@@ -67,8 +88,8 @@ const processedAnswers = computed(() =>
     : ['True', 'False'],
 );
 
-const update = (value: string, index: number) => {
-  emit('update', { ...props.feedback, [index]: value });
+const update = (value: string, key: number | 'general') => {
+  emit('update', { ...props.feedback, [key]: value });
 };
 
 watch(
