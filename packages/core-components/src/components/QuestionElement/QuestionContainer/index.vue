@@ -43,7 +43,7 @@ withDefaults(defineProps<Props>(), {
   isDisabled: false,
   isDirty: false,
   isReadonly: false,
-  showAnswerFeedback: true,
+  showAnswerFeedback: false,
 });
 defineEmits(['update']);
 </script>

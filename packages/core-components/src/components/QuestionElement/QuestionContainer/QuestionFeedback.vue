@@ -75,7 +75,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   answers: () => [],
   feedback: () => ({}),
-  showAnswerFeedback: true,
+  showAnswerFeedback: false,
 });
 const emit = defineEmits(['update']);
 
