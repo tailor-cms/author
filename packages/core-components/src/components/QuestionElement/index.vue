@@ -12,6 +12,7 @@
         :embed-element-config="embedElementConfig"
         :is-disabled="isDisabled"
         :is-readonly="isDisabled"
+        :show-answer-feedback="showAnswerFeedback"
         @update="update"
       >
         <component
@@ -126,6 +127,10 @@ const ceRegistry = inject<any>('$ceRegistry');
 
 const form = ref();
 const editedElement = reactive(initializeElement());
+
+const showAnswerFeedback = computed(
+  () => !!ceRegistry.getByEntity(props.element)?.showAnswerFeedback,
+);
 
 const isDirty = computed(() => {
   const dataChanged = !isEqual(editedElement.data, initializeElement().data);
