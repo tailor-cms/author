@@ -12,7 +12,7 @@
       <ContainedContent
         :key="element.id"
         :element="element"
-        :expanded="defaultExpanded || isAdded(element)"
+        :expanded="defaultExpanded || !initialIds.includes(element.id)"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
@@ -28,7 +28,7 @@
 
 <script lang="ts" setup>
 import { calculatePosition } from '@tailor-cms/utils';
-import { cloneDeep, mapKeys, sortBy } from 'lodash-es';
+import { cloneDeep, map, mapKeys, sortBy } from 'lodash-es';
 import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -68,17 +68,12 @@ const emit = defineEmits(['save', 'delete']);
 const editorBus = inject<any>('$editorBus');
 const showConfirmationDialog = useConfirmationDialog();
 
+const initialIds = map(props.container.embeds, 'id');
+
 const embeds = computed(() => {
   const items = Object.values(props.container.embeds ?? {});
   return sortBy(items, 'position') as ContentElement[];
 });
-
-// Ids of embeds present on mount; embeds created afterwards always
-// mount expanded, even when the container collapses its embeds.
-const initialIds = new Set(Object.keys(props.container.embeds ?? {}));
-
-const isAdded = (element: ContentElement) =>
-  !initialIds.has(String(element.id));
 
 const addItems = (items: ContentElement[]) => {
   items = Array.isArray(items) ? items : [items];
