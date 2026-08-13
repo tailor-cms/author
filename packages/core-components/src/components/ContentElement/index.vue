@@ -30,9 +30,10 @@
       :class="{ revealed: isHighlighted || activeUsers.length }"
       class="header-reveal"
     >
-      <div
+      <VSheet
         :class="{ expanded: isExpanded }"
         class="card-header d-flex align-center"
+        color="surface-container-low"
         @click="toggleExpanded"
       >
         <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
@@ -96,7 +97,7 @@
           variant="text"
           @click.stop="toggleExpanded"
         />
-      </div>
+      </VSheet>
     </div>
     <DeprecationWarning
       v-if="!isDisabled && isDeprecated(element.type)"
@@ -584,6 +585,7 @@ $accent-selected: #ff4081;
   min-height: 2.75rem;
   padding: 0.375rem 0.5rem 0.375rem 0.25rem;
   cursor: pointer;
+  border-radius: 7px 7px 0 0;
 
   &.expanded {
     border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);
