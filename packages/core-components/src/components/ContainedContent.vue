@@ -1,19 +1,11 @@
 <template>
   <VCol
-    :class="[{ disabled: isDisabled, hovered: isHovered }]"
     :cols="elementWidth"
     class="contained-content"
     @dragend="emit('dragend')"
     @dragover="scrollContainer"
     @dragstart="emit('dragstart')"
-    @focusin="isHovered = true"
-    @focusout="isHovered = false"
-    @mouseleave="isHovered = false"
-    @mouseover="isHovered = true"
   >
-    <span v-if="!isDisabled" class="drag-handle">
-      <span class="mdi mdi-drag-vertical"></span>
-    </span>
     <ContentElementWrapper
       v-bind="bindings"
       @add="$emit('add', $event)"
@@ -25,34 +17,37 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
 import { get, throttle } from 'lodash-es';
 
-import ContentElementWrapper from './ContentElement.vue';
+import ContentElementWrapper from './ContentElement/index.vue';
 
 interface Props {
   element: ContentElement;
   embedElementConfig?: ContentElementCategory[];
   references?: Record<string, ContentElement[]> | null;
+  // Proxied expansion state (see ContentElement `expanded`).
+  expanded?: boolean | null;
   isDisabled?: boolean;
   isDragged?: boolean;
   showDiscussion?: boolean;
   setWidth?: boolean;
-  dense?: boolean;
   autosave?: boolean;
+  variant?: 'card' | 'field' | 'quiet';
 }
 
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
+  expanded: null,
   isDisabled: false,
   isDragged: false,
   showDiscussion: false,
   setWidth: true,
-  dense: false,
   autosave: false,
+  variant: 'card',
 });
 
 const emit = defineEmits([
@@ -64,29 +59,28 @@ const emit = defineEmits([
   'save:meta',
 ]);
 
-const isHovered = ref(false);
-
 const bindings = computed(() => {
   const {
     embedElementConfig,
     element,
+    expanded,
     isDisabled,
     references,
     isDragged,
-    dense,
     showDiscussion,
     autosave,
+    variant,
   } = props;
   return {
     element,
     embedElementConfig,
     references,
+    expanded,
     isDisabled,
     isDragged,
-    isHovered: isHovered.value,
     showDiscussion,
-    dense,
     autosave,
+    variant,
   };
 });
 
@@ -104,29 +98,6 @@ const scrollContainer = throttle((e) => {
 </script>
 
 <style lang="scss" scoped>
-.drag-handle {
-  position: absolute;
-  left: -0.1875rem;
-  z-index: 2;
-  width: 1.625rem;
-  opacity: 0;
-
-  .mdi {
-    color: rgba(var(--v-theme-on-surface), 0.4);
-    font-size: 1.75rem;
-  }
-}
-
-.hovered .drag-handle {
-  opacity: 1;
-  transition: opacity 0.6s ease-in-out;
-  cursor: pointer;
-}
-
-.disabled .drag-handle {
-  display: none;
-}
-
 .contained-content {
   position: relative;
   margin: 7px 0;

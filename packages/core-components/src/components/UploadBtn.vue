@@ -63,9 +63,11 @@ const { upload, uploading } = useUpload(emit);
 
 const validateAndUpload = async (target: HTMLInputElement) => {
   const files = Array.from(target.files ?? []);
+  const [file] = files;
+  if (!file) return;
   const regex = new RegExp('.(' + props.extensions.join('|') + ')$', 'i');
-  const isValid = files.every((file: File) => regex.test(file.name));
-  if (isValid) return upload(files[0]);
+  const isValid = files.every((it: File) => regex.test(it.name));
+  if (isValid) return upload(file);
 };
 
 watch(uploading, (val) => emit('update:uploading', val));

@@ -28,9 +28,9 @@
         :tes="elements"
         @add:element="(val: any) => saveContentElements([val])"
         @add:subcontainer="addContainer"
-        @delete="requestContainerDeletion(container)"
+        @delete="requestActivityDeletion(container, { label: name })"
         @delete:element="requestElementDeletion"
-        @delete:subcontainer="requestContainerDeletion"
+        @delete:subcontainer="requestActivityDeletion"
         @reorder:element="reorderContentElements"
         @save:element="saveContentElements"
         @update:activity="activityStore.update"
@@ -80,6 +80,11 @@ interface Props {
   required?: boolean;
   multiple?: boolean;
   displayHeading?: boolean;
+}
+
+interface DeletionOptions {
+  label?: string;
+  force?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -183,9 +188,10 @@ const persistElement = async (element: ContentElement) => {
   const elementChannelName = `element:${getElementId(element)}`;
   const elementChannel = eventBus.channel(elementChannelName);
   try {
+    const { deletedAt: _deletedAt, ...rest } = element;
     await contentElementStore.save({
-      ...element,
-      repositoryId: currentRepository.repositoryId,
+      ...rest,
+      repositoryId: currentRepository.repositoryId ?? element.repositoryId,
     });
     elementChannel.emit('saved');
   } catch (err) {
@@ -209,25 +215,24 @@ const reorderContentElements = ({
 const requestDeletion = (
   content: Activity | ContentElement,
   action: (val: any) => Promise<undefined>,
-  name: string,
+  label: string,
   onDelete?: () => void,
 ) => {
   confirmationDialog({
-    title: `Delete ${name}?`,
+    title: `Delete ${label}?`,
     color: 'error',
-    message: `Are you sure you want to delete ${name}?`,
+    message: `Are you sure you want to delete ${label}?`,
     action: () => action(content).then(onDelete),
   });
 };
 
-const requestContainerDeletion = (
-  container: Activity,
-  opts: string | { force?: boolean } = 'container',
+const requestActivityDeletion = (
+  activity: Activity,
+  { label = 'item', force = false }: DeletionOptions = {},
 ) => {
   const action = (val: Activity) => activityStore.remove(val.id);
-  if (typeof opts === 'object' && opts.force) return action(container);
-  const name = typeof opts === 'string' ? opts : 'container';
-  requestDeletion(container, action, name);
+  if (force) return action(activity);
+  requestDeletion(activity, action, label.toLowerCase());
 };
 
 const requestElementDeletion = (

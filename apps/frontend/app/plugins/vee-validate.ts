@@ -72,6 +72,16 @@ export default defineNuxtPlugin(() => {
             const max = (rule?.params as any[])[0];
             return `${label} must be at most ${max} characters`;
           },
+          min_value: ({ field, rule }) => {
+            const label = sentenceCase(field);
+            const min = (rule?.params as any[])[0];
+            return `${label} must be ${min} or greater`;
+          },
+          max_value: ({ field, rule }) => {
+            const label = sentenceCase(field);
+            const max = (rule?.params as any[])[0];
+            return `${label} must be ${max} or less`;
+          },
         },
       },
     }),

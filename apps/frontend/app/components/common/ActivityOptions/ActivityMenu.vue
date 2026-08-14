@@ -72,13 +72,20 @@ import LinkContent from '@/components/repository/Library/LinkContent.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useSelectedActivity } from '#imports';
 
+interface MenuOption {
+  name: string;
+  icon: string;
+  color?: string;
+  action: () => void;
+}
+
 const { AddAfter, AddBefore, AddInto } = InsertLocation;
+
 const activityStore = useActivityStore();
 const currentRepositoryStore = useCurrentRepository();
-const { requestDeletion } = useCollectionItemDeletion();
-
 const confirmationDialog = useConfirmationDialog();
 const notify = useNotification();
+const { requestDeletion } = useCollectionItemDeletion();
 
 export interface Props {
   activity: StoreActivity;
@@ -164,7 +171,7 @@ const linkMenuOptions = computed(() => {
   });
 });
 
-const menuOptions = computed(() => {
+const menuOptions = computed<MenuOption[]>(() => {
   return [
     ...addMenuOptions.value,
     ...copyMenuOptions.value,

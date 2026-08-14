@@ -72,6 +72,8 @@ export class Comments {
   readonly thread: Locator;
   readonly commentInput: Locator;
   readonly postBtn: Locator;
+  readonly resolveAllBtn: Locator;
+  readonly resolveAllDialog: ConfirmationDialog;
 
   constructor(page: Page, parent: Locator) {
     this.page = page;
@@ -79,12 +81,19 @@ export class Comments {
     this.thread = this.el.locator('.discussion-thread');
     this.commentInput = this.el.locator('textarea').locator('visible=true');
     this.postBtn = this.el.getByRole('button', { name: 'Post comment' });
+    this.resolveAllBtn = this.el.getByRole('button', { name: 'Resolve All' });
+    this.resolveAllDialog = new ConfirmationDialog(page, 'Resolve all comments');
   }
 
   async post(comment: string) {
     await this.commentInput.fill(comment);
     await this.postBtn.click();
     await expect(this.page.getByText(comment)).toBeVisible();
+  }
+
+  async resolveAll() {
+    await this.resolveAllBtn.click();
+    await this.resolveAllDialog.confirm();
   }
 
   getComment(content?: string) {

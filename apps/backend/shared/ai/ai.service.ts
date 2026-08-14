@@ -1,4 +1,4 @@
-import type { AiContext, ImageDescription } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext, ImageDescription } from '@tailor-cms/interfaces/ai.ts';
 import OpenAI from 'openai';
 
 import { ai as aiConfig } from '#config';
@@ -25,7 +25,7 @@ class AiService {
     return this.#openai;
   }
 
-  generate(context: AiContext) {
+  generate(context: AiGenerationContext) {
     const prompt = new AiPrompt(this.#openai, context);
     return prompt.execute();
   }

@@ -12,6 +12,7 @@
     "start": "cd ./apps/backend && pnpm start",
     "dcs": "docker compose -f docker-compose.dev.yaml up & pnpm start",
     "lint": "eslint .",
+    "typecheck": "pnpm -r typecheck",
     "seed": "cd ./apps/backend && pnpm db:seed",
     "e2e:functional": "cd tests && pnpm e2e:functional",
     "e2e:visual": "cd tests && pnpm e2e:visual",

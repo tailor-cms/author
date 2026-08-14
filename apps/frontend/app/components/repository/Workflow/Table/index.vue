@@ -39,6 +39,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { ActivityConfig } from '@tailor-cms/interfaces/schema';
 import type { StatusConfig } from '@tailor-cms/interfaces/activity';
 import type { User } from '@tailor-cms/interfaces/user';
 import { workflow as workflowConfig } from '@tailor-cms/config';
@@ -52,10 +53,6 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 interface PriorityConfig extends StatusConfig {
   icon: string;
-}
-
-interface TypeConfig extends StatusConfig {
-  type: string;
 }
 
 const props = defineProps<{
@@ -126,20 +123,21 @@ function isActivitySelected(id: number) {
 }
 
 function getStatusById(id: string) {
-  return workflow.value.statuses.find((it: StatusConfig) => it.id === id);
+  return workflow.value?.statuses.find((it: StatusConfig) => it.id === id);
 }
 
 function getTypeById(type: string) {
-  return workflowTypes.value.find((it: TypeConfig) => it.type === type);
+  return workflowTypes.value.find((it: ActivityConfig) => it.type === type);
 }
 
 function compareStatuses(first: StatusConfig, second: StatusConfig) {
-  const statusIds = workflow.value.statuses.map((it: StatusConfig) => it.id);
+  const statuses = workflow.value?.statuses ?? [];
+  const statusIds = statuses.map((it: StatusConfig) => it.id);
   return statusIds.indexOf(first.id) - statusIds.indexOf(second.id);
 }
 
-function compareTypes(first: TypeConfig, second: TypeConfig) {
-  const typeIds = workflowTypes.value.map((it: TypeConfig) => it.type);
+function compareTypes(first: ActivityConfig, second: ActivityConfig) {
+  const typeIds = workflowTypes.value.map((it: ActivityConfig) => it.type);
   return typeIds.indexOf(first?.type) - typeIds.indexOf(second?.type);
 }
 

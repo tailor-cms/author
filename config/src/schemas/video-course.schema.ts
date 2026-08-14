@@ -88,6 +88,7 @@ const LessonConfig: ActivityConfig = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the lesson',
       inputType: 'number',
+      validate: { min_value: 0 },
     },
   ],
 };
@@ -116,6 +117,7 @@ export const SCHEMA: Schema = {
       label: 'Estimated time (minutes)',
       placeholder: 'Enter estimated time to complete the course',
       inputType: 'number',
+      validate: { min_value: 0 },
     },
   ],
   structure: [ChapterConfig, LessonConfig],

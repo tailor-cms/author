@@ -53,21 +53,20 @@ import { VAvatarGroup } from 'vuetify/labs/VAvatarGroup';
 
 import UserAvatar from './UserAvatar.vue';
 
-const props = withDefaults(
-  defineProps<{
-    users: User[];
-    limit?: number;
-    size?: number | string;
-    vertical?: boolean;
-    tooltipLocation?: 'start' | 'end' | 'top' | 'bottom';
-  }>(),
-  {
-    limit: 4,
-    size: 32,
-    vertical: false,
-    tooltipLocation: 'end',
-  },
-);
+interface Props {
+  users: User[];
+  limit?: number;
+  size?: number | string;
+  vertical?: boolean;
+  tooltipLocation?: 'start' | 'end' | 'top' | 'bottom';
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  limit: 4,
+  size: 32,
+  vertical: false,
+  tooltipLocation: 'end',
+});
 
 const overflowUsers = computed(() => props.users);
 </script>

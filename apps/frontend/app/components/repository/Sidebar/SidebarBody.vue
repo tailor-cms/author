@@ -19,29 +19,19 @@
       />
       <VSpacer />
       <VBtn
-        :key="`${activityUrl}-identifier`"
-        v-clipboard:copy="activity.shortId"
-        v-clipboard:error="() => notify('Not able to copy the ID')"
-        v-clipboard:success="
-          () => notify('ID copied to the clipboard')
-        "
         class="mr-2 px-4"
         size="small"
         variant="tonal"
+        @click="() => copyToClipboard(activity.shortId, 'ID')"
       >
         <VIcon class="mr-1" icon="mdi-content-copy" />
         <VIcon icon="mdi-identifier" />
       </VBtn>
       <VBtn
-        :key="`${activityUrl}-link`"
-        v-clipboard:copy="activityUrl"
-        v-clipboard:error="() => notify('Not able to copy the link')"
-        v-clipboard:success="
-          () => notify('Link copied to the clipboard')
-        "
         class="px-4"
         size="small"
         variant="tonal"
+        @click="() => copyToClipboard(activityUrl, 'link')"
       >
         <VIcon class="mr-1" icon="mdi-content-copy" />
         <VIcon icon="mdi-link" />
@@ -87,6 +77,7 @@
       </div>
     </div>
     <ActivityDiscussion
+      :key="activity.id"
       :activity="activity"
       panel
       show-heading
@@ -111,6 +102,8 @@ const route = useRoute();
 const store = useActivityStore();
 const repositoryStore = useCurrentRepository();
 const notify = useNotification();
+const copyToClipboard = useCopyToClipboard();
+
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 
 const activityUrl = computed(() => route.query && window.location.href);
@@ -125,7 +118,7 @@ const isSoftDeleted = computed(() =>
 
 const viewCopy = (copy: {
   repositoryId: number;
-  outlineActivityId: number;
+  outlineActivityId?: number;
 }) => {
   navigateTo({
     name: 'repository',
@@ -141,7 +134,7 @@ const updateActivity = async (
 ) => {
   // Use processed data if provided, otherwise fallback to simple update
   const data = updatedData ?? { ...props.activity.data, [key]: value };
-  await store.update({ id: props.activity.id, uid: props.activity.uid, data });
+  await store.update({ id: props.activity.id, data });
   notify(`${config.value.label} saved`);
 };
 </script>

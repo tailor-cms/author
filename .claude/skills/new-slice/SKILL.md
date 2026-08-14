@@ -40,4 +40,4 @@ framework. `apps/backend/tag/` is a minimal reference slice.
 7. **Client.** Types flow to `@tailor-cms/api-client` automatically (regen
    on boot) - never hand-edit generated output.
 
-8. **Verify.** `pnpm --filter tailor-server type-check`; check `/api/docs`.
+8. **Verify.** `pnpm --filter tailor-server typecheck`; check `/api/docs`.

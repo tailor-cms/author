@@ -30,3 +30,8 @@ export interface UserActivityContext {
 export interface UserActivityContextStored extends UserActivityContext {
   connectedAt: string;
 }
+
+// A context for live SSE connection
+export type LiveUserActivity = UserActivityContext & {
+  sseId: string;
+};

@@ -104,7 +104,9 @@ const getDatetime = () => {
   if (!dateInput.value) return;
   if (props.meta.hideTime) return dateInput.value;
   if (!timeInput.value) return;
-  const [hours, minutes] = timeInput.value.split(':').map((it) => parseInt(it));
+  const [hours = 0, minutes = 0] = timeInput.value
+    .split(':')
+    .map((it) => parseInt(it));
   return date.setMinutes(date.setHours(dateInput.value, hours), minutes);
 };
 

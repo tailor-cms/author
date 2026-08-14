@@ -83,7 +83,10 @@
             />
           </VWindowItem>
           <VWindowItem :value="COMMENTS_TAB">
-            <ActivityDiscussion :activity="selectedActivity" />
+            <ActivityDiscussion
+              :key="selectedActivity.id"
+              :activity="selectedActivity"
+            />
           </VWindowItem>
           <VWindowItem :value="HISTORY_TAB">
             <ActivityHistory :activity="selectedActivity" />
@@ -136,7 +139,7 @@ const modelValue = defineModel<boolean>({ required: true });
 const props = defineProps<{
   repository: Repository;
   activities: Activity[];
-  selectedActivity: Activity;
+  selectedActivity: StoreActivity;
   selectedElement: ContentElement | null;
 }>();
 

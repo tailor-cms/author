@@ -82,7 +82,7 @@ export interface ActivityRelationship {
 export interface AiActivityConfig {
   definition: string;
   outputRules?: {
-    prompt: string;
+    prompt?: string;
     isAssessment?: boolean;
   };
 }
@@ -129,6 +129,7 @@ export interface ActivityConfig {
 
 export interface ContentElementConfig {
   isGradable?: boolean;
+  isDeprecated?: boolean;
 }
 
 export interface ContentElementItem extends ContentElementConfig {
@@ -207,6 +208,7 @@ export interface EntityRelationshipConfig {
 }
 
 export interface ContainerStructure {
+  meta?: Metadata[];
   subcontainers: ContentSubcontainer[];
   defaultSubcontainers?: { type: string; data?: Record<string, unknown> }[];
   elementConfig?: ElementConfig[] | null;

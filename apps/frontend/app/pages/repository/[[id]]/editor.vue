@@ -9,7 +9,7 @@
       v-model="showSidebar"
       :activities="repositoryStore.outlineActivities as Activity[]"
       :repository="repositoryStore.repository as Repository"
-      :selected-activity="editorStore.selectedActivity as Activity"
+      :selected-activity="editorStore.selectedActivity as StoreActivity"
       :selected-element="editorStore.selectedContentElement as ContentElement"
     />
     <VMain class="editor-main">

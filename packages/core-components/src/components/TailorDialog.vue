@@ -17,6 +17,16 @@
               <VIcon :icon="headerIcon" :color="color" />
             </template>
             <VCardTitle class="dialog-title">{{ title }}</VCardTitle>
+            <template v-if="closeable" #append>
+              <VBtn
+                data-testid="tailorDialogClose"
+                density="comfortable"
+                icon="mdi-close"
+                title="Close"
+                variant="text"
+                @click="defaultProps.isActive.value = false"
+              />
+            </template>
           </VCardItem>
           <div v-if="$slots.subheader" class="dialog-subheader">
             <slot name="subheader"></slot>
@@ -51,6 +61,7 @@ export interface Props {
   width?: number | string;
   dataTestid?: string;
   color?: string;
+  closeable?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -59,6 +70,7 @@ withDefaults(defineProps<Props>(), {
   color: 'primary',
   width: 500,
   dataTestid: 'tailorDialog',
+  closeable: false,
 });
 
 const emit = defineEmits(['open', 'close', 'submit']);

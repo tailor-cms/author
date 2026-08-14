@@ -230,9 +230,13 @@ const assignElements = (
 
 const isAllowedType = (el: ContentElement) => {
   if (!props.allowedElementConfig.length) return true;
+  if (!ceRegistry) return false;
+  // Elements whose type has no registered manifest can't match a config and
+  // are filtered out rather than crashing the picker.
+  const manifest = ceRegistry.getByEntity(el);
+  if (!manifest) return false;
   return props.allowedElementConfig.some(({ type, config }: any) => {
-    if (!ceRegistry) return;
-    const sameType = type === ceRegistry.getByEntity(el).type;
+    const sameType = type === manifest.type;
     const sameConfig = ceRegistry.matchesAllowedElementConfig(el, config);
     return sameType && sameConfig;
   });

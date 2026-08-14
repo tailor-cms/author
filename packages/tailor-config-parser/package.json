@@ -27,37 +27,18 @@
     }
   },
   "scripts": {
-    "dev": "tsup --watch src",
-    "build": "tsup",
-    "prebuild": "del-cli dist"
+    "dev": "tsdown --watch src",
+    "build": "tsdown"
   },
   "dependencies": {
+    "@tailor-cms/interfaces": "workspace:^",
     "lodash-es": "^4.18.1",
     "yup": "^1.7.1"
   },
   "devDependencies": {
-    "@tailor-cms/interfaces": "workspace:^",
     "@types/lodash-es": "^4.17.12",
-    "del-cli": "^7.0.0",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
-  },
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "target": [
-      "node14",
-      "es2022"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "bundle": true,
-    "minify": false,
-    "clean": false,
-    "dts": true
   },
   "publishConfig": {
     "access": "public"

@@ -1,0 +1,5 @@
+{
+  // Prefer the native TS 7 (tsgo) language service wherever a project
+  // resolves to a typescript install that ships it.
+  "js/ts.experimental.useTsgo": true
+}

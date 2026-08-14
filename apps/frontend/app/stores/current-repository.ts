@@ -20,7 +20,7 @@ import { api } from '@/api';
 import { useTimeoutFn } from '@vueuse/core';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { filter } from 'lodash-es';
+import { filter, keyBy } from 'lodash-es';
 
 const { getWorkflow } = workflowConfig;
 
@@ -120,6 +120,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return items.sort((a, b) => a.position - b.position);
   });
 
+  const expandableOutlineActivities = computed(() => {
+    const levelByType = keyBy(taxonomy.value, 'type');
+    return outlineActivities.value.filter(
+      ({ type }) => !!levelByType[type]?.subLevels?.length,
+    );
+  });
+
   const selectedActivity = computed(() => {
     const id = parseInt(route.query.activityId as string, 10);
     if (Number.isNaN(id)) return undefined;
@@ -157,12 +164,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
-    const totalItems = outlineActivities.value.length;
-    const itemStates = outlineActivities.value.map((it) =>
-      outlineState.expanded.get(it.uid),
-    );
-    const expandedItems = itemStates.filter(Boolean).length;
-    return expandedItems === totalItems;
+    const items = expandableOutlineActivities.value;
+    if (!items.length) return false;
+    return items.every((it) => outlineState.expanded.get(it.uid));
   });
 
   const isOutlineItemExpanded = (id: Id) => {
@@ -182,7 +186,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const toggleOutlineExpand = () => {
     const expand = !isOutlineExpanded.value;
-    outlineActivities.value.forEach((it) =>
+    expandableOutlineActivities.value.forEach((it) =>
       outlineState.expanded.set(it.uid, expand),
     );
   };

@@ -9,7 +9,7 @@ import type {
 } from 'sequelize';
 
 import type {
-  ContentElement as ContentElementAttrs,
+  ContentElementAttrs,
   ElementSourceInfo,
 } from '@tailor-cms/interfaces/content-element';
 import type { OperationContext } from '#shared/database/types.ts';

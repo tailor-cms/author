@@ -42,7 +42,8 @@ function upload(repositoryId, files, { onProgress, folder } = {}) {
     .then(extractData);
 }
 
-function updateAsset(repositoryId, id, { meta, name }) {
+function updateAsset(repositoryId, id, payload) {
+  const { meta, name } = payload;
   return request
     .patch(urls.resource(repositoryId, id), { meta, ...(name && { name }) })
     .then(extractData);

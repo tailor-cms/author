@@ -13,11 +13,11 @@
       @update="$emit('update', { hint: $event })"
     />
     <QuestionFeedback
-      v-if="showFeedback"
       :answers="elementData.answers"
       :feedback="elementData.feedback"
       :is-readonly="isReadonly || isDisabled"
       :is-gradable="elementData.isGradable"
+      :show-answer-feedback="showAnswerFeedback"
       @update="$emit('update', { feedback: $event })"
     />
   </div>
@@ -34,7 +34,7 @@ interface Props {
   elementData: Record<string, any>;
   isDisabled?: boolean;
   isReadonly?: boolean;
-  showFeedback?: boolean;
+  showAnswerFeedback?: boolean;
   embedElementConfig?: ContentElementCategory[];
 }
 
@@ -43,7 +43,7 @@ withDefaults(defineProps<Props>(), {
   isDisabled: false,
   isDirty: false,
   isReadonly: false,
-  showFeedback: true,
+  showAnswerFeedback: false,
 });
 defineEmits(['update']);
 </script>

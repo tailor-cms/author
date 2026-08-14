@@ -1,5 +1,5 @@
 <template>
-  <VExpansionPanel :value="group.uid" class="assessment-group">
+  <VExpansionPanel :value="group.uid" class="assessment-group elevation-1">
     <VHover v-slot="{ isHovering, props: hoverProps }">
       <VExpansionPanelTitle v-bind="hoverProps" min-height="64" static>
         <div class="text-body-large font-weight-bold">
@@ -34,7 +34,8 @@
         type="number"
         variant="outlined"
         persistent-hint
-        @keydown="e => ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
+        @keydown="(e: KeyboardEvent) =>
+          ['e', '+', '-', '.'].includes(e.key) && e.preventDefault()"
       />
       <div class="text-title-small text-left">Introduction</div>
       <GroupIntroduction
@@ -65,7 +66,7 @@
         @update="$emit('reorder:element', $event)"
       >
         <template #default="{ element }">
-          <AssessmentItem
+          <Assessment
             :assessment="element"
             :is-disabled="isDisabled"
             :objectives="objectives"
@@ -98,7 +99,7 @@ import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ElementList } from '@tailor-cms/core-components';
 import type { ElementRegistry } from '@tailor-cms/interfaces/schema';
 
-import AssessmentItem from './Assessment.vue';
+import Assessment from './Assessment.vue';
 import GroupIntroduction from './GroupIntroduction.vue';
 
 interface Props {

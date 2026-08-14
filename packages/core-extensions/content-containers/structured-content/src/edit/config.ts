@@ -48,7 +48,7 @@ export const parseConfig = (
       acc[key] = {
         ...val,
         icon: val.icon || 'mdi-text',
-        label: val.label || words(capitalize(key)),
+        label: val.label || words(capitalize(key)).join(' '),
         meta: val?.meta?.(repository, outlineActivity, container, val) ?? [],
         initMeta: () =>
           val?.initMeta?.(repository, outlineActivity, container, val) ?? {},

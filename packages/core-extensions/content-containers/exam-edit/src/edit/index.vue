@@ -1,6 +1,7 @@
 <template>
-  <VCard color="surface-container-high" elevation="0" rounded="lg">
+  <VCard color="surface-container" elevation="0" rounded="lg">
     <VCard
+      :ripple="false"
       color="transparent"
       elevation="0"
       rounded="0"
@@ -150,7 +151,7 @@ const createGroup = () => {
 
 const deleteGroup = (group: Activity) => {
   const isExpanded = expandedAssessmentGroup.value === group.uid;
-  emit('delete:subcontainer', group, 'group');
+  emit('delete:subcontainer', group, { label: 'group' });
   if (isExpanded) expandedAssessmentGroup.value = undefined;
 };
 

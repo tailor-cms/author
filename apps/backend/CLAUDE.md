@@ -32,5 +32,5 @@ a minimal reference slice.
 ## Client
 
 Endpoint changes flow to `@tailor-cms/api-client` on boot - never hand-edit
-generated output. Verify with `pnpm --filter tailor-server type-check` and
+generated output. Verify with `pnpm --filter tailor-server typecheck` and
 `/api/docs`.

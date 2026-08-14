@@ -4,6 +4,7 @@
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
   "type": "module",
+  "sideEffects": false,
   "version": "1.0.8",
   "files": [
     "dist"
@@ -18,40 +19,24 @@
     }
   },
   "scripts": {
-    "build": "tsup",
+    "build": "tsdown",
     "lint:fix": "pnpm lint --fix"
   },
   "dependencies": {
     "@paralleldrive/cuid2": "^3.3.0",
+    "html-entities": "^2.6.0",
     "lodash-es": "^4.18.1",
     "uuid": "^14.0.1"
   },
   "devDependencies": {
     "@tailor-cms/interfaces": "workspace:*",
     "@types/lodash-es": "^4.17.12",
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
   },
   "bundledDependencies": [
     "@tailor-cms/interfaces"
   ],
-  "tsup": {
-    "entry": [
-      "src/index.ts"
-    ],
-    "target": [
-      "node14",
-      "es2022"
-    ],
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "bundle": true,
-    "minify": false,
-    "clean": false,
-    "dts": true
-  },
   "publishConfig": {
     "access": "public"
   }

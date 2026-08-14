@@ -205,6 +205,7 @@ const addLinkedElements = async (elements: any[]) => {
       type: el.type,
       data: { ...el.data, width: processedWidth.value },
       meta: el.meta,
+      refs: {},
       position: positions[index],
       activityId: props.activity!.id,
       isLinkedCopy: true,
@@ -234,7 +235,8 @@ const generateContent = async (element: ContentElement) => {
 const buildElement = async (el: any) => {
   const { position, data = {}, initState = () => ({}), config } = el;
   const element = {
-    ...pick(el, ['type', 'refs', 'contentId']),
+    ...pick(el, ['type', 'contentId']),
+    refs: el.refs ?? {},
     data: { ...initState(), ...data, width: processedWidth.value },
     position,
   };

@@ -13,7 +13,7 @@
     "#storage": "./repository/storage.ts"
   },
   "scripts": {
-    "type-check": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
     "dev": "node --watch --import ./script/preflight.js  ./index.ts || exit 0",
     "start": "node --import ./script/preflight.js ./index.ts",
     "start:docker": "node  ./index.ts",
@@ -88,6 +88,7 @@
     "openid-client": "^5.7.1",
     "optional-require": "^2.1.0",
     "package-directory": "^8.2.0",
+    "papaparse": "^5.5.4",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
@@ -136,13 +137,15 @@
     "@types/mime-types": "^3.0.1",
     "@types/multer": "^2.2.0",
     "@types/node": "^26.1.1",
+    "@types/papaparse": "^5.5.2",
     "@types/qrcode-terminal": "^0.12.2",
     "@types/qs": "^6.15.1",
     "dargs": "^8.1.0",
     "del-cli": "^7.0.0",
     "dotenv-cli": "^11.0.0",
     "sequelize-cli": "^6.6.5",
-    "terser": "^5.49.0"
+    "terser": "^5.49.0",
+    "typescript": "^7.0.2"
   },
   "engines": {
     "node": ">= 26.0.0",

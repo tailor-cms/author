@@ -12,10 +12,12 @@
       <ContainedContent
         :key="element.id"
         :element="element"
+        :expanded="defaultExpanded || !initialIds.includes(element.id)"
         :is-disabled="isDisabled || isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
         class="my-2"
+        :variant="elementVariant"
         @delete="requestDeleteConfirmation(element)"
         @save="save(element, 'data', $event)"
         @save:meta="save(element, 'meta', $event)"
@@ -26,7 +28,7 @@
 
 <script lang="ts" setup>
 import { calculatePosition } from '@tailor-cms/utils';
-import { cloneDeep, mapKeys, sortBy } from 'lodash-es';
+import { cloneDeep, map, mapKeys, sortBy } from 'lodash-es';
 import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { ContentElementCategory } from '@tailor-cms/interfaces/schema';
@@ -38,16 +40,23 @@ import ElementList from './ElementList.vue';
 interface Props {
   allowedElementConfig?: ContentElementCategory[];
   container: { embeds: Record<string, ContentElement> };
+  // Baseline expansion state of each embed (`card` variant only).
+  // Embeds added during the session always start expanded.
+  defaultExpanded?: boolean;
   isDisabled?: boolean;
   isReadonly?: boolean;
   enableAdd?: boolean;
   addElementOptions?: Record<string, any>;
+  // Presentation for each embedded element (see ContentElement `variant`).
+  elementVariant?: 'card' | 'field' | 'quiet';
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  defaultExpanded: true,
   isDisabled: false,
   isReadonly: false,
   enableAdd: true,
+  elementVariant: 'quiet',
   allowedElementConfig: () => [{
     name: 'Content Elements',
     items: [{ id: 'TIPTAP_HTML' }, { id: 'IMAGE' }, { id: 'EMBED' }],
@@ -58,6 +67,8 @@ const emit = defineEmits(['save', 'delete']);
 
 const editorBus = inject<any>('$editorBus');
 const showConfirmationDialog = useConfirmationDialog();
+
+const initialIds = map(props.container.embeds, 'id');
 
 const embeds = computed(() => {
   const items = Object.values(props.container.embeds ?? {});

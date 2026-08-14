@@ -425,6 +425,7 @@ const hasEmptyStateActions = computed(
 
 const emptyState = computed(() => {
   if (isLoading.value || hasRepositories.value) return null;
+  if (!authStore.user) return null;
   if (hasSearchOrFilter.value) {
     return {
       icon: 'mdi-magnify-close',
