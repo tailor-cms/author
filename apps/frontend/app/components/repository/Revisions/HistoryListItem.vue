@@ -23,7 +23,7 @@
     <template #append>
       <VChip
         v-if="isPublished"
-        color="tertiary"
+        color="secondary"
         size="x-small"
         text="Published"
         variant="tonal"

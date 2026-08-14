@@ -14,6 +14,8 @@ export interface Relationship {
   uid?: string;
   containerId?: number;
   outlineId?: number;
+  /** Model the pointer resolves against; omitted for same-entity refs. */
+  entity?: string;
 }
 
 export interface RelationshipType extends ElementRelationship {
@@ -31,11 +33,13 @@ export interface ElementSourceInfo {
   linkedAt?: string;
 }
 
-export interface ContentElement {
+/**
+ * Persisted columns of a content element.
+ */
+export interface ContentElementAttrs {
   id: number;
   uid: string;
   type: string;
-  activity?: Activity;
   repositoryId: number;
   /** Container holding the element */
   activityId: number;
@@ -48,9 +52,11 @@ export interface ContentElement {
   /**
    * Cross-element references keyed by the relationship types the schema
    * declares for this element type via `elementMeta.relationships[]`.
-   * Values are arrays of pointers (see `Relationship`).
+   * Values are arrays of pointers (see `Relationship`); single-valued
+   * relationships store one bare pointer instead (e.g. an exam question's
+   * `objective`, which points at an Activity).
    */
-  refs: Record<string, Relationship[]>;
+  refs: Record<string, Relationship[] | Relationship>;
   /** Parent is soft-deleted */
   detached: boolean;
   /** Whether this element is an active linked copy */
@@ -63,12 +69,26 @@ export interface ContentElement {
   contentId: string;
   /** SHA-1 hash of `data`. Updated on every write */
   contentSignature?: string;
-  comments?: Comment[];
-  hasUnresolvedComments?: boolean;
-  embedded?: boolean;
-  lastSeen?: number;
-  diffChange?: DiffChangeTypes;
   createdAt: string;
   updatedAt: string;
   deletedAt: null | string;
+}
+
+/**
+ * The persisted columns from `ContentElementAttrs`, plus two kinds of non-column
+ * fields; associations attached on read (associations like `activity`/`comments`,
+ * computed flags) and client-only/processed attrs (`parent`, `lastSeen`,
+ * `diffChange`). The backend model is typed by `ContentElementAttrs`, so
+ * none of these appear on a persisted instance.
+ */
+export interface ContentElement extends ContentElementAttrs {
+  /** Owning outline activity, when loaded via include */
+  activity?: Activity;
+  comments?: Comment[];
+  embedded?: boolean;
+  /** Parent/composite element when focusing an embed (client-only) */
+  parent?: ContentElement;
+  lastSeen?: number;
+  /** Client-only: publish-diff change marker */
+  diffChange?: DiffChangeTypes;
 }

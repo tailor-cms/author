@@ -12,15 +12,18 @@
         <span v-tooltip:right="fullDate" class="time">
           {{ timeAgo }}
         </span>
-        <template v-if="isActivityThread && elementLabel">
-          <EditorLink
-            v-if="!isDeleted"
-            :activity-id="comment.activityId"
-            :element-uid="elementUid"
-            :label="elementLabel"
-            class="ml-1"
-          />
-        </template>
+        <EditorLink
+          v-if="
+            isActivityThread
+              && elementLabel
+              && !isDeleted
+              && comment.activityId != null
+          "
+          :activity-id="comment.activityId"
+          :element-uid="elementUid"
+          :label="elementLabel"
+          class="ml-1"
+        />
       </div>
     </div>
     <VMenu

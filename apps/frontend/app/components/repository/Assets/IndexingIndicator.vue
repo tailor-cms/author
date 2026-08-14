@@ -16,7 +16,7 @@
         <VProgressCircular
           v-if="isActiveStatus(item.status)"
           class="mr-3"
-          color="tertiary"
+          color="secondary"
           size="18"
           width="2"
           indeterminate

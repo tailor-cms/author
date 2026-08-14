@@ -46,7 +46,7 @@ every schema in `config/src/schemas/` is only an example - none is canonical.
   ports, runs backend + frontend + api-client watcher. Needs a DB;
   `PORT`/`REVERSE_PROXY_PORT` must differ (FE served via the proxy). `pnpm
   dc` also starts Docker Compose dev services.
-- `pnpm build|lint|seed`, `pnpm db:migrate|db:reset`; backend `type-check`.
+- `pnpm build|lint|seed`, `pnpm db:migrate|db:reset`; backend `typecheck`.
   Migrations auto-apply at boot unless `DATABASE_DISABLE_MIGRATIONS_ON_STARTUP`.
 - Tests (`tests/`): `pnpm e2e:functional|e2e:visual|e2e:a11y`. Single: `cd
   tests && pnpm playwright test specs/functional/<f>.spec.ts

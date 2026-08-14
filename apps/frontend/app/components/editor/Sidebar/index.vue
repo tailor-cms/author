@@ -51,7 +51,7 @@
               location="bottom"
             />
             <template v-if="tab.badgeData" #append>
-              <VBadge :content="tab.badgeData" color="tertiary" inline />
+              <VBadge :content="tab.badgeData" color="secondary" inline />
             </template>
           </VTab>
         </VTabs>
@@ -83,7 +83,10 @@
             />
           </VWindowItem>
           <VWindowItem :value="COMMENTS_TAB">
-            <ActivityDiscussion :activity="selectedActivity" />
+            <ActivityDiscussion
+              :key="selectedActivity.id"
+              :activity="selectedActivity"
+            />
           </VWindowItem>
           <VWindowItem :value="HISTORY_TAB">
             <ActivityHistory :activity="selectedActivity" />
@@ -107,7 +110,7 @@
       :icon="activeTabIcon"
       aria-label="Open sidebar"
       class="sidebar-toggle"
-      color="secondary-container"
+      color="primary-container"
       density="comfortable"
       size="small"
       @click="modelValue = true"
@@ -136,7 +139,7 @@ const modelValue = defineModel<boolean>({ required: true });
 const props = defineProps<{
   repository: Repository;
   activities: Activity[];
-  selectedActivity: Activity;
+  selectedActivity: StoreActivity;
   selectedElement: ContentElement | null;
 }>();
 

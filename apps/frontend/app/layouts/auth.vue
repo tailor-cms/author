@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-container fill-height bg-surface-container-low pa-4">
+  <div class="auth-container fill-height bg-surface-canvas pa-4">
     <div class="theme-switcher">
       <ThemeSwitcher />
     </div>

@@ -1,10 +1,9 @@
 {
   "compilerOptions": {
-    "target": "ES2018",
-    "lib": ["esnext"],
+    "target": "es2024",
+    "lib": ["es2024", "esnext.decorators"],
     "module": "ESNext",
-    "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "strict": false,
     "strictNullChecks": true,

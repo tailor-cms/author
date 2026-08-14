@@ -17,9 +17,10 @@ import {
   workflow as workflowConfig,
 } from '@tailor-cms/config';
 import { api } from '@/api';
+import { useTimeoutFn } from '@vueuse/core';
 import { useActivityStore } from './activity';
 import { useRepositoryStore } from './repository';
-import { filter } from 'lodash-es';
+import { filter, keyBy } from 'lodash-es';
 
 const { getWorkflow } = workflowConfig;
 
@@ -28,6 +29,10 @@ type Id = number | string;
 interface OutlineState {
   expanded: Map<string, boolean>;
 }
+
+// Only record a repository as "recent" after the user has stayed this long,
+// so accidental opens the user immediately bounces from never enter the list.
+const RECENT_MIN_VISIT_MS = 10_000;
 
 const getOutlineKey = (repositoryId: Id) =>
   `tailor-cms-outline:${repositoryId}`;
@@ -60,6 +65,12 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   });
 
   const repositoryId = ref<number | null>(null);
+
+  const { start: startRecentTimer, stop: stopRecentTimer } = useTimeoutFn(
+    () => repositoryId.value && recentRepositories.touch(repositoryId.value),
+    RECENT_MIN_VISIT_MS,
+    { immediate: false },
+  );
 
   const repository = computed(() => {
     return repositoryId.value ? Repository.findById(repositoryId.value) : null;
@@ -109,6 +120,13 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     return items.sort((a, b) => a.position - b.position);
   });
 
+  const expandableOutlineActivities = computed(() => {
+    const levelByType = keyBy(taxonomy.value, 'type');
+    return outlineActivities.value.filter(
+      ({ type }) => !!levelByType[type]?.subLevels?.length,
+    );
+  });
+
   const selectedActivity = computed(() => {
     const id = parseInt(route.query.activityId as string, 10);
     if (Number.isNaN(id)) return undefined;
@@ -146,12 +164,9 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const isOutlineExpanded = computed(() => {
     if (!repository.value) return false;
-    const totalItems = outlineActivities.value.length;
-    const itemStates = outlineActivities.value.map((it) =>
-      outlineState.expanded.get(it.uid),
-    );
-    const expandedItems = itemStates.filter(Boolean).length;
-    return expandedItems === totalItems;
+    const items = expandableOutlineActivities.value;
+    if (!items.length) return false;
+    return items.every((it) => outlineState.expanded.get(it.uid));
   });
 
   const isOutlineItemExpanded = (id: Id) => {
@@ -171,7 +186,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
 
   const toggleOutlineExpand = () => {
     const expand = !isOutlineExpanded.value;
-    outlineActivities.value.forEach((it) =>
+    expandableOutlineActivities.value.forEach((it) =>
       outlineState.expanded.set(it.uid, expand),
     );
   };
@@ -231,7 +246,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     await Activity.fetch(repoId, { outlineOnly: true });
     // Notify plugins about repository change (e.g., i18n initialization)
     if (repository.value) {
-      recentRepositories.touch(repoId);
+      startRecentTimer();
       $pluginRegistry.filter('repository:change', null, {
         schema: schema.value,
         repository: repository.value,
@@ -240,6 +255,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
   };
 
   function $reset() {
+    stopRecentTimer();
     if (repositoryId.value) saveOutline(repositoryId.value, outlineState);
     repositoryId.value = null;
     outlineState.expanded.clear();

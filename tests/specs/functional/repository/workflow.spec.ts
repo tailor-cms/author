@@ -30,8 +30,7 @@ test('should display no items for empty repository', async ({ page }) => {
   const repository = await toEmptyRepository(page);
   await page.goto(getWorkflowRoute(repository.id));
   const workflow = new Workflow(page);
-  const table = await workflow.showTable();
-  await expect(table.emptyState).toBeVisible();
+  await expect(workflow.emptyState).toBeVisible();
 });
 
 test.describe('with a seeded workflow', () => {
@@ -222,9 +221,9 @@ test.describe('with a seeded workflow', () => {
     test('status filter focuses a single column', async ({ page }) => {
       const workflow = new Workflow(page);
       await expect(workflow.board.columns).toHaveCount(statuses.length);
-      await workflow.filterStatus('Done');
+      await workflow.filterStatus('Todo');
       await expect(workflow.board.columns).toHaveCount(1);
-      await expect(workflow.board.column('Done')).toBeVisible();
+      await expect(workflow.board.column('Todo')).toBeVisible();
     });
 
     test('drag moves a card to another status', async ({ page }) => {

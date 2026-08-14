@@ -1,6 +1,7 @@
 // Reusable Zod building blocks for action input / response schemas.
 // Centralised here so a "trimmed short text" rule reads identically across
 // actions and any tightening happens in one place.
+import { oneLine } from 'common-tags';
 import { z, type ZodType } from 'zod';
 
 // Standard `{ data: T }` response envelope. Non-`raw` actions wrap their
@@ -69,6 +70,16 @@ export const Int = () => z.number().int().positive();
 export const Relationship = z
   .object({
     id: Int().describe('Referenced entity id.'),
+    // Resolved by `detectMissingReferences`; without it the pointer is
+    // looked up in the owning entity's own table and pruned as missing.
+    entity: z
+      .string()
+      .optional()
+      .describe(oneLine`
+        Model the pointer resolves against. Omit for same-entity refs
+        (element -> element); set to \`Activity\` for an element -> activity
+        ref such as an exam question's objective.
+      `),
     containerId: Int()
       .optional()
       .describe('Container activity id (for content-element refs).'),
@@ -80,10 +91,14 @@ export const Relationship = z
   .meta({ id: 'Relationship' });
 
 // Cross-reference bag stored under `refs`. Keys are relationship type
-// names declared by the schema for the owning entity; values are arrays
-// of `Relationship` pointers.
+// names declared by the schema for the owning entity. Values are either a
+// list of `Relationship` pointers or, for single-valued relationships, one
+// bare pointer - both shapes are handled by `normalizeReferenceValue` and
+// `removeReference` in `shared/util/modelReference.js`.
 export const Refs = (desc = 'Cross-entity references (JSONB).') =>
-  z.record(z.string(), z.array(Relationship)).describe(desc);
+  z
+    .record(z.string(), z.union([z.array(Relationship), Relationship]))
+    .describe(desc);
 
 // Unsigned integer (>=0) for body/response fields where 0 is a
 // meaningful value: sizes (an empty file is 0 bytes), counts,

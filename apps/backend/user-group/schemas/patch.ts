@@ -5,7 +5,7 @@ import { UserGroup } from './entity.ts';
 export const PatchInput = z
   .object({
     name: UserGroup.shape.name.optional(),
-    logoUrl: UserGroup.shape.logoUrl.unwrap().optional(),
+    logoUrl: UserGroup.shape.logoUrl.nullish(),
   })
   .describe('Patch payload for a user-group update operation.');
 

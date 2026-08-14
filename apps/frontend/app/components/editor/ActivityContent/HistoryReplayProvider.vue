@@ -28,6 +28,12 @@ import type { RevisionReconstructEntity } from '@tailor-cms/api-client';
 
 import { api } from '@/api';
 
+const diffChangeByKey: Record<string, DiffChangeTypes> = {
+  new: DiffChangeTypes.New,
+  changed: DiffChangeTypes.Changed,
+  removed: DiffChangeTypes.Removed,
+};
+
 interface Props {
   repositoryId: number;
   activityId: number;
@@ -128,7 +134,7 @@ const processedElements = computed<Record<string, ContentElement>>(() => {
     historicalElements.value.map(({ uid, state, change }) => ({
       ...(props.elements[uid] ?? {}),
       ...(state as unknown as ContentElement),
-      diffChange: change ?? undefined,
+      diffChange: change ? diffChangeByKey[change] : undefined,
     })),
     'uid',
   );

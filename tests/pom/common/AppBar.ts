@@ -40,6 +40,11 @@ export class AppBar {
     await this.repositoryList.waitFor();
   }
 
+  async closeRepositorySwitcher() {
+    await this.page.keyboard.press('Escape');
+    await this.repositoryList.waitFor({ state: 'hidden' });
+  }
+
   repositoryItems() {
     return this.repositoryList.locator('.v-list-item');
   }
@@ -54,5 +59,15 @@ export class AppBar {
 
   switchToRepository(name: string) {
     return this.repositoryItem(name).click();
+  }
+
+  recentRemoveButton(name: string) {
+    return this.repositoryItem(name).getByRole('button', {
+      name: `Remove ${name} from recents`,
+    });
+  }
+
+  removeRecent(name: string) {
+    return this.recentRemoveButton(name).click();
   }
 }

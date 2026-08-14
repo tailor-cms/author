@@ -1,4 +1,4 @@
-import type { AiContext } from '@tailor-cms/interfaces/ai.ts';
+import type { AiGenerationContext } from '@tailor-cms/interfaces/ai.ts';
 import { schema as schemaConfiguration } from '@tailor-cms/config';
 
 import type { AiResponseSpec, OpenAISchema } from './interfaces.js';
@@ -78,7 +78,7 @@ const generateTaxonomyDesc = (schemaId: string): string => {
   `;
 };
 
-const getPrompt = (context: AiContext): string => {
+const getPrompt = (context: AiGenerationContext): string => {
   const { schemaId } = context.repository;
   const schema = getSchema(schemaId);
   const leafLevels = getOutlineLevels(schemaId).filter(

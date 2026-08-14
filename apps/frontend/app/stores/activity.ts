@@ -286,6 +286,8 @@ export const useActivityStore = defineStore('activities', () => {
         const requirePublishing = activityUtils.doesRequirePublishing(activity);
         if (requirePublishing) add(activity as Activity);
         else $items.delete(activity.uid);
+        const descendants = getDescendants(activity.uid);
+        descendants.forEach((child) => $items.delete(child.uid));
       });
   };
 

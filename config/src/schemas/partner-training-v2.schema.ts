@@ -37,6 +37,7 @@ const baseMeta = [
     label: 'Estimated time (minutes)',
     placeholder: 'Enter estimated time in minutes',
     inputType: 'number',
+    validate: { min_value: 0 },
   },
   {
     key: 'tags',

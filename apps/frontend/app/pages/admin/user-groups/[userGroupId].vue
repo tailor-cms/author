@@ -10,8 +10,13 @@
         @click="router.back()"
       />
       <UserGroupAvatar :logo-url="userGroup?.logoUrl" size="40" />
-      <div class="text-left">
-        <h1 class="text-title-large">{{ userGroup?.name }}</h1>
+      <div class="group-title text-left overflow-hidden">
+        <h1
+          v-tooltip:bottom="{ text: userGroup?.name, openDelay: 500 }"
+          class="text-title-large text-truncate"
+        >
+          {{ userGroup?.name }}
+        </h1>
       </div>
       <VSpacer />
       <VBtn
@@ -56,14 +61,7 @@
           @save="fetchUsers()"
         />
       </div>
-      <TailorEmptyState
-        v-if="!userGroupUsers.length"
-        icon="mdi-account-multiple-outline"
-        text="No users assigned to this group yet."
-        title="No members"
-      />
       <VDataIterator
-        v-else
         v-model:page="page"
         :items="userGroupUsers"
         :items-per-page="ITEMS_PER_PAGE"
@@ -90,11 +88,7 @@
           </VList>
         </template>
         <template #no-data>
-          <TailorEmptyState
-            icon="mdi-magnify"
-            text="No members match your search."
-            title="No matches"
-          />
+          <TailorEmptyState v-bind="emptyState" @click:action="search = ''" />
         </template>
         <template #footer="{ page: currentPage, pageCount, itemsCount }">
           <div
@@ -147,6 +141,7 @@ definePageMeta({
 
 const route = useRoute();
 const router = useRouter();
+const auth = useAuthStore();
 const notify = useNotification();
 const notifyError = (message: string) => notify(message, { color: 'error' });
 
@@ -167,6 +162,21 @@ const sortOrder = ref<'asc' | 'desc'>('asc');
 const sortIcon = computed(() => sortOrder.value === 'desc'
   ? 'mdi-sort-alphabetical-descending'
   : 'mdi-sort-alphabetical-ascending',
+);
+
+const emptyState = computed(() => search.value
+  ? {
+      actionText: 'Clear search',
+      prependActionIcon: 'mdi-close',
+      icon: 'mdi-magnify',
+      text: 'No members match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-account-multiple-outline',
+      text: 'No users assigned to this group yet.',
+      title: 'No members',
+    },
 );
 
 const toggleSort = () => {
@@ -201,15 +211,27 @@ async function upsertUser(email: string, role: string) {
 
 async function removeUser(userId: number) {
   const showDialog = useConfirmationDialog();
+  const willLoseAccess = userId === auth.user?.id && !auth.isAdmin;
+  const hasOtherAdminGroups = auth.groupsWithAdminAccess.length > 1;
   const confirmation = {
-    title: 'Remove user',
+    title: willLoseAccess ? 'Remove yourself' : 'Remove user',
     color: 'error',
-    message: 'Are you sure you want to remove user from a group?',
+    message: willLoseAccess
+      ? `You are about to remove yourself from this group and will lose access
+        to it. Are you sure?`
+      : 'Are you sure you want to remove user from a group?',
     action: async () => {
       await api.userGroup.removeUser({
         params: { id: userGroupId, userId },
       });
+      if (willLoseAccess) {
+        notify('You removed yourself from the group.');
+        if (hasOtherAdminGroups) return navigateTo({ name: 'user-groups' });
+        await auth.fetchUserInfo();
+        return navigateTo('/');
+      }
       await fetchUsers();
+      notify('User removed');
     },
   };
   showDialog(confirmation);
@@ -242,6 +264,10 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
+.group-title {
+  min-width: 0;
+}
+
 .member-search {
   max-width: 18rem;
 

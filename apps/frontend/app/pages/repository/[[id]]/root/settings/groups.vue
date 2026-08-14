@@ -38,14 +38,7 @@
           <VSpacer />
           <AddUserGroup :user-groups="groups" />
         </div>
-        <TailorEmptyState
-          v-if="!groups.length"
-          icon="mdi-account-group-outline"
-          text="No user groups associated with this repository yet."
-          title="No user groups"
-        />
         <VDataIterator
-          v-else
           v-model:page="page"
           :items="groups"
           :items-per-page="ITEMS_PER_PAGE"
@@ -93,11 +86,7 @@
             </VList>
           </template>
           <template #no-data>
-            <TailorEmptyState
-              icon="mdi-magnify"
-              text="No user groups match your search."
-              title="No matches"
-            />
+            <TailorEmptyState v-bind="emptyState" @click:action="search = ''" />
           </template>
           <template #footer="{ page: currentPage, pageCount, itemsCount }">
             <div
@@ -162,6 +151,21 @@ const toggleSort = () => {
 
 const groups = computed<UserGroup[]>(
   () => (repository.value?.userGroups as UserGroup[]) ?? [],
+);
+
+const emptyState = computed(() => search.value
+  ? {
+      actionText: 'Clear search',
+      prependActionIcon: 'mdi-close',
+      icon: 'mdi-magnify',
+      text: 'No user groups match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-account-group-outline',
+      text: 'No user groups associated with this repository yet.',
+      title: 'No user groups',
+    },
 );
 
 watch([search, sortOrder], () => {

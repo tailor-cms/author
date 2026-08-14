@@ -11,12 +11,13 @@
   >
     <template #activator="{ props: menuProps }">
       <VBtn
-        v-tooltip:left="{ text: activator.tooltip, openDelay: 1000 }"
+        v-tooltip:bottom="{ text: activator.tooltip, openDelay: 1000 }"
         v-bind="menuProps"
         :icon="activator?.icon"
         aria-label="View comments"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" class="pa-4" rounded="lg">
@@ -24,7 +25,6 @@
         v-bind="{
           comments,
           unseenComments,
-          hasUnresolvedComments,
           user,
           isVisible,
         }"
@@ -47,7 +47,7 @@ import { Events } from '@tailor-cms/utils';
 import { get } from 'lodash-es';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import Discussion from './Discussion/index.vue';
+import Discussion from '../../Discussion/index.vue';
 
 const getActivatorOptions = (unseenComments: Comment[]) => ({
   unseen: {
@@ -75,17 +75,15 @@ interface Props {
   lastSeen?: number | null;
   user: User;
   id?: number | null;
-  hasUnresolvedComments?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   id: null,
   comments: () => [],
   lastSeen: null,
-  hasUnresolvedComments: false,
 });
 
-const isVisible = ref(false);
+const isVisible = defineModel<boolean>('open', { default: false });
 const isConfirmationActive = ref(false);
 
 const editorBus = inject<any>('$editorBus');
@@ -118,7 +116,6 @@ const save = (data: Partial<Comment>) => {
       ...data,
       author: props.user,
       contentElementId: props.id,
-      hasUnresolvedComments: props.hasUnresolvedComments,
     },
   });
 };

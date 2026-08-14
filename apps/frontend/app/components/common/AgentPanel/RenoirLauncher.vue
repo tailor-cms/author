@@ -3,7 +3,7 @@
     v-if="showRenoir"
     v-bind="$attrs"
     :class="{ 'is-running': isAgentRunning }"
-    :color="isPanelOpen ? 'tertiary' : undefined"
+    :color="isPanelOpen ? 'secondary' : undefined"
     class="renoir-pill"
     height="40"
     rounded="pill"

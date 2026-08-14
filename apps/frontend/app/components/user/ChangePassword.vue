@@ -10,7 +10,6 @@
       <VBtn
         v-bind="props"
         class="mt-6"
-        color="secondary"
         prepend-icon="mdi-lock"
         text="Change Password"
         variant="tonal"
@@ -46,9 +45,7 @@
       />
     </template>
     <template #actions>
-      <NuxtLink :to="{ name: 'forgot-password' }" class="text-body-medium">
-        Forgot password ?
-      </NuxtLink>
+      <NuxtLink :to="{ name: 'forgot-password' }">Forgot password?</NuxtLink>
       <VSpacer />
       <VBtn
         text="Cancel"

@@ -10,7 +10,7 @@
       :rounded="rounded"
       :text="label"
       :value="value"
-      color="tertiary"
+      color="secondary"
       role="button"
       size="small"
       variant="tonal"

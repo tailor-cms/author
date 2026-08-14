@@ -1,20 +1,21 @@
+import { createLogger } from '#logger';
+import { pinSchemaSnapshot } from '#app/repository/lib/schema.ts';
+import { parse } from 'JSONStream';
+import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
+import { SCHEMAS } from '@tailor-cms/config';
 import filter from 'lodash/filter.js';
 import forEach from 'lodash/forEach.js';
 import isEmpty from 'lodash/isEmpty.js';
 import last from 'lodash/last.js';
 import map from 'lodash/map.js';
+import memoize from 'lodash/memoize.js';
 import miss from 'mississippi';
 import omit from 'lodash/omit.js';
-import { parse } from 'JSONStream';
 import Promise from 'bluebird';
 import reduce from 'lodash/reduce.js';
 import roleConfig from '@tailor-cms/interfaces/role';
-import { SCHEMAS } from '@tailor-cms/config';
 import zipObject from 'lodash/zipObject.js';
 import db from '../../database/index.js';
-import { createLogger } from '#logger';
-import { pinSchemaSnapshot } from '#app/repository/lib/schema.ts';
-import { stripInstanceSpecific } from '#app/repository/lib/data-attr.ts';
 
 const logger = createLogger('processors');
 
@@ -73,6 +74,8 @@ export default {
 // and can pick "registry hit", "paste-mode fallback", or "fail".
 function processManifest(manifest, _enc, { context }) {
   if (!manifest?.schema?.id) throw new Error('Manifest missing schema');
+  // New import run; reset
+  reportUnknownColumn.cache.clear();
   context.manifestSchema = manifest.schema;
   context.assets.push(...manifest.assets);
 }
@@ -253,17 +256,37 @@ function groupByDepth(activities) {
   }
 }
 
+/**
+ * Map raw archive columns to model attributes. Archives exported by
+ * other app versions may carry columns the model no longer has;
+ * those are dropped with a warning instead of failing the whole import.
+ */
 function normalize(it, Model) {
   return reduce(
     it,
     (acc, value, key) => {
-      const { fieldName } = Model.fieldRawAttributesMap[key];
-      acc[fieldName] = value;
+      const attribute = Model.fieldRawAttributesMap[key];
+      // Column unknown to the current model; skip it
+      if (!attribute) {
+        reportUnknownColumn(Model, key);
+        return acc;
+      }
+      acc[attribute.fieldName] = value;
       return acc;
     },
     {},
   );
 }
+
+// Memoized to avoid log spam; cache is reset per import
+const reportUnknownColumn = memoize(
+  (Model, key) =>
+    logger.warn(
+      { model: Model.name, column: key },
+      'Skipping unknown archive column',
+    ),
+  (Model, key) => `${Model.name}.${key}`,
+);
 
 function createProcessor(transform = noop, flush = noop, options = {}) {
   if (arguments.length < 3) {

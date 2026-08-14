@@ -8,7 +8,7 @@
   >
     <template #activator="{ props: menuProps }">
       <VBtn
-        v-tooltip:left="{
+        v-tooltip:bottom="{
           text: tooltipText,
           disabled: menuOpen,
           openDelay: 1000,
@@ -16,10 +16,10 @@
         v-bind="menuProps"
         :class="{ 'opacity-60': !isEntryPoint }"
         aria-label="Linked content"
-        color="tertiary"
         icon="mdi-link-variant"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
@@ -53,7 +53,7 @@
 
 <script lang="ts" setup>
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
-import { computed, ref, watch } from 'vue';
+import { computed, watch } from 'vue';
 
 interface Props {
   sourceInfo?: ElementSourceInfo | null;
@@ -73,7 +73,7 @@ const emit = defineEmits<{
   'source:view': [sourceInfo: ElementSourceInfo];
 }>();
 
-const menuOpen = ref(false);
+const menuOpen = defineModel<boolean>('open', { default: false });
 
 const tooltipText = computed(() =>
   props.isEntryPoint

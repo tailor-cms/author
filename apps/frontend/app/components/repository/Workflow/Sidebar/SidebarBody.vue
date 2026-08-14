@@ -10,7 +10,7 @@
       @change="updateStatus('description', $event)"
     />
     <SelectStatus
-      :items="workflow.statuses"
+      :items="workflow?.statuses ?? []"
       :model-value="activityStatus.status"
       class="my-4"
       data-testid="workflow_statusInput"
@@ -53,6 +53,7 @@
       @update:model-value="updateStatus('dueDate', $event)"
     />
     <ActivityDiscussion
+      :key="activity.id"
       :activity="activity"
       panel
       show-heading

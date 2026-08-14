@@ -13,7 +13,7 @@
         </VSheet>
         <VSheet
           v-else
-          class="preview-scale py-3"
+          class="preview-scale"
           color="surface"
           rounded="lg"
           border

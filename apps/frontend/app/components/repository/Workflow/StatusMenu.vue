@@ -24,7 +24,7 @@
     </template>
     <VList density="compact" min-width="180" nav>
       <VListItem
-        v-for="option in workflow.statuses"
+        v-for="option in workflow?.statuses ?? []"
         :key="option.id"
         :active="option.id === activity.currentStatus.status"
         @click="update(activity, 'status', option.id)"

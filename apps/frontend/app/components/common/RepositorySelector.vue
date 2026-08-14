@@ -63,6 +63,17 @@
             <template #prepend>
               <VIcon :icon="repositoryIcon(item.id)" size="small" />
             </template>
+            <template v-if="isRemovableRecent(item.id)" #append>
+              <VBtn
+                :aria-label="`Remove ${item.name} from recents`"
+                class="remove-recent"
+                icon="mdi-close"
+                size="x-small"
+                variant="text"
+                density="comfortable"
+                @click.stop="removeRecent(item.id)"
+              />
+            </template>
           </VListItem>
         </VList>
         <div
@@ -87,11 +98,25 @@ const RECENT_LIMIT = 8;
 
 const props = defineProps<{ repository: Repository }>();
 
-const { search, items, recentItems, isLoading, hasLoaded, fetchRecent } =
-  useRepositorySwitcher();
+const {
+  search,
+  items,
+  recentItems,
+  isLoading,
+  hasLoaded,
+  fetchRecent,
+  removeRecent,
+} = useRepositorySwitcher();
 const recentRepositories = useRecentRepositories();
 
 const hasQuery = computed(() => !!search.value);
+
+// A row is a removable recent only in the default view: never the pinned
+// current repository, and never a search result.
+const isRemovableRecent = (id: number) =>
+  !hasQuery.value &&
+  id !== props.repository.id &&
+  recentRepositories.ids.value.includes(id);
 
 // The current repository is excluded; it renders from the prop, pinned first.
 const recentIds = computed(() => {
@@ -144,6 +169,24 @@ watch(isOpen, (open) => {
 </script>
 
 <style lang="scss" scoped>
+// Reveal the remove control on hover/focus only; keep it visible on touch
+// where there is no hover. Opacity (not v-if) so the row never reflows.
+.remove-recent {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+
+  .v-list-item:hover &,
+  .v-list-item:focus-within & {
+    opacity: 1;
+  }
+}
+
+@media (hover: none) {
+  .remove-recent {
+    opacity: 1;
+  }
+}
+
 .repository-list :deep(.v-list-item-title) {
   white-space: normal;
   display: -webkit-box;

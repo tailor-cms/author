@@ -28,6 +28,7 @@
         :counter="NAME_MAX_LENGTH"
         :error-messages="errors.name"
         :messages="warning"
+        autofocus
         class="mb-3 required"
         label="Group name"
         placeholder="Enter group name..."
@@ -154,7 +155,7 @@ const submit = handleSubmit(async () => {
   const action = isNewGroup.value ? 'create' : 'update';
   const body = {
     name: nameInput.value || undefined,
-    logoUrl: logoUrlInput.value || undefined,
+    logoUrl: logoUrlInput.value || null,
   };
   let group;
   try {

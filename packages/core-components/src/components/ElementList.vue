@@ -4,19 +4,16 @@
       v-bind="options"
       :disabled="isDisabled"
       :list="elements"
-      item-key="uid"
+      :item-key="getElementId"
       tag="VRow"
-      @end="dragElementIndex = -1"
-      @start="dragElementIndex = $event.oldIndex"
+      @end="onDragEnd"
+      @start="onDragStart"
       @update="reorder"
     >
       <template #item="{ element, index }">
         <VCol
           :key="getElementId(element)"
           :cols="getVal(element, 'data.width', 12)"
-          class="pr-5"
-          @dragend="onDragEnd(element)"
-          @dragstart="onDragStart(index)"
         >
           <slot
             :element="element"
@@ -94,28 +91,24 @@ const options = computed(() => ({
   handle: '.drag-handle',
 }));
 
-const onDragStart = (index: number) => {
-  dragElementIndex.value = index;
+const onDragStart = (event: { oldIndex: number }) => {
+  dragElementIndex.value = event.oldIndex;
   editorBus.emit('element:focus');
 };
 
-const onDragEnd = (element: ContentElement) => {
+const onDragEnd = (event: { newIndex: number }) => {
   dragElementIndex.value = -1;
-  editorBus.emit('element:focus', element);
+  const element = props.elements[event.newIndex];
+  if (element) editorBus.emit('element:focus', element);
 };
 
-const reorder = ({ newIndex: newPosition }: { newIndex: number }) => {
+const reorder = (event: { newIndex: number }) => {
   const items = props.elements;
-  emit('update', { newPosition, items });
+  emit('update', { newPosition: event.newIndex, items });
 };
 </script>
 
 <style lang="scss" scoped>
-/* Do not remove! Makes sure vuedraggable detects correct scrollable parent */
-.list-group {
-  padding: 0.625rem 1.5rem;
-}
-
 :deep(.sortable-ghost) {
   .drag-handle {
     display: none;

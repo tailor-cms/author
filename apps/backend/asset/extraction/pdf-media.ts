@@ -137,8 +137,8 @@ export async function extractAndSaveImages(
     }
     seenHashes.add(hash);
 
-    let created: any = null;
-    let storageKey: string | null = null;
+    let created: any;
+    let storageKey: string | null;
     try {
       const built = buildStorageKey(asset.repositoryId, 'pdf-extract.jpg');
       storageKey = built.key;

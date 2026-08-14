@@ -126,10 +126,12 @@
         <VSelect
           v-show="showUserGroupInput"
           v-model="groupInput"
-          :clearable="!lockedGroupId"
+          :clearable="isGroupSelectClearable"
           :error-messages="errors.userGroupIds"
           :items="authStore.groupsWithCreateRepositoryAccess"
+          :menu-props="{ maxWidth: 460 }"
           class="user-group-select mb-3"
+          no-data-text="No more user groups to add"
           item-title="name"
           item-value="id"
           label="User Group"
@@ -143,9 +145,17 @@
         >
           <template #chip="{ internalItem, props: chipProps }">
             <VChip
+              v-tooltip:top="{
+                text: internalItem.title,
+                openDelay: 400,
+                maxWidth: 400,
+              }"
               v-bind="chipProps"
               :closable="internalItem.value !== lockedGroupId"
-            />
+              class="user-group-chip"
+            >
+              <span class="text-truncate">{{ internalItem.title }}</span>
+            </VChip>
           </template>
         </VSelect>
       </div>
@@ -169,6 +179,7 @@
 </template>
 
 <script lang="ts" setup>
+import type { Metadata } from '@tailor-cms/interfaces/schema';
 import { pick, startCase } from 'lodash-es';
 import { formDataBodySerializer } from '@tailor-cms/api-client';
 import { schema as schemaApi } from '@tailor-cms/config';
@@ -257,12 +268,16 @@ const [descriptionInput] = defineField('description');
 const [archiveInput] = defineField('archive');
 const [groupInput] = defineField('userGroupIds');
 
+const isGroupSelectClearable = computed(
+  () => !lockedGroupId.value && (groupInput.value?.length ?? 0) > 1,
+);
+
 const schema = computed(() =>
   schemaInput.value ? schemaApi.getSchema(schemaInput.value) : undefined,
 );
 
 const schemaMeta = computed(() =>
-  schema.value?.meta?.filter((it) => !it.hideOnCreate),
+  schema.value?.meta?.filter((it: Metadata) => !it.hideOnCreate),
 );
 
 // Export names the download after the repository (see snakeCase(name) in
@@ -331,7 +346,7 @@ watch(
     // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
     Object.keys(metaValidation).forEach((key) => delete metaValidation[key]);
     if (!val?.length) return;
-    return val.forEach((it) => (metaValidation[it.key] = it.validate));
+    return val.forEach((it: Metadata) => (metaValidation[it.key] = it.validate));
   },
   { immediate: true },
 );

@@ -1,27 +1,15 @@
 import { elements } from '@tailor-cms/content-element-collection/server.js';
-import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
+import filter from 'lodash/filter.js';
+import map from 'lodash/map.js';
 import pick from 'lodash/pick.js';
 import storage from '../../repository/storage.ts';
 import hooksTypes from './elementHooks.js';
 import config from '#config';
 
-// Hardcoded because the per-element
-// server packages' default export (serverModule) doesn't carry
-// `isQuestion`
-const QUESTION_TYPES = new Set([
-  ContentElementType.MultipleChoice,
-  ContentElementType.SingleChoice,
-  ContentElementType.MatchingQuestion,
-  ContentElementType.TextResponse,
-  ContentElementType.TrueFalse,
-  ContentElementType.NumericalResponse,
-  ContentElementType.FillBlank,
-  ContentElementType.DragDrop,
-]);
-
 class ElementsRegistry {
   constructor() {
     this._registry = elements;
+    this._questionTypes = map(filter(elements, 'isQuestion'), 'type');
     this._hooks = {};
     this._procedures = {};
     this._aiSchemas = {};
@@ -48,7 +36,7 @@ class ElementsRegistry {
   }
 
   isQuestion(type) {
-    return QUESTION_TYPES.has(type);
+    return this._questionTypes.includes(type);
   }
 
   getHook(elementType, hookName) {

@@ -42,12 +42,17 @@
         @click="navigateToActivity(item.id)"
       />
     </VList>
-    <VAlert
+    <TailorEmptyState
       v-else
-      class="mx-4"
-      icon="mdi-information-outline"
-      text="No items found!"
-      variant="tonal"
+      action-text="Clear search"
+      prepend-action-icon="mdi-close"
+      text="No items match your search."
+      title="No matches"
+      class="flex-grow-1"
+      height="100%"
+      icon="mdi-magnify"
+      variant="text"
+      @click:action="search = ''"
     />
   </div>
 </template>
@@ -58,6 +63,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import CollectionSortMenu from '@/components/repository/Outline/CollectionSortMenu.vue';
 import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 const props = defineProps<{
   repository: Repository;

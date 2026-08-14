@@ -1,5 +1,5 @@
-FROM node:26.1.0-bookworm-slim AS base
-RUN npm install -g pnpm@11.1.3
+FROM node:26.5.0-bookworm-slim AS base
+RUN npm install -g pnpm@11.16.0
 RUN apt update && apt install -y --no-install-recommends dumb-init
 ENTRYPOINT ["dumb-init", "--"]
 

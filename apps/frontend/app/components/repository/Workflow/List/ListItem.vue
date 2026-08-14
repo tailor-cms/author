@@ -22,7 +22,7 @@
         />
         <VChip
           :text="activity.shortId"
-          color="secondary"
+          color="tertiary"
           class="mr-2 font-weight-semibold"
           size="x-small"
         />

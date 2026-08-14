@@ -42,7 +42,7 @@ import { computed, inject } from 'vue';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { get } from 'lodash-es';
 
-import ContentElementWrapper from '../ContentElement.vue';
+import ContentElementWrapper from '../ContentElement/index.vue';
 
 interface Props {
   element: ContentElement;

@@ -4,7 +4,7 @@
       :text="unseenCommentsLabel"
       prepend-icon="mdi-arrow-down"
       close-icon="mdi-close"
-      color="tertiary"
+      color="secondary"
       size="small"
       variant="flat"
       closable

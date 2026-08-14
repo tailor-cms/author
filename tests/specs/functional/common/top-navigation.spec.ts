@@ -14,14 +14,14 @@ test.beforeEach(async ({ page }) => {
 test('should be able to access admin page', async ({ page }) => {
   const appBar = new AppBar(page);
   await appBar.goToAdmin();
-  await expect(page).toHaveTitle('Admin');
-  await expect(page.getByText('System users')).toBeVisible();
+  await expect(page).toHaveTitle('System Users');
+  await expect(page.getByText('System Users')).toBeVisible();
 });
 
 test('should be able to navigate to the catalog page', async ({ page }) => {
   const appBar = new AppBar(page);
   await appBar.goToAdmin();
-  await expect(page.getByText('System users')).toBeVisible();
+  await expect(page.getByText('System Users')).toBeVisible();
   await appBar.catalogLink.click();
   await expect(page).toHaveTitle('Catalog');
   await expect(page.getByText('No repositories yet')).toBeVisible();

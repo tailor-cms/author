@@ -46,7 +46,7 @@ const props = defineProps<{ repository: Repository; isVisible: boolean }>();
 const emit = defineEmits(['close']);
 
 const tags = ref<Tag[]>([]);
-const assignedTags = computed(() => props.repository.tags);
+const assignedTags = computed(() => props.repository.tags ?? []);
 const availableTags = computed(() =>
   map(differenceBy(tags.value, assignedTags.value, 'id'), 'name'),
 );

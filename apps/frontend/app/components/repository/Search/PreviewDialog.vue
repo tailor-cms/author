@@ -27,7 +27,7 @@
         <span class="text-body-medium mt-2">Preview unavailable</span>
       </VSheet>
       <div v-else ref="rootRef">
-        <VThemeProvider class="pa-6 rounded-lg" theme="light" with-background>
+        <VThemeProvider class="rounded-lg" theme="light" with-background>
           <ContentElementWrapper :element="element" is-disabled />
         </VThemeProvider>
       </div>

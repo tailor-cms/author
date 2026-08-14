@@ -16,7 +16,7 @@
         <VChip
           v-if="schema.collection"
           class="mr-2 flex-shrink-0"
-          color="tertiary"
+          color="secondary"
           prepend-icon="mdi-view-grid-outline"
           rounded="lg"
           size="small"

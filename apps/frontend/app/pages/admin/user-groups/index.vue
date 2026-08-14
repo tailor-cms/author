@@ -41,13 +41,8 @@
     </div>
     <TailorEmptyState
       v-if="!isLoading && !userGroups.length"
-      :icon="filter ? 'mdi-magnify' : 'mdi-account-group-outline'"
-      :text="
-        filter
-          ? 'No user groups match your search.'
-          : 'Create a user group to get started.'
-      "
-      :title="filter ? 'No matches' : 'No user groups'"
+      v-bind="emptyState"
+      @click:action="filter = ''"
     />
     <template v-else-if="!isLoading">
       <div class="group-grid">
@@ -131,6 +126,21 @@ const sortOrder = computed(() => dataTable.sortBy[0]?.order ?? 'asc');
 const sortIcon = computed(() => sortOrder.value === 'desc'
   ? 'mdi-sort-alphabetical-descending'
   : 'mdi-sort-alphabetical-ascending',
+);
+
+const emptyState = computed(() => filter.value
+  ? {
+      actionText: 'Clear search',
+      prependActionIcon: 'mdi-close',
+      icon: 'mdi-magnify',
+      text: 'No user groups match your search.',
+      title: 'No matches',
+    }
+  : {
+      icon: 'mdi-account-group-outline',
+      text: 'Create a user group to get started.',
+      title: 'No user groups',
+    },
 );
 
 const toggleSort = () => {

@@ -41,14 +41,19 @@ Cross-cutting libs in `lib/`; the content-plugin registries live in
   single-purpose subcomponents rather than one growing file.
 - **Boolean props** use `is`/`has` prefixes (`isOpen`, `hasError`).
 - **Events** are namespaced `ns:action` (`save:element`, `delete:element`).
-- **Reuse** `packages/utils`, `@tailor-cms/common`, `core-components`, and
-  `lodash-es` instead of hand-rolling helpers.
+- **Reuse** `@vueuse/core`, `packages/utils`, `@tailor-cms/common`,
+  `core-components`, and `lodash-es` instead of hand-rolling helpers.
 - **Shallow nesting** - guard clauses / early returns, not deep if/else.
 
 ## Gotchas
 
 - **AI**: content generation is exposed via `inject('$doTheMagic')`, provided
   by `components/editor/ActivityContent/index.vue`.
+- **`typescript` is aliased** in `package.json`:
+  `"typescript": "npm:@typescript/typescript6@..."`. The backend runs native
+  TS 7 (`tsc`), but `vue-tsc` needs the JS-API compiler, so the frontend
+  points the bare `typescript` name at the TS 6 bridge. Keep the alias - a
+  plain `typescript` here breaks `vue-tsc` type-checking.
 
 ## Docs
 

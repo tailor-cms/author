@@ -280,6 +280,10 @@
             "maximum": 9007199254740991,
             "description": "Referenced entity id."
           },
+          "entity": {
+            "description": "Model the pointer resolves against. Omit for same-entity refs (element -> element); set to `Activity` for an element -> activity ref such as an exam question's objective.",
+            "type": "string"
+          },
           "containerId": {
             "description": "Container activity id (for content-element refs).",
             "type": "integer",
@@ -550,10 +554,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -2223,10 +2234,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -2375,10 +2393,17 @@
               "type": "string"
             },
             "additionalProperties": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Relationship"
-              }
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Relationship"
+                  }
+                },
+                {
+                  "$ref": "#/components/schemas/Relationship"
+                }
+              ]
             },
             "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
           },
@@ -3702,10 +3727,17 @@
                   "type": "string"
                 },
                 "additionalProperties": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/Relationship"
+                    }
+                  ]
                 },
                 "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
@@ -3929,10 +3961,17 @@
                   "type": "string"
                 },
                 "additionalProperties": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Relationship"
-                  }
+                  "anyOf": [
+                    {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Relationship"
+                      }
+                    },
+                    {
+                      "$ref": "#/components/schemas/Relationship"
+                    }
+                  ]
                 },
                 "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
               },
@@ -5844,10 +5883,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
@@ -6039,10 +6085,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-activity references (JSONB). Keyed by relationship type declared in the schema's `relationships` config for this activity type; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   }
@@ -9450,10 +9503,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },
@@ -9812,10 +9872,17 @@
                       "type": "string"
                     },
                     "additionalProperties": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Relationship"
-                      }
+                      "anyOf": [
+                        {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/Relationship"
+                          }
+                        },
+                        {
+                          "$ref": "#/components/schemas/Relationship"
+                        }
+                      ]
                     },
                     "description": "Cross-element references (JSONB). Keyed by the relationship types the schema declares for this element type via `elementMeta.relationships[]`; values are arrays of `Relationship` pointers. Remapped on deep-clone via `mapClonedReferences`."
                   },
@@ -13107,14 +13174,44 @@
                     "description": "Account email; lower-cased + trimmed."
                   },
                   "firstName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "First name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "lastName": {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "minLength": 2,
+                            "maxLength": 50
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Last name (2..50 chars when present)."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   },
                   "role": {
                     "type": "string",
@@ -13147,6 +13244,93 @@
                 "description": "Admin-driven invite-or-update payload."
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/users/export": {
+      "get": {
+        "tags": [
+          "User / CRUD (admin)"
+        ],
+        "operationId": "userExportUsers",
+        "x-tailor-slice": "user",
+        "x-tailor-method": "exportUsers",
+        "summary": "Export users as CSV",
+        "description": "Streams the full match set for the given filters as a CSV attachment. Archived users are excluded unless `archived` is set, in which case the Status column distinguishes them.",
+        "parameters": [
+          {
+            "name": "filter",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Substring match across email, firstName, lastName (iLike).",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Exact-equality match against User.email. Kept as a plain string (not validated as a real address) so a typo from the search box returns zero results instead of a 400.",
+              "type": "string",
+              "maxLength": 250
+            }
+          },
+          {
+            "name": "role",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to a specific role.",
+              "type": "string",
+              "enum": [
+                "USER",
+                "ADMIN",
+                "COLLABORATOR",
+                "INTEGRATION"
+              ]
+            }
+          },
+          {
+            "name": "archived",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Include soft-deleted (archived) users in the result.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          },
+          {
+            "name": "includeUserGroups",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Append a \"User groups\" column listing each user's group memberships.",
+              "anyOf": [
+                {
+                  "type": "boolean"
+                },
+                {}
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "CSV attachment (text/csv; charset=utf-8)."
           }
         },
         "security": [
@@ -13380,8 +13564,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "required": [
@@ -13501,8 +13700,23 @@
                     "description": "Display name (2..250 chars; unique across groups)."
                   },
                   "logoUrl": {
-                    "type": "string",
-                    "maxLength": 200000
+                    "anyOf": [
+                      {
+                        "anyOf": [
+                          {
+                            "type": "string",
+                            "maxLength": 200000
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ],
+                        "description": "Logo URL or base64 data URL. Capped at 200_000 chars to match the ceiling on user avatars."
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
                   }
                 },
                 "additionalProperties": false,

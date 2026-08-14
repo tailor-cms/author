@@ -54,7 +54,7 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 
 const VALUE_COLORS = {
   empty: 'text-medium-emphasis',
-  flag: 'text-secondary',
+  flag: 'text-tertiary',
   numeric: 'text-warning',
   text: '',
 } as const;

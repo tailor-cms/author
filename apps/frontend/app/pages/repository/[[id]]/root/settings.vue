@@ -39,7 +39,7 @@
           v-if="!showSidebar"
           v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
           class="sidebar-toggle"
-          color="secondary-container"
+          color="primary-container"
           aria-label="Open sidebar"
           density="comfortable"
           icon="mdi-chevron-double-right"

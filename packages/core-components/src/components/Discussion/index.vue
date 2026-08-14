@@ -92,7 +92,6 @@ interface Props {
   showHeading?: boolean;
   showNotifications?: boolean;
   isActivityThread?: boolean;
-  hasUnresolvedComments?: boolean;
   isVisible?: boolean;
 }
 
@@ -104,7 +103,6 @@ const props = withDefaults(defineProps<Props>(), {
   showHeading: false,
   showNotifications: false,
   isActivityThread: false,
-  hasUnresolvedComments: false,
   isVisible: false,
 });
 
@@ -129,12 +127,12 @@ const inputEl = ref<HTMLElement>();
 const showAll = ref(false);
 const error = ref(false);
 
-const { defineField, errors, handleSubmit } = useForm({
+const { defineField, errors, handleSubmit, resetForm } = useForm({
   validationSchema: object({
-    message: string().required().max(600, 'Max 600 characters'),
+    message: string().max(600, 'Max 600 characters'),
   }),
 });
-const [contentInput] = defineField('message');
+const [contentInput] = defineField('message', { validateOnModelUpdate: true });
 
 const thread = computed(() => {
   const processedThread = props.comments.map((comment) => {
@@ -152,8 +150,12 @@ const hasHiddenComments = computed(
 
 const isTextEditorEmpty = computed(() => !contentInput.value?.trim());
 
+const hasUnresolvedComments = computed(() =>
+  props.comments.some((it) => !it.resolvedAt && !it.deletedAt),
+);
+
 const showResolveButton = computed(
-  () => props.hasUnresolvedComments && !props.isActivityThread,
+  () => hasUnresolvedComments.value && !props.isActivityThread,
 );
 
 const post = handleSubmit(() => {
@@ -168,7 +170,7 @@ const post = handleSubmit(() => {
     updatedAt: Date.now(),
   };
   emit('save', payload);
-  contentInput.value = '';
+  resetForm();
   const scrollOptions: ScrollIntoViewOptions = {
     block: 'center',
     behavior: 'smooth',

@@ -12,8 +12,9 @@
         v-bind="menuProps"
         aria-label="Comments disabled"
         icon="mdi-comment-off-outline"
+        rounded="lg"
         size="x-small"
-        variant="tonal"
+        variant="text"
       />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
@@ -39,7 +40,7 @@
 
 <script lang="ts" setup>
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
-import { ref, watch } from 'vue';
+import { watch } from 'vue';
 
 interface Props {
   sourceInfo?: ElementSourceInfo | null;
@@ -56,7 +57,7 @@ const emit = defineEmits<{
   'source:view': [sourceInfo: ElementSourceInfo];
 }>();
 
-const menuOpen = ref(false);
+const menuOpen = defineModel<boolean>('open', { default: false });
 
 watch(menuOpen, (open) => {
   if (open && !props.sourceInfo && !props.isLoading) {

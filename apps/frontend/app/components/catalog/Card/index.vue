@@ -7,7 +7,7 @@
     rounded="xl"
     elevation="1"
     color="surface-raised"
-    @click="navigateTo({ name: 'repository', params: { id: repository.id } })"
+    @click="openRepository"
   >
     <PosterArtwork v-if="thumbnailUrl" :src="thumbnailUrl" />
     <div class="card-body">
@@ -63,10 +63,7 @@
             icon="mdi-cog"
             size="small"
             variant="text"
-            @click.stop="navigateTo({
-              name: 'repository-settings-general',
-              params: { id: repository.id },
-            })"
+            @click.stop="openSettings"
           />
           <VMenu
             v-if="repositoryActions.length"
@@ -75,7 +72,6 @@
           >
             <template #activator="{ props: menuProps }">
               <VBtn
-                v-tooltip:top="{ text: 'Repository actions', openDelay: 400 }"
                 v-bind="menuProps"
                 aria-label="Repository actions"
                 class="tinted-btn"
@@ -104,11 +100,11 @@
         {{ repository.name }}
       </VCardTitle>
       <div class="d-flex justify-start align-center px-4 py-2">
-        <UserAvatar :img-url="lastActivity.user.imgUrl" :size="34" />
+        <UserAvatar :img-url="lastActivity.user?.imgUrl" :size="34" />
         <div class="ml-3 overflow-hidden ">
           <div class="text-label-small">Edited {{ lastActivityTimeago }} by</div>
           <div class="text-label-large text-truncate">
-            {{ lastActivity.user.label }}
+            {{ lastActivity.user?.label }}
           </div>
         </div>
       </div>
@@ -211,6 +207,15 @@ const detectSchemaTruncation = () => {
 
 const { width: innerWidth } = useDisplay();
 watch(() => innerWidth.value, detectSchemaTruncation);
+
+const openRepository = () =>
+  navigateTo({ name: 'repository', params: { id: props.repository.id } });
+
+const openSettings = () =>
+  navigateTo({
+    name: 'repository-settings-general',
+    params: { id: props.repository.id },
+  });
 
 onMounted(() => nextTick(detectSchemaTruncation));
 </script>

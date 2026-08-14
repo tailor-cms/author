@@ -50,7 +50,7 @@ import { api } from '@/api';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface ReferenceError {
-  id?: string;
+  id?: number;
   link?: string;
   message: string;
 }

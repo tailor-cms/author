@@ -44,13 +44,14 @@
       </template>
       <VBtn
         v-if="!isDisabled"
+        :aria-label="`Delete ${label}`"
         class="mr-2"
         color="error"
         density="comfortable"
         icon="mdi-trash-can-outline"
         size="small"
         variant="tonal"
-        @click.stop="emit('delete:subcontainer', container, label)"
+        @click.stop="emit('delete:subcontainer', container, { label })"
       />
       <VBtn
         v-if="isCollapsible"
@@ -90,9 +91,7 @@
             :label="'content elements'"
             :layout="layout"
             :supported-element-config="contentElementConfig"
-            @add:subcontainer="emit('add:subcontainer', $event)"
             @update:subcontainer="emit('update:subcontainer', $event)"
-            @delete:subcontainer="emit('delete:subcontainer', $event)"
             @delete:element="(el, force) => emit('delete:element', el, force)"
             @reorder:element="emit('reorder:element', $event)"
           />
@@ -131,7 +130,6 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits([
-  'add:subcontainer',
   'update:subcontainer',
   'delete:subcontainer',
   'reorder:subcontainer',

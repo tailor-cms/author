@@ -90,12 +90,12 @@
       <div class="sidebar-body px-5 pb-5 d-flex flex-column ga-3">
         <div
           v-if="reviewStore.isRunning"
-          class="d-flex flex-column align-center ga-4 pa-6 mt-8"
+          class="d-flex flex-column align-center justify-center ga-4 pa-6 flex-grow-1"
         >
-          <VProgressCircular color="tertiary" size="54" width="5" indeterminate />
+          <VProgressCircular color="secondary" size="54" width="5" indeterminate />
           <div class="text-title-small text-medium-emphasis text-center mt-4">
             Reading the content through the <br />
-            <span class="font-weight-bold text-tertiary">
+            <span class="font-weight-bold text-secondary">
               {{ reviewStore.selectedRubric?.name }}
             </span> lens.<br />
             This usually takes under a minute.
@@ -138,6 +138,8 @@
         </template>
         <TailorEmptyState
           v-else
+          class="flex-grow-1"
+          height="100%"
           icon="mdi-creation-outline"
           size="48"
           title="Review this content"
@@ -163,7 +165,7 @@
       v-tooltip:left="{ text: 'Open Lens review', openDelay: 500 }"
       aria-label="Open Lens review"
       class="lens-toggle"
-      color="tertiary-container"
+      color="secondary-container"
       density="comfortable"
       icon="mdi-camera-iris"
       size="small"

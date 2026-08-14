@@ -12,7 +12,7 @@
       <LabelChip color="inverse-surface" size="x-small" variant="tonal">
         {{ typeLabel }}
       </LabelChip>
-      <LabelChip color="secondary" size="x-small" variant="tonal">
+      <LabelChip color="tertiary" size="x-small" variant="tonal">
         {{ activity.shortId }}
       </LabelChip>
       <ActivityName :activity="activity" class="text-title-medium ml-2" />
@@ -22,7 +22,6 @@
         v-tooltip:bottom="'Go to'"
         class="go-to-btn text-medium-emphasis"
         append-icon="mdi-arrow-right"
-        color="tertiary"
         text="Go to"
         size="small"
         variant="tonal"

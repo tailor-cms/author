@@ -19,12 +19,16 @@
       </template>
     </Draggable>
   </VList>
-  <VAlert
+  <TailorEmptyState
     v-if="search && !hasItems"
-    class="mx-4"
-    icon="mdi-information-outline"
-    text="No items found!"
-    variant="tonal"
+    action-text="Clear search"
+    height="100%"
+    icon="mdi-magnify"
+    prepend-action-icon="mdi-close"
+    text="No items match your search."
+    title="No matches"
+    variant="text"
+    @click:action="emit('clear:search')"
   />
 </template>
 
@@ -36,6 +40,7 @@ import Draggable from 'vuedraggable';
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
 import ItemGroup from './ItemGroup.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { TailorEmptyState } from '@tailor-cms/core-components';
 
 const repositoryStore = useCurrentRepository();
 const reorder = useOutlineReorder();
@@ -46,7 +51,7 @@ const props = defineProps<{
   search: string;
 }>();
 
-const emit = defineEmits(['edit']);
+const emit = defineEmits(['edit', 'clear:search']);
 
 const expanded = ref<number[]>([]);
 

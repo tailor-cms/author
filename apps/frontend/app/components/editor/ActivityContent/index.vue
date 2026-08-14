@@ -121,7 +121,8 @@ import {
   without,
 } from 'lodash-es';
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { AiGenerateRequest, AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiInput } from '@tailor-cms/interfaces/ai';
+import type { AiGenerateData } from '@tailor-cms/api-client';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 import { getElementId } from '@tailor-cms/utils';
@@ -183,7 +184,7 @@ const doTheMagic = async ({
   inputs: AiInput[];
   content?: string;
 }) => {
-  const context: AiGenerateRequest = {
+  const context: AiGenerateData['body'] = {
     repository: {
       outlineActivityId: props.activity?.id,
       outlineActivityType: props.activity?.type,
@@ -250,11 +251,9 @@ const elementsWithComments = computed<any>(() => {
         (commentStore.$seen.contentElement as any)[element.uid] || 0,
         (commentStore.$seen.activity as any)[props.activity?.uid] || 0,
       ]);
-      const hasUnresolvedComments = !!comments.length;
       elementMap[element.uid] = {
         ...element,
         comments,
-        hasUnresolvedComments,
         lastSeen: lastSeen || 0,
       };
     },
@@ -388,7 +387,9 @@ const scrollToElement = (id: string, timeout = 500) => {
 const revealElement = () => {
   const elementId = route.query.elementId as string;
   if (!elementId) return;
-  // Select and scroll to element if elementId is set
+  // Already focused; the route just caught up with an in-editor selection
+  const focused = focusedElement.value;
+  if (focused && getElementId(focused) === elementId) return;
   selectElement(elementId);
   scrollToElement(elementId);
 };

@@ -2,6 +2,7 @@
   "name": "@tailor-cms/interfaces",
   "description": "Tailor data interfaces",
   "type": "module",
+  "sideEffects": false,
   "version": "0.0.1",
   "files": [
     "dist"
@@ -24,24 +25,10 @@
     }
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsdown"
   },
   "devDependencies": {
-    "tsup": "^8.5.1",
+    "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
-  },
-  "tsup": {
-    "entry": [
-      "*.ts"
-    ],
-    "target": "node20",
-    "format": [
-      "cjs",
-      "esm"
-    ],
-    "bundle": true,
-    "minify": false,
-    "clean": true,
-    "dts": true
   }
 }

@@ -18,7 +18,7 @@
       <VSpacer v-else />
       <VBtnToggle
         v-model="viewMode"
-        color="primary"
+        color="tertiary"
         variant="outlined"
         density="compact"
         mandatory

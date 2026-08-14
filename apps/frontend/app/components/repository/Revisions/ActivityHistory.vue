@@ -13,7 +13,7 @@
     />
     <template v-else>
       <VList
-        color="tertiary"
+        color="secondary"
         density="compact"
         bg-color="transparent"
         class="history-list pa-0"

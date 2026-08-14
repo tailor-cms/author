@@ -70,14 +70,14 @@
   </VDataIterator>
   <TailorEmptyState
     v-else-if="showEmptyState"
-    :action-text="isInFolder ? 'Go back' : undefined"
-    :icon="emptyStateIcon"
-    :text="emptyStateText"
-    :title="emptyStateTitle"
+    :action-text="emptyState.actionText"
+    :icon="emptyState.icon"
+    :prepend-action-icon="emptyState.prependActionIcon"
+    :text="emptyState.text"
+    :title="emptyState.title"
     class="empty-state"
-    prepend-action-icon="mdi-arrow-left"
     data-testid="assetEmptyState"
-    @click:action="emit('folder:up')"
+    @click:action="emptyState.handler?.()"
   />
 </template>
 
@@ -119,6 +119,7 @@ const emit = defineEmits<{
   'delete': [asset: Asset];
   'folder:open': [path: string];
   'folder:up': [];
+  'clear:filters': [];
 }>();
 
 // Collapse the row meta (type + size) when the list gets narrow, so the name +
@@ -146,31 +147,37 @@ const showEmptyState = computed(
     !props.hasFolders,
 );
 
-// Browsing inside a specific folder (not the library root, not search/filter).
-const isInFolder = computed(() => !!props.currentFolder && !isFiltered.value);
-
-const emptyStateIcon = computed(() =>
-  isInFolder.value ? 'mdi-folder-open-outline' : 'mdi-image-multiple',
-);
-
-const emptyStateTitle = computed(() => {
-  if (isFiltered.value) return 'No assets match your search or filter.';
-  if (isInFolder.value) return 'This folder is empty.';
-  return 'No assets uploaded yet.';
-});
-
-const emptyStateText = computed(() => {
-  if (isFiltered.value) return 'Try adjusting your search or filters.';
-  if (isInFolder.value) {
-    if (props.isLocalFolder) {
-      return oneLine`
-        This folder is saved on your device until you add a file to it.
-        Upload or move an asset here to keep it for everyone.
-      `;
-    }
-    return 'Upload files here or move assets in.';
+const emptyState = computed(() => {
+  const isInFolder = !!props.currentFolder && !isFiltered.value;
+  if (isFiltered.value) return {
+    icon: 'mdi-image-multiple',
+    title: 'No matches',
+    text: 'No assets match your search or filters.',
+    actionText: 'Clear filters',
+    prependActionIcon: 'mdi-close',
+    handler: () => emit('clear:filters'),
+  };
+  if (isInFolder) {
+    const text = props.isLocalFolder
+      ? oneLine`
+          This folder is saved on your device until you add a file to it.
+          Upload or move an asset here to keep it for everyone.
+        `
+      : 'Upload files here or move assets in.';
+    return {
+      icon: 'mdi-folder-open-outline',
+      title: 'This folder is empty.',
+      text,
+      actionText: 'Go back',
+      prependActionIcon: 'mdi-arrow-left',
+      event: () => emit('folder:up'),
+    };
   }
-  return 'Upload files, add links, or use Discover.';
+  return {
+    icon: 'mdi-image-multiple',
+    title: 'No assets uploaded yet.',
+    text: 'Upload files, add links, or use Discover.',
+  };
 });
 </script>
 

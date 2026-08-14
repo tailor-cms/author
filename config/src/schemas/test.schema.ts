@@ -199,6 +199,7 @@ const KnowledgeCheckConfig: ActivityConfig = {
       understanding of the material covered in the lesson. They help reinforce
       learning and provide immediate feedback to the learner.`,
   },
+  subLevels: [ActivityType.Page],
   color: OUTLINE_COLOR.ACCENT_5,
   contentContainers: [ContentContainerType.Exam],
 };
@@ -232,6 +233,16 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Carousel,
         ContentElementType.Sequence,
         ContentElementType.Flashcards,
+      ],
+    },
+    {
+      name: 'Deprecated Elements',
+      config: { isDeprecated: true },
+      items: [
+        ContentElementType.JoditHtml,
+        ContentElementType.Html,
+        ContentElementType.BrightcoveVideo,
+        ContentElementType.Table,
       ],
     },
     {

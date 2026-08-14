@@ -1,3 +1,5 @@
+import type { LiveUserActivity } from '@tailor-cms/interfaces/user-activity';
+
 import { isEqual } from 'lodash-es';
 
 import feed from '@/lib/RepositoryFeed';
@@ -7,6 +9,18 @@ import { useContentElementStore } from '@/stores/content-elements';
 
 // Report user activity every 30s
 const PING_INTERVAL = 30000;
+
+/**
+ * Narrows the loosely-typed connection params to a context the
+ * tracking store accepts (or null when the required ids are not yet known).
+ */
+function toTrackingContext(
+  params: Partial<LiveUserActivity>,
+): LiveUserActivity | null {
+  const { sseId, repositoryId } = params;
+  if (!sseId || !repositoryId) return null;
+  return { ...params, sseId, repositoryId };
+}
 
 // Subscribe to server-sent events on the repository level
 export const useRepositorySSE = () => {
@@ -36,7 +50,8 @@ export const useRepositorySSE = () => {
   function disconnect() {
     clearInterval(heartbeat.value);
 
-    if (isTracking.value) userTrackingStore.reportEnd(trackingParameters.value);
+    const context = trackingContext.value;
+    if (context) userTrackingStore.reportEnd(context);
     feed.disconnect();
     sseId.value = null;
     userTrackingStore.$reset();
@@ -53,26 +68,24 @@ export const useRepositorySSE = () => {
     elementId: (route.query?.elementId as string) || undefined,
   }));
 
-  const isTracking = computed(() => {
-    return (
-      trackingParameters.value.sseId && trackingParameters.value.repositoryId
-    );
-  });
+  const trackingContext = computed(() =>
+    toTrackingContext(trackingParameters.value),
+  );
 
   watch(
     trackingParameters,
     async (val, prevVal) => {
       if (isEqual(val, prevVal)) return;
-      if (prevVal.sseId && prevVal.repositoryId) {
-        await userTrackingStore.reportEnd(prevVal);
+      const prevContext = toTrackingContext(prevVal);
+      if (prevContext) {
+        await userTrackingStore.reportEnd(prevContext);
         clearInterval(heartbeat.value);
       }
-      const { sseId, repositoryId } = val;
-      if (!sseId || !repositoryId) return;
-      await userTrackingStore.reportStart(val);
+      const context = toTrackingContext(val);
+      if (!context) return;
+      await userTrackingStore.reportStart(context);
       heartbeat.value = setInterval(
-
-        () => userTrackingStore.reportStart(val),
+        () => userTrackingStore.reportStart(context),
         PING_INTERVAL,
       );
     },
@@ -80,9 +93,10 @@ export const useRepositorySSE = () => {
   );
 
   onBeforeUnmount(async () => {
-    if (!isTracking.value) return;
+    const context = trackingContext.value;
+    if (!context) return;
     clearInterval(heartbeat.value);
-    await userTrackingStore.reportEnd(trackingParameters.value);
+    await userTrackingStore.reportEnd(context);
     sseId.value = null;
     userTrackingStore.$reset();
   });

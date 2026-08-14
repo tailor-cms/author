@@ -1,14 +1,6 @@
 <template>
   <div class="workflow-list">
-    <TailorEmptyState
-      v-if="!items.length"
-      class="mt-4"
-      icon="mdi-clipboard-text-outline"
-      text="No activities match the current filters."
-      title="No items"
-    />
     <Draggable
-      v-else
       :list="items"
       animation="150"
       class="workflow-list__items"
@@ -26,7 +18,6 @@
 import { calculatePosition } from '@tailor-cms/utils';
 import Draggable from 'vuedraggable';
 import { orderBy } from 'lodash-es';
-import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import type { ChangeEvent } from '@/types/draggable';
 import ListItem from './ListItem.vue';

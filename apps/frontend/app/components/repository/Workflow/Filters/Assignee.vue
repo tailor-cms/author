@@ -69,7 +69,7 @@ const isSelected = (id?: number) => props.modelValue.includes(id ?? null);
 <style lang="scss" scoped>
 :deep(.v-avatar):not(.menu-avatar) {
   transition: all 0.3s ease;
-  outline: 0 solid rgb(var(--v-theme-tertiary));
+  outline: 0 solid rgb(var(--v-theme-secondary));
 
   &:not(:first-of-type) {
     margin-left: -0.5rem;

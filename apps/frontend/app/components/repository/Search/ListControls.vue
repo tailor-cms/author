@@ -4,7 +4,7 @@
     <VSpacer />
     <VBtn
       :aria-label="isCompact ? 'Switch to comfortable view' : 'Switch to compact view'"
-      :color="isCompact ? 'tertiary' : undefined"
+      :color="isCompact ? 'secondary' : undefined"
       size="small"
       variant="text"
       icon
