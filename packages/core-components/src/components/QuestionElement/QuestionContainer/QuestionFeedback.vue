@@ -18,51 +18,27 @@
         :id="contentId"
         class="d-flex flex-column ga-6 pt-2"
       >
-        <div>
+        <RichTextEditor
+          :model-value="feedback?.general"
+          :readonly="isReadonly"
+          label="General feedback"
+          variant="outlined"
+          hide-details
+          toolbar-on-focus
+          @update:model-value="update($event, 'general')"
+        />
+        <template v-if="showAnswerFeedback">
           <RichTextEditor
-            v-if="!isReadonly"
-            :model-value="feedback?.general"
-            label="General feedback"
+            v-for="(answer, index) in processedAnswers"
+            :key="index"
+            :label="answerLabel(answer, index)"
+            :model-value="feedback?.[index]"
+            :readonly="isReadonly"
             variant="outlined"
             hide-details
             toolbar-on-focus
-            @update:model-value="update($event, 'general')"
+            @update:model-value="update($event, index)"
           />
-          <template v-else>
-            <div class="text-label-medium text-medium-emphasis mb-1">
-              General feedback
-            </div>
-            <!-- eslint-disable-next-line vue/no-v-html -->
-            <div v-if="feedback?.general" v-html="feedback.general"></div>
-            <div v-else class="text-medium-emphasis font-italic">
-              Feedback not added.
-            </div>
-          </template>
-        </div>
-        <template v-if="showAnswerFeedback">
-          <div v-for="(answer, index) in processedAnswers" :key="index">
-            <RichTextEditor
-              v-if="!isReadonly"
-              :label="answerLabel(answer, index)"
-              :model-value="feedback?.[index]"
-              variant="outlined"
-              hide-details
-              toolbar-on-focus
-              @update:model-value="update($event, index)"
-            />
-            <template v-else>
-              <div
-                class="text-label-medium text-medium-emphasis text-truncate mb-1"
-              >
-                {{ answerLabel(answer, index) }}
-              </div>
-              <!-- eslint-disable-next-line vue/no-v-html -->
-              <div v-if="feedback?.[index]" v-html="feedback[index]"></div>
-              <div v-else class="text-medium-emphasis font-italic">
-                Feedback not added.
-              </div>
-            </template>
-          </div>
         </template>
       </div>
     </VExpandTransition>
