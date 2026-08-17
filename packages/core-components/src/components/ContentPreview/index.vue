@@ -14,7 +14,7 @@
       :is-selected="!!selectionMap[it.id]"
       :selectable="selectable"
       :selection-disabled="isSelectionDisabled"
-      is-disabled
+      is-readonly
       @element:open="$emit('element:open', $event)"
       @toggle="$emit('toggle', it)"
     />

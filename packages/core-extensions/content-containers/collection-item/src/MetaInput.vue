@@ -4,7 +4,7 @@
     :class="{ required: get(meta, 'validate.required') }"
     :error-messages="errorMessage"
     :meta="meta"
-    :readonly="isDisabled"
+    :readonly="isReadonly"
     persistent-placeholder
     @update="updateMeta"
   />
@@ -21,12 +21,12 @@ import type { Metadata } from '@tailor-cms/interfaces/schema';
 interface Props {
   meta: Metadata;
   name?: string | null;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   name: null,
-  isDisabled: false,
+  isReadonly: false,
 });
 
 const emit = defineEmits(['update']);

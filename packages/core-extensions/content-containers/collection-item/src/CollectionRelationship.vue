@@ -9,7 +9,7 @@
       </span>
       <CreateRelatedRecord
         :config="config"
-        :is-disabled="isDisabled"
+        :is-readonly="isReadonly"
         @created="appendSelection"
       />
     </div>
@@ -17,7 +17,7 @@
       v-model="model"
       :chips="config.multiple"
       :clearable="!config.multiple"
-      :disabled="isDisabled || !items.length"
+      :disabled="isReadonly || !items.length"
       :error-messages="errorMessage"
       :items="items"
       :multiple="config.multiple"
@@ -43,7 +43,7 @@ const props = defineProps({
   // Stored value: an array of `{ id }` pointers (the refs shape).
   modelValue: { type: Array, default: () => [] },
   ownerId: { type: Number, default: undefined },
-  isDisabled: { type: Boolean, default: false },
+  isReadonly: { type: Boolean, default: false },
   errorMessage: { type: String, default: undefined },
 });
 

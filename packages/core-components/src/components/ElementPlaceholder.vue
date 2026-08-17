@@ -7,7 +7,7 @@
       <VIcon :icon="icon" :size="isFocused ? 34 : 28" />
     </VAvatar>
     <div class="mt-4 mb-2 text-title-large">{{ name }}</div>
-    <div v-if="!isDisabled" class="text-body-medium">
+    <div v-if="!isReadonly" class="text-body-medium">
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>
         {{ activePlaceholder }}
@@ -26,7 +26,7 @@ interface Props {
   activePlaceholder?: string;
   activeIcon?: string | null;
   isFocused?: boolean;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
 }
 
 withDefaults(defineProps<Props>(), {
@@ -35,6 +35,6 @@ withDefaults(defineProps<Props>(), {
   activePlaceholder: 'Use toolbar to edit',
   activeIcon: null,
   isFocused: false,
-  isDisabled: false,
+  isReadonly: false,
 });
 </script>

@@ -5,7 +5,7 @@
       <VSpacer />
       <div v-if="!isAiGeneratingContent" class="pb-1 d-flex ga-2">
         <VBtn
-          v-if="isAiEnabled && !disabled"
+          v-if="isAiEnabled && !isReadonly"
           color="secondary"
           size="small"
           variant="tonal"
@@ -26,7 +26,7 @@
     </div>
     <VAlert
       v-if="!hasAssessments && !isAiGeneratingContent"
-      :text="disabled
+      :text="isReadonly
         ? 'Empty assessment pool'
         : 'Click the button below to create first Assessment.'"
       icon="mdi-information-outline"
@@ -55,7 +55,7 @@
           :element="it"
           :embed-element-config="embedElementConfig"
           :expanded="isSelected(it.uid)"
-          :is-disabled="disabled"
+          :is-readonly="isReadonly"
           :is-draggable="false"
           @update:expanded="toggleSelect(it.uid)"
           @save="saveAssessment(it, $event)"
@@ -64,7 +64,7 @@
       </div>
     </VThemeProvider>
     <AddElement
-      v-if="!disabled && !isAiGeneratingContent"
+      v-if="!isReadonly && !isAiGeneratingContent"
       :activity="container"
       :include="include"
       :items="assessments"
@@ -99,7 +99,7 @@ import { uuid } from '@tailor-cms/utils';
 interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
-  disabled: boolean;
+  isReadonly: boolean;
   embedElementConfig?: ContentElementCategory[];
   contentElementConfig?: ContentElementCategory[];
 }

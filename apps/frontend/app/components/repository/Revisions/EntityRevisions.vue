@@ -5,7 +5,7 @@
         <VSheet v-if="selectedRevision" rounded="lg" theme="light" elevation="1">
           <ContentElementWrapper
             :element="selectedRevision?.state as unknown as ContentElement"
-            is-disabled
+            is-readonly
           />
         </VSheet>
       </VCol>
