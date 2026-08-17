@@ -1,5 +1,5 @@
 <template>
-  <div class="text-left">
+  <div class="question-container text-left">
     <QuestionPrompt
       :allowed-element-config="embedElementConfig"
       :element-data="elementData"
@@ -49,6 +49,12 @@ defineEmits(['update']);
 </script>
 
 <style lang="scss" scoped>
+// Keep the page scroll position stable while toolbars expand and collapse
+// on focus changes between the rich text fields.
+.question-container {
+  overflow-anchor: none;
+}
+
 :deep(.v-input__control) {
   flex-wrap: wrap;
 }

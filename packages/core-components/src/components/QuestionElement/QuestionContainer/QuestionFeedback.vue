@@ -1,53 +1,66 @@
 <template>
   <div class="feedback-container">
-    <div class="mb-2">
-      <span class="text-title-small">Feedback</span>
-      <VBtn
-        :text="buttonLabel"
-        class="ml-2"
-        size="small"
-        variant="text"
-        @click="isExpanded = !isExpanded"
-      />
-    </div>
+    <VBtn
+      :append-icon="isExpanded ? 'mdi-chevron-up' : 'mdi-chevron-down'"
+      :aria-controls="contentId"
+      :aria-expanded="isExpanded"
+      class="mb-2"
+      text="Feedback"
+      variant="tonal"
+      color="secondary"
+      size="small"
+      rounded="lg"
+      @click="isExpanded = !isExpanded"
+    />
     <VExpandTransition>
-      <div v-show="isExpanded">
-        <div class="general-feedback text-title-small mb-6">
-          <div class="mb-4">General feedback</div>
+      <div
+        v-show="isExpanded"
+        :id="contentId"
+        class="d-flex flex-column ga-6 pt-2"
+      >
+        <div>
           <RichTextEditor
-            v-if="!props.isReadonly"
+            v-if="!isReadonly"
             :model-value="feedback?.general"
+            label="General feedback"
             variant="outlined"
             hide-details
+            toolbar-on-focus
             @update:model-value="update($event, 'general')"
           />
           <template v-else>
+            <div class="text-label-medium text-medium-emphasis mb-1">
+              General feedback
+            </div>
             <!-- eslint-disable-next-line vue/no-v-html -->
             <div v-if="feedback?.general" v-html="feedback.general"></div>
-            <span v-else class="font-italic">Feedback not added.</span>
+            <div v-else class="text-medium-emphasis font-italic">
+              Feedback not added.
+            </div>
           </template>
         </div>
         <template v-if="showAnswerFeedback">
-          <div
-            v-for="(answer, index) in processedAnswers"
-            :key="index"
-            class="text-title-small mb-6"
-          >
-            <div class="mb-4">
-              {{ answerType }} {{ index + 1 }}:
-              {{ answer || 'Answer not added.' }}
-            </div>
+          <div v-for="(answer, index) in processedAnswers" :key="index">
             <RichTextEditor
-              v-if="!props.isReadonly"
+              v-if="!isReadonly"
+              :label="answerLabel(answer, index)"
               :model-value="feedback?.[index]"
               variant="outlined"
               hide-details
+              toolbar-on-focus
               @update:model-value="update($event, index)"
             />
             <template v-else>
+              <div
+                class="text-label-medium text-medium-emphasis text-truncate mb-1"
+              >
+                {{ answerLabel(answer, index) }}
+              </div>
               <!-- eslint-disable-next-line vue/no-v-html -->
               <div v-if="feedback?.[index]" v-html="feedback[index]"></div>
-              <span v-else class="font-italic">Feedback not added.</span>
+              <div v-else class="text-medium-emphasis font-italic">
+                Feedback not added.
+              </div>
             </template>
           </div>
         </template>
@@ -57,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
+import { computed, ref, useId, watch } from 'vue';
 import { isArray, some } from 'lodash-es';
 
 import RichTextEditor from '../../RichTextEditor/index.vue';
@@ -79,14 +92,19 @@ const props = withDefaults(defineProps<Props>(), {
 });
 const emit = defineEmits(['update']);
 
+const contentId = useId();
 const isExpanded = ref(some(props.feedback));
 const answerType = computed(() => (props.isGradable ? 'Answer' : 'Option'));
-const buttonLabel = computed(() => (isExpanded.value ? 'hide' : 'show'));
 const processedAnswers = computed(() =>
   isArray(props.answers) && props.answers.length
     ? props.answers
     : ['True', 'False'],
 );
+
+const answerLabel = (answer: string, index: number) => {
+  const prefix = `${answerType.value} ${index + 1}`;
+  return answer ? `${prefix} · ${answer}` : `${prefix} (answer not added)`;
+};
 
 const update = (value: string, key: number | 'general') => {
   emit('update', { ...props.feedback, [key]: value });

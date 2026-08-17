@@ -38,7 +38,7 @@
       <VFadeTransition>
         <div
           v-if="!isDisabled && isDirty && !autosave"
-          class="d-flex justify-end ga-2"
+          class="d-flex justify-end mt-4 ga-2"
         >
           <VBtn text="Cancel" variant="text" @click="cancel" />
           <VBtn
