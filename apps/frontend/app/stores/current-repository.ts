@@ -317,6 +317,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
     activities,
     outlineActivities,
     rootActivities,
+    expandableOutlineActivities,
     selectActivity,
     deselectActivity,
     selectedActivity,

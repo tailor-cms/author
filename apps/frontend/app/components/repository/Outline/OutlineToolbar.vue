@@ -40,7 +40,7 @@
         @completed="showLinkDialog = false"
       />
       <VBtn
-        v-if="!isCollection && !isFlat"
+        v-if="!isCollection && !isFlat && expandableOutlineActivities.length"
         :disabled="!!search"
         :text="isOutlineExpanded ? 'Collapse all' : 'Expand all'"
         rounded="lg"
@@ -101,6 +101,7 @@ const search = defineModel<string>('search', { default: '' });
 
 const currentRepositoryStore = useCurrentRepository();
 const {
+  expandableOutlineActivities,
   outlineActivities,
   rootActivities,
   taxonomy,
