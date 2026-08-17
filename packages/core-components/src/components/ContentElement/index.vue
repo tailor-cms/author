@@ -36,11 +36,11 @@
         color="surface-container-low"
         @click="toggleExpanded"
       >
-        <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
+        <span v-if="!isReadonly && isDraggable" class="drag-handle" @click.stop>
           <span class="mdi mdi-drag-vertical"></span>
         </span>
         <div
-          :class="{ 'ml-2': isDisabled || !isDraggable }"
+          :class="{ 'ml-2': isReadonly || !isDraggable }"
           class="type-label d-flex align-center flex-shrink-0"
         >
           <VIcon
@@ -75,7 +75,7 @@
           class="active-users"
         />
         <DiffChip :change-type="element.diffChange" />
-        <div v-if="!props.isDisabled" @click.stop>
+        <div v-if="!props.isReadonly" @click.stop>
           <ElementActions
             v-bind="actionBindings"
             @delete="emit('delete')"
@@ -100,7 +100,7 @@
       </VSheet>
     </div>
     <DeprecationWarning
-      v-if="!isDisabled && isDeprecated(element.type)"
+      v-if="!isReadonly && isDeprecated(element.type)"
       :element="element"
       class="ma-3"
     />
@@ -196,7 +196,7 @@ interface Props {
   expanded?: boolean | null;
   isDragged?: boolean;
   isDraggable?: boolean;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   // External dirty state (e.g. edited element refs); shows the save
   // controls and lets a save through even when element data is unchanged.
   isDirty?: boolean;
@@ -217,7 +217,7 @@ const props = withDefaults(defineProps<Props>(), {
   expanded: null,
   isDragged: false,
   isDraggable: true,
-  isDisabled: false,
+  isReadonly: false,
   isDirty: false,
   showDiscussion: false,
   autosave: false,
@@ -313,8 +313,7 @@ const editBindings = computed(() => ({
   references: props.references,
   isFocused: isFocused.value,
   isDragged: props.isDragged,
-  isDisabled: props.isDisabled,
-  isReadonly: props.isDisabled,
+  isReadonly: props.isReadonly,
 }));
 
 const actionBindings = computed(() => ({
@@ -346,20 +345,20 @@ const toggleExpanded = () => {
 };
 
 const onSelect = (e: any) => {
-  if (!props.isDisabled && !showDiff.value && !e.component) {
+  if (!props.isReadonly && !showDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }
 };
 
 const focus = () => {
-  if (props.isDisabled) return;
+  if (props.isReadonly) return;
   const { element, parent } = props;
   editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onSave = (data: ContentElement['data']) => {
-  if (props.isDisabled) return;
+  if (props.isReadonly) return;
   // Editors re-emit `save` on blur even when nothing changed; skip persisting
   // (and its "saved" toast) when the payload matches the stored data.
   if (!props.isDirty && isEqual(data, props.element.data)) return;

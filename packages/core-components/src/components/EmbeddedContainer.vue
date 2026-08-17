@@ -2,9 +2,9 @@
   <ElementList
     :add-element-options="addElementOptions"
     :elements="embeds"
-    :enable-add="!isDisabled && !isReadonly && enableAdd"
+    :enable-add="!isReadonly && enableAdd"
     :supported-element-config="allowedElementConfig"
-    :is-disabled="isDisabled || isReadonly"
+    :is-readonly="isReadonly"
     @add="addItems"
     @update="reorderItem"
   >
@@ -13,7 +13,7 @@
         :key="element.id"
         :element="element"
         :expanded="defaultExpanded || !initialIds.includes(element.id)"
-        :is-disabled="isDisabled || isReadonly"
+        :is-readonly="isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
         class="my-2"
@@ -43,7 +43,6 @@ interface Props {
   // Baseline expansion state of each embed (`card` variant only).
   // Embeds added during the session always start expanded.
   defaultExpanded?: boolean;
-  isDisabled?: boolean;
   isReadonly?: boolean;
   enableAdd?: boolean;
   addElementOptions?: Record<string, any>;
@@ -53,7 +52,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   defaultExpanded: true,
-  isDisabled: false,
   isReadonly: false,
   enableAdd: true,
   elementVariant: 'quiet',

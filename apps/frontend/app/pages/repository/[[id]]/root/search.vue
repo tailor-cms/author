@@ -95,7 +95,7 @@ const currentRepositoryStore = useCurrentRepository();
 
 // Injection context the content-element renderer reads: `ceRegistry`
 // (and `editorState`, for question elements) are required; `editorBus` is
-// only hit by edit interactions, which `is-disabled` suppresses - kept as
+// only hit by edit interactions, which `is-readonly` suppresses - kept as
 // a no-op safety net.
 provide('$editorBus', $eventBus.channel('editor'));
 provide('$ceRegistry', $ceRegistry);

@@ -30,7 +30,7 @@ interface Props {
   references?: Record<string, ContentElement[]> | null;
   // Proxied expansion state (see ContentElement `expanded`).
   expanded?: boolean | null;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   isDragged?: boolean;
   showDiscussion?: boolean;
   setWidth?: boolean;
@@ -42,7 +42,7 @@ const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
   expanded: null,
-  isDisabled: false,
+  isReadonly: false,
   isDragged: false,
   showDiscussion: false,
   setWidth: true,
@@ -64,7 +64,7 @@ const bindings = computed(() => {
     embedElementConfig,
     element,
     expanded,
-    isDisabled,
+    isReadonly,
     references,
     isDragged,
     showDiscussion,
@@ -76,7 +76,7 @@ const bindings = computed(() => {
     embedElementConfig,
     references,
     expanded,
-    isDisabled,
+    isReadonly,
     isDragged,
     showDiscussion,
     autosave,

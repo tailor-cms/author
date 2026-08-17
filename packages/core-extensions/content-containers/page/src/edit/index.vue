@@ -10,13 +10,13 @@
       class="d-flex flex-wrap justify-end ma-3 ga-3"
     >
       <AIPrompt
-        v-if="isAiEnabled && !disabled"
+        v-if="isAiEnabled && !isReadonly"
         :content-elements="containerElements"
         :inputs="aiInputs"
         @generate="generateContent"
       />
       <VBtn
-        v-if="isAiEnabled && !disabled"
+        v-if="isAiEnabled && !isReadonly"
         append-icon="mdi-shimmer"
         color="secondary"
         size="small"
@@ -31,7 +31,7 @@
         "
       />
       <VBtn
-        v-if="!disabled"
+        v-if="!isReadonly"
         :text="`Delete ${props.name}`"
         color="error"
         size="small"
@@ -42,7 +42,7 @@
     <VAlert
       v-if="!containerElements.length && !isAiGeneratingContent"
       :text="
-        disabled ? `Empty ${name}` : 'Click the button below to add content.'
+        isReadonly ? `Empty ${name}` : 'Click the button below to add content.'
       "
       class="mt-7 mb-5 mx-4"
       density="comfortable"
@@ -67,7 +67,7 @@
       }"
       :elements="containerElements"
       :enable-add="false"
-      :is-disabled="disabled"
+      :is-readonly="isReadonly"
       :layout="layout"
       :supported-types-config="contentElementConfig"
       class="element-list"
@@ -76,7 +76,7 @@
     >
       <template #default="{ element, position: pos, isDragged }">
         <InlineActivator
-          :disabled="disabled"
+          :disabled="isReadonly"
           @mousedown="showElementDrawer(pos)"
         />
         <ContainedContent
@@ -84,7 +84,7 @@
             embedElementConfig,
             element,
             isDragged,
-            isDisabled: disabled,
+            isReadonly,
             setWidth: false,
           }"
           :references="getRefElements(element.refs)"
@@ -96,7 +96,7 @@
       </template>
     </ElementList>
     <AddElement
-      v-if="!disabled && !isAiGeneratingContent"
+      v-if="!isReadonly && !isAiGeneratingContent"
       :activity="container"
       :include="contentElementConfig"
       :items="containerElements"
@@ -139,7 +139,7 @@ interface Props {
   embedElementConfig?: ContentElementCategory[];
   contentElementConfig?: ContentElementCategory[];
   layout?: boolean;
-  disabled?: boolean;
+  isReadonly?: boolean;
   config?: Record<string, any>;
 }
 
@@ -147,7 +147,7 @@ const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   contentElementConfig: () => [],
   layout: true,
-  disabled: false,
+  isReadonly: false,
   config: () => ({}),
 });
 
@@ -201,7 +201,7 @@ const reorder = ({ newPosition }: { newPosition: number }) => {
 };
 
 const showElementDrawer = (elementIndex: number) => {
-  if (props.disabled) return;
+  if (props.isReadonly) return;
   insertPosition.value = elementIndex;
   isElementDrawerVisible.value = true;
 };

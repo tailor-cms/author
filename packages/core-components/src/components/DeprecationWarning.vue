@@ -32,7 +32,6 @@
             :is="updatedComponentMeta.componentName"
             v-if="updatedComponentMeta?.componentName"
             :element="updatedElement"
-            is-disabled
             is-readonly
           />
         </VSheet>
