@@ -37,10 +37,10 @@
               color="secondary"
               icon="mdi-link-box"
             />
-            <ActivityName :activity="activity" />
+            {{ getActivityName(activity) }}
           </div>
           <div v-else class="activity-name my-auto text-truncate">
-            <ActivityName :activity="activity" />
+            {{ getActivityName(activity) }}
           </div>
           <template #append>
             <div
@@ -132,13 +132,13 @@ import { size } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 
 import type { ChangeEvent, SortableEvent } from '@/types/draggable';
-import ActivityName from '@/components/common/ActivityName.vue';
 import OptionsMenu from '@/components/common/ActivityOptions/ActivityMenu.vue';
 import OutlineItem from '@/components/repository/Outline/OutlineItem.vue';
 import OutlineItemToolbar from '@/components/common/ActivityOptions/ActivityToolbar.vue';
 import type { StoreActivity } from '@/stores/activity';
 
 const { smAndUp } = useDisplay();
+const { getActivityName } = useActivityName();
 const currentRepositoryStore = useCurrentRepository();
 
 const { selectedActivity, taxonomy } = storeToRefs(currentRepositoryStore);

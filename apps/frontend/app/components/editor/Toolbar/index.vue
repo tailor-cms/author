@@ -26,13 +26,14 @@
           icon="mdi-link-box"
           size="small"
         />
-        <ActivityName
-          :activity="activity"
+        <span
           :class="[
             'activity-name font-weight-medium',
             activity?.isLinkedCopy ? 'text-secondary' : '',
           ]"
-        />
+        >
+          {{ getActivityName(activity) }}
+        </span>
         <template v-if="showPublishDiff">
           <span class="title-separator">·</span>
           <span class="text-body-small">comparing with published</span>
@@ -47,6 +48,7 @@
         </template>
       </h1>
       <div class="toolbar-trailing d-flex align-center ga-2">
+        <ActivityPagination />
         <template v-if="activity?.isLinkedCopy">
           <VBtn
             :disabled="!source"
@@ -86,7 +88,7 @@ import { formatDate } from 'date-fns/format';
 
 import { api } from '@/api';
 import ActivityActions from './ActivityActions.vue';
-import ActivityName from '@/components/common/ActivityName.vue';
+import ActivityPagination from './ActivityPagination.vue';
 import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import HistoryToolbar from './HistoryToolbar.vue';
 import { useEditorStore } from '@/stores/editor';
@@ -112,6 +114,7 @@ const showPublishDiff = computed(() => editorStore.showDiff);
 const isHistoryMode = computed(() => editorStore.isHistoryMode);
 
 const notify = useNotification();
+const { getActivityName } = useActivityName();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
 const { mdAndUp } = useDisplay();
@@ -232,10 +235,5 @@ const usersWithActivity = computed(() => {
 .toolbar-trailing {
   flex-shrink: 0;
   padding-right: 0.5rem;
-}
-
-.rail-divider {
-  height: 1.5rem;
-  align-self: center;
 }
 </style>
