@@ -4,7 +4,6 @@
     :expanded="expanded"
     :is-readonly="isReadonly"
     :is-dirty="isDirty"
-    class="ml-2 mr-3"
     @delete="$emit('delete')"
     @save="save"
     @update:expanded="expanded = $event"
