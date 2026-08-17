@@ -354,7 +354,6 @@ test('linked activity shows link icon in outline', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  await outline.toggleExpand();
   const item = await outline.getOutlineItemByUid(linkedActivity.uid);
   await expect(item.linkIcon).toBeVisible();
 });
@@ -365,7 +364,7 @@ test('linked indicator shows in sidebar when linked activity is selected', async
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
   await indicator.expectLinkedStatus();
@@ -375,13 +374,13 @@ test('can unlink activity via indicator menu', async ({ page }) => {
   const { linkedActivity: item } = await seedLinkedRepositories();
   await toStructurePage(page, item);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(item.uid);
+  const { sidebar } = await outline.selectItem(item.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
   await indicator.unlink();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
-  const { sidebar: reloadedSidebar } = await outline.expandAndSelect(item.uid);
+  const { sidebar: reloadedSidebar } = await outline.selectItem(item.uid);
   await reloadedSidebar.linkedIndicator.expectNotVisible();
 });
 
@@ -389,7 +388,7 @@ test('comments disabled on linked activity', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   const notice = sidebar.linkedCopyNotice;
   await expect(notice.el).toBeVisible();
   await expect(notice.viewOnSourceBtn).toBeVisible();
@@ -400,7 +399,7 @@ test('can navigate to source from comments notice', async ({ page }) => {
   const { repository, linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   const notice = sidebar.linkedCopyNotice;
   await expect(notice.viewOnSourceBtn).toBeVisible();
   await notice.navigateToSource();
@@ -411,7 +410,7 @@ test('unlinking preserves content', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
   await indicator.unlink();
@@ -428,7 +427,7 @@ test('auto-unlink on activity data edit', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
   // Edit the activity name in sidebar, triggers auto-unlink
@@ -438,7 +437,6 @@ test('auto-unlink on activity data edit', async ({ page }) => {
   // Verify persistence
   await page.reload();
   await page.waitForLoadState('networkidle');
-  await outline.toggleExpand();
   const editedItem = await outline.getOutlineItemByName(newName);
   await editedItem.select();
   await indicator.expectNotVisible();
@@ -460,7 +458,7 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
   const linkedModule = linkedActivities[0];
   await toStructurePage(page, { repositoryId: targetRepoId } as any);
   const outline = new ActivityOutline(page);
-  const { item, sidebar } = await outline.expandAndSelect(linkedModule.uid);
+  const { item, sidebar } = await outline.selectItem(linkedModule.uid);
   const indicator = sidebar.linkedIndicator;
   await indicator.expectVisible();
   // Add a child Page into the linked module — triggers auto-unlink
@@ -470,7 +468,7 @@ test('auto-unlink on structural change (add child to a linked module)', async ({
   // Verify persistence
   await page.reload();
   await page.waitForLoadState('networkidle');
-  const { sidebar: reloadedSidebar } = await outline.expandAndSelect(
+  const { sidebar: reloadedSidebar } = await outline.selectItem(
     linkedModule.uid,
   );
   await reloadedSidebar.linkedIndicator.expectNotVisible();
