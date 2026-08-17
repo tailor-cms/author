@@ -22,7 +22,10 @@
           <div class="w-100">
             <EditorContent v-bind="fieldProps" :editor="editor" class="w-100" />
             <VExpandTransition>
-              <div v-if="!isReadonly.value" ref="toolbar">
+              <div
+                v-if="!isReadonly.value && (!toolbarOnFocus || focused)"
+                ref="toolbar"
+              >
                 <VDivider />
                 <EditorToolbar :disabled="isDisabled.value" :editor="editor" />
               </div>
@@ -53,6 +56,8 @@ interface Props {
   variant?: VField['variant'];
   rules?: VInput['rules'];
   readonly?: boolean;
+  // Show the formatting toolbar only while the editor has focus.
+  toolbarOnFocus?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -61,6 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   readonly: false,
   variant: undefined,
   rules: undefined,
+  toolbarOnFocus: false,
 });
 const emit = defineEmits(['update:model-value', 'change']);
 
