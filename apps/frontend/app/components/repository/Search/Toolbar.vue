@@ -51,7 +51,14 @@
         </span>
       </template>
       <template #item="{ props: itemProps, item }">
-        <VListItem v-bind="itemProps" :prepend-icon="item.icon" />
+        <VListItem v-bind="itemProps" :active="types.includes(item.value)">
+          <template #prepend>
+            <VListItemAction start>
+              <VCheckboxBtn :model-value="types.includes(item.value)" />
+            </VListItemAction>
+            <VIcon :icon="item.icon" size="small" />
+          </template>
+        </VListItem>
       </template>
     </VAutocomplete>
   </div>
