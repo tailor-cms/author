@@ -46,6 +46,19 @@ body {
   word-break: break-word;
 }
 
+/* Ellipsis for long selection chip labels; `text-overflow` needs a block box,
+   Vuetify makes `.v-chip__content` an inline-flex. Keep chip content text-only
+   - icons and avatars go in the chip's `prepend` slot. */
+.v-autocomplete__selection,
+.v-combobox__selection,
+.v-select__selection {
+  .v-chip__content {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
 /* VBottomSheet: since v4.1 the overlay animates its `top` on resize (default
    transition-property is `all`), so resizing content makes the sheet wobble.
    Limit to `transform` to keep the slide-in without the jitter. */
