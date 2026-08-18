@@ -253,7 +253,7 @@ const icon = computed(() => {
 
 .drop-group {
   // The ghost is a real row, so a dragged row tracks drags in and out alike.
-  &:has(> [data-draggable]) .drop-group__placeholder {
+  &:has(> [data-draggable]) > .drop-group__placeholder {
     display: none;
   }
 
