@@ -15,7 +15,7 @@
           :key="child.id"
           :style="{ '--type-accent': getColor(child.type) }"
           :subtitle="getLabel(child.type)"
-          :title="getName(child)"
+          :title="getActivityName(child)"
           :to="routeFor(child)"
           class="subactivity-list__row bg-surface-raised elevation-1"
           color="primary"
@@ -40,8 +40,9 @@ import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{ activity: Activity }>();
 
-const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
+const { $schemaService } = useNuxtApp() as any;
 const repositoryStore = useCurrentRepository();
+const { getActivityName } = useActivityName();
 
 const activityLabel = computed(
   () => $schemaService.getLevel(props.activity.type)?.label || 'Activity',
@@ -55,11 +56,6 @@ const children = computed(() =>
 
 const getLabel = (type: string) => $schemaService.getLevel(type)?.label;
 const getColor = (type: string) => $schemaService.getLevel(type)?.color;
-const getName = (activity: Activity) => {
-  const data = activity.data;
-  const raw = data?.name ?? '';
-  return $pluginRegistry.filter('data:value', raw, { data, key: 'name' });
-};
 
 const routeFor = (activity: Activity) => ({
   name: 'editor',
