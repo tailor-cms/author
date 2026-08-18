@@ -1,5 +1,5 @@
 <template>
-  <div ref="navigationContainer" class="navigation-container">
+  <div class="navigation-container">
     <div class="controls px-3 pt-2">
       <VTextField
         v-model="searchInput"
@@ -56,7 +56,6 @@ const props = defineProps<{
 
 const searchInput = ref('');
 const treeRef = useTemplateRef<InstanceType<typeof TailorTreeview>>('treeRef');
-const navigationContainer = useTemplateRef<HTMLElement>('navigationContainer');
 
 const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,
@@ -83,16 +82,6 @@ const navigateToActivity = (activityId: number) => {
     params: { id: props.repository.id, activityId },
   });
 };
-
-const scrollSelectedItemIntoView = async () => {
-  await nextTick();
-  const selectedNode =
-    navigationContainer.value?.querySelector<HTMLElement>('.list-item-active');
-  selectedNode?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-};
-
-onMounted(scrollSelectedItemIntoView);
-watch(() => props.selected.id, scrollSelectedItemIntoView);
 </script>
 
 <style lang="scss" scoped>
