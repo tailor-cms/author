@@ -55,7 +55,6 @@
       {{/previousComments}}
       <mj-section padding="8px 12px 24px">
         <mj-column>
-          <mj-divider mj-class="divider" />
           <mj-text mj-class="content" padding-bottom="0">
             View the {{activityLabel}} by clicking the button below:
           </mj-text>

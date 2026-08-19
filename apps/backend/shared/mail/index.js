@@ -153,13 +153,13 @@ async function sendCommentNotification(users, comment) {
   }
 }
 
-async function sendAssigneeNotification(assignee, activity) {
+async function sendAssigneeNotification(recipient, assignment) {
   try {
-    const recipients = assignee;
+    const { activityId, repositoryId, name, repositoryName } = assignment;
     const data = {
-      ...activity,
+      ...assignment,
       origin,
-      href: activityStatusUrl(activity.repositoryId, activity.id),
+      href: activityStatusUrl(repositoryId, activityId),
     };
     const html = await renderHtml(
       path.join(templatesDir, 'assignee.mjml'),
@@ -167,20 +167,20 @@ async function sendAssigneeNotification(assignee, activity) {
     );
     const text = renderText(path.join(templatesDir, 'assignee.txt'), data);
     logger.info(
-      { recipients, sender: from },
+      { recipient, sender: from },
       '📧  Sending notification email to:',
-      recipients,
+      recipient,
     );
     return await send({
       from,
-      to: recipients,
-      subject: `You've been assigned to the ${activity.label} "${activity.data.name}".`,
+      to: recipient,
+      subject: `You've been assigned to "${name}" in ${repositoryName}`,
       text,
       attachment: [{ data: html, alternative: true }],
     });
   } catch (error) {
     logger.error(
-      { recipient: assignee, error },
+      { recipient, error },
       '📧  Failed to send assignee notification',
     );
   }
