@@ -68,6 +68,12 @@ const listItem = useTemplateRef<HTMLButtonElement>('listItem');
 const isHovered = useElementHover(listItem);
 const isMenuOpen = ref(false);
 
+// Scrolls itself into view once its group expands to reveal it.
+useScrollWhenSelected(
+  () => (listItem.value as any)?.$el,
+  toRef(props, 'isActive'),
+);
+
 const activity = computed(
   () => activityStore.findById(props.id) as StoreActivity,
 );

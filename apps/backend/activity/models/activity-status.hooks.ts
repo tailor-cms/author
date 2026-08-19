@@ -42,10 +42,10 @@ const add = (ActivityStatus: any, Hooks: any) => {
   async function notifyAssignee(
     _: string,
     activity: Activity,
+    status: ActivityStatus,
     { context = {} as { user?: User } }: StatusHookOptions,
   ) {
     const userId = get(context, 'user.id');
-    const [status] = activity.status;
     if (!status.assigneeId) return;
     const previousStatus = await ActivityStatus.findOne({
       where: {
@@ -57,11 +57,16 @@ const add = (ActivityStatus: any, Hooks: any) => {
     const isUnchanged = previousStatus?.assigneeId === status.assigneeId;
     const isSelfAssign = status.assigneeId === userId;
     if (isUnchanged || isSelfAssign) return;
-    sendEmailNotification(activity);
+    const assignee = await status.getAssignee();
+    if (!assignee) return;
+    sendEmailNotification(activity, assignee);
   }
 
   // The status row's `belongsTo(Activity)` is fetched on first invocation
-  // so each inner hook receives the activity
+  // so each inner hook receives the activity alongside the created status
+  // row. The row is passed through directly - `activity.status` comes from
+  // a nested include, so neither the defaultScope ordering nor the
+  // assignee eager-load apply to it.
   function withActivity(...hooks: any[]) {
     const invokeHooks = (
       type: string,
@@ -70,18 +75,22 @@ const add = (ActivityStatus: any, Hooks: any) => {
     ) =>
       status.getActivity({ paranoid: false }).then((activity) => {
         if (!activity) return;
-        hooks.forEach((hook) => hook(type, activity, opts));
+        hooks.forEach((hook) => hook(type, activity, status, opts));
       });
     return afterTransaction(invokeHooks);
   }
 };
 
-async function sendEmailNotification(activity: Activity) {
+async function sendEmailNotification(activity: Activity, assignee: User) {
   const { label } = schema.getLevel(activity.type);
-  const [status] = activity.status as any[];
-  mail.sendAssigneeNotification(status.assignee.email, {
-    ...activity.toJSON(),
+  const repository = await activity.getRepository();
+  mail.sendAssigneeNotification(assignee.email, {
+    activityId: activity.id,
+    repositoryId: activity.repositoryId,
     label: label.toLowerCase(),
+    name: activity.data.name,
+    assigneeName: assignee.firstName || assignee.email,
+    repositoryName: repository?.name,
   });
 }
 

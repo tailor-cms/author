@@ -12,11 +12,13 @@
           variant="text"
         />
       </template>
-      <VList class="py-0">
+      <VList density="compact" nav>
+        <VListSubheader>Order by</VListSubheader>
         <VListItem
-          v-for="{ text, field, direction } in options"
+          v-for="{ text, icon, field, direction } in options"
           :key="field"
           :active="sortBy.field === field"
+          :prepend-icon="icon"
           :title="text"
           @click="update({ field, direction })"
         />
@@ -50,8 +52,24 @@ const sortIcon = computed(() =>
 );
 
 const options = computed(() => [
-  { text: 'Creation date', field: 'createdAt', direction: 'DESC' },
-  { text: 'Name', field: 'name', direction: 'ASC' },
+  {
+    text: 'Last updated',
+    icon: 'mdi-update',
+    field: 'updatedAt',
+    direction: 'DESC',
+  },
+  {
+    text: 'Creation date',
+    icon: 'mdi-calendar-plus',
+    field: 'createdAt',
+    direction: 'DESC',
+  },
+  {
+    text: 'Name',
+    icon: 'mdi-sort-alphabetical-variant',
+    field: 'name',
+    direction: 'ASC',
+  },
 ]);
 
 const update = (sortOption: { field: string; direction: string }) => {

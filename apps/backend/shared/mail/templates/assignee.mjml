@@ -1,31 +1,27 @@
 <mjml>
   <mj-include path="./components/head.mjml"/>
-  <mj-body padding="10px">
-    <mj-include path="./components/header.mjml"/>
-    <mj-section
-      padding="10px 10px 20px 10px"
-      text-align="left">
-      <mj-column
-        padding-bottom="15px"
-        border-bottom="1px solid #ccc">
-        <mj-text
-          mj-class="content"
-          padding-left="0"
-          color="#444"
-          font-size="16px">
-          You've been assigned to the {{label}} "{{data.name}}".
-        </mj-text>
-        <mj-text
-          mj-class="content"
-          padding-left="0"
-          color="#444"
-          font-size="16px">
-          View the {{label}} status by clicking the button below:
-        </mj-text>
-        <mj-button mj-class="ctaButton" href="{{href}}">
-          View {{data.name}} status
-        </mj-button>
-      </mj-column>
-    </mj-section>
+  <mj-body background-color="#F2F4F7" width="520px">
+    <mj-section padding="16px 0 0" />
+    <mj-wrapper background-color="#FFFFFF" border-radius="16px" padding="0">
+      <mj-include path="./components/header.mjml"/>
+      <mj-section padding="0 12px 24px" text-align="left">
+        <mj-column>
+          <mj-text mj-class="content">
+            Hi <strong>{{assigneeName}}</strong>,
+          </mj-text>
+          <mj-text mj-class="content" padding-bottom="0">
+            You've been assigned to the {{label}}
+            <strong>"{{name}}"</strong> in <strong>{{repositoryName}}</strong>.
+          </mj-text>
+          <mj-text mj-class="content">
+            View the {{label}} status by clicking the button below:
+          </mj-text>
+          <mj-button mj-class="ctaButton" align="center" padding-bottom="0" href="{{href}}">
+            View status
+          </mj-button>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-section padding="16px 0 32px" />
   </mj-body>
 </mjml>

@@ -61,7 +61,7 @@ const emit = defineEmits(['created']);
 const props = defineProps({
   // The ActivityRelationship config (allowedTypes, label).
   config: { type: Object, required: true },
-  isDisabled: { type: Boolean, default: false },
+  isReadonly: { type: Boolean, default: false },
 });
 
 const vuetifyTheme = useTheme();
@@ -73,7 +73,7 @@ const targetType = computed(() => {
 });
 
 const canCreate = computed(
-  () => !props.isDisabled && !!targetType.value && !!createActivity,
+  () => !props.isReadonly && !!targetType.value && !!createActivity,
 );
 
 const entityLabel = computed(

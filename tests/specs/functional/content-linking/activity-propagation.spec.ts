@@ -51,7 +51,6 @@ test('source activity rename propagates to linked copy', async ({ page }) => {
   // Navigate to target, linked copy should reflect the new name
   await toStructurePage(page, linkedActivity);
   const targetOutline = new ActivityOutline(page);
-  await targetOutline.toggleExpand();
   const targetItem = await targetOutline.getOutlineItemByUid(
     linkedActivity.uid,
   );
@@ -70,7 +69,7 @@ test('source root delete unlinks target copy', async ({ page }) => {
   // independent activity, but the link indicator is gone.
   await toStructurePage(page, linkedActivity);
   const targetOutline = new ActivityOutline(page);
-  const { sidebar } = await targetOutline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await targetOutline.selectItem(linkedActivity.uid);
   await sidebar.linkedIndicator.expectNotVisible();
 });
 
@@ -82,7 +81,6 @@ test('reordering linked activity does not unlink it', async ({ page }) => {
   // Add a sibling at root level to have something to reorder against
   await outline.addRootItem(outlineLevel.LEAF, 'Sibling Page');
   // Verify initial linked status
-  await outline.toggleExpand();
   const linkedItem = await outline.getOutlineItemByUid(linkedActivity.uid);
   await expect(linkedItem.linkIcon).toBeVisible();
   // Reorder the linked activity via API (move to last position)
@@ -91,11 +89,8 @@ test('reordering linked activity does not unlink it', async ({ page }) => {
   });
   // Reload and verify reorder happened and link is preserved
   await page.reload({ waitUntil: 'networkidle' });
-  await outline.toggleExpand();
   // Verify the linked activity is now last in the list
-  const items = await outline.getOutlineItems();
-  const lastItemUid = await items[items.length - 1].getUid();
-  expect(lastItemUid).toBe(linkedActivity.uid);
+  await outline.expectLastItem(linkedActivity.uid);
   // Verify link is preserved
   const reorderedItem = await outline.getOutlineItemByUid(linkedActivity.uid);
   await expect(reorderedItem.linkIcon).toBeVisible();
@@ -123,7 +118,6 @@ test('clone preserves linked content fields', async ({ page }) => {
   // Verify in UI
   await toStructurePage(page, { repositoryId: clonedRepo.id } as any);
   const outline = new ActivityOutline(page);
-  await outline.toggleExpand();
   const clonedItem = await outline.getOutlineItemByUid(clonedLinked.uid);
   await expect(clonedItem.linkIcon).toBeVisible();
 });
@@ -164,7 +158,7 @@ test('unlinking activity does not create extra revision', async ({ page }) => {
   // Unlink the activity
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   await sidebar.linkedIndicator.expectVisible();
   await sidebar.linkedIndicator.unlink();
   // Navigate to history page and verify no new revision created
@@ -246,7 +240,7 @@ test('unlinking from editor toolbar enables editing', async ({ page }) => {
   // Linked indicator should be gone on structure page
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);
-  const { sidebar } = await outline.expandAndSelect(linkedActivity.uid);
+  const { sidebar } = await outline.selectItem(linkedActivity.uid);
   await sidebar.linkedIndicator.expectNotVisible();
 });
 

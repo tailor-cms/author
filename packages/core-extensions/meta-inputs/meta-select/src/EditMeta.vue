@@ -27,9 +27,16 @@
       </VListItem>
     </template>
     <template v-if="meta.multiple" #chip="{ item, props: selectProps }">
-      <VChip v-bind="selectProps" rounded="pill" closable pill>
-        <VAvatar v-if="hasImgProp" :image="item.img" start />
-        {{ item.label }}
+      <VChip
+        v-bind="selectProps"
+        :text="item.label"
+        rounded="pill"
+        closable
+        pill
+      >
+        <template v-if="hasImgProp" #prepend>
+          <VAvatar :image="item.img" start />
+        </template>
       </VChip>
     </template>
     <template v-if="hasImgProp" #selection="{ item }">
@@ -68,9 +75,3 @@ const input = ref(props.meta.value);
 const options = computed<SelectOption[]>(() => props.meta.options ?? []);
 const hasImgProp = computed(() => options.value.some((it) => it.img));
 </script>
-
-<style lang="scss" scoped>
-:deep(.v-select__selection .v-chip__content) {
-  overflow: unset;
-}
-</style>

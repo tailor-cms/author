@@ -103,6 +103,7 @@
           />
         </PublishDiffProvider>
       </template>
+      <ActivityPager v-if="!isLoading" class="mt-16" />
     </div>
   </div>
 </template>
@@ -131,6 +132,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 
 import aiAPI from '@/api/ai';
 import ActivityMetadata from './ActivityMetadata.vue';
+import ActivityPager from './ActivityPager.vue';
 import ContentContainers from './ContainerList.vue';
 import ContentLoader from './ContentLoader.vue';
 import HistoryReplayProvider from './HistoryReplayProvider.vue';

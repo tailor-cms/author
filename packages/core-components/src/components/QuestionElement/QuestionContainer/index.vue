@@ -1,21 +1,21 @@
 <template>
-  <div class="text-left">
+  <div class="question-container text-left">
     <QuestionPrompt
       :allowed-element-config="embedElementConfig"
       :element-data="elementData"
-      :is-readonly="isReadonly || isDisabled"
+      :is-readonly="isReadonly"
       @update="$emit('update', $event)"
     />
     <slot></slot>
     <QuestionHint
       :hint="elementData.hint"
-      :is-readonly="isReadonly || isDisabled"
+      :is-readonly="isReadonly"
       @update="$emit('update', { hint: $event })"
     />
     <QuestionFeedback
       :answers="elementData.answers"
       :feedback="elementData.feedback"
-      :is-readonly="isReadonly || isDisabled"
+      :is-readonly="isReadonly"
       :is-gradable="elementData.isGradable"
       :show-answer-feedback="showAnswerFeedback"
       @update="$emit('update', { feedback: $event })"
@@ -32,7 +32,6 @@ import QuestionPrompt from './QuestionPrompt.vue';
 
 interface Props {
   elementData: Record<string, any>;
-  isDisabled?: boolean;
   isReadonly?: boolean;
   showAnswerFeedback?: boolean;
   embedElementConfig?: ContentElementCategory[];
@@ -40,7 +39,6 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
-  isDisabled: false,
   isDirty: false,
   isReadonly: false,
   showAnswerFeedback: false,
@@ -49,6 +47,12 @@ defineEmits(['update']);
 </script>
 
 <style lang="scss" scoped>
+// Keep the page scroll position stable while toolbars expand and collapse
+// on focus changes between the rich text fields.
+.question-container {
+  overflow-anchor: none;
+}
+
 :deep(.v-input__control) {
   flex-wrap: wrap;
 }

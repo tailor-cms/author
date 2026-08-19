@@ -1,7 +1,7 @@
 <template>
   <div class="px-4 pb-2">
     <div
-      v-if="isAiEnabled && !isDisabled && !isAiGeneratingContent"
+      v-if="isAiEnabled && !isReadonly && !isAiGeneratingContent"
       class="d-flex flex-wrap justify-end mb-3 ga-3"
     >
       <AIPrompt
@@ -34,7 +34,7 @@
     </VSheet>
     <VAlert
       v-else-if="!containerContent.length"
-      :text="isDisabled ? `Empty ${label}` : `Click the button below to add ${label}.`"
+      :text="isReadonly ? `Empty ${label}` : `Click the button below to add ${label}.`"
       class="mt-7 mr-2 mb-11"
       icon="mdi-information-outline"
       variant="tonal"
@@ -44,7 +44,7 @@
       v-if="!isAiGeneratingContent"
       :activity="container"
       :elements="containerContent"
-      :is-disabled="isDisabled"
+      :is-readonly="isReadonly"
       :layout="layout"
       :supported-element-config="supportedElementConfig"
       class="element-list"
@@ -52,7 +52,7 @@
     >
       <template #default="{ element, position, isDragged }">
         <InlineActivator
-          :disabled="isDisabled"
+          :disabled="isReadonly"
           @click="showElementDrawer(position)"
         />
         <ContainedContent
@@ -60,7 +60,7 @@
             element,
             references: references?.[element.uid],
             isDragged,
-            isDisabled,
+            isReadonly,
             setWidth: false,
           }"
           show-discussion
@@ -74,7 +74,7 @@
           v-bind="slotProps"
           :items="containerContent"
           :position="Math.min(insertElementPosition, lastPosition)"
-          :show="!isDisabled && isAddDrawerVisible"
+          :show="!isReadonly && isAddDrawerVisible"
           class="my-5"
           label="Add content element"
           variant="tonal"
@@ -111,7 +111,7 @@ const props = defineProps<{
   container: Activity;
   elements: Record<string, ContentElement>;
   label: string;
-  isDisabled: boolean;
+  isReadonly: boolean;
   layout?: boolean;
   disableAi?: boolean;
   supportedTypes?: any[];

@@ -1,13 +1,13 @@
-<mj-section>
+<mj-section padding="32px 0 0">
   <mj-column>
     <mj-image
       width="64px"
       height="64px"
+      padding="0"
       src="https://avatars.githubusercontent.com/u/142484057"
     />
-    <mj-text align="center" mj-class="title">
+    <mj-text align="center" mj-class="title" padding="12px 25px 24px">
       Tailor
     </mj-text>
-    <mj-divider mj-class="divider" border-width="2px" />
   </mj-column>
 </mj-section>

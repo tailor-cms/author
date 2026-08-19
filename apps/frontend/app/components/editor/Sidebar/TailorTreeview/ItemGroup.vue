@@ -72,7 +72,7 @@ const bindings = computed(() => {
 <style lang="scss" scoped>
 .drop-group {
   // The ghost is a real item, so a dragged item tracks drags in and out alike.
-  &:has(> [data-draggable]) .drop-group__placeholder {
+  &:has(> [data-draggable]) > .drop-group__placeholder {
     display: none;
   }
 

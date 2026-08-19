@@ -10,8 +10,7 @@
       <QuestionContainer
         :element-data="editedElement.data"
         :embed-element-config="embedElementConfig"
-        :is-disabled="isDisabled"
-        :is-readonly="isDisabled"
+        :is-readonly="isReadonly"
         :show-answer-feedback="showAnswerFeedback"
         @update="update"
       >
@@ -24,8 +23,7 @@
             references,
             isFocused,
             isDragged,
-            isDisabled,
-            isReadonly: props.isDisabled,
+            isReadonly,
           }"
           @add="emit('add', $event)"
           @delete="emit('delete')"
@@ -37,8 +35,8 @@
       </QuestionContainer>
       <VFadeTransition>
         <div
-          v-if="!isDisabled && isDirty && !autosave"
-          class="d-flex justify-end ga-2"
+          v-if="!isReadonly && isDirty && !autosave"
+          class="d-flex justify-end mt-4 ga-2"
         >
           <VBtn text="Cancel" variant="text" @click="cancel" />
           <VBtn
@@ -94,7 +92,6 @@ interface Props {
   componentName: string;
   references?: Record<string, ContentElement[]> | null;
   embedElementConfig?: ContentElementCategory[];
-  isDisabled?: boolean;
   isReadonly?: boolean;
   isFocused?: boolean;
   isDragged?: boolean;
@@ -105,7 +102,6 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   references: null,
-  isDisabled: false,
   isReadonly: false,
   isDragged: false,
   isFocused: false,

@@ -2,7 +2,7 @@
   <div class="group-introduction">
     <VAlert
       v-if="!elements.length"
-      :text="isDisabled
+      :text="isReadonly
         ? 'Empty introduction'
         : 'Click the button below to create first Introduction item.'"
       class="mt-4"
@@ -13,7 +13,7 @@
     <ElementList
       :activity="group"
       :elements="elements"
-      :is-disabled="isDisabled"
+      :is-readonly="isReadonly"
       :supported-element-config="introductionElementConfig"
       class="pa-0"
       layout
@@ -23,7 +23,7 @@
       <template #default="{ element, isDragged }">
         <ContainedContent
           :element="element"
-          :is-disabled="isDisabled"
+          :is-readonly="isReadonly"
           :is-dragged="isDragged"
           :set-width="false"
           @delete="$emit('delete:element', element)"
@@ -44,7 +44,7 @@ import { introductionElementConfig } from './config';
 defineProps<{
   group: Activity;
   elements: ContentElement[];
-  isDisabled: boolean;
+  isReadonly: boolean;
 }>();
 
 const emit = defineEmits([

@@ -1,11 +1,11 @@
 <template>
   <div v-if="editorStore.selectedActivity" class="editor-root w-100">
-    <VToolbar
-      :key="`${editorStore.selectedActivityId}-${editorStore.selectedContentElementId}`"
+    <EditorToolbar
+      :key="editorStore.selectedContentElementId ?? 'activity'"
       :active-users="activeUsers"
       :element="editorStore.selectedContentElement as ContentElement"
     />
-    <VSidebar
+    <EditorSidebar
       v-model="showSidebar"
       :activities="repositoryStore.outlineActivities as Activity[]"
       :repository="repositoryStore.repository as Repository"
@@ -26,6 +26,7 @@
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import type { Repository } from '@tailor-cms/interfaces/repository';
+import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
 
 import { useCommentStore } from '@/stores/comments';
@@ -34,8 +35,8 @@ import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
 import { useReviewStore } from '@/stores/review';
 import FeedbackSidebar from '@/components/editor/FeedbackSidebar/index.vue';
-import VSidebar from '@/components/editor/Sidebar/index.vue';
-import VToolbar from '@/components/editor/Toolbar/index.vue';
+import EditorSidebar from '@/components/editor/Sidebar/index.vue';
+import EditorToolbar from '@/components/editor/Toolbar/index.vue';
 
 const { $ceRegistry, $pluginRegistry } = useNuxtApp() as any;
 
@@ -73,6 +74,25 @@ const initializeFeedback = (activityId: number) => {
 };
 
 const lastEditorActivity = useLastEditorActivity();
+const { previous, next, goToPrevious, goToNext } = useEditorPagination();
+
+// Alt+Arrow moves the caret inside text fields and the rich text editor.
+const isEditingText = () => {
+  const target = document.activeElement;
+  if (!(target instanceof HTMLElement)) return false;
+  if (target.isContentEditable) return true;
+  return ['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName);
+};
+
+// Vertical arrows, since Alt+Left/Right is browser Back/Forward on Windows.
+onKeyStroke(['ArrowUp', 'ArrowDown'], (e) => {
+  if (!e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || e.repeat) return;
+  if (isEditingText()) return;
+  const isBack = e.key === 'ArrowUp';
+  if (!(isBack ? previous.value : next.value)) return;
+  e.preventDefault();
+  return isBack ? goToPrevious() : goToNext();
+});
 
 const parseActivityId = () => {
   if (!route.params.activityId) navigateTo({ name: 'catalog' });

@@ -2,6 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { ContentElement, HtmlContentElement } from './ContentElement';
+import { ActivityPager } from './ActivityPager';
 import { AddElementDialog } from './AddElementDialog';
 import { ContainerList } from './ContainerList';
 import { EditorSidebar } from './Sidebar';
@@ -13,6 +14,7 @@ export class Editor {
   readonly page: Page;
   readonly copyDialog: SelectElementDialog;
   readonly sidebar: EditorSidebar;
+  readonly pager: ActivityPager;
   readonly topToolbar: Locator;
   readonly addElementDialog: AddElementDialog;
   readonly primaryPageName = outlineSeed.primaryPage.title;
@@ -29,6 +31,7 @@ export class Editor {
     this.toast = new Toast(page);
     this.copyDialog = new SelectElementDialog(page);
     this.sidebar = new EditorSidebar(page);
+    this.pager = new ActivityPager(page);
     this.topToolbar = this.page.locator('.activity-toolbar');
     this.addElementDialog = new AddElementDialog(page);
     this.containerList = new ContainerList(page);
