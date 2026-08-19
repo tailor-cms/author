@@ -120,15 +120,21 @@ watch(
   },
 );
 
+const revealActiveItem = () => {
+  const ancestors = findAncestors(props.items, props.activeItemId);
+  expanded.value = uniq([...expanded.value, ...getGroupIds(ancestors)]);
+};
+
 watch(
   () => props.items,
   () => {
     if (expanded.value.length) return;
-    const ancestors = findAncestors(props.items, props.activeItemId);
-    expanded.value = uniq([...expanded.value, ...getGroupIds(ancestors)]);
+    revealActiveItem();
   },
   { deep: true },
 );
+
+watch(() => props.activeItemId, revealActiveItem);
 </script>
 
 <style lang="scss" scoped>

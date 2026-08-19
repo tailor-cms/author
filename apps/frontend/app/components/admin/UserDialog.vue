@@ -7,15 +7,16 @@
     @submit="submit"
   >
     <template #body>
-      <VBtn
-        v-if="userData?.id"
-        :disabled="isReinviting"
-        :loading="isReinviting"
-        class="d-block ml-auto mb-4"
-        text="Reinvite"
-        variant="tonal"
-        @click="reinvite"
-      />
+      <div v-if="userData?.id" class="d-flex justify-end mb-4">
+        <VBtn
+          :disabled="isReinviting"
+          :loading="isReinviting"
+          append-icon="mdi-sync"
+          text="Reinvite"
+          variant="tonal"
+          @click="reinvite"
+        />
+      </div>
       <VTextField
         v-model="emailInput"
         :disabled="!isNewUser"
@@ -64,7 +65,7 @@
         v-model="groupInput"
         :error-messages="errors.userGroupIds"
         :items="userGroups"
-        class="user-group-select mb-3"
+        class="user-group-select"
         item-title="name"
         item-value="id"
         label="User Group"
@@ -104,7 +105,7 @@
 import { isEmpty, map } from 'lodash-es';
 import { boolean, object, string } from 'yup';
 import { role } from '@tailor-cms/interfaces/role';
-import { TailorDialog } from '@tailor-cms/core-components';
+import { TailorDialog, useLoader } from '@tailor-cms/core-components';
 import { titleCase } from '@tailor-cms/utils';
 import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
@@ -112,7 +113,15 @@ import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 
 import { api } from '@/api';
 
+const MIN_LOADING_MS = 800;
+
 const UserRole = role.user;
+
+const availableRoles = {
+  [UserRole.COLLABORATOR]: 'Can access only assigned repositories',
+  [UserRole.USER]: 'Can create new and access assigned repositories',
+  [UserRole.ADMIN]: 'Can fully manage the application and access all data',
+};
 
 export interface Props {
   visible?: boolean;
@@ -128,11 +137,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits(['created', 'updated', 'update:visible']);
 
-const availableRoles = {
-  [UserRole.COLLABORATOR]: 'Can access only assigned repositories',
-  [UserRole.USER]: 'Can create new and access assigned repositories',
-  [UserRole.ADMIN]: 'Can fully manage the application and access all data',
-};
+const notify = useNotification();
+const { loading: isReinviting, loader } = useLoader();
 
 const isDialogVisible = computed({
   get: () => props.visible,
@@ -141,7 +147,6 @@ const isDialogVisible = computed({
   },
 });
 
-const isReinviting = ref(false);
 const isNewUser = computed(() => !props.userData?.id);
 const roles = computed(() =>
   map(availableRoles, (description, value) => ({
@@ -215,10 +220,12 @@ const submit = handleSubmit(async () => {
   close();
 });
 
-const reinvite = () => {
-  isReinviting.value = true;
-  api.user
-    .reinvite({ params: { id: props.userData.id } })
-    .finally(() => (isReinviting.value = false));
-};
+const reinvite = loader(async () => {
+  try {
+    await api.user.reinvite({ params: { id: props.userData.id } });
+    notify(`Invite sent to ${props.userData.email}`);
+  } catch {
+    notify('We couldn\'t send the invite. Please try again.', { color: 'error' });
+  }
+}, MIN_LOADING_MS);
 </script>

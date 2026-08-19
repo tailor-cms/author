@@ -1,25 +1,32 @@
 <mjml>
   <mj-include path="./components/head.mjml"/>
-  <mj-body>
-    <mj-include path="./components/header.mjml"/>
-    <mj-section mj-class="content">
-      <mj-column>
-        <mj-text mj-class="content">
-          Welcome <strong class="name">{{recipientName}}</strong>,
-        </mj-text>
-        <mj-text mj-class="content" padding-bottom="0">
-          An account has been created for you on <a href="{{origin}}">{{hostname}}</a>.
-        </mj-text>
-        <mj-text mj-class="content">
-          Please finish your registration by clicking the button below:
-        </mj-text>
-        <mj-button mj-class="ctaButton" href="{{href}}">Complete registration</mj-button>
-        <mj-text mj-class="content">
-          Or copy and paste this URL into your browser:
-        </mj-text>
-        <mj-text mj-class="content"><a href="{{href}}">{{href}}</a></mj-text>
-        <mj-include path="./components/footer.mjml"/>
-      </mj-column>
-    </mj-section>
+  <mj-body background-color="#F2F4F7" width="520px">
+    <mj-section padding="16px 0 0" />
+    <mj-wrapper background-color="#FFFFFF" border-radius="16px" padding="0">
+      <mj-include path="./components/header.mjml"/>
+      <mj-section padding="0 12px 24px">
+        <mj-column>
+          <mj-text mj-class="content">
+            Welcome <strong class="name">{{recipientName}}</strong>,
+          </mj-text>
+          <mj-text mj-class="content" padding-bottom="0">
+            An account has been created for you on <a href="{{origin}}">{{hostname}}</a>.
+          </mj-text>
+          <mj-text mj-class="content">
+            Please finish your registration by clicking the button below:
+          </mj-text>
+          <mj-button mj-class="ctaButton" align="center" href="{{href}}">
+            Complete registration
+          </mj-button>
+          <mj-text mj-class="muted" padding-bottom="0">
+            Or copy and paste this URL into your browser:
+          </mj-text>
+          <mj-text mj-class="muted" css-class="fallback">
+            <a href="{{href}}">{{href}}</a>
+          </mj-text>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-include path="./components/footer.mjml"/>
   </mj-body>
 </mjml>

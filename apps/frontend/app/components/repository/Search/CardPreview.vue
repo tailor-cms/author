@@ -18,7 +18,7 @@
           rounded="lg"
           border
         >
-          <ContentElementWrapper :element="element" is-disabled />
+          <ContentElementWrapper :element="element" is-readonly />
         </VSheet>
       </VLazy>
     </VThemeProvider>

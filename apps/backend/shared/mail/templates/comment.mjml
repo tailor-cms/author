@@ -1,45 +1,25 @@
 <mjml>
   <mj-include path="./components/head.mjml"/>
-  <mj-body padding="10px">
-    <mj-include path="./components/header.mjml"/>
-    <mj-section
-      padding="0 10px 20px"
-      text-align="left">
-      <mj-column>
-        <mj-text
-          mj-class="content"
-          padding-left="0"
-          color="#444"
-          font-size="16px">
-          <b>{{author.label}}</b> {{ action }} a comment on
-          <b>{{repositoryName}}</b>, <b>{{topic}}</b>.
-        </mj-text>
-      </mj-column>
-    </mj-section>
-    <mj-section padding="0 10px">
-      <mj-column border-bottom="2px dashed #d2d2d2">
-        <mj-table padding="10px">
-          <tr class="content" style="display: flex;">
-            <td>
-              <span class="avatar">{{#getInitials}}{{author.label}}{{/getInitials}}</span>
-            </td>
-            <td style="padding: 0 0 0 20px">
-              <div class="label">{{author.label}}</div>
-              <div>{{content}}</div>
-            </td>
-          </tr>
-        </mj-table>
-       </mj-column>
-    </mj-section>
-    {{#previousComments}}
-      <mj-section padding="0 10px">
-        <mj-column background-color="#f5f5f5" border-bottom="2px dashed #d2d2d2">
-          <mj-table padding="10px">
+  <mj-body background-color="#F2F4F7" width="520px">
+    <mj-section padding="16px 0 0" />
+    <mj-wrapper background-color="#FFFFFF" border-radius="16px" padding="0">
+      <mj-include path="./components/header.mjml"/>
+      <mj-section padding="0 12px" text-align="left">
+        <mj-column>
+          <mj-text mj-class="content">
+            <b>{{author.label}}</b> {{ action }} a comment on
+            <b>{{repositoryName}}</b>, <b>{{topic}}</b>.
+          </mj-text>
+        </mj-column>
+      </mj-section>
+      <mj-section padding="0 37px">
+        <mj-column background-color="#F2F4F7" border-radius="12px">
+          <mj-table padding="10px 16px">
             <tr class="content" style="display: flex;">
               <td>
                 <span class="avatar">{{#getInitials}}{{author.label}}{{/getInitials}}</span>
               </td>
-              <td style="padding: 0 0 0 20px">
+              <td style="padding: 0 0 0 16px">
                 <div class="label">{{author.label}}</div>
                 <div>{{content}}</div>
               </td>
@@ -47,20 +27,43 @@
           </mj-table>
         </mj-column>
       </mj-section>
-    {{/previousComments}}
-    <mj-section padding="20px 10px 0">
-      <mj-column>
-        <mj-text
-          mj-class="content"
-          padding-left="0"
-          color="#444"
-          font-size="16px">
-          View the {{activityLabel}} by clicking the button below:
-        </mj-text>
-        <mj-button mj-class="ctaButton" href="{{href}}">
-          View {{activityLabel}}
-        </mj-button>
-      </mj-column>
-    </mj-section>
+      {{#previousComments.length}}
+        <mj-section padding="12px 37px 0">
+          <mj-column>
+            <mj-text mj-class="muted" padding="0 4px 2px">
+              Earlier in this thread:
+            </mj-text>
+          </mj-column>
+        </mj-section>
+      {{/previousComments.length}}
+      {{#previousComments}}
+        <mj-section padding="6px 37px 0">
+          <mj-column background-color="#F2F4F7" border-radius="12px">
+            <mj-table padding="10px 16px">
+              <tr class="content" style="display: flex;">
+                <td>
+                  <span class="avatar">{{#getInitials}}{{author.label}}{{/getInitials}}</span>
+                </td>
+                <td style="padding: 0 0 0 16px">
+                  <div class="label">{{author.label}}</div>
+                  <div>{{content}}</div>
+                </td>
+              </tr>
+            </mj-table>
+          </mj-column>
+        </mj-section>
+      {{/previousComments}}
+      <mj-section padding="8px 12px 24px">
+        <mj-column>
+          <mj-text mj-class="content" padding-bottom="0">
+            View the {{activityLabel}} by clicking the button below:
+          </mj-text>
+          <mj-button mj-class="ctaButton" align="center" padding-bottom="0" href="{{href}}">
+            View {{activityLabel}}
+          </mj-button>
+        </mj-column>
+      </mj-section>
+    </mj-wrapper>
+    <mj-section padding="16px 0 32px" />
   </mj-body>
 </mjml>

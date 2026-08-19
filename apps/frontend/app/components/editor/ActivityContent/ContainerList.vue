@@ -20,7 +20,7 @@
         :activities="processedActivities"
         :config="config"
         :container="container"
-        :disabled="isReadonly"
+        :is-readonly="isReadonly"
         :elements="processedElements"
         :name="name"
         :position="index"

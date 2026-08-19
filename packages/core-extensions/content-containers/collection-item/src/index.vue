@@ -7,7 +7,7 @@
           :key="meta.key"
           :meta="{ ...meta, value: entryMetaValues[meta.key] }"
           :name="meta.key"
-          :is-disabled="disabled"
+          :is-readonly="isReadonly"
           hide-details="auto"
           @update="(e) => (entryMetaValues[meta.key] = e)"
         />
@@ -35,7 +35,7 @@
               <ContainedContent
                 :element="containerState[input.key]"
                 :embed-element-config="embedElementConfig"
-                :is-disabled="disabled"
+                :is-readonly="isReadonly"
                 variant="field"
                 autosave
                 @save="(e) => updateSlot(input.key, e)"
@@ -51,7 +51,7 @@
             v-else
             :meta="{ ...input, value: containerState[input.key] }"
             :name="input.key"
-            :is-disabled="disabled"
+            :is-readonly="isReadonly"
             class="pb-4"
             hide-details="auto"
             @update="(e) => (containerState[input.key] = e)"
@@ -77,7 +77,7 @@
               :activities="activities"
               :config="rel"
               :error-message="errorMessage"
-              :is-disabled="disabled"
+              :is-readonly="isReadonly"
               :model-value="refsState[rel.type]"
               :owner-id="container.parentId ?? undefined"
               @update="(ids) => (refsState[rel.type] = ids)"
@@ -88,7 +88,7 @@
     </VCardText>
     <VSlideYTransition>
       <VSheet
-        v-if="!disabled && isDirty"
+        v-if="!isReadonly && isDirty"
         color="surface-container-low"
         class="px-4 py-3 d-flex justify-end ga-2"
         border="t"
@@ -143,11 +143,11 @@ interface Props {
   elements: Record<string, ContentElement>;
   config?: Record<number, any>;
   embedElementConfig?: any[];
-  disabled?: boolean;
+  isReadonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
+  isReadonly: false,
   config: () => ({}),
   embedElementConfig: () => [],
 });

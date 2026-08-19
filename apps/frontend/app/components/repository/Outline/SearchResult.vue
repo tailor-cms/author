@@ -15,7 +15,7 @@
       <LabelChip color="tertiary" size="x-small" variant="tonal">
         {{ activity.shortId }}
       </LabelChip>
-      <ActivityName :activity="activity" class="text-title-medium ml-2" />
+      <span class="text-title-medium ml-2">{{ getActivityName(activity) }}</span>
     </VListItemTitle>
     <template #append>
       <VBtn
@@ -34,7 +34,6 @@
 <script lang="ts" setup>
 import { find } from 'lodash-es';
 
-import ActivityName from '@/components/common/ActivityName.vue';
 import LabelChip from '@/components/common/LabelChip.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
@@ -47,6 +46,7 @@ const props = withDefaults(defineProps<Props>(), { isSelected: false });
 defineEmits(['select', 'show']);
 
 const store = useCurrentRepository();
+const { getActivityName } = useActivityName();
 
 const config = computed(() =>
   find(store.taxonomy, { type: props.activity.type }),

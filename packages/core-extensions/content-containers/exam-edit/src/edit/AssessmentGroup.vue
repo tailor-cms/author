@@ -8,7 +8,7 @@
         <VSpacer />
         <VFadeTransition>
           <VBtn
-            v-if="!isDisabled && (isExpanded || isHovering)"
+            v-if="!isReadonly && (isExpanded || isHovering)"
             v-tooltip:bottom="{ text: 'Delete Group', openDelay: 300 }"
             class="mr-2"
             color="error"
@@ -25,7 +25,7 @@
     <VExpansionPanelText>
       <VTextField
         v-model.number="timeLimit"
-        :readonly="isDisabled"
+        :readonly="isReadonly"
         label="Time limit"
         min="0"
         name="timeLimit"
@@ -41,7 +41,7 @@
       <GroupIntroduction
         :elements="introductionElements"
         :group="group"
-        :is-disabled="isDisabled"
+        :is-readonly="isReadonly"
         @delete:element="$emit('delete:element', $event)"
         @reorder:element="$emit('reorder:element', $event)"
         @save:element="$emit('save:element', $event)"
@@ -49,7 +49,7 @@
       <div class="text-title-small text-left mb-2">Questions</div>
       <VAlert
         v-if="!hasAssessments"
-        :text="isDisabled
+        :text="isReadonly
           ? 'Empty question group'
           : 'Click the button below to create first question.'"
         class="mt-4"
@@ -60,7 +60,7 @@
       <ElementList
         :activity="group"
         :elements="assessments"
-        :is-disabled="isDisabled"
+        :is-readonly="isReadonly"
         :supported-element-config="supportedElementConfig"
         @add="addAssessments"
         @update="$emit('reorder:element', $event)"
@@ -68,7 +68,7 @@
         <template #default="{ element }">
           <Assessment
             :assessment="element"
-            :is-disabled="isDisabled"
+            :is-readonly="isReadonly"
             :objectives="objectives"
             :objective-label="objectiveLabel"
             @delete="deleteAssessment(element)"
@@ -107,12 +107,12 @@ interface Props {
   elements: Record<string, ContentElement>;
   objectives: Activity[];
   position: number;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   isExpanded?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  isDisabled: false,
+  isReadonly: false,
   isExpanded: false,
 });
 

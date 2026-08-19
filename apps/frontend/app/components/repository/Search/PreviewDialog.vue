@@ -28,7 +28,7 @@
       </VSheet>
       <div v-else ref="rootRef">
         <VThemeProvider class="rounded-lg" theme="light" with-background>
-          <ContentElementWrapper :element="element" is-disabled />
+          <ContentElementWrapper :element="element" is-readonly />
         </VThemeProvider>
       </div>
     </template>

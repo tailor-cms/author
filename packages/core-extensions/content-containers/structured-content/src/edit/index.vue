@@ -2,7 +2,7 @@
   <div>
     <div class="d-flex items-center justify-end ga-2 mb-6">
       <VBtn
-        v-if="isAiEnabled && !isAiGeneratingContent && !disabled"
+        v-if="isAiEnabled && !isAiGeneratingContent && !isReadonly"
         color="secondary"
         size="small"
         variant="tonal"
@@ -11,7 +11,7 @@
         @click="generateStructuredContent"
       />
       <span
-        v-if="isCollapsible && subcontainers.length > 1 && !disabled"
+        v-if="isCollapsible && subcontainers.length > 1 && !isReadonly"
         v-show="!isAiGeneratingContent"
         class="d-flex justify-end"
       >
@@ -31,7 +31,7 @@
     </div>
     <VAlert
       v-if="!subcontainers.length && !isAiGeneratingContent"
-      :text="disabled
+      :text="isReadonly
         ? 'Empty structured content'
         : 'Click the button below to add a first content section.'"
       icon="mdi-information-outline"
@@ -51,7 +51,7 @@
         :content-element-config="getContentElementConfig(subcontainer.type)"
         :elements="elements"
         :expand-all="expandAll"
-        :is-disabled="disabled"
+        :is-readonly="isReadonly"
         :is-first="isFirst(subcontainer.id)"
         :is-last="isLast(subcontainer.id)"
         @add:element="emit('add:element', $event)"
@@ -64,7 +64,7 @@
       />
     </div>
     <div
-      v-if="!disabled"
+      v-if="!isReadonly"
       v-show="!isAiGeneratingContent"
       class="d-flex justify-center flex-wrap ga-3 mt-8"
     >
@@ -102,14 +102,14 @@ interface Props {
   container: Activity;
   elements: Record<string, ContentElement>;
   config: any;
-  disabled?: boolean;
+  isReadonly?: boolean;
   embedElementConfig?: ContentElementCategory[];
   contentElementConfig?: ContentElementCategory[];
   disableAi?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
+  isReadonly: false,
   disableAi: false,
 });
 

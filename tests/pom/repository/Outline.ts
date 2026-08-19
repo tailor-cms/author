@@ -14,6 +14,7 @@ export class ActivityOutline {
   readonly page: Page;
   readonly el: Locator;
   readonly searchInput: Locator;
+  readonly items: Locator;
   readonly toggleAllBtn: Locator;
   readonly addMenuBtn: Locator;
   readonly emptyCreateCard: Locator;
@@ -23,6 +24,7 @@ export class ActivityOutline {
   constructor(page: Page) {
     const el = page.locator('.structure-page');
     this.searchInput = el.getByPlaceholder('Search by name or id...');
+    this.items = el.locator('.activity-wrapper');
     this.toggleAllBtn = el.getByRole('button', {
       name: /^(Expand all|Collapse all)$/,
     });
@@ -42,9 +44,9 @@ export class ActivityOutline {
     return this.searchInput.fill(name);
   }
 
-  async getOutlineItems() {
-    const items = await this.el.locator('.activity-wrapper').all();
-    return items.map((item) => new OutlineItem(this.page, item));
+  expectLastItem(uid: string) {
+    const lastItem = this.items.last().locator('.activity');
+    return expect(lastItem).toHaveAttribute('id', `activity_${uid}`);
   }
 
   async getOutlineItemByName(name: string) {
@@ -59,12 +61,16 @@ export class ActivityOutline {
     return new OutlineItem(this.page, item);
   }
 
-  async expandAndSelect(uid: string) {
-    await this.toggleExpand();
+  async selectItem(uid: string) {
     const item = await this.getOutlineItemByUid(uid);
     await item.select();
     const sidebar = new OutlineSidebar(this.page);
     return { item, sidebar };
+  }
+
+  async expandAndSelect(uid: string) {
+    await this.toggleExpand();
+    return this.selectItem(uid);
   }
 
   async addRootItem(type: string, name: string) {

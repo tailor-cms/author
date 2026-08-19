@@ -22,7 +22,7 @@
             {{ label }}
           </VChip>
           <VBtn
-            v-else-if="!disabled"
+            v-else-if="!isReadonly"
             color="error"
             size="small"
             text="Delete Exam"
@@ -36,7 +36,7 @@
       <div v-if="!isExamCollapsed" class="px-6 mb-6">
         <VAlert
           v-if="!groups.length"
-          :text="disabled
+          :text="isReadonly
             ? 'Empty exam'
             : 'Click the button below to create first question group.'"
           icon="mdi-information-outline"
@@ -54,7 +54,7 @@
             :key="group.uid"
             :elements="elements"
             :group="group"
-            :is-disabled="disabled"
+            :is-readonly="isReadonly"
             :is-expanded="expandedAssessmentGroup === group.uid"
             :objectives="examObjectives"
             :position="index"
@@ -67,7 +67,7 @@
           />
         </VExpansionPanels>
         <VBtn
-          v-if="!disabled"
+          v-if="!isReadonly"
           :disabled="!container.id"
           class="mt-5"
           prepend-icon="mdi-folder-plus-outline"
@@ -100,14 +100,14 @@ interface Props {
   embedElementConfig?: ContentElementCategory[];
   contentElementConfig?: ContentElementCategory[];
   config?: Record<string, any>;
-  disabled?: boolean;
+  isReadonly?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   embedElementConfig: () => [],
   contentElementConfig: () => [],
   config: () => ({}),
-  disabled: false,
+  isReadonly: false,
 });
 const emit = defineEmits([
   'delete',

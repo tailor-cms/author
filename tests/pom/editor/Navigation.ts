@@ -22,6 +22,26 @@ export class Navigation {
     return this.toggleAllBtn.click();
   }
 
+  async expandAll() {
+    const label = (await this.toggleAllBtn.innerText()).trim();
+    if (label === 'Expand all') await this.toggleItems();
+  }
+
+  // The button only offers "Collapse all" once every group is open.
+  async collapseAll() {
+    await this.expandAll();
+    await this.toggleItems();
+  }
+
+  outlineItem(name: string) {
+    return this.el.locator('.v-list-item').filter({ hasText: name });
+  }
+
+  // With every group expanded, DOM order is the outline's reading order.
+  getOutlineTitles() {
+    return this.el.locator('.v-list-item-title').allInnerTexts();
+  }
+
   async getOutlineItems(name?: string) {
     const el = this.el.locator('.v-list-item');
     return name ? el.filter({ hasText: name }).all() : el.all();
