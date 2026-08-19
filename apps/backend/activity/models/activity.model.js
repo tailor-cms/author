@@ -390,10 +390,11 @@ class Activity extends Model {
   }
 
   descendants(options = {}, nodes = [], leaves = []) {
-    const { attributes } = options;
+    const { attributes, filterFn } = options;
     const node = !isEmpty(attributes) ? pick(this, attributes) : this;
     nodes.push(node);
     return Promise.resolve(this.getChildren(options))
+      .then((children) => (filterFn ? children.filter(filterFn) : children))
       .map((it) => it.descendants(options, nodes, leaves))
       .then((children) => {
         if (!isEmpty(children)) return { nodes, leaves };
@@ -401,6 +402,13 @@ class Activity extends Model {
         leaves.push(leaf);
         return { nodes, leaves };
       });
+  }
+
+  // Descendants pruned at outline levels (the editor-scoped subtree);
+  // child page/module branches are never fetched.
+  containerDescendants(options = {}) {
+    const filterFn = (it) => !isOutlineActivity(it.type);
+    return this.descendants({ ...options, filterFn });
   }
 
   remove(options = {}) {
