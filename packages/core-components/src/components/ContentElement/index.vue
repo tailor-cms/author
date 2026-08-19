@@ -30,16 +30,17 @@
       :class="{ revealed: isHighlighted || activeUsers.length }"
       class="header-reveal"
     >
-      <div
+      <VSheet
         :class="{ expanded: isExpanded }"
         class="card-header d-flex align-center"
+        color="surface-container-low"
         @click="toggleExpanded"
       >
-        <span v-if="!isDisabled && isDraggable" class="drag-handle" @click.stop>
+        <span v-if="!isReadonly && isDraggable" class="drag-handle" @click.stop>
           <span class="mdi mdi-drag-vertical"></span>
         </span>
         <div
-          :class="{ 'ml-2': isDisabled || !isDraggable }"
+          :class="{ 'ml-2': isReadonly || !isDraggable }"
           class="type-label d-flex align-center flex-shrink-0"
         >
           <VIcon
@@ -74,7 +75,7 @@
           class="active-users"
         />
         <DiffChip :change-type="element.diffChange" />
-        <div v-if="!props.isDisabled" @click.stop>
+        <div v-if="!props.isReadonly" @click.stop>
           <ElementActions
             v-bind="actionBindings"
             @delete="emit('delete')"
@@ -96,10 +97,10 @@
           variant="text"
           @click.stop="toggleExpanded"
         />
-      </div>
+      </VSheet>
     </div>
     <DeprecationWarning
-      v-if="!isDisabled && isDeprecated(element.type)"
+      v-if="!isReadonly && isDeprecated(element.type)"
       :element="element"
       class="ma-3"
     />
@@ -195,7 +196,7 @@ interface Props {
   expanded?: boolean | null;
   isDragged?: boolean;
   isDraggable?: boolean;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   // External dirty state (e.g. edited element refs); shows the save
   // controls and lets a save through even when element data is unchanged.
   isDirty?: boolean;
@@ -216,7 +217,7 @@ const props = withDefaults(defineProps<Props>(), {
   expanded: null,
   isDragged: false,
   isDraggable: true,
-  isDisabled: false,
+  isReadonly: false,
   isDirty: false,
   showDiscussion: false,
   autosave: false,
@@ -251,7 +252,9 @@ if (rpc) {
 }
 
 const rootEl = ref<HTMLElement | null>(null);
-const isHovered = useElementHover(rootEl);
+// Delayed so a pointer passing over a stack of elements does not flash
+// their chrome; quiet headers reveal in flow, shifting the body down.
+const isHovered = useElementHover(rootEl, { delayEnter: 150 });
 const { focused: isFocusWithin } = useFocusWithin(rootEl);
 
 const isFocused = ref(false);
@@ -310,8 +313,7 @@ const editBindings = computed(() => ({
   references: props.references,
   isFocused: isFocused.value,
   isDragged: props.isDragged,
-  isDisabled: props.isDisabled,
-  isReadonly: props.isDisabled,
+  isReadonly: props.isReadonly,
 }));
 
 const actionBindings = computed(() => ({
@@ -343,20 +345,20 @@ const toggleExpanded = () => {
 };
 
 const onSelect = (e: any) => {
-  if (!props.isDisabled && !showDiff.value && !e.component) {
+  if (!props.isReadonly && !showDiff.value && !e.component) {
     focus();
     e.component = { name: 'content-element', data: props.element };
   }
 };
 
 const focus = () => {
-  if (props.isDisabled) return;
+  if (props.isReadonly) return;
   const { element, parent } = props;
   editorBus.emit('element:focus', { ...element, parent });
 };
 
 const onSave = (data: ContentElement['data']) => {
-  if (props.isDisabled) return;
+  if (props.isReadonly) return;
   // Editors re-emit `save` on blur even when nothing changed; skip persisting
   // (and its "saved" toast) when the payload matches the stored data.
   if (!props.isDirty && isEqual(data, props.element.data)) return;
@@ -584,6 +586,7 @@ $accent-selected: #ff4081;
   min-height: 2.75rem;
   padding: 0.375rem 0.5rem 0.375rem 0.25rem;
   cursor: pointer;
+  border-radius: 7px 7px 0 0;
 
   &.expanded {
     border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);

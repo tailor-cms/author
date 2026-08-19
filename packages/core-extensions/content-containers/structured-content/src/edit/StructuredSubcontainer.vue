@@ -43,7 +43,7 @@
         <VDivider class="mx-4 my-1" vertical />
       </template>
       <VBtn
-        v-if="!isDisabled"
+        v-if="!isReadonly"
         :aria-label="`Delete ${label}`"
         class="mr-2"
         color="error"
@@ -87,7 +87,7 @@
             :activities="activities"
             :container="container"
             :elements="elements"
-            :is-disabled="isDisabled"
+            :is-readonly="isReadonly"
             :label="'content elements'"
             :layout="layout"
             :supported-element-config="contentElementConfig"
@@ -118,7 +118,7 @@ const props = defineProps<{
   label: string;
   icon: string;
   meta: any;
-  isDisabled: boolean;
+  isReadonly: boolean;
   layout?: boolean;
   contentElementConfig?: Array<any>;
   disableContentElementList?: boolean;
@@ -138,7 +138,7 @@ const emit = defineEmits([
 ]);
 
 const canReorder = computed(
-  () => !props.isDisabled && !(props.isFirst && props.isLast),
+  () => !props.isReadonly && !(props.isFirst && props.isLast),
 );
 
 const elementCount = computed(() => {

@@ -74,7 +74,7 @@ export default (appInstance) =>
     name: 'content element',
     attrs: [
       'name', 'type', 'version', 'schema', 'initState', 'ui', 'isQuestion',
-      'isComposite', 'ai', 'isEmpty',
+      'isComposite', 'ai', 'isEmpty', 'showAnswerFeedback',
     ],
     getCondition: (type) => (it) => it.type === type,
     getName,

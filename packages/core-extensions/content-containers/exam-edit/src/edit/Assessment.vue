@@ -2,9 +2,8 @@
   <ContentElementWrapper
     :element="assessment"
     :expanded="expanded"
-    :is-disabled="isDisabled"
+    :is-readonly="isReadonly"
     :is-dirty="isDirty"
-    class="ml-2 mr-3"
     @delete="$emit('delete')"
     @save="save"
     @update:expanded="expanded = $event"
@@ -14,7 +13,7 @@
         <VCol cols="5">
           <VAutocomplete
             v-model="objectiveId"
-            :disabled="isDisabled"
+            :disabled="isReadonly"
             :items="objectives"
             :placeholder="objectiveLabel"
             density="comfortable"
@@ -45,7 +44,7 @@ const props = defineProps<{
   assessment: ContentElement;
   objectives: Activity[];
   objectiveLabel: string;
-  isDisabled: boolean;
+  isReadonly: boolean;
 }>();
 const emit = defineEmits(['save', 'delete']);
 

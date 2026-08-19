@@ -2,7 +2,7 @@
   <VContainer class="list-group" fluid>
     <Draggable
       v-bind="options"
-      :disabled="isDisabled"
+      :disabled="isReadonly"
       :list="elements"
       :item-key="getElementId"
       tag="VRow"
@@ -25,7 +25,7 @@
         </VCol>
       </template>
     </Draggable>
-    <template v-if="enableAdd && !isDisabled">
+    <template v-if="enableAdd && !isReadonly">
       <slot
         :activity="activity"
         :include="supportedElementConfig"
@@ -65,7 +65,7 @@ interface Props {
   supportedElementConfig?: ContentElementCategory[] | null;
   activity?: Activity | null;
   layout?: boolean;
-  isDisabled?: boolean;
+  isReadonly?: boolean;
   enableAdd?: boolean;
   addElementOptions?: any;
 }
@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<Props>(), {
   supportedElementConfig: null,
   activity: null,
   layout: false,
-  isDisabled: false,
+  isReadonly: false,
   enableAdd: true,
   addElementOptions: () => ({}),
 });

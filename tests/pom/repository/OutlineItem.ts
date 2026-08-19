@@ -77,11 +77,6 @@ export class OutlineItem {
     return this.el.click();
   }
 
-  async getUid(): Promise<string> {
-    const id = await this.el.locator('.activity').getAttribute('id');
-    return id?.replace('activity_', '') ?? '';
-  }
-
   toggleExpand() {
     return this.toggleBtn.click();
   }

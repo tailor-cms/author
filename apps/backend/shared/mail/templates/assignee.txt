@@ -1,9 +1,11 @@
 Tailor
 =================================================
 
-You've been assigned to the {{label}}: "{{data.name}}"
+Hi {{assigneeName}},
 
-View the {{label}} status by visiting the link:
+You've been assigned to the {{label}} "{{name}}" in {{repositoryName}}.
+
+View the {{label}} status by clicking the URL below:
 
 {{{href}}}
 

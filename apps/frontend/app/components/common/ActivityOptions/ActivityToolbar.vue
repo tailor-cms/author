@@ -29,20 +29,14 @@ import { useDisplay } from 'vuetify';
 import CreateDialog from '@/components/repository/Outline/CreateDialog/index.vue';
 
 const { AddAfter, AddBefore, AddInto } = InsertLocation;
-const { $pluginRegistry } = useNuxtApp() as any;
 
 const props = defineProps<{ activity: StoreActivity }>();
 
 const { smAndUp } = useDisplay();
 const selectedActivity = useSelectedActivity(props.activity);
+const { getActivityName } = useActivityName();
 
-// Get processed name via plugin hooks
-const activityName = computed(() => {
-  const data = props.activity?.data;
-  if (!data) return '';
-  const rawValue = data.name ?? '';
-  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
-});
+const activityName = computed(() => getActivityName(props.activity));
 const showCreateDialog = ref(false);
 const action = ref<InsertLocation>(AddAfter);
 

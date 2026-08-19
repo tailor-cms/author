@@ -99,18 +99,12 @@ const props = withDefaults(defineProps<Props>(), {
   rounded: 'circle',
 });
 
-const { $pluginRegistry } = useNuxtApp() as any;
 const selectedActivity = useSelectedActivity(props.activity);
+const { getActivityName } = useActivityName();
 
 const isOpen = defineModel<boolean>({ default: false });
 
-// Get processed name via plugin hooks
-const activityName = computed(() => {
-  const data = props.activity?.data;
-  if (!data) return '';
-  const rawValue = data.name ?? '';
-  return $pluginRegistry.filter('data:value', rawValue, { data, key: 'name' });
-});
+const activityName = computed(() => getActivityName(props.activity));
 
 const showCreateDialog = ref(false);
 const showCopyDialog = ref(false);
