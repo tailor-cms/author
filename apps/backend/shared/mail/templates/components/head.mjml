@@ -1,43 +1,56 @@
 <mj-head>
   <mj-attributes>
+    <mj-all font-family="'Helvetica Neue', helvetica, arial, sans-serif" />
     <mj-class name="title"
-      font-size="28px"
-      color="#37474F" />
+      font-size="20px"
+      font-weight="600"
+      letter-spacing="4px"
+      text-transform="uppercase"
+      color="#30323B" />
     <mj-class name="content"
-      color="#222222"
-      font-size="14px"
-      font-family="'Helvetica Neue', helvetica, arial, sans-serif"
-      background-color="white" />
+      color="#30323B"
+      font-size="15px"
+      line-height="24px" />
     <mj-class name="ctaButton"
-      height="50px"
-      inner-padding="0 25px"
-      padding="25px"
       color="white"
-      font-size="16px"
-      background-color="#37474f" />
-    <mj-class name="footer"
-      color="#555"
+      font-size="14px"
+      font-weight="500"
+      letter-spacing="0.2px"
+      border-radius="20px"
+      inner-padding="12px 24px"
+      padding="24px 25px 16px"
+      background-color="#1E9659" />
+    <mj-class name="muted"
+      color="#5E6470"
       font-size="12px"
-      background-color="white" />
+      line-height="18px" />
+    <mj-class name="footer"
+      color="#5E6470"
+      font-size="12px" />
     <mj-class name="divider"
-      padding="20px 10px"
+      padding="16px 25px"
       border-width="1px"
-      border-color="#d2d2d2"
-      border-style="dashed" />
+      border-color="#E6E9ED"
+      border-style="solid" />
   </mj-attributes>
   <mj-style inline="inline">
     strong {
-      font-weight: bold;
+      font-weight: 600;
     }
 
     a {
-      color: #c2185b;
+      color: #1E9659;
       text-decoration: none;
     }
 
+    .fallback a {
+      color: #2F6F8F;
+      word-break: break-all;
+    }
+
     .content {
-      color: #222222;
-      font-size: 16px;
+      color: #30323B;
+      font-size: 15px;
       font-family: 'Helvetica Neue', helvetica, arial, sans-serif;
     }
 
@@ -50,12 +63,12 @@
       display: block;
       width: 36px;
       height: 36px;
-      color: #fff;
+      color: #00210E;
       line-height: 36px;
-      font-weight: 100;
+      font-weight: 600;
       text-align: center;
       border-radius: 50%;
-      background-color: #36474f;
+      background-color: #C9E6F5;
     }
   </mj-style>
 </mj-head>
