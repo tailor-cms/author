@@ -191,9 +191,12 @@ watch(
   { immediate: true },
 );
 
-const descendantIds = computed(
-  () => new Set(map(activityStore.getDescendants(props.activity.id), 'id')),
-);
+// Editor-scoped descendants, mirroring the list endpoint - child pages have
+// their own editor and history.
+const descendantIds = computed(() => {
+  const descendants = activityStore.getContainerDescendants(props.activity.id);
+  return new Set(map(descendants, 'id'));
+});
 
 const isInSubtree = ({ entity, state }: Revision): boolean => {
   if (entity === Entity.Repository) return false;

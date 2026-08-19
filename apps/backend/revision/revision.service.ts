@@ -7,7 +7,7 @@ import isEqual from 'lodash/isEqual.js';
 import differenceBy from 'lodash/differenceBy.js';
 
 import { Entity, Operation } from '@tailor-cms/interfaces/revision';
-import { activity as activityUtils } from '@tailor-cms/utils';
+import { schema } from '@tailor-cms/config';
 import type { Activity } from '#app/activity/models/activity.model.js';
 import type {
   ListFilter,
@@ -27,7 +27,6 @@ import * as activityService from '../activity/activity.service.ts';
 import * as contentElementService from '../content-element/content-element.service.ts';
 
 const { Activity, ContentElement, Revision: RevisionModel, User } = db;
-const { getDescendants } = activityUtils;
 
 const logger = createLogger('revision:svc');
 
@@ -50,12 +49,14 @@ const includeUser = () => ({
   attributes: USER_SUMMARY_ATTRS,
 });
 
-// Root + descendants as full instances (incl. soft-deleted/detached),
-// parent-first - the order the restore cascade relies on.
+// Root + editor-scoped descendants (pruned at outline levels - child pages
+// have their own editor, history, and restore scope) as full instances
+// (incl. soft-deleted/detached), parent-first - the order the restore
+// cascade relies on.
 async function getSubtreeActivities(id: number): Promise<any[]> {
   const root: any = await Activity.findByPk(id, { paranoid: false });
   if (!root) return [];
-  const { nodes } = await root.descendants({ paranoid: false });
+  const { nodes } = await root.containerDescendants({ paranoid: false });
   return nodes;
 }
 
@@ -73,7 +74,8 @@ async function aliveStatesAt(where: any, at: string): Promise<any[]> {
 }
 
 // Lists a repository's revisions. `entity`+`entityId` scopes to one entity's
-// trail; `activityId` returns its whole subtree timeline (for the editor sidebar).
+// trail; `activityId` returns its editor-scoped subtree timeline (for the
+// editor sidebar).
 export async function list(
   repository: Repository,
   opts: ListQueryOptions,
@@ -85,7 +87,7 @@ export async function list(
     where.state = { id: filters.entityId };
   } else if (filters.activityId) {
     // Content elements hang off child container activities, not the page
-    // directly, so match the whole subtree's ids, not just `pageId`.
+    // directly, so match the container subtree's ids, not just `pageId`.
     const subtree = await getSubtreeActivities(filters.activityId);
     if (subtree.length === 0) return { total: 0, items: [] };
     const inSubtree = { [Op.in]: map(subtree, 'id') };
@@ -105,9 +107,9 @@ export function get(id: number): Promise<Revision> {
   return RevisionModel.fetch(id, { include: [includeUser()] });
 }
 
-// Resets an activity's whole subtree to its state at or before `timestamp` by
-// replaying through the live services - so each change emits a fresh revision
-// rather than rewriting history (additive restore).
+// Resets an activity's editor-scoped subtree to its state at or before
+// `timestamp` by replaying through the live services - so each change emits
+// a fresh revision rather than rewriting history (additive restore).
 //
 // Limitations:
 //   - Hard-deleted ids can't be resurrected (lookup keys are gone).
@@ -194,7 +196,7 @@ export async function restoreToMoment(
   return { activityId, elementCount: elements.length };
 }
 
-// Full subtree snapshot (activity + element states) alive at `at`.
+// Editor-scoped subtree snapshot (activity + element states) alive at `at`.
 async function snapshotAt(
   activity: Activity,
   at: string,
@@ -204,7 +206,10 @@ async function snapshotAt(
     { entity: Entity.Activity, repositoryId: activity.repositoryId },
     at,
   );
-  const descendants = getDescendants(aliveActivities, activity);
+  const descendants = schema.getContainerDescendants(
+    aliveActivities,
+    activity.id,
+  );
   const root = aliveActivities.find((state: any) => state.id === activity.id);
   const activities = root ? [root, ...descendants] : descendants;
   const inSubtree = { [Op.in]: [activity.id, ...map(descendants, 'id')] };

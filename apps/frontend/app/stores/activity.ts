@@ -99,6 +99,13 @@ export const useActivityStore = defineStore('activities', () => {
     return activity ? activityUtils.getDescendants(items.value, activity) : [];
   }
 
+  // Descendants within the editor scope (pruned at outline levels).
+  function getContainerDescendants(id: Id): StoreActivity[] {
+    const activity = findById(id);
+    if (!activity) return [];
+    return schema.getContainerDescendants(items.value, activity.id) as StoreActivity[];
+  }
+
   function getAncestors(id: Id): StoreActivity[] {
     const activity = findById(id);
     return activity ? activityUtils.getAncestors(items.value, activity) : [];
@@ -303,6 +310,7 @@ export const useActivityStore = defineStore('activities', () => {
     isLinkEntryPoint,
     getAncestors,
     getDescendants,
+    getContainerDescendants,
     getLineage,
     where,
     add,
