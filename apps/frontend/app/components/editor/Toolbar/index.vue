@@ -48,7 +48,6 @@
         </template>
       </h1>
       <div class="toolbar-trailing d-flex align-center ga-2">
-        <ActivityPagination />
         <template v-if="activity?.isLinkedCopy">
           <VBtn
             :disabled="!source"
@@ -71,6 +70,7 @@
           :users="usersWithActivity"
           :size="32"
         />
+        <ActivityPagination />
       </div>
     </div>
     <ElementToolbarContainer
