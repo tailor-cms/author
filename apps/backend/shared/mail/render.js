@@ -1,4 +1,5 @@
 import * as fs from 'node:fs';
+import * as path from 'node:path';
 import * as cheerio from 'cheerio';
 import kebabCase from 'lodash/kebabCase.js';
 import map from 'lodash/map.js';
@@ -14,7 +15,13 @@ async function renderHtml(templatePath, data, style) {
   const $ = cheerio.load(template, { xmlMode: true });
   const $style = $('mj-attributes');
   $style.append(getAttributes($, style));
-  const opts = { filePath: templatePath, minify: true };
+  // MJML 5 ignores mj-include unless explicitly enabled and scoped.
+  const opts = {
+    filePath: templatePath,
+    ignoreIncludes: false,
+    includePath: path.dirname(templatePath),
+    minify: true,
+  };
   const mustacheOutput = mustache.render($.html(), data);
   const { html: output } = await mjml2html(mustacheOutput, opts);
   // NOTE: Additional `mustache.render` call handles mustache syntax within mjml

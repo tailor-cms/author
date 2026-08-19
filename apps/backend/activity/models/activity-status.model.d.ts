@@ -5,13 +5,15 @@ import type {
 } from 'sequelize';
 import type { Status as StatusAttrs } from '@tailor-cms/interfaces/activity';
 import type { Activity } from './activity.model.js';
+import type { User } from '../../user/models/user.model.js';
 
 // Sequelize instance type for an ActivityStatus row. Composes the
 // canonical attributes (from @tailor-cms/interfaces) with the Sequelize
-// Model API + the `belongsTo(Activity)` getter mixin.
+// Model API + the `belongsTo` getter mixins (Activity, assignee User).
 export type ActivityStatus = StatusAttrs &
   Model<StatusAttrs> & {
     getActivity: BelongsToGetAssociationMixin<Activity>;
+    getAssignee: BelongsToGetAssociationMixin<User>;
   };
 
 interface ActivityStatusModel extends ModelStatic<ActivityStatus> {

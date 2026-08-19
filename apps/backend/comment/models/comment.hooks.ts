@@ -4,7 +4,6 @@
 // real time. Mail: Create + Update notify the repository's
 // collaborators (excluding the author).
 import map from 'lodash/map.js';
-import pick from 'lodash/pick.js';
 import { schema } from '@tailor-cms/config';
 import without from 'lodash/without.js';
 import sse from '#shared/sse/index.js';
@@ -119,9 +118,12 @@ function add(Comment: any, Hooks: any, db: ModelsBag) {
       activityLabel: schema.getLevel(activity.type).label,
       topic: activity.data.name,
       author: author.profile,
-      previousComments,
+      content: comment.content,
       action: isCreate ? 'left' : 'updated',
-      ...pick(comment, ['id', 'content', 'createdAt']),
+      previousComments: previousComments.map((it: any) => ({
+        author: { label: it.author.label },
+        content: it.content,
+      })),
     };
     const collaborators = map(repository.repositoryUsers, 'user.email');
     const recipients = without(collaborators, author.email);
