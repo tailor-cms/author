@@ -12,7 +12,7 @@ import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
-import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
@@ -172,9 +172,9 @@ test('export and reimport strips linked content fields', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Navigate to linked repository settings and export
-  await page.goto(`/repository/${targetRepoId}/root/settings/general`);
+  await page.goto(`/repository/${targetRepoId}/root/settings`);
   await page.waitForLoadState('networkidle');
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositorySettings(page);
   const exportPath = await settingsPage.rail.export();
   // Import the exported archive via catalog UI
   await page.goto('/');

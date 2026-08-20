@@ -22,7 +22,7 @@
           <VBtnToggle
             v-model="view"
             class="view-toggle flex-shrink-0"
-            color="tertiary"
+            color="secondary"
             density="compact"
             variant="outlined"
             mandatory
@@ -31,7 +31,7 @@
               v-tooltip:bottom="'Board view'"
               aria-label="Board view"
               class="px-4"
-              icon="mdi-view-column-outline"
+              icon="mdi-view-column"
               size="small"
               value="board"
             />
@@ -39,7 +39,7 @@
               v-tooltip:bottom="'List view'"
               aria-label="List view"
               class="px-4"
-              icon="mdi-view-list-outline"
+              icon="mdi-view-list"
               size="small"
               value="list"
             />
