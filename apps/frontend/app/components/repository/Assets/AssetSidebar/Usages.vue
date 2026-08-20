@@ -60,7 +60,7 @@ const subtitleFor = (usage: AssetUsage) => {
 const routeFor = (usage: AssetUsage) => {
   const { repositoryId } = props.asset;
   if (usage.type === 'repository') {
-    return `/repository/${repositoryId}/root/settings/general`;
+    return `/repository/${repositoryId}/root/info`;
   }
   if (usage.type === 'element') {
     return elementHref(repositoryId, usage.activityId!, usage.elementUid!);

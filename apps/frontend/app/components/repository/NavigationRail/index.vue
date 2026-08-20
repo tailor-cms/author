@@ -189,13 +189,22 @@ const repositoryTabs = computed<RailTab[]>(() => {
   }
 
   if (repoStore.access.canAccessSettings) {
-    items.push({
-      key: 'settings',
-      label: 'Settings',
-      icon: 'cog-outline',
-      to: { name: 'repository-settings', params: { id } },
-      matches: (name) => name.startsWith('repository-settings'),
-    });
+    items.push(
+      {
+        key: 'access',
+        label: 'Access',
+        icon: 'shield-account-outline',
+        to: { name: 'repository-access', params: { id } },
+        matches: (name) => name === 'repository-access',
+      },
+      {
+        key: 'settings',
+        label: 'Settings',
+        icon: 'cog-outline',
+        to: { name: 'repository-info', params: { id } },
+        matches: (name) => name === 'repository-info',
+      },
+    );
   }
 
   return items;

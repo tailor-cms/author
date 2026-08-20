@@ -213,7 +213,7 @@ const openRepository = () =>
 
 const openSettings = () =>
   navigateTo({
-    name: 'repository-settings-general',
+    name: 'repository-info',
     params: { id: props.repository.id },
   });
 
