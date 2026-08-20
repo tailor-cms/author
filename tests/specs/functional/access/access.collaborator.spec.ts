@@ -351,6 +351,34 @@ test.describe('Collaborator opening a repository without access', () => {
   });
 });
 
+test.describe('Repository admin viewing the associated groups', () => {
+  test.beforeEach(() => SeedClient.resetDatabase());
+
+  test('offers the group page only for groups they administer', async ({
+    page,
+  }) => {
+    const { data: administered } = await SeedClient.seedUser({
+      email: COLLAB_TEST_USER.email,
+      userGroup: { name: 'Group A', role: 'ADMIN' },
+    });
+    const { data: foreign } = await SeedClient.seedUser({
+      email: 'test_user@gostudion.com',
+      userGroup: { name: 'Group B', role: 'ADMIN' },
+    });
+    const repository = await createCleanRepository(REPOSITORY_NAME, [
+      administered.userGroup.id,
+      foreign.userGroup.id,
+    ]);
+    await page.goto(RepositoryGroups.getRoute(repository.id), {
+      waitUntil: 'networkidle',
+    });
+    const access = new RepositoryGroups(page);
+    await expect(access.getViewGroupButton('Group A')).toBeVisible();
+    await expect(access.getEntryByName('Group B')).toBeVisible();
+    await expect(access.getViewGroupButton('Group B')).not.toBeVisible();
+  });
+});
+
 test.describe('Group admin opening a group they do not administer', () => {
   test.beforeEach(async () => {
     await SeedClient.resetDatabase();

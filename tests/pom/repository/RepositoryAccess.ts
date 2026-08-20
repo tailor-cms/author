@@ -179,4 +179,8 @@ export class RepositoryGroups {
   getEntryByName(name: string) {
     return this.groupEntriesLocator.filter({ hasText: name });
   }
+
+  getViewGroupButton(name: string) {
+    return this.getEntryByName(name).getByLabel('View user group');
+  }
 }
