@@ -17,7 +17,7 @@
             v-for="{ raw: group } in items"
             :key="group.id"
             :title="group.name"
-            class="group-row bg-surface-raised py-3 px-4 mb-2"
+            class="group-row bg-surface-raised py-4 px-4 mb-2"
             elevation="1"
             rounded="lg"
           >
