@@ -106,7 +106,7 @@
     />
     <VExpandTransition>
       <div v-show="isExpanded">
-        <div class="card-body">
+        <div :class="isField ? 'field-body' : 'card-body'">
           <QuestionElement
             v-if="isQuestion"
             v-bind="{ ...editBindings, componentName, autosave, isDirty }"
@@ -566,10 +566,11 @@ $accent-selected: #ff4081;
 .field {
   border: 1px solid rgba(var(--v-theme-outline), 0.3);
   padding: 1rem;
+}
 
-  .card-body, :deep(.tiptap) {
-    padding: 0;
-  }
+/** The field frame supplies the padding, so the editor inside must not. */
+.field-body .tce-container > :deep(.tiptap) {
+  padding: 0;
 }
 
 .quiet .header-reveal {
