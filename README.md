@@ -14,9 +14,9 @@ Traditional courses, adaptive learning paths, knowledge bases, content libraries
 
 <br>
 
-<img src="./.github/assets/structure.webp" width="49%" alt="The structure view: a nested outline of modules and pages, with the selected module's status, metadata and comments alongside" /> <img src="./.github/assets/elements.webp" width="49%" alt="The editor: the outline on the left, a page composed of typed content elements on the right" />
+<img src="./.github/assets/elements.webp" alt="The Tailor editor: the outline on the left, a page composed of typed content elements on the right" />
 
-<sub><b>Shape the structure</b> &nbsp;·&nbsp; <b>then fill it with content</b></sub>
+<sub>The editor - your outline on the left, the page you are writing on the right</sub>
 
 <sub><b>Built-in extensions:</b> 27 content elements &nbsp;·&nbsp; 5 containers &nbsp;·&nbsp; 12 meta inputs<br>Every one is a swappable package, not core code &nbsp;·&nbsp; 10 example schemas included</sub>
 
@@ -24,6 +24,8 @@ Traditional courses, adaptive learning paths, knowledge bases, content libraries
 
 > [!NOTE]
 > **Tailor X** is here. Read the release brief at **[x.tailor-cms.com][link-x]**.
+>
+> Arrived from **ExtensionEngine/tailor**? You are in the right place - this is the project's current home, and the [original repository][link-legacy] is archived.
 
 ## Why Tailor
 
@@ -36,6 +38,12 @@ A course is not a list of pages with media. Pedagogy decides shape, and every ap
 - **Blended and flipped** designs split material into pre-work, live session and follow-up, each carrying different information.
 
 Most content tools can express none of these, because they already decided the shape for you: here is a page, here are some fields, squeeze your material in.
+
+<p align="center">
+<img src="./.github/assets/structure.webp" alt="The structure view: a nested outline, with the selected level's status, fields and comments alongside" />
+<br>
+<sub>Levels you name yourself, nested as deep as the material needs, each carrying its own information</sub>
+</p>
 
 Tailor starts from **your** model instead. You describe the shape your material actually takes - the levels it needs, the checkpoints along the way, the information each one carries - and the whole application reshapes itself around it: the editor, the validation, the permissions, the published output. Bespoke learning experiences, tailored to the pedagogy, with no fork and no custom build.
 
@@ -83,13 +91,13 @@ Publishing a blog or a marketing site? Use one of those instead - they are bette
 ### ✨ AI that does the heavy lifting
 
 - **Lens** is your pre-publish reviewer. It scores every page against quality rubrics - clarity, credibility, accessibility, publish-readiness - flags blockers, and turns each one into a concrete fix.
-- **Renoir** is your co-author in the editor. It sees what you have open and can act on it directly: inspect and search your content, organize and index your media, repurpose what you already have (a PDF into schema-ready content, say), or draft a first pass when you want a head start.
+- **Renoir is an agent, not a chat box.** Give it a goal and it plans the work, then carries it out on the project you have open - reaching for any of 30 tools to restructure an outline, create and refine elements, find and import media, or generate a whole section. It reads your schema before it acts, so what it builds fits your model, and it stops to ask when a decision is yours to make.
 - **Media discovery** surfaces the right images for exactly the section you're working on and pulls them into your library, ready to use.
 
 <p align="center">
-<img src="./apps/marketing/app/assets/media/shots/lens.webp" width="49%" alt="The Lens review panel scoring a module against the Publish Readiness rubric" /> <img src="./.github/assets/renoir.webp" width="49%" alt="Renoir docked beside a page of content, scoped to the page currently open in the editor" />
+<img src="./.github/assets/lens.webp" width="49%" alt="The Lens review panel scoring a module against the Publish Readiness rubric" /> <img src="./.github/assets/renoir.webp" width="49%" alt="Renoir docked beside a page of content, scoped to the page currently open in the editor" />
 <br>
-<sub><b>Lens</b> - scored against a rubric, turned into fixes &nbsp;·&nbsp; <b>Renoir</b> - scoped to the page you have open</sub>
+<sub><b>Lens</b> - scored against a rubric, turned into fixes &nbsp;·&nbsp; <b>Renoir</b> - an agent working on the project you have open</sub>
 </p>
 
 ### ♻️ Build once, reuse everywhere
@@ -99,7 +107,7 @@ Publishing a blog or a marketing site? Use one of those instead - they are bette
 - **Asset library.** Upload, import and organize every file in one place, trace exactly where each one is used before you change it, and pull in what's missing straight from the web.
 
 <p align="center">
-<img src="./apps/marketing/app/assets/media/shots/assets.webp" width="49%" alt="The asset library: images, video, YouTube and web links with type filters and a usage panel" /> <img src="./apps/marketing/app/assets/media/shots/collection.webp" width="49%" alt="A collection: articles, authors, tags and categories with an item sidebar" />
+<img src="./.github/assets/assets.webp" width="49%" alt="The asset library: images, video, YouTube and web links with type filters and a usage panel" /> <img src="./.github/assets/collection.webp" width="49%" alt="A collection: articles, authors, tags and categories with an item sidebar" />
 <br>
 <sub><b>Asset library</b> - every file in one home &nbsp;·&nbsp; <b>Collections</b> - flat entities, related as you write</sub>
 </p>
@@ -308,10 +316,6 @@ Issues and pull requests are welcome. Open a [bug report][link-bug] or a [propos
 ## License
 
 [MIT](./LICENSE) © [Studion](https://gostudion.com)
-
-## Project history
-
-Tailor has been in development since 2016. This repository is the project's current home - it supersedes [ExtensionEngine/tailor][link-legacy], the original repository, which is now archived.
 
 ## Acknowledgements
 
