@@ -26,6 +26,7 @@
             </template>
             <template #append>
               <VBtn
+                v-if="canManage(group)"
                 :to="{ name: 'user-group', params: { userGroupId: group.id } }"
                 append-icon="mdi-arrow-right"
                 aria-label="View user group"
@@ -84,6 +85,7 @@ import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import { api } from '@/api';
 import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
+import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 definePageMeta({
@@ -102,6 +104,7 @@ const FILTER_KEYS = ['name'];
 
 const store = useCurrentRepository();
 const repositoryStore = useRepositoryStore();
+const authStore = useAuthStore();
 const { repository } = storeToRefs(store);
 
 const page = ref(1);
@@ -131,6 +134,9 @@ watch(
     page.value = 1;
   },
 );
+
+const canManage = (group: UserGroup) =>
+  authStore.manageableUserGroupIds.includes(group.id);
 
 const remove = (group: UserGroup) => {
   const showDialog = useConfirmationDialog();
