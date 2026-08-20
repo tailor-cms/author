@@ -2,80 +2,22 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { NavigationRail } from './NavigationRail';
-import { Toast } from '../common/Toast';
 
-export const getGeneralRoute = (id: number) =>
-  `/repository/${id}/root/settings/general`;
+export const getAccessRoute = (id: number) => `/repository/${id}/root/access`;
 
-export const getMembersRoute = (id: number) =>
-  `/repository/${id}/root/settings/members`;
-
-export const getGroupsRoute = (id: number) =>
-  `/repository/${id}/root/settings/groups`;
-
-// Left navigation drawer shown on every repository settings page.
-export class SettingsSidebar {
+// Chip-tab switcher on the Access page (Members | Groups). Members is the
+// landing tab.
+export class AccessTabs {
   readonly page: Page;
   readonly el: Locator;
 
   constructor(page: Page) {
     this.page = page;
-    this.el = page.locator('.repository-settings').getByRole('navigation');
+    this.el = page.locator('.repository-access .access-tabs');
   }
 
-  open(section: 'General' | 'Members' | 'Groups') {
-    return this.el.getByRole('link', { name: section }).click();
-  }
-}
-
-export class GeneralSettings {
-  static getRoute = getGeneralRoute;
-
-  readonly page: Page;
-  readonly el: Locator;
-  readonly rail: NavigationRail;
-  readonly nameInput: Locator;
-  readonly nameWarning: Locator;
-  readonly descriptionInput: Locator;
-  readonly publishInfoBtn: Locator;
-  readonly infoPublishedToast: Locator;
-  readonly publishBlockedToast: Locator;
-  readonly toast: Toast;
-
-  constructor(page: Page) {
-    const el = page.locator('.repository-settings');
-    this.rail = new NavigationRail(page);
-    this.toast = new Toast(page);
-    this.page = page;
-    this.el = el;
-    this.nameInput = el.getByLabel('Name');
-    this.nameWarning = el.getByText('a Repository with that name already exists');
-    this.descriptionInput = el.getByLabel('Description');
-    this.publishInfoBtn = el.getByRole('button', { name: 'Publish info' });
-    this.infoPublishedToast = page.getByText('Info successfully published');
-    this.publishBlockedToast = page.getByText(
-      'Please fix the highlighted errors before publishing',
-    );
-  }
-
-  getName() {
-    return this.page.getByLabel('Name').inputValue();
-  }
-
-  publishInfo() {
-    return this.publishInfoBtn.click();
-  }
-
-  async updateName(name: string) {
-    await this.nameInput.fill(name);
-    await this.nameInput.blur();
-    await this.toast.isSaved();
-  }
-
-  async updateDescription(description: string) {
-    await this.descriptionInput.fill(description);
-    await this.descriptionInput.blur();
-    await this.toast.isSaved();
+  open(tab: 'Members' | 'Groups') {
+    return this.el.getByRole('tab', { name: tab, exact: true }).click();
   }
 }
 
@@ -128,11 +70,12 @@ export class AddUserDialog {
 }
 
 export class RepositoryMembers {
-  static getRoute = getMembersRoute;
+  static getRoute = getAccessRoute;
 
   readonly page: Page;
   readonly el: Locator;
   readonly rail: NavigationRail;
+  readonly tabs: AccessTabs;
   readonly userList: Locator;
   readonly userEntriesLocator: Locator;
   readonly addBtn: Locator;
@@ -141,8 +84,9 @@ export class RepositoryMembers {
   readonly nextPage: Locator;
 
   constructor(page: Page) {
-    const el = page.locator('.repository-settings');
+    const el = page.locator('.repository-access');
     this.rail = new NavigationRail(page);
+    this.tabs = new AccessTabs(page);
     this.userList = el.locator('.member-list');
     this.userEntriesLocator = el.locator('.member-row');
     this.addBtn = el.getByRole('button', { name: 'Add user' });
@@ -151,6 +95,12 @@ export class RepositoryMembers {
     this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
+  }
+
+  // Members is the Access page's landing tab; call after direct navigation
+  // only when another tab might be active.
+  open() {
+    return this.tabs.open('Members');
   }
 
   getEntries() {
@@ -188,31 +138,39 @@ export class RepositoryMembers {
   }
 }
 
-// Back-compat alias for existing tests that imported the old name.
-export const RepositoryUsers = RepositoryMembers;
-
 export class RepositoryGroups {
-  static getRoute = getGroupsRoute;
+  static getRoute = getAccessRoute;
 
   readonly page: Page;
   readonly el: Locator;
   readonly rail: NavigationRail;
+  readonly tabs: AccessTabs;
   readonly groupList: Locator;
   readonly groupEntriesLocator: Locator;
+  readonly emptyState: Locator;
   readonly pagination: Locator;
   readonly prevPage: Locator;
   readonly nextPage: Locator;
 
   constructor(page: Page) {
-    const el = page.locator('.repository-settings');
+    const el = page.locator('.repository-access');
     this.rail = new NavigationRail(page);
+    this.tabs = new AccessTabs(page);
     this.groupList = el.locator('.group-list');
     this.groupEntriesLocator = el.locator('.group-row');
+    this.emptyState = el.getByText(
+      'No user groups associated with this repository yet.',
+    );
     this.pagination = el.locator('.v-pagination');
     this.prevPage = this.pagination.getByRole('button', { name: 'Previous page' });
     this.nextPage = this.pagination.getByRole('button', { name: 'Next page' });
     this.page = page;
     this.el = el;
+  }
+
+  // The Groups list renders only once its tab is active.
+  open() {
+    return this.tabs.open('Groups');
   }
 
   getEntries() {

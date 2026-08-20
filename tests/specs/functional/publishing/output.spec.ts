@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { isStorageConfigured, StorageClient } from '../../../api/StorageClient';
-import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
+import { RepositoryInfo } from '../../../pom/repository/RepositoryInfo';
 import SeedClient from '../../../api/SeedClient';
 import {
   seedLinkedRepositories,
@@ -15,7 +15,7 @@ test.beforeEach(async () => {
 test('should be able to publish repository', async ({ page }) => {
   test.skip(!isStorageConfigured, 'Storage is not enabled');
   const { repository, activity } = await toSeededRepositorySettings(page);
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositoryInfo(page);
   await settingsPage.rail.publish();
   const publishedRepository = await StorageClient.source().get(repository.id);
   expect(publishedRepository).toBeDefined();
@@ -46,9 +46,9 @@ test('should publish linked content with sourceId and isLinkedCopy', async ({
   const { activity, linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Navigate to linked repository settings and publish
-  await page.goto(`/repository/${targetRepoId}/root/settings/general`);
+  await page.goto(`/repository/${targetRepoId}/root/info`);
   await page.waitForLoadState('networkidle');
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositoryInfo(page);
   await settingsPage.rail.publish();
   // Read the published manifest from storage
   const publishedRepo = await StorageClient.source().get(targetRepoId);

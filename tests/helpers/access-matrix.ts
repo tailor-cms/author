@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../pom/repository/Outline';
 import { Catalog } from '../pom/catalog/Catalog';
-import { GeneralSettings } from '../pom/repository/RepositorySettings';
+import { RepositoryInfo } from '../pom/repository/RepositoryInfo';
 import { NavigationRail } from '../pom/repository/NavigationRail';
 import { RepositoryCard } from '../pom/catalog/RepositoryCard';
 import SeedClient from '../api/SeedClient';
@@ -63,7 +63,7 @@ export const verifyRepositoryAccess = ({
       expect(await card.getActionLabels()).toEqual(ADMIN_ACTIONS);
     });
 
-    test('shows the Settings tab and actions menu to admins only', async ({
+    test('shows the Access/Settings tabs and actions menu to admins only', async ({
       page,
     }) => {
       const { id } = await seed();
@@ -71,19 +71,21 @@ export const verifyRepositoryAccess = ({
       const rail = new NavigationRail(page);
       await expect(rail.getTab('Structure')).toBeVisible();
       if (isAdmin) {
+        await expect(rail.getTab('Access')).toBeVisible();
         await expect(rail.getTab('Settings')).toBeVisible();
         await expect(rail.actionsMenuBtn).toBeVisible();
         return;
       }
+      await expect(rail.getTab('Access')).not.toBeVisible();
       await expect(rail.getTab('Settings')).not.toBeVisible();
       await expect(rail.actionsMenuBtn).not.toBeVisible();
     });
 
     test('opens the settings page to admins only', async ({ page }) => {
       const { id } = await seed();
-      await page.goto(GeneralSettings.getRoute(id));
+      await page.goto(RepositoryInfo.getRoute(id));
       // Admins stay on settings; everyone else is redirected to the catalog.
-      const expectedUrl = isAdmin ? GeneralSettings.getRoute(id) : '/';
+      const expectedUrl = isAdmin ? RepositoryInfo.getRoute(id) : '/';
       await expect(page).toHaveURL(expectedUrl);
     });
 

@@ -11,7 +11,7 @@ import {
 import {
   RepositoryGroups,
   RepositoryMembers,
-} from '../../../pom/repository/RepositorySettings.ts';
+} from '../../../pom/repository/RepositoryAccess.ts';
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { Toast } from '../../../pom/common/Toast.ts';
 import SeedClient from '../../../api/SeedClient.ts';
@@ -172,6 +172,8 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     await page.goto(groupsRoute);
     const access = new RepositoryGroups(page);
     await expect(access.rail.el).toBeVisible();
+    // The Access page lands on Members; the group list needs its tab.
+    await access.open();
     await expect(access.groupList).toBeVisible();
     await expect(page).toHaveURL(groupsRoute);
   });
