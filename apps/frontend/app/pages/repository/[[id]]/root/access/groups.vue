@@ -86,6 +86,10 @@ import { api } from '@/api';
 import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+definePageMeta({
+  name: 'repository-access-groups',
+});
+
 const props = defineProps<{
   search: string;
   sortOrder: 'asc' | 'desc';

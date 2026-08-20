@@ -172,8 +172,6 @@ test.describe('Collaborator added to a User Group as Admin,', () => {
     await page.goto(groupsRoute);
     const access = new RepositoryGroups(page);
     await expect(access.rail.el).toBeVisible();
-    // The Access page lands on Members; the group list needs its tab.
-    await access.open();
     await expect(access.groupList).toBeVisible();
     await expect(page).toHaveURL(groupsRoute);
   });

@@ -195,7 +195,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
         label: 'Access',
         icon: 'shield-account-outline',
         to: { name: 'repository-access', params: { id } },
-        matches: (name) => name === 'repository-access',
+        matches: (name) => name.startsWith('repository-access'),
       },
       {
         key: 'settings',

@@ -1,7 +1,7 @@
 <template>
   <VLayout class="repository-info h-100">
     <VMain class="info-main">
-      <VContainer class="px-md-10 py-md-8 text-left" max-width="1400">
+      <VContainer class="px-md-10 py-md-8 text-left" max-width="1100">
         <div class="toolbar">
           <VSpacer />
           <VBtn

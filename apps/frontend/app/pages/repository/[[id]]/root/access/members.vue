@@ -66,10 +66,13 @@ import { TailorEmptyState } from '@tailor-cms/core-components';
 import MemberRow from '@/components/common/MemberRow.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
 
+definePageMeta({
+  name: 'repository-access-members',
+});
+
 const props = defineProps<{
   search: string;
   sortOrder: 'asc' | 'desc';
-  isLoading: boolean;
 }>();
 
 const emit = defineEmits<{ 'clear:search': [] }>();
@@ -83,6 +86,7 @@ const { users } = storeToRefs(store);
 
 const roles = useRepositoryRoles();
 
+const isLoading = ref(true);
 const page = ref(1);
 
 const emptyState = computed(() => props.search
@@ -126,4 +130,9 @@ from this repository?`,
     action: () => removeUser(user.id),
   });
 };
+
+onMounted(async () => {
+  await store.getUsers();
+  isLoading.value = false;
+});
 </script>

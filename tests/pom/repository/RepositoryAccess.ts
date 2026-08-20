@@ -3,10 +3,12 @@ import { expect } from '@playwright/test';
 
 import { NavigationRail } from './NavigationRail';
 
+// The bare access route redirects to the Members section.
 export const getAccessRoute = (id: number) => `/repository/${id}/root/access`;
+export const getMembersRoute = (id: number) => `${getAccessRoute(id)}/members`;
+export const getGroupsRoute = (id: number) => `${getAccessRoute(id)}/groups`;
 
-// Chip-tab switcher on the Access page (Members | Groups). Members is the
-// landing tab.
+// Section tabs on the Access page (Members | Groups).
 export class AccessTabs {
   readonly page: Page;
   readonly el: Locator;
@@ -70,7 +72,7 @@ export class AddUserDialog {
 }
 
 export class RepositoryMembers {
-  static getRoute = getAccessRoute;
+  static getRoute = getMembersRoute;
 
   readonly page: Page;
   readonly el: Locator;
@@ -97,8 +99,6 @@ export class RepositoryMembers {
     this.el = el;
   }
 
-  // Members is the Access page's landing tab; call after direct navigation
-  // only when another tab might be active.
   open() {
     return this.tabs.open('Members');
   }
@@ -139,7 +139,7 @@ export class RepositoryMembers {
 }
 
 export class RepositoryGroups {
-  static getRoute = getAccessRoute;
+  static getRoute = getGroupsRoute;
 
   readonly page: Page;
   readonly el: Locator;
@@ -168,7 +168,6 @@ export class RepositoryGroups {
     this.el = el;
   }
 
-  // The Groups list renders only once its tab is active.
   open() {
     return this.tabs.open('Groups');
   }

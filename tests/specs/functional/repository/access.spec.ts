@@ -3,6 +3,7 @@ import { times } from 'lodash-es';
 
 import {
   AddUserDialog,
+  getAccessRoute,
   RepositoryGroups,
   RepositoryMembers,
 } from '../../../pom/repository/RepositoryAccess.ts';
@@ -98,15 +99,19 @@ test('should be able to paginate', async ({ page }) => {
 
 test('should switch between the Members and Groups tabs', async ({ page }) => {
   const repository = await toEmptyRepository(page);
-  await page.goto(RepositoryMembers.getRoute(repository.id));
+  // The bare access route redirects to the Members section.
+  await page.goto(getAccessRoute(repository.id));
+  await expect(page).toHaveURL(/\/root\/access\/members$/);
   const members = new RepositoryMembers(page);
   // Members is the landing tab; the creator is its only entry.
   await expect(members.userEntriesLocator).toHaveCount(1);
   const groups = new RepositoryGroups(page);
   await groups.open();
+  await expect(page).toHaveURL(/\/root\/access\/groups$/);
   await expect(members.userList).not.toBeVisible();
   await expect(groups.emptyState).toBeVisible();
   await members.open();
+  await expect(page).toHaveURL(/\/root\/access\/members$/);
   await expect(members.userEntriesLocator).toHaveCount(1);
 });
 
