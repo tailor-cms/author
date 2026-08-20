@@ -54,25 +54,13 @@
           @click:action="emit('clear:search')"
         />
       </template>
-      <template #footer="{ page: currentPage, pageCount, itemsCount }">
-        <div
-          v-if="itemsCount"
-          class="d-flex align-center justify-space-between mt-2 px-1"
-        >
-          <span class="text-body-medium">
-            Showing {{ (currentPage - 1) * ITEMS_PER_PAGE + 1 }}
-            –{{ Math.min(currentPage * ITEMS_PER_PAGE, itemsCount) }}
-            of {{ itemsCount }}
-          </span>
-          <VPagination
-            v-if="pageCount > 1"
-            v-model="page"
-            :length="pageCount"
-            :total-visible="7"
-            density="comfortable"
-            rounded
-          />
-        </div>
+      <template #footer="{ pageCount, itemsCount }">
+        <PaginationFooter
+          v-model:page="page"
+          :page-count="pageCount"
+          :items-count="itemsCount"
+          :items-per-page="ITEMS_PER_PAGE"
+        />
       </template>
     </VDataIterator>
   </section>
@@ -84,6 +72,7 @@ import type { UserGroup } from '@tailor-cms/interfaces/user-group';
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
 import { api } from '@/api';
+import PaginationFooter from '@/components/common/PaginationFooter.vue';
 import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
 import { useAuthStore } from '@/stores/auth';
 import { useCurrentRepository } from '@/stores/current-repository';
