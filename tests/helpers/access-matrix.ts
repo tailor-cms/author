@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../pom/repository/Outline';
 import { Catalog } from '../pom/catalog/Catalog';
-import { RepositoryInfo } from '../pom/repository/RepositoryInfo';
+import { RepositorySettings } from '../pom/repository/RepositorySettings';
 import { NavigationRail } from '../pom/repository/NavigationRail';
 import { RepositoryCard } from '../pom/catalog/RepositoryCard';
 import SeedClient from '../api/SeedClient';
@@ -83,9 +83,9 @@ export const verifyRepositoryAccess = ({
 
     test('opens the settings page to admins only', async ({ page }) => {
       const { id } = await seed();
-      await page.goto(RepositoryInfo.getRoute(id));
+      await page.goto(RepositorySettings.getRoute(id));
       // Admins stay on settings; everyone else is redirected to the catalog.
-      const expectedUrl = isAdmin ? RepositoryInfo.getRoute(id) : '/';
+      const expectedUrl = isAdmin ? RepositorySettings.getRoute(id) : '/';
       await expect(page).toHaveURL(expectedUrl);
     });
 

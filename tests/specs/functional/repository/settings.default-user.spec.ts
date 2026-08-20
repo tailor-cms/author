@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { Catalog } from '../../../pom/catalog/Catalog';
-import { RepositoryInfo } from '../../../pom/repository/RepositoryInfo';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings';
 import SeedClient from '../../../api/SeedClient';
 import { toSeededRepositorySettings } from '../../../helpers/seed';
 
@@ -12,18 +12,18 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('should be able to delete owned repository', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.delete();
   await expect(page.getByText('No repositories yet')).toBeVisible();
 });
 
 test('should be able to export owned repository', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.export();
 });
 
 test('should be able to clone owned repository', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   const name = 'Cloned Repository';
   await settingsPage.rail.clone(name);
   await page.goto('/');
@@ -31,7 +31,7 @@ test('should be able to clone owned repository', async ({ page }) => {
 });
 
 test('should be able to publish owned repository', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.publish();
   const repositoryName = await settingsPage.getName();
   await page.goto('/');
@@ -43,21 +43,21 @@ test('should be able to publish owned repository', async ({ page }) => {
 });
 
 test('should be able to edit owned repository name', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.updateName('New Name');
   await page.reload();
   await expect(settingsPage.nameInput).toHaveValue('New Name');
 });
 
 test('should be able to edit owned repository description', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.updateDescription('New Description');
   await page.reload();
   await expect(settingsPage.descriptionInput).toHaveValue('New Description');
 });
 
 test('should be able to publish owned repository info', async ({ page }) => {
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.el.getByRole('button', { name: 'Publish info' }).click();
   await expect(page.getByText('Info successfully published')).toBeVisible();
 });

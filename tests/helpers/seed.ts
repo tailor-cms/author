@@ -124,7 +124,7 @@ export const toSeededRepositorySettings = async (
 ) => {
   const { data } = await SeedClient.seedTestRepository({ authorEmail });
   const { repository, activity } = data;
-  await page.goto(`/repository/${repository.id}/root/info`);
+  await page.goto(`/repository/${repository.id}/root/settings`);
   return { repository, activity };
 };
 

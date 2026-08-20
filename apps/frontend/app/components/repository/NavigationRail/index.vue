@@ -201,8 +201,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
         key: 'settings',
         label: 'Settings',
         icon: 'cog-outline',
-        to: { name: 'repository-info', params: { id } },
-        matches: (name) => name === 'repository-info',
+        to: { name: 'repository-settings', params: { id } },
+        matches: (name) => name === 'repository-settings',
       },
     );
   }

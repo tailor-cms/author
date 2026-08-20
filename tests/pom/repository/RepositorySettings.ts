@@ -3,11 +3,12 @@ import type { Locator, Page } from '@playwright/test';
 import { NavigationRail } from './NavigationRail';
 import { Toast } from '../common/Toast';
 
-export const getInfoRoute = (id: number) => `/repository/${id}/root/info`;
+export const getSettingsRoute = (id: number) =>
+  `/repository/${id}/root/settings`;
 
-// The repository info form ("Settings" rail item) at /root/info.
-export class RepositoryInfo {
-  static getRoute = getInfoRoute;
+// The repository settings form ("Settings" rail item).
+export class RepositorySettings {
+  static getRoute = getSettingsRoute;
 
   readonly page: Page;
   readonly el: Locator;
@@ -21,7 +22,7 @@ export class RepositoryInfo {
   readonly toast: Toast;
 
   constructor(page: Page) {
-    const el = page.locator('.repository-info');
+    const el = page.locator('.repository-settings');
     this.rail = new NavigationRail(page);
     this.toast = new Toast(page);
     this.page = page;

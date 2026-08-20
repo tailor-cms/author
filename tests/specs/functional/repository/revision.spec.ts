@@ -4,7 +4,7 @@ import { outlineLevel, toEmptyRepository } from '../../../helpers/seed.ts';
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { Editor } from '../../../pom/editor/Editor.ts';
 import { expectAlert } from '../../../pom/common/utils.ts';
-import { RepositoryInfo } from '../../../pom/repository/RepositoryInfo.ts';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings.ts';
 import { NavigationRail } from '../../../pom/repository/NavigationRail.ts';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
@@ -26,7 +26,7 @@ test('should display a revision for updated repository', async ({ page }) => {
   await toEmptyRepository(page);
   const rail = new NavigationRail(page);
   await rail.goToSettings();
-  const settings = new RepositoryInfo(page);
+  const settings = new RepositorySettings(page);
   await settings.updateName('Test update');
   await rail.goToHistory();
   await expect(page.getByText('Updated repository')).toBeVisible();

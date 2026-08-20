@@ -5,7 +5,7 @@ import {
   RepositoryGroups,
   RepositoryMembers,
 } from '../../../pom/repository/RepositoryAccess';
-import { RepositoryInfo } from '../../../pom/repository/RepositoryInfo';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings';
 import {
   createCleanRepository,
   toSeededRepositorySettings,
@@ -41,8 +41,8 @@ const addSourceMember = async (page: Page, repositoryId: number) => {
 };
 
 const openCloneDialog = async (page: Page, repositoryId: number) => {
-  await page.goto(RepositoryInfo.getRoute(repositoryId));
-  await new RepositoryInfo(page).rail.runAction('Clone');
+  await page.goto(RepositorySettings.getRoute(repositoryId));
+  await new RepositorySettings(page).rail.runAction('Clone');
   return new CloneDialog(page);
 };
 
@@ -56,13 +56,13 @@ const openCloneAccess = async (page: Page) => {
     catalog.findRepositoryCard(CLONE_NAME),
   );
   await card.openSettings();
-  await new RepositoryInfo(page).rail.goToAccess();
+  await new RepositorySettings(page).rail.goToAccess();
   return new AccessTabs(page);
 };
 
 test('should be able to clone the repository', async ({ page }) => {
   await toSeededRepositorySettings(page);
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.runAction('Clone');
   const cloneDialog = new CloneDialog(page);
   await cloneDialog.expectTitle('Clone Course');
@@ -132,7 +132,7 @@ test('share option is disabled when the source is not shared', async ({
   page,
 }) => {
   await toSeededRepositorySettings(page);
-  const settingsPage = new RepositoryInfo(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.runAction('Clone');
   const dialog = new CloneDialog(page);
   // The dialog resolves who has access on mount;

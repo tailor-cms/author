@@ -1,6 +1,6 @@
 <template>
-  <VLayout class="repository-info h-100">
-    <VMain class="info-main">
+  <VLayout class="repository-settings h-100">
+    <VMain class="settings-main">
       <VContainer class="px-md-10 py-md-8 text-left" max-width="1100">
         <div class="toolbar">
           <VSpacer />
@@ -62,7 +62,7 @@ import { useNotification } from '@/composables/useNotification';
 import { useRepositoryStore } from '@/stores/repository';
 
 definePageMeta({
-  name: 'repository-info',
+  name: 'repository-settings',
 });
 
 const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
@@ -204,7 +204,7 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.info-main {
+.settings-main {
   flex: 1 1 0;
   min-height: 0;
   overflow-y: auto;
