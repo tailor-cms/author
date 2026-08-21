@@ -1,7 +1,5 @@
 <template>
-  <div class="d-flex align-center flex-wrap ga-2">
-    <span class="text-body-medium text-medium-emphasis">{{ rangeLabel }}</span>
-    <VSpacer />
+  <div class="d-flex align-center justify-end flex-wrap ga-2">
     <VBtn
       :aria-label="isCompact ? 'Switch to comfortable view' : 'Switch to compact view'"
       :color="isCompact ? 'secondary' : undefined"
@@ -60,39 +58,16 @@
         />
       </VList>
     </VMenu>
-    <template v-if="pageCount > 1">
-      <VBtn
-        :disabled="page <= 1"
-        aria-label="Previous page"
-        icon="mdi-chevron-left"
-        size="small"
-        variant="text"
-        @click="page--"
-      />
-      <VBtn
-        :disabled="page >= pageCount"
-        aria-label="Next page"
-        icon="mdi-chevron-right"
-        size="small"
-        variant="text"
-        @click="page++"
-      />
-    </template>
   </div>
 </template>
 
 <script lang="ts" setup>
 import { PAGE_SIZE_OPTIONS, type SearchSort } from './composables';
 
-const props = defineProps<{
-  total: number;
-  pageCount: number;
-  isSearchActive: boolean;
-}>();
+const props = defineProps<{ isSearchActive: boolean }>();
 
 const sort = defineModel<SearchSort>('sort', { required: true });
 const itemsPerPage = defineModel<number>('itemsPerPage', { required: true });
-const page = defineModel<number>('page', { required: true });
 const isCompact = defineModel<boolean>('isCompact', { required: true });
 
 const sortOptions = computed(() => [
@@ -108,11 +83,4 @@ const activeSortLabel = computed(
     sortOptions.value.find((it) => it.value === sort.value)?.title ??
     'Most relevant',
 );
-
-const rangeLabel = computed(() => {
-  const from = (page.value - 1) * itemsPerPage.value + 1;
-  const to = Math.min(page.value * itemsPerPage.value, props.total);
-  const noun = props.total === 1 ? 'element' : 'elements';
-  return `Showing ${from}-${to} of ${props.total} ${noun}`;
-});
 </script>
