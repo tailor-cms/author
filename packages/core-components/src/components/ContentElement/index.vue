@@ -568,8 +568,11 @@ $accent-selected: #ff4081;
   padding: 1rem;
 }
 
-/** The field frame supplies the padding, so the editor inside must not. */
-.field-body .tce-container > :deep(.tiptap) {
+/**
+ * The field frame supplies the padding, so the editor inside must not.
+ * Scoped to this element's own editor; embedded elements keep theirs.
+ */
+.field-body > :deep(.tce-container > * > .tiptap) {
   padding: 0;
 }
 
