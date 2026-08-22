@@ -173,5 +173,9 @@ function getConsumerConfig() {
       name: 'CONSUMER_ACCESS_UPDATE_WEBHOOK',
       value: consumerConfig.get('accessUpdateWebhook'),
     },
+    {
+      name: 'CONSUMER_PREVIEW_WEBHOOK',
+      value: consumerConfig.get('previewWebhook'),
+    },
   ];
 }
