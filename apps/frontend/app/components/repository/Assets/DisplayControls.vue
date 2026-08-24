@@ -30,7 +30,7 @@
     />
     <VBtnToggle
       v-model="viewMode"
-      color="tertiary"
+      color="secondary"
       variant="outlined"
       density="compact"
       mandatory
@@ -38,14 +38,14 @@
       <VBtn
         v-tooltip:bottom="'Grid view'"
         class="px-4"
-        icon="mdi-view-module-outline"
+        icon="mdi-view-module"
         value="grid"
         size="small"
       />
       <VBtn
         v-tooltip:bottom="'List view'"
         class="px-4"
-        icon="mdi-view-list-outline"
+        icon="mdi-view-list"
         value="list"
         size="small"
       />

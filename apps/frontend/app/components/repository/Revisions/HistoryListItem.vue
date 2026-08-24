@@ -18,7 +18,7 @@
       class="text-label-medium"
       data-percy="hide"
     >
-      {{ timeOfDay }} · {{ revision.user?.label ?? 'Unknown' }}
+      {{ subtitle }}
     </VListItemSubtitle>
     <template #append>
       <VChip
@@ -66,6 +66,8 @@ const props = withDefaults(defineProps<{
   isPublished?: boolean;
   isExpanded?: boolean;
   childrenCount?: number;
+  // Oldest group member's timestamp; run headers subtitle the time range.
+  startedAt?: string;
   // False renders a static, non-clickable row.
   selectable?: boolean;
   // VListGroup activator props - bound to the chevron so it toggles the group.
@@ -105,18 +107,29 @@ const date = computed(() => new Date(props.revision.createdAt));
 const timeOfDay = computed(() => formatDate(date.value, 'h:mm A'));
 const fullTimestamp = computed(() => formatDate(date.value, 'MMMM Do, YYYY h:mm A'));
 
+const subtitle = computed(() => {
+  const user = props.revision.user?.label ?? 'Unknown';
+  if (!props.startedAt || props.revision.isRestore)
+    return `${timeOfDay.value} · ${user}`;
+  const startTime = formatDate(new Date(props.startedAt), 'h:mm A');
+  const range = startTime === timeOfDay.value
+    ? timeOfDay.value
+    : `${startTime} – ${timeOfDay.value}`;
+  return `${range} · ${user} · ${pluralize('edit', props.childrenCount, true)}`;
+});
+
 const change = computed(() => {
   if (props.revision.isRestore) return { icon: 'mdi-restore', color: 'info' };
   return CHANGE[props.revision.operation] ?? CHANGE[Operation.Update];
 });
 
 const expandLabel = computed(() => {
-  const isRestore = props.revision.isRestore;
-  const noun = pluralize(isRestore ? 'change' : 'edit', props.childrenCount);
+  const noun = pluralize(
+    props.revision.isRestore ? 'change' : 'edit',
+    props.childrenCount,
+  );
   if (props.isExpanded) return `Collapse ${noun}`;
-  return isRestore
-    ? `Show ${props.childrenCount} ${noun}`
-    : `Show ${props.childrenCount} more ${noun}`;
+  return `Show ${props.childrenCount} ${noun}`;
 });
 </script>
 

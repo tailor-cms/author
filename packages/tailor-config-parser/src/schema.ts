@@ -19,6 +19,7 @@ import {
   isString,
   map,
   reduce,
+  reject,
   sortBy,
   union,
   uniq,
@@ -116,6 +117,7 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     getOutlineLevels,
     isOutlineActivity,
     getOutlineChildren,
+    getContainerDescendants,
     filterOutlineActivities,
     isTrackedInWorkflow,
     getRepositoryMetadata,
@@ -208,6 +210,23 @@ export const getSchemaApi = (schemas: Schema[], ceRegistry: string[]) => {
     const schemaId = getSchemaId(type);
     if (!schemaId) return false;
     return !!find(getOutlineLevels(schemaId), { type });
+  }
+
+  /**
+   * Descendants of `parentId` reachable without crossing an outline level
+   * (content containers and their subtrees) - the scope a single editor
+   * screen displays.
+   */
+  function getContainerDescendants(
+    activities: Activity[],
+    parentId: number,
+  ): Activity[] {
+    const children = filter(activities, { parentId });
+    const containers = reject(children, (it) => isOutlineActivity(it.type));
+    return flatMap(containers, (it) => [
+      it,
+      ...getContainerDescendants(activities, it.id),
+    ]);
   }
 
   /**

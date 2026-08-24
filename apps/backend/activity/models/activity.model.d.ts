@@ -102,12 +102,22 @@ export type Activity = ActivityAttrs &
     predecessors(): Promise<Activity[]>;
     // Walks up the parent chain to the first outline-level activity.
     getFirstOutlineItem(item?: Activity): Promise<Activity>;
-    // Children
+    // Children; `filterFn` prunes - a child failing it is skipped along
+    // with its whole branch (never fetched).
     descendants(
-      options?: { attributes?: string[]; paranoid?: boolean },
+      options?: {
+        attributes?: string[];
+        paranoid?: boolean;
+        filterFn?: (node: Activity) => boolean;
+      },
       nodes?: Activity[],
       leaves?: Activity[],
     ): Promise<DescendantsResult>;
+    // Descendants pruned at outline levels (the editor-scoped subtree).
+    containerDescendants(options?: {
+      attributes?: string[];
+      paranoid?: boolean;
+    }): Promise<DescendantsResult>;
     // Wrapping destroy: optional `recursive`/`soft` for tree mutations.
     // `soft: true` marks descendants as `detached` instead of destroying.
     remove(options?: {
