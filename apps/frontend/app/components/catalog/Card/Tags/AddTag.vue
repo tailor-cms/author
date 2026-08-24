@@ -3,6 +3,7 @@
     :model-value="isVisible"
     header-icon="mdi-tag-outline"
     title="Add Tag"
+    persistent
     @close="closeAddTagDialog"
     @submit="submitForm"
   >
@@ -10,12 +11,12 @@
       <VCombobox
         v-model="tagInput"
         :error-messages="errors.tag"
+        counter="20"
         :items="availableTags"
         label="Select a tag or add a new one"
         name="tag"
         variant="outlined"
         @keydown.enter="submitForm"
-        @update-tag-name:search-input="(v: string) => (tagInput = v)"
       />
     </template>
     <template #actions>
@@ -63,7 +64,8 @@ const { defineField, handleSubmit, errors, resetForm } = useForm({
       .max(20),
   }),
 });
-const [tagInput] = defineField('tag');
+
+const [tagInput] = defineField('tag', { validateOnModelUpdate: true });
 
 const closeAddTagDialog = () => {
   resetForm();
