@@ -8,7 +8,11 @@ class Thread extends Model {
     const { ARRAY, DATE, ENUM, INTEGER, STRING, TEXT } = DataTypes;
     return {
       type: {
-        type: ENUM(...Object.values(ThreadType)),
+        type: ENUM(
+          ThreadType.Repository,
+          ThreadType.Activity,
+          ThreadType.Element,
+        ),
         allowNull: false,
       },
       // Only a repository discussion has a name;
