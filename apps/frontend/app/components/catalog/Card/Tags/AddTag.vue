@@ -3,6 +3,7 @@
     :model-value="isVisible"
     header-icon="mdi-tag-outline"
     title="Add Tag"
+    persistent
     @close="closeAddTagDialog"
     @submit="submitForm"
   >
