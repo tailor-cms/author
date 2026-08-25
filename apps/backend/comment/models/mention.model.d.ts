@@ -1,8 +1,4 @@
-import type {
-  InstanceUpdateOptions,
-  Model,
-  ModelStatic,
-} from 'sequelize';
+import type { Model, ModelStatic } from 'sequelize';
 
 export interface MentionAttrs {
   commentId: number;
@@ -12,13 +8,7 @@ export interface MentionAttrs {
   updatedAt: string;
 }
 
-export type Mention = MentionAttrs &
-  Model<MentionAttrs> & {
-    update(
-      values: Partial<MentionAttrs>,
-      options?: InstanceUpdateOptions<MentionAttrs>,
-    ): Promise<Mention>;
-  };
+export type Mention = MentionAttrs & Model<MentionAttrs>;
 
 declare const Mention: ModelStatic<Mention>;
 export default Mention;

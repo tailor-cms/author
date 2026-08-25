@@ -1,4 +1,4 @@
-import type { InstanceDestroyOptions, Model, ModelStatic } from 'sequelize';
+import type { Model, ModelStatic } from 'sequelize';
 
 export interface CommentReactionAttrs {
   commentId: number;
@@ -9,9 +9,7 @@ export interface CommentReactionAttrs {
 }
 
 export type CommentReaction = CommentReactionAttrs &
-  Model<CommentReactionAttrs> & {
-    destroy(options?: InstanceDestroyOptions): Promise<CommentReaction>;
-  };
+  Model<CommentReactionAttrs>;
 
 declare const CommentReaction: ModelStatic<CommentReaction>;
 export default CommentReaction;

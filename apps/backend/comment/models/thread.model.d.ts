@@ -1,9 +1,4 @@
-import type {
-  InstanceDestroyOptions,
-  InstanceUpdateOptions,
-  Model,
-  ModelStatic,
-} from 'sequelize';
+import type { Model, ModelStatic } from 'sequelize';
 import type { ThreadType } from '@tailor-cms/interfaces/comment';
 
 export interface ThreadAttrs {
@@ -22,14 +17,7 @@ export interface ThreadAttrs {
   updatedAt: string;
 }
 
-export type Thread = ThreadAttrs &
-  Model<ThreadAttrs> & {
-    update(
-      values: Partial<ThreadAttrs>,
-      options?: InstanceUpdateOptions<ThreadAttrs>,
-    ): Promise<Thread>;
-    destroy(options?: InstanceDestroyOptions): Promise<Thread>;
-  };
+export type Thread = ThreadAttrs & Model<ThreadAttrs>;
 
 declare const Thread: ModelStatic<Thread>;
 export default Thread;

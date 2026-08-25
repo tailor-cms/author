@@ -1,9 +1,4 @@
-import type {
-  InstanceDestroyOptions,
-  InstanceUpdateOptions,
-  Model,
-  ModelStatic,
-} from 'sequelize';
+import type { Model, ModelStatic } from 'sequelize';
 
 export interface UserThreadAttrs {
   threadId: number;
@@ -14,14 +9,7 @@ export interface UserThreadAttrs {
   updatedAt: string;
 }
 
-export type UserThread = UserThreadAttrs &
-  Model<UserThreadAttrs> & {
-    update(
-      values: Partial<UserThreadAttrs>,
-      options?: InstanceUpdateOptions<UserThreadAttrs>,
-    ): Promise<UserThread>;
-    destroy(options?: InstanceDestroyOptions): Promise<UserThread>;
-  };
+export type UserThread = UserThreadAttrs & Model<UserThreadAttrs>;
 
 declare const UserThread: ModelStatic<UserThread>;
 export default UserThread;
