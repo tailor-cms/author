@@ -35,6 +35,7 @@
                   :is-expanded="isOpen"
                   :is-published="bundle.uid === publishedRevision?.uid"
                   :revision="bundle"
+                  :started-at="last(bundle.children)?.createdAt"
                   @select="previewRevision(bundle)"
                 />
               </template>
@@ -69,7 +70,7 @@
 </template>
 
 <script lang="ts" setup>
-import { findIndex, findLastIndex, last, map, uniqBy } from 'lodash-es';
+import { findIndex, last, map, omit, uniqBy } from 'lodash-es';
 import { useIntersectionObserver } from '@vueuse/core';
 import { Revision as RevisionEvents } from '@tailor-cms/common/src/sse.js';
 import { Entity } from '@tailor-cms/interfaces/revision';
@@ -119,10 +120,17 @@ const bundledRevisions = computed<BundledRevision[]>(() => {
       });
       continue;
     }
-    // Normal edits group into runs of the same entity + operation.
-    if (previous && !previous.isRestore && isSameRun(previous, revision))
+    // Normal edits group into runs of the same entity + operation; a run
+    // gets a synthetic parent with every member listed as a child step.
+    if (previous && !previous.isRestore && isSameRun(previous, revision)) {
+      if (!previous.children.length) {
+        previous.children.push(omit(previous, 'children') as Revision);
+        previous.uid = `run:${previous.children[0]!.uid}`;
+      }
       previous.children.push(revision);
-    else result.push({ ...revision, children: [] });
+    } else {
+      result.push({ ...revision, children: [] });
+    }
   }
   return result;
 });
@@ -138,14 +146,14 @@ const publishedRevision = computed<BundledRevision | undefined>(() => {
 const isPreviewed = (revision: HistoryEntry) =>
   editorStore.historyRevision?.uid === revision.uid;
 
-const previewRevision = (revision: HistoryEntry) => {
+const previewRevision = (
+  revision: HistoryEntry & { children?: Revision[] },
+) => {
   if (isPreviewed(revision)) return editorStore.exitHistoryMode();
-  const { uid, transactionId } = revision;
-  // Diff baseline = the next-older revision. For a restore, anchor on the
-  // cascade's last (oldest) member so the baseline precedes the whole restore.
-  const index = transactionId
-    ? findLastIndex(revisions.value, { transactionId })
-    : findIndex(revisions.value, { uid });
+  // Diff baseline = the next-older revision; group parents anchor on their
+  // oldest member so the preview covers the whole group.
+  const anchorUid = last(revision.children ?? [])?.uid ?? revision.uid;
+  const index = findIndex(revisions.value, { uid: anchorUid });
   const previousRevision = index >= 0 ? revisions.value[index + 1] ?? null : null;
   editorStore.enterHistoryMode(revision, previousRevision);
 };
@@ -183,9 +191,12 @@ watch(
   { immediate: true },
 );
 
-const descendantIds = computed(
-  () => new Set(map(activityStore.getDescendants(props.activity.id), 'id')),
-);
+// Editor-scoped descendants, mirroring the list endpoint - child pages have
+// their own editor and history.
+const descendantIds = computed(() => {
+  const descendants = activityStore.getContainerDescendants(props.activity.id);
+  return new Set(map(descendants, 'id'));
+});
 
 const isInSubtree = ({ entity, state }: Revision): boolean => {
   if (entity === Entity.Repository) return false;

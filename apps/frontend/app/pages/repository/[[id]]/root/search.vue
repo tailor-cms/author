@@ -11,11 +11,8 @@
         v-if="results.total"
         v-model:is-compact="isCompact"
         v-model:items-per-page="results.itemsPerPage"
-        v-model:page="results.page"
         v-model:sort="sort"
         :is-search-active="isSearchActive"
-        :page-count="results.pageCount"
-        :total="results.total"
         class="mb-4"
       />
       <template v-if="results.isFetching">
@@ -45,11 +42,12 @@
           :is-compact="isCompact"
           @element:preview="previewedElement = $event"
         />
-        <VPagination
-          v-if="results.pageCount > 1"
-          v-model="results.page"
-          v-bind="paginationProps"
-          class="mt-6"
+        <PaginationFooter
+          v-model:page="results.page"
+          :items-count="results.total"
+          :items-per-page="results.itemsPerPage"
+          :page-count="results.pageCount"
+          item-label="element"
         />
       </template>
     </VContainer>
@@ -78,6 +76,7 @@ import {
 } from '@/components/repository/Search/composables';
 import ElementCard from '@/components/repository/Search/ElementCard.vue';
 import ListControls from '@/components/repository/Search/ListControls.vue';
+import PaginationFooter from '@/components/common/PaginationFooter.vue';
 import PreviewDialog from '@/components/repository/Search/PreviewDialog.vue';
 import Toolbar from '@/components/repository/Search/Toolbar.vue';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -127,12 +126,6 @@ const defaultSort = computed<SearchSort>(() =>
 );
 const sort = ref<SearchSort>(initialSort());
 
-const paginationProps = computed(() => ({
-  length: results.pageCount,
-  totalVisible: 7,
-  density: 'comfortable' as const,
-  rounded: true,
-}));
 results.page = restored?.page ?? (Number(route.query.page) || 1);
 if (restored?.itemsPerPage) results.itemsPerPage = restored.itemsPerPage;
 

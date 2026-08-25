@@ -1,11 +1,11 @@
 import type { Page } from '@playwright/test';
 
 import {
-  GeneralSettings,
+  AccessTabs,
   RepositoryGroups,
   RepositoryMembers,
-  SettingsSidebar,
-} from '../../../pom/repository/RepositorySettings';
+} from '../../../pom/repository/RepositoryAccess';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings';
 import {
   createCleanRepository,
   toSeededRepositorySettings,
@@ -41,14 +41,14 @@ const addSourceMember = async (page: Page, repositoryId: number) => {
 };
 
 const openCloneDialog = async (page: Page, repositoryId: number) => {
-  await page.goto(GeneralSettings.getRoute(repositoryId));
-  await new GeneralSettings(page).rail.runAction('Clone');
+  await page.goto(RepositorySettings.getRoute(repositoryId));
+  await new RepositorySettings(page).rail.runAction('Clone');
   return new CloneDialog(page);
 };
 
-// Reach the clone's settings the way a user would: catalog card cog,
-// then the settings sidebar.
-const openCloneSettings = async (page: Page) => {
+// Reach the clone's Access page the way a user would: catalog card cog
+// (lands on the info page), then the Access rail item.
+const openCloneAccess = async (page: Page) => {
   await page.goto('/');
   const catalog = new Catalog(page);
   const card = new RepositoryCard(
@@ -56,12 +56,13 @@ const openCloneSettings = async (page: Page) => {
     catalog.findRepositoryCard(CLONE_NAME),
   );
   await card.openSettings();
-  return new SettingsSidebar(page);
+  await new RepositorySettings(page).rail.goToAccess();
+  return new AccessTabs(page);
 };
 
 test('should be able to clone the repository', async ({ page }) => {
   await toSeededRepositorySettings(page);
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.runAction('Clone');
   const cloneDialog = new CloneDialog(page);
   await cloneDialog.expectTitle('Clone Course');
@@ -81,11 +82,11 @@ test('shares the clone with the same people when enabled', async ({
   await expect(dialog.shareSwitch).not.toBeChecked();
   await dialog.clone(CLONE_NAME, undefined, true);
   await new Toast(page).expectCloned('Course');
-  const sidebar = await openCloneSettings(page);
-  await sidebar.open('Groups');
+  const tabs = await openCloneAccess(page);
+  await tabs.open('Groups');
   const groups = new RepositoryGroups(page);
   await expect(groups.getEntryByName(GROUP_NAME)).toBeVisible();
-  await sidebar.open('Members');
+  await tabs.open('Members');
   const members = new RepositoryMembers(page);
   await expect(members.getEntryByEmail(DEFAULT_TEST_USER.email)).toBeVisible();
 });
@@ -103,8 +104,8 @@ test('shares the clone when cloning from a catalog card', async ({ page }) => {
   await expect(dialog.shareSwitch).toBeEnabled();
   await dialog.clone(CLONE_NAME, undefined, true);
   await new Toast(page).expectCloned('Course');
-  const sidebar = await openCloneSettings(page);
-  await sidebar.open('Groups');
+  const tabs = await openCloneAccess(page);
+  await tabs.open('Groups');
   const groups = new RepositoryGroups(page);
   await expect(groups.getEntryByName(GROUP_NAME)).toBeVisible();
 });
@@ -115,10 +116,12 @@ test('does not share the clone by default', async ({ page }) => {
   const dialog = await openCloneDialog(page, repository.id);
   await dialog.clone(CLONE_NAME);
   await new Toast(page).expectCloned('Course');
-  const sidebar = await openCloneSettings(page);
-  await sidebar.open('Groups');
-  await expect(page.getByText('No associated user groups.')).toBeVisible();
-  await sidebar.open('Members');
+  const tabs = await openCloneAccess(page);
+  await tabs.open('Groups');
+  await expect(
+    page.getByText('No user groups associated with this repository yet.'),
+  ).toBeVisible();
+  await tabs.open('Members');
   const members = new RepositoryMembers(page);
   // Only the cloning admin; the source's Author must not carry over.
   await expect(members.userEntriesLocator).toHaveCount(1);
@@ -129,7 +132,7 @@ test('share option is disabled when the source is not shared', async ({
   page,
 }) => {
   await toSeededRepositorySettings(page);
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositorySettings(page);
   await settingsPage.rail.runAction('Clone');
   const dialog = new CloneDialog(page);
   // The dialog resolves who has access on mount;
