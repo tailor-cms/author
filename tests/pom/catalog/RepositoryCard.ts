@@ -27,7 +27,9 @@ export class RepositoryCard {
     this.pinBtn = el.getByLabel('Pin repository');
     this.addTagDialog = page.getByTestId('tailorDialog');
     this.tagInput = this.addTagDialog.locator('input');
-    this.tagErrorMessage = this.addTagDialog.getByRole('alert');
+    this.tagErrorMessage = this.addTagDialog
+      .getByRole('alert')
+      .locator('.v-messages__message');
     this.actionsBtn = el.getByLabel('Repository actions');
     this.settingsBtn = el.getByLabel('Repository settings');
     this.selectCheckbox = el.getByLabel('Select repository');
