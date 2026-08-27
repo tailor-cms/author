@@ -1,7 +1,7 @@
 import { IntegrationType } from '@tailor-cms/interfaces/comment';
 import { Model } from 'sequelize';
 
-// Built-in reporters and webhooks post as an integration.
+// Built-in and external integrations both post as an integration.
 // Where it posts is up to the thread, which subscribes to `integration:<key>`.
 class Integration extends Model {
   static fields(DataTypes) {
@@ -11,7 +11,7 @@ class Integration extends Model {
       name: { type: STRING, allowNull: false },
       icon: { type: STRING },
       type: {
-        type: ENUM(IntegrationType.Builtin, IntegrationType.Webhook),
+        type: ENUM(IntegrationType.Builtin, IntegrationType.External),
         allowNull: false,
       },
       // inbound webhook tokens are matched against this digest.
