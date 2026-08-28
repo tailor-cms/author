@@ -4,6 +4,7 @@
       :clearable="!isReadonly"
       :model-value="hint"
       :readonly="isReadonly"
+      density="comfortable"
       label="Hint"
       variant="outlined"
       hide-details
