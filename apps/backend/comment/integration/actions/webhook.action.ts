@@ -28,7 +28,7 @@ export default defineAction({
   async handler({ body, params }) {
     try {
       const integration = await service.resolveByToken(params.token);
-      await service.postInbound(integration, body);
+      await service.postFromWebhook(integration, body);
     } catch (err) {
       if (err instanceof service.IntegrationNotFoundError) {
         return createError(StatusCodes.NOT_FOUND, err.message);
