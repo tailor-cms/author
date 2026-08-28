@@ -1,5 +1,5 @@
 <template>
-  <div class="hint-container mt-8 mb-6">
+  <div class="hint-container mb-6">
     <VTextField
       :clearable="!isReadonly"
       :model-value="hint"
