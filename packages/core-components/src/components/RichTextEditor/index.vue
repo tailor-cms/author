@@ -105,6 +105,7 @@ watch(
   () => props.modelValue,
   (value) => {
     if (!editor.value) return;
+    content.value = value;
     const isSame = editor.value.getHTML() === value;
     if (isSame) return;
     return editor.value?.commands.setContent(value, { emitUpdate: false });
