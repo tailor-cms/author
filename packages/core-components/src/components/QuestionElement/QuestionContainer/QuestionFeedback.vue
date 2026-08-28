@@ -16,7 +16,7 @@
       <div
         v-show="isExpanded"
         :id="contentId"
-        class="d-flex flex-column ga-3 pt-2"
+        class="d-flex flex-column pt-2"
       >
         <RichTextEditor
           :model-value="feedback?.general"
@@ -36,6 +36,7 @@
             :model-value="feedback?.[index]"
             :readonly="isReadonly"
             density="comfortable"
+            class="mt-4"
             variant="outlined"
             hide-details
             toolbar-on-focus
