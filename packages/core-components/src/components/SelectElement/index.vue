@@ -276,7 +276,7 @@ const fetchActivities = loader(async function (repository: Repository) {
 
 const fetchElements = loader(async function (containers: Activity[]) {
   const repositoryId = selection.repository?.id;
-  const params = { ids: map(containers, 'id') };
+  const params = { activityIds: map(containers, 'id') };
   return api.fetchContentElements(repositoryId, params);
 }, 500);
 
