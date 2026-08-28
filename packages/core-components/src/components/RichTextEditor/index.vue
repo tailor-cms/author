@@ -4,6 +4,7 @@
     ref="input"
     v-bind="{ disabled, focused, readonly, rules }"
     :model-value="content"
+    :density="density"
     class="text-left"
   >
     <template #default="{ id, isValid, isReadonly, isDisabled, isDirty }">
@@ -56,6 +57,7 @@ interface Props {
   variant?: VField['variant'];
   rules?: VInput['rules'];
   readonly?: boolean;
+  density?: 'comfortable' | 'compact' | 'default';
   // Show the formatting toolbar only while the editor has focus.
   toolbarOnFocus?: boolean;
 }
@@ -63,6 +65,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   label: undefined,
   disabled: false,
+  density: 'default',
   readonly: false,
   variant: undefined,
   rules: undefined,

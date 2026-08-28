@@ -16,7 +16,7 @@
       <div
         v-show="isExpanded"
         :id="contentId"
-        class="d-flex flex-column ga-6 pt-2"
+        class="d-flex flex-column ga-3 pt-2"
       >
         <RichTextEditor
           :model-value="feedback?.general"
@@ -25,6 +25,7 @@
           variant="outlined"
           hide-details
           toolbar-on-focus
+          density="comfortable"
           @update:model-value="update($event, 'general')"
         />
         <template v-if="showAnswerFeedback">
@@ -34,6 +35,7 @@
             :label="answerLabel(answer, index)"
             :model-value="feedback?.[index]"
             :readonly="isReadonly"
+            density="comfortable"
             variant="outlined"
             hide-details
             toolbar-on-focus
