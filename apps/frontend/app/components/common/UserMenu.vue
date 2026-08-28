@@ -28,6 +28,12 @@
       <VDivider class="mx-n2 mb-2" />
       <template v-if="authStore.hasAdminAccess">
         <VListItem
+          :to="{ name: 'user-profile' }"
+          title="Profile"
+          prepend-icon="mdi-account-circle-outline"
+          rounded="lg"
+        />
+        <VListItem
           :to="{
             name: authStore.isAdmin ? 'system-user-management' : 'user-groups',
           }"
@@ -35,12 +41,6 @@
           prepend-icon="mdi-account-cog-outline"
         />
       </template>
-      <VListItem
-        :to="{ name: 'user-profile' }"
-        title="Profile"
-        prepend-icon="mdi-account-circle-outline"
-        rounded="lg"
-      />
       <ThemeSwitcher submenu />
       <VListItem
         title="Logout"
