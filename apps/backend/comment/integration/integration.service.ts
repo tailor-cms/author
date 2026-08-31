@@ -1,4 +1,4 @@
-// Lets something other than a person post in a repository's discussion:
+// Lets something other than a person post in a repository's threads:
 // Tailor's own reporters, and outside systems via webhook. Registers
 // those identities, lists and revokes them, and posts what an outside
 // system sends.
@@ -12,7 +12,7 @@ import type {
 } from './schemas/index.ts';
 import type { Integration } from './models/integration.model.js';
 import * as commentService from '../comment.service.ts';
-import * as threadService from '../thread.service.ts';
+import * as threadService from '../thread/thread.service.ts';
 import { Op } from 'sequelize';
 import { IntegrationType } from '@tailor-cms/interfaces/comment.ts';
 import { createLogger } from '#logger';

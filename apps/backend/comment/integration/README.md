@@ -1,6 +1,6 @@
 # Comment integrations
 
-Lets something other than a person post into a repository's discussion:
+Lets something other than a person post into a repository's threads:
 Tailor's own built-in integrations, which announce things like a
 publish, and external ones - a CI pipeline, an alerting tool, a
 translation vendor - posting over a webhook.

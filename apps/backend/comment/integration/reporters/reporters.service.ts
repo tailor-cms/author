@@ -1,7 +1,7 @@
 import type { AnyReporter, WindowContext } from './lib/types.ts';
 import * as commentService from '../../comment.service.ts';
 import * as integrationService from '../integration.service.ts';
-import * as threadService from '../../thread.service.ts';
+import * as threadService from '../../thread/thread.service.ts';
 import { subscribe, type CloudEvent } from '#shared/events/bus.ts';
 import { createLogger } from '#logger';
 import { sharedValue } from './lib/format.ts';
