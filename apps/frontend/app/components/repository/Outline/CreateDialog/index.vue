@@ -177,7 +177,7 @@ const submitForm = handleSubmit(async () => {
     action,
     anchor as StoreActivity,
   );
-  // Singularized - collection entity labels are plural
+  // Normalize in case a schema defines the label as plural (e.g. "Tags")
   const label = pluralize.singular(
     $schemaService.getActivityLabel(activity.value) || 'item',
   );
