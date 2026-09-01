@@ -1,8 +1,8 @@
 <mjml>
   <mj-include path="./components/head.mjml"/>
-  <mj-body background-color="#F2F4F7" width="520px">
+  <mj-body background-color="#FFFFFF" width="520px">
     <mj-section padding="16px 0 0" />
-    <mj-wrapper background-color="#FFFFFF" border-radius="16px" padding="0">
+    <mj-wrapper background-color="#FAFBFC" border="1px solid #E6E9ED" border-radius="16px" padding="0">
       <mj-include path="./components/header.mjml"/>
       <mj-section padding="0 12px" text-align="left">
         <mj-column>
@@ -13,7 +13,7 @@
         </mj-column>
       </mj-section>
       <mj-section padding="0 37px">
-        <mj-column background-color="#F2F4F7" border-radius="12px">
+        <mj-column background-color="#ECEFF3" border-radius="12px">
           <mj-table padding="10px 16px">
             <tr class="content" style="display: flex;">
               <td>
@@ -38,7 +38,7 @@
       {{/previousComments.length}}
       {{#previousComments}}
         <mj-section padding="6px 37px 0">
-          <mj-column background-color="#F2F4F7" border-radius="12px">
+          <mj-column background-color="#ECEFF3" border-radius="12px">
             <mj-table padding="10px 16px">
               <tr class="content" style="display: flex;">
                 <td>
