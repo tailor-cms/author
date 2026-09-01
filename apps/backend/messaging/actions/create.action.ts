@@ -7,7 +7,7 @@ import { defineAction } from '#shared/request/action.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
-// POST /repositories/:repositoryId/comments
+// POST /repositories/:repositoryId/messaging/comments
 // Creates a new comment authored by the current user.
 export default defineAction({
   name: 'create',

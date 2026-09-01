@@ -4,7 +4,7 @@ import { dataEnvelope } from '#shared/request/schemas.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
-// DELETE /repositories/:repositoryId/comments/:commentId
+// DELETE /repositories/:repositoryId/messaging/comments/:commentId
 // Soft-deletes the comment. Only the author may delete (gated by the
 // `canEdit` route middleware).
 export default defineAction({

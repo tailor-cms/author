@@ -9,9 +9,9 @@ import express from 'express';
 // Public, token-authenticated ingress for integrations. Mounted before
 // the JWT guard
 const router = express.Router();
-const mount = createActionMounter(router, '/hooks/comments/integrations', {
+const mount = createActionMounter(router, '/hooks/messaging/integrations', {
   tag: 'Webhooks',
-  group: 'Comment',
+  group: 'Messaging',
 });
 
 mount.post('/:token', actions.postMessage, {
@@ -19,6 +19,6 @@ mount.post('/:token', actions.postMessage, {
 });
 
 export default {
-  path: '/hooks/comments/integrations',
+  path: '/hooks/messaging/integrations',
   router,
 };

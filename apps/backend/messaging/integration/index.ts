@@ -5,11 +5,11 @@ import express from 'express';
 import AccessService from '#app/shared/auth/access.service.js';
 
 const router = express.Router({ mergeParams: true });
-const basePath = '/repositories/:repositoryId/comments/integrations';
+const basePath = '/repositories/:repositoryId/messaging/integrations';
 
 const integrations = createActionMounter(router, basePath, {
   tag: 'Integrations',
-  group: 'Comment',
+  group: 'Messaging',
 });
 
 // Registering an integration hands out a posting credential for the

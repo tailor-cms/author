@@ -6,7 +6,7 @@ import { defineAction, type Ctx } from '#shared/request/action.ts';
 import { createError } from '#shared/error/helpers.js';
 import { RepositoryScopedParams } from '#shared/request/schemas.ts';
 
-// POST /repositories/:repositoryId/comments/resolve
+// POST /repositories/:repositoryId/messaging/comments/resolve
 // Toggles the resolved state of a single comment or entire thread.
 // Exactly one of `id` / `contentElementId` must be
 // supplied; mapped to 400 via the typed domain error otherwise.

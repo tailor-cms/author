@@ -17,6 +17,9 @@ export const ListFilter = z
       Restrict to comments on a single activity (the activity-thread
       view).
     `),
+    threadId: IntParam().optional().describe(oneLine`
+      Restrict to a single thread.
+    `),
     contentElementId: IntParam().optional().describe(oneLine`
       Restrict to comments on a single content element (the inline
       thread). May be combined with \`activityId\`; the client

@@ -19,7 +19,9 @@ export async function getComment(
   if (!Number.isInteger(Number(commentId))) {
     return createError(StatusCodes.BAD_REQUEST, 'Invalid id format');
   }
-  const include = [{ model: User, as: 'author', attributes: USER_SUMMARY_ATTRS }];
+  const include = [
+    { model: User, as: 'author', attributes: USER_SUMMARY_ATTRS },
+  ];
   const comment = await CommentModel.findByPk(commentId, {
     include,
     paranoid: false,

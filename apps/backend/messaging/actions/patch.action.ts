@@ -4,7 +4,7 @@ import { dataEnvelope } from '#shared/request/schemas.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
-// PATCH /repositories/:repositoryId/comments/:commentId
+// PATCH /repositories/:repositoryId/messaging/comments/:commentId
 // Replaces the comment body. The `canEdit` route middleware ensures
 // only the author reaches this handler; the service stamps `editedAt`
 // so the FE can render an "(edited)" hint.
