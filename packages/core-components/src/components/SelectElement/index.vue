@@ -78,7 +78,7 @@ import type {
   ContentElement,
   Relationship,
 } from '@tailor-cms/interfaces/content-element';
-import { flatMap, map, sortBy } from 'lodash-es';
+import { flatMap, map, reject, sortBy, unionBy } from 'lodash-es';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import type { ElementRegistry, Filter } from '@tailor-cms/interfaces/schema';
 import { activity as activityUtils } from '@tailor-cms/utils';
@@ -201,6 +201,7 @@ const getSubcontainers = (container: Activity) => {
 
 const showActivityElements = async (activity: Activity) => {
   selection.activity = activity;
+  await loadContainers(activity);
   const elements: ContentElement[] = await fetchElements(
     processedContainers.value,
   );
@@ -267,15 +268,31 @@ const selectRepository = async (repository: Repository) => {
   const activities: Activity[] = isCurrentRepository
     ? currentRepository.value.activities
     : await fetchActivities(repository);
-  items.activities = activities.filter((it) => !it.deletedAt);
+  items.activities = reject(activities, 'deletedAt');
 };
 
 const fetchActivities = loader(async function (repository: Repository) {
   return api.fetchActivities(repository.id);
 }, 500);
 
+// The store only holds outline activities plus the subtrees of activities
+// opened in the editor, so a never-visited activity has no containers
+// loaded. Pull the subtree on demand and merge it into the local set.
+const loadContainers = loader(async function (activity: Activity) {
+  const repositoryId = selection.repository?.id;
+  if (!repositoryId) return;
+  const subtree: Activity[] = await api.fetchActivities(repositoryId, {
+    subtreeOf: activity.id,
+  });
+  const loaded = reject(subtree, 'deletedAt');
+  items.activities = unionBy(items.activities, loaded, 'id');
+});
+
 const fetchElements = loader(async function (containers: Activity[]) {
   const repositoryId = selection.repository?.id;
+  // An empty `activityIds` is dropped by the API's array preprocessor and
+  // would widen the query to the whole repository; skip the call instead.
+  if (!containers.length) return [];
   const params = { activityIds: map(containers, 'id') };
   return api.fetchContentElements(repositoryId, params);
 }, 500);

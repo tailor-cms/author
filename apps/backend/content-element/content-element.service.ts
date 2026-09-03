@@ -39,10 +39,14 @@ export class SourceNotFoundError extends Error {
 const logger = createLogger('content-element:svc');
 
 // Returns the elements matched by `opts` (built by processQuery) and the
-// supplied filters. `detached=false` is applied by default; an
-// `activityIds` filter is implemented as an INNER JOIN on Activity so
-// the result is scoped to the supplied parent activities.
-export async function list(opts: any, filters: ListFilter) {
+// supplied filters. Always scoped to `repository`; `activityIds` narrows
+// further via an INNER JOIN on Activity. `detached=false` by default.
+export async function list(
+  repository: Repository,
+  opts: any,
+  filters: ListFilter,
+) {
+  opts.where = { ...opts.where, repositoryId: repository.id };
   if (!filters.detached) opts.where = { ...opts.where, detached: false };
   if (filters.activityIds) {
     const where = { id: filters.activityIds };

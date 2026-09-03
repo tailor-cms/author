@@ -30,6 +30,6 @@ export default defineAction({
     },
   },
   async handler({ query, req }) {
-    return service.list(req.opts!, query);
+    return service.list(req.repository!, req.opts!, query);
   },
 });
