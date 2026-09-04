@@ -92,6 +92,9 @@ const openInEditor = (element: ContentElement) => {
 
 .element-wrapper {
   position: relative;
+  // Flex items default to min-width: auto, so an image at its natural
+  // width would widen the sheet past the dialog instead of scaling down.
+  min-width: 0;
 }
 
 .open-element-button {
