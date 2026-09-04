@@ -23,7 +23,7 @@ import {
 import type { Activity } from '../../activity/models/activity.model.js';
 import type { AgentSession } from '../ai/agent/session/index.ts';
 import type { Asset } from '../../asset/models/asset.model.js';
-import type { Comment } from '../../comment/models/comment.model.js';
+import type { Comment } from '../../messaging/models/comment.model.js';
 import type { ContentElement }
   from '../../content-element/models/content-element.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';

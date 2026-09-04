@@ -1,4 +1,4 @@
-import type { Model, ModelStatic } from 'sequelize';
+import type { Model, ModelStatic, Optional } from 'sequelize';
 
 export interface CommentReactionAttrs {
   commentId: number;
@@ -8,8 +8,10 @@ export interface CommentReactionAttrs {
   updatedAt: string;
 }
 
+type GeneratedAttrs = 'createdAt' | 'updatedAt';
+
 export type CommentReaction = CommentReactionAttrs &
-  Model<CommentReactionAttrs>;
+  Model<CommentReactionAttrs, Optional<CommentReactionAttrs, GeneratedAttrs>>;
 
 declare const CommentReaction: ModelStatic<CommentReaction>;
 export default CommentReaction;

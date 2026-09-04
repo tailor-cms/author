@@ -1,4 +1,4 @@
-import type { Model, ModelStatic } from 'sequelize';
+import type { Model, ModelStatic, Optional } from 'sequelize';
 
 export interface MentionAttrs {
   commentId: number;
@@ -8,7 +8,10 @@ export interface MentionAttrs {
   updatedAt: string;
 }
 
-export type Mention = MentionAttrs & Model<MentionAttrs>;
+type GeneratedAttrs = 'readAt' | 'createdAt' | 'updatedAt';
+
+export type Mention = MentionAttrs &
+  Model<MentionAttrs, Optional<MentionAttrs, GeneratedAttrs>>;
 
 declare const Mention: ModelStatic<Mention>;
 export default Mention;

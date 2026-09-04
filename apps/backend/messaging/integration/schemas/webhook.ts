@@ -46,7 +46,7 @@ export const InboundWebhookInput = z
       stays either way.
     `),
     icon_emoji: z.string().optional().describe(oneLine`
-      Custom emoji shortcode (\`:rocket:\`) to show instead of the
+      Emoji shortcode (\`:rocket:\`) to show instead of the
       integration's icon. Resolved against the workspace's emoji; an
       unknown name falls back to the icon.
     `),

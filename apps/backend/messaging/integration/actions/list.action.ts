@@ -9,7 +9,7 @@ import { defineAction } from '#shared/request/action.ts';
 import { z } from 'zod';
 
 export default defineAction({
-  name: 'listIntegrations',
+  name: 'getIntegrations',
   params: RepositoryScopedParams,
   openapi: {
     authenticated: true,
