@@ -596,6 +596,9 @@ $accent-selected: #ff4081;
     border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);
   }
 
+  &:not(.expanded) {
+    border-radius: 7px;
+  }
   .drag-handle {
     flex-shrink: 0;
     width: 1.5rem;
