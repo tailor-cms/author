@@ -5,26 +5,26 @@ import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
 export default defineAction({
-  name: 'update',
+  name: 'toggleReaction',
   params: schemas.CommentItemParams,
-  body: schemas.PatchInput,
+  body: schemas.ToggleReactionInput,
   openapi: {
     authenticated: true,
-    summary: 'Edit a comment',
+    summary: 'Add or remove a reaction',
     description: oneLine`
-      Replaces the text. Only the author can edit, and the comment
-      carries an "edited" mark from then on.
+      Reacting again with the same emoji takes it back, so a double-tap
+      cannot leave a reaction stuck. Anyone who can read the comment can
+      react to it.
     `,
     responses: {
       200: {
-        description: 'The edited comment.',
-        schema: dataEnvelope(schemas.Comment),
+        description: 'The comment reactions after the toggle.',
+        schema: dataEnvelope(schemas.ReactionResult),
       },
-      403: { description: 'Not the author.' },
       404: { description: 'Comment not found.' },
     },
   },
-  handler({ body, req }) {
-    return service.update(req.comment!, body.content);
+  handler({ body, req, user }) {
+    return service.toggleReaction(req.comment!, user.id, body.emoji);
   },
 });

@@ -1,29 +1,28 @@
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
+import { z } from 'zod';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
 export default defineAction({
-  name: 'delete',
+  name: 'getReplies',
   params: schemas.CommentItemParams,
   openapi: {
     authenticated: true,
-    summary: 'Delete a comment',
+    summary: 'List replies to a message',
     description: oneLine`
-      Only the author can delete. The comment keeps its place as a
-      "deleted" placeholder so the replies around it still read.
+      The side conversation under one message, oldest first. Fetched on
+      demand so a long reply chain does not slow the thread down.
     `,
     responses: {
       200: {
-        description: 'Id of the deleted comment.',
-        schema: dataEnvelope(schemas.RemoveResult),
+        description: 'Replies to the message.',
+        schema: dataEnvelope(z.array(schemas.Message)),
       },
-      403: { description: 'Not the author.' },
-      404: { description: 'Comment not found.' },
     },
   },
-  handler({ req }) {
-    return service.remove(req.comment!);
+  handler({ params, req }) {
+    return service.listReplies(req.repository!.id, params.commentId);
   },
 });

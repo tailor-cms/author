@@ -7,6 +7,7 @@ import {
   Pagination,
   QueryBoolean,
   Sort,
+  UidArrayFromQuery,
 } from '#shared/request/schemas.ts';
 
 export const ListFilter = z

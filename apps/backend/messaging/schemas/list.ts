@@ -1,40 +1,30 @@
-// Wire shape for the comments listing endpoint.
-import { oneLine } from 'common-tags';
-import { z } from 'zod';
-
 import {
   IntParam,
   Pagination,
   QueryBoolean,
   Sort,
 } from '#shared/request/schemas.ts';
+import { oneLine } from 'common-tags';
+import { z } from 'zod';
 
 const SORT_COLUMNS = ['createdAt', 'updatedAt', 'resolvedAt'] as const;
 
 export const ListFilter = z
   .object({
     activityId: IntParam().optional().describe(oneLine`
-      Restrict to comments on a single activity (the activity-thread
-      view).
-    `),
-    threadId: IntParam().optional().describe(oneLine`
-      Restrict to a single thread.
+      Only comments on this activity - the activity's own thread.
     `),
     contentElementId: IntParam().optional().describe(oneLine`
-      Restrict to comments on a single content element (the inline
-      thread). May be combined with \`activityId\`; the client
-      typically sends one or the other.
+      Only comments on this content element - the inline thread in the
+      editor.
     `),
     paranoid: QueryBoolean.optional().describe(oneLine`
-      Set false to include soft-deleted comments (default: true). The
-      list route's default already opts into \`paranoid: false\` so
-      deleted comments stay visible in the thread (their body renders
-      as a placeholder via the model getter); this flag is exposed for
-      completeness.
+      Set true to leave deleted comments out. They are included by
+      default, so a reply keeps the message it was answering.
     `),
     ...Pagination(),
     ...Sort(SORT_COLUMNS),
   })
-  .describe('Filters, pagination, and sort for listing repository comments.');
+  .describe('Filters, paging and sort for the comment list.');
 
 export type ListFilter = z.infer<typeof ListFilter>;

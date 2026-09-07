@@ -1,35 +1,34 @@
-import { z } from 'zod';
-
 import {
   RepositoryScopedParams,
   dataEnvelope,
 } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
-
+import { oneLine } from 'common-tags';
+import { z } from 'zod';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
-// GET /repositories/:repositoryId/messaging/comments
-// Scoped listing of repository comments. The client typically narrows
-// by either `activityId` (the activity's own thread) or `contentElementId`
-// (content element thread); list defaults to `createdAt DESC` and includes
-// soft-deleted rows so deleted comments stay visible in the thread.
 export default defineAction({
   name: 'list',
   params: RepositoryScopedParams,
   query: schemas.ListFilter,
   openapi: {
     authenticated: true,
-    summary: 'List comments in the repository',
-    description: `Returns the repository's comments in newest-first order.`,
+    summary: 'List comments',
+    description: oneLine`
+      Comments on one activity, or on a single content element. The
+      editor asks for a whole activity at once and splits the result
+      per element. Newest first; deleted ones stay as placeholders so a
+      reply never loses what it was answering.
+    `,
     responses: {
       200: {
-        description: 'List of comments matching the filter.',
+        description: 'Comments matching the filter.',
         schema: dataEnvelope(z.array(schemas.Comment)),
       },
     },
   },
-  async handler({ query, req }) {
+  handler({ query, req }) {
     return service.list(req.repository!, req.opts!, query);
   },
 });

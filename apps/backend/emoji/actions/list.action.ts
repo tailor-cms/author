@@ -6,7 +6,7 @@ import * as schemas from '../schemas/index.ts';
 import * as service from '../emoji.service.ts';
 
 export default defineAction({
-  name: 'listEmoji',
+  name: 'getEmoji',
   openapi: {
     summary: 'List emoji',
     description: oneLine`
