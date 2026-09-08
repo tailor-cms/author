@@ -7,25 +7,10 @@
     offset="4"
   >
     <template #activator="{ props: menuProps }">
-      <VBtn
-        v-tooltip:bottom="{
-          text: tooltipText,
-          disabled: menuOpen,
-          openDelay: 1000,
-        }"
-        v-bind="menuProps"
-        :class="{ 'opacity-60': !isEntryPoint }"
-        aria-label="Linked content"
-        icon="mdi-link-variant"
-        rounded="lg"
-        size="x-small"
-        variant="text"
-      />
+      <ElementLinkedChip v-bind="menuProps" class="mr-1" is-interactive />
     </template>
     <VSheet :theme="$vuetify.theme.global.name" min-width="220" rounded="lg">
-      <div class="px-4 pt-3 pb-2 text-label-medium">
-        {{ isEntryPoint ? 'Linked Element' : 'Nested Linked Element' }}
-      </div>
+      <div class="px-4 pt-3 pb-2 text-label-medium">Linked Element</div>
       <VDivider />
       <div v-if="isLoading" class="d-flex justify-center py-4">
         <VProgressCircular color="primary" size="24" indeterminate />
@@ -38,14 +23,12 @@
           title="View Source"
           @click="onViewSource"
         />
-        <template v-if="isEntryPoint">
-          <VListItem
-            prepend-icon="mdi-link-variant-off"
-            subtitle="Convert to local copy"
-            title="Unlink"
-            @click="onUnlink"
-          />
-        </template>
+        <VListItem
+          prepend-icon="mdi-link-variant-off"
+          subtitle="Convert to local copy"
+          title="Unlink"
+          @click="onUnlink"
+        />
       </VList>
     </VSheet>
   </VMenu>
@@ -53,18 +36,18 @@
 
 <script lang="ts" setup>
 import type { ElementSourceInfo } from '@tailor-cms/interfaces/content-element';
-import { computed, watch } from 'vue';
+import { watch } from 'vue';
+
+import ElementLinkedChip from './ElementLinkedChip.vue';
 
 interface Props {
   sourceInfo?: ElementSourceInfo | null;
   isLoading?: boolean;
-  isEntryPoint?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   sourceInfo: null,
   isLoading: false,
-  isEntryPoint: true,
 });
 
 const emit = defineEmits<{
@@ -74,12 +57,6 @@ const emit = defineEmits<{
 }>();
 
 const menuOpen = defineModel<boolean>('open', { default: false });
-
-const tooltipText = computed(() =>
-  props.isEntryPoint
-    ? 'Linked content'
-    : 'Part of linked activity - synced via parent',
-);
 
 watch(menuOpen, (open) => {
   if (open && !props.sourceInfo && !props.isLoading) {
