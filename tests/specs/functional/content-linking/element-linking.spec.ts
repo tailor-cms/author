@@ -141,14 +141,15 @@ test('comments restore after unlink', async ({ page }) => {
   await expect(element.commentDisabledBtn).not.toBeVisible();
 });
 
-test('nested linked elements do not show unlink action', async ({ page }) => {
+test('nested linked elements show no linked indicator', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   await toEditorPage(page, linkedActivity);
   const editor = new Editor(page);
   const element = editor.getElement();
-  await element.expectLinked();
-  // Element actions are hidden on disabled editor (activity-linked);
-  // unlink is only available at the toolbar level
+  // The activity carries the linked state; its elements are plain readonly
+  // cards, so unlink is only available at the toolbar level
+  await element.expectReadonly();
+  await element.expectNotLinked();
   await element.el.hover();
   await expect(element.linkedIndicatorBtn).not.toBeVisible();
 });
