@@ -69,10 +69,6 @@ const { $schemaService, $pluginRegistry } = useNuxtApp() as any;
 
 const repositoryStore = useRepositoryStore();
 const currentRepositoryStore = useCurrentRepository();
-const storageService = useStorageService();
-
-provide('$storageService', storageService);
-
 const notify = useNotification();
 
 const { errors } = useForm();
