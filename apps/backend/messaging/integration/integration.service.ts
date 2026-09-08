@@ -18,9 +18,7 @@ import { IntegrationType } from '@tailor-cms/interfaces/comment.ts';
 import { createLogger } from '#logger';
 import { parseShortcode } from '@tailor-cms/utils';
 import crypto from 'node:crypto';
-import db from '#shared/database/models.ts';
-
-const { Integration: IntegrationModel } = db;
+import IntegrationModel from './models/integration.model.js';
 
 const logger = createLogger('comment:integration');
 

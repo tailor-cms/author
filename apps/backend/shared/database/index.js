@@ -21,8 +21,14 @@ import ActivityStatus from '../../activity/models/activity-status.model.js';
 import Activity from '../../activity/models/activity.model.js';
 import ContentElement from '../../content-element/models/content-element.model.js';
 import Revision from '../../revision/models/revision.model.js';
-import Comment from '../../comment/models/comment.model.js';
+import Comment from '../../messaging/models/comment.model.js';
+import CommentReaction from '../../messaging/models/reaction.model.js';
+import Mention from '../../messaging/models/mention.model.js';
+import Thread from '../../messaging/thread/models/thread.model.js';
+import UserThread from '../../messaging/thread/models/user-thread.model.js';
+import Integration from '../../messaging/integration/models/integration.model.js';
 import Asset from '../../asset/models/asset.model.js';
+import Emoji from '../../emoji/models/emoji.model.js';
 import Tag from '../../tag/models/tag.model.js';
 import Hooks from './hooks.js';
 import linkService from '#shared/content-library/link.service.js';
@@ -108,7 +114,13 @@ const models = {
   Revision: defineModel(Revision),
   ContentElement: defineModel(ContentElement),
   Comment: defineModel(Comment),
+  CommentReaction: defineModel(CommentReaction),
+  Thread: defineModel(Thread),
+  UserThread: defineModel(UserThread),
+  Mention: defineModel(Mention),
+  Integration: defineModel(Integration),
   Asset: defineModel(Asset),
+  Emoji: defineModel(Emoji),
   Tag: defineModel(Tag),
 };
 

@@ -5,9 +5,7 @@ import * as threadService from '../../thread/thread.service.ts';
 import { subscribe, type CloudEvent } from '#shared/events/bus.ts';
 import { createLogger } from '#logger';
 import { sharedValue } from './lib/format.ts';
-import db from '#shared/database/models.ts';
-
-const { User } = db;
+import User from '#app/user/models/user.model.js';
 
 const logger = createLogger('integration:reporters');
 

@@ -1,13 +1,10 @@
 import type { Emoji } from './schemas/index.ts';
-import type { Emoji as EmojiRow } from './models/emoji.model.js';
+import EmojiModel, { type Emoji as EmojiRow } from './models/emoji.model.js';
 import { EMOJI_NAME } from '@tailor-cms/interfaces/emoji';
 import { createKvStore } from '#shared/kvStore.ts';
 import crypto from 'node:crypto';
-import db from '#shared/database/models.ts';
 import sharp from 'sharp';
 import storage from './storage.ts';
-
-const { Emoji: EmojiModel } = db;
 
 export class EmojiNameTakenError extends Error {}
 export class EmojiNameInvalidError extends Error {}
