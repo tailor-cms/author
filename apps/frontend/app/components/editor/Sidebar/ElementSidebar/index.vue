@@ -20,7 +20,6 @@ import { useCurrentRepository } from '@/stores/current-repository';
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
-const storageService = useStorageService();
 
 interface Props {
   element: ContentElement;
@@ -35,7 +34,6 @@ const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 const editorChannel = eventBus.channel('editor');
 provide('$elementBus', elementBus);
 provide('$editorBus', editorChannel);
-provide('$storageService', storageService);
 provide('$rpc', (procedure: string, payload?: any) =>
   repositoryStore.rpc(props.element.type, procedure, payload),
 );

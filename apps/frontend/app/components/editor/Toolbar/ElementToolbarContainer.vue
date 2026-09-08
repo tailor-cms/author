@@ -22,8 +22,6 @@ import ElementToolbar from './ElementToolbar.vue';
 const props = defineProps<{ element: ContentElement }>();
 
 const elementBus = useContentElementBus(props.element);
-const storageService = useStorageService();
 
 provide('$elementBus', elementBus);
-provide('$storageService', storageService);
 </script>

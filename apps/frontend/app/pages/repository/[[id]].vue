@@ -52,9 +52,11 @@ const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const commentStore = useCommentStore();
 const repositorySSE = useRepositorySSE();
+const storageService = useStorageService();
 
 // Expose $eventBus via Vue provide/inject to external components
 provide('$eventBus', $eventBus);
+provide('$storageService', storageService);
 provide(
   '$repository',
   computed(() => {
