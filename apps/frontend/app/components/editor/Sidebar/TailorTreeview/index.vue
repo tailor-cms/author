@@ -97,9 +97,11 @@ const flatTree = (tree: any) =>
     [],
   );
 
+// Parents of the item only (the item itself is excluded), so revealing a
+// folder opens the path to it without expanding the folder.
 const findAncestors = (items: any, id: number, parents: any[] = []): any[] => {
   const item = items.find((it: any) => it.id === id);
-  if (item) return [...parents, item];
+  if (item) return parents;
   return items
     .map((it: any) =>
       it.children?.length
