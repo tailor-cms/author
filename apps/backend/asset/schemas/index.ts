@@ -5,6 +5,7 @@ export * from './create.ts';
 export * from './update.ts';
 export * from './attach.ts';
 export * from './import.ts';
+export * from './link-preview.ts';
 export * from './bulk.ts';
 export * from './folders.ts';
 export * from './download.ts';
