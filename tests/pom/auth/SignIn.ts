@@ -15,7 +15,7 @@ export class SignIn {
     this.page = page;
     this.oidcBtn = page.getByTestId('auth_oidcLoginBtn');
     this.emailInput = page.getByLabel('Email');
-    this.passwordInput = page.getByLabel('Password');
+    this.passwordInput = page.getByLabel('Password', { exact: true });
     this.forgotPasswordLink = page.getByRole('link', {
       name: 'Forgot password?',
     });
