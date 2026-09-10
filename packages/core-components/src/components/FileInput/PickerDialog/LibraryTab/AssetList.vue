@@ -10,13 +10,13 @@
       :key="asset.id"
       :disabled="!isCompatible(asset)"
       :value="asset.id"
-      class="bg-surface-raised py-2 px-3"
+      class="bg-surface-overlay py-2 px-3"
       color="primary"
       rounded="lg"
       elevation="1"
     >
       <template #prepend>
-        <VAvatar rounded="lg" size="40">
+        <VAvatar rounded="md" size="40">
           <VImg
             v-if="asset.publicUrl && asset.type === AssetType.Image"
             :src="asset.publicUrl"
@@ -95,9 +95,5 @@ const isCompatible = (asset: Asset): boolean => {
 
 .v-list-item {
   transition: background 0.15s ease;
-
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container));
-  }
 }
 </style>

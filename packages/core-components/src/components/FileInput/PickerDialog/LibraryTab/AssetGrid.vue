@@ -4,7 +4,7 @@
       v-for="asset in assets"
       :key="asset.id"
       :disabled="!isCompatible(asset)"
-      :color="selectedIds.includes(asset.id) ? 'primary' : 'surface-raised'"
+      :color="selectedIds.includes(asset.id) ? 'primary' : 'surface-overlay'"
       :variant="selectedIds.includes(asset.id) ? 'tonal' : 'flat'"
       class="asset-card pa-3"
       rounded="lg"
@@ -108,10 +108,6 @@ const toggle = (asset: Asset) => {
 .asset-card {
   cursor: pointer;
   transition: background 0.15s ease;
-
-  &:hover {
-    background-color: rgb(var(--v-theme-surface-container)) !important;
-  }
 }
 
 .asset-card__icon {
