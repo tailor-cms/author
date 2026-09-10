@@ -1,12 +1,12 @@
 import { defineAction } from '#shared/request/action.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
-import { getLinkPreview } from '../extraction/link-preview.ts';
+import { describeUrl } from '../extraction/url-description.ts';
 import { oneLine } from 'common-tags';
 import * as schemas from '../schemas/index.ts';
 
 export default defineAction({
-  name: 'getLinkPreview',
-  query: schemas.LinkPreviewFilter,
+  name: 'describeUrl',
+  query: schemas.UrlDescriptionFilter,
   openapi: {
     authenticated: true,
     summary: 'Describe a URL',
@@ -17,12 +17,12 @@ export default defineAction({
     responses: {
       200: {
         description: 'Link description.',
-        schema: dataEnvelope(schemas.LinkPreview),
+        schema: dataEnvelope(schemas.UrlDescription),
       },
       400: { description: 'Invalid URL or private/localhost address.' },
     },
   },
   async handler({ query }) {
-    return getLinkPreview(query.url);
+    return describeUrl(query.url);
   },
 });

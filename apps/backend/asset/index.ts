@@ -57,7 +57,7 @@ mount
       ]),
     ],
   })
-  .get('/link-preview', actions.linkPreview)
+  .get('/url-description', actions.describeUrl)
   .post('/import/link', actions.importFromLink)
   .post('/bulk/remove', actions.bulkRemove)
   .post('/bulk/move', actions.move);

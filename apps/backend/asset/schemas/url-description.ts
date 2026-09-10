@@ -3,19 +3,23 @@ import { oneLine } from 'common-tags';
 import { safeUrl } from './import.ts';
 import { z } from 'zod';
 
-export const LinkPreviewFilter = z.object({
+export const UrlDescriptionFilter = z.object({
   url: safeUrl().describe('Public https URL to describe.'),
 });
 
-export const LinkPreview = z
+export const UrlDescription = z
   .object({
     url: z.string(),
     title: z.string().describe('Page title, or empty behind a sign-in.'),
     description: z.string(),
-    siteName: z.string(),
+    siteName: z
+      .string()
+      .describe('Publisher name, where it differs from the domain.'),
     domain: z.string(),
     favicon: z.string(),
-    thumbnail: z.string(),
+    thumbnail: z
+      .string()
+      .describe('Preview image URL; empty when there is none.'),
     thumbnailWidth: z
       .number()
       .describe('Advertised width; 0 when the page did not say.'),
@@ -30,8 +34,8 @@ export const LinkPreview = z
       .nullable()
       .describe('What the link points at; null when the URL does not say.'),
   })
-  .meta({ id: 'LinkPreview' })
+  .meta({ id: 'UrlDescription' })
   .describe('What is on the other end of a link.');
 
-export type LinkPreview = z.infer<typeof LinkPreview>;
-export type LinkPreviewFilter = z.infer<typeof LinkPreviewFilter>;
+export type UrlDescription = z.infer<typeof UrlDescription>;
+export type UrlDescriptionFilter = z.infer<typeof UrlDescriptionFilter>;
