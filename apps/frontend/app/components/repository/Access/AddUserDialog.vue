@@ -34,12 +34,23 @@
         v-model="roleInput"
         :error-messages="errors.role"
         :items="roles"
+        :menu-props="{ maxWidth: 420 }"
         aria-label="Role"
         class="role-select required my-4"
         label="Role"
         placeholder="Role..."
         variant="outlined"
-      />
+      >
+        <template #item="{ props: itemProps, item }">
+          <VListItem
+            v-bind="itemProps"
+            :prepend-icon="item.icon"
+            :subtitle="item.description"
+            class="role-option"
+            lines="two"
+          />
+        </template>
+      </VSelect>
     </template>
     <template #actions>
       <VBtn
@@ -64,13 +75,13 @@ import { object, string } from 'yup';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { throttle } from 'lodash-es';
 import { useForm } from 'vee-validate';
-import type { RepositoryRole } from '@tailor-cms/interfaces/role';
 import type { User } from '@tailor-cms/interfaces/user';
+import type { RepositoryRoleOption } from '@/composables/useRepositoryRoles';
 
 import { api } from '@/api';
 
 defineProps<{
-  roles: Array<{ title: string; value: RepositoryRole }>;
+  roles: RepositoryRoleOption[];
 }>();
 
 const authStore = useAuthStore();

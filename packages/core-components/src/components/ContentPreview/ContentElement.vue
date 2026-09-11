@@ -77,12 +77,10 @@ const openInEditor = (element: ContentElement) => {
 <style lang="scss" scoped>
 .content-element {
   border: 1px solid rgba(var(--v-theme-outline), 0.2);
-  border-radius: 4px;
+  border-radius: 8px;
 
   &.selected {
-    border-style: solid;
-    border-color: rgba(var(--v-theme-primary), 1);
-    background: rgba(var(--v-theme-primary), 0.1);
+    border: 1px solid rgba(var(--v-theme-primary), 1);
 
     &::after {
       display: none;
@@ -92,6 +90,9 @@ const openInEditor = (element: ContentElement) => {
 
 .element-wrapper {
   position: relative;
+  // Flex items default to min-width: auto, so an image at its natural
+  // width would widen the sheet past the dialog instead of scaling down.
+  min-width: 0;
 }
 
 .open-element-button {

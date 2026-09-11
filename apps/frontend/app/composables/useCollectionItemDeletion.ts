@@ -43,7 +43,7 @@ export function useCollectionItemDeletion() {
   const notify = useNotification();
 
   const entityLabel = (type: string): string =>
-    $schemaService.getLevel(type)?.label ?? 'records';
+    $schemaService.getLevel(type)?.label ?? 'record';
 
   // Records in the loaded store that reference `item`
   const findReferencingRecords = (item: StoreActivity): ReferencingRecord[] => {
@@ -69,7 +69,7 @@ export function useCollectionItemDeletion() {
       {} as Record<string, number>,
     );
     return Object.entries(counts)
-      .map(([type, n]) => `${n} ${entityLabel(type)}`)
+      .map(([type, n]) => pluralize(entityLabel(type), n, true))
       .join(', ');
   };
 
@@ -101,7 +101,7 @@ export function useCollectionItemDeletion() {
       unlinks.length && `${summarize(unlinks)} will be unlinked`,
     ].filter(Boolean);
 
-    // Entity labels are plural (they name the collection list, e.g. "Tags")
+    // Normalize in case a schema defines the label as plural (e.g. "Tags")
     const label = pluralize.singular(
       $schemaService.getActivityLabel(item) ?? 'item',
     );

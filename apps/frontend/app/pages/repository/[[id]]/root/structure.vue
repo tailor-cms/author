@@ -58,10 +58,6 @@ const { rootActivities, selectedActivity, isCollection } =
   storeToRefs(repositoryStore);
 
 const { selectedEntity } = useCollectionEntities();
-const storageService = useStorageService();
-
-provide('$storageService', storageService);
-
 const filters = reactive<Filters>({ search: '' });
 const structureEl = ref();
 

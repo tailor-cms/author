@@ -22,8 +22,9 @@ export class Navigation {
     return this.toggleAllBtn.click();
   }
 
+  // The button is icon-only; its state lives in the accessible name.
   async expandAll() {
-    const label = (await this.toggleAllBtn.innerText()).trim();
+    const label = await this.toggleAllBtn.getAttribute('aria-label');
     if (label === 'Expand all') await this.toggleItems();
   }
 

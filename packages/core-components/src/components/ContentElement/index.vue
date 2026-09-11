@@ -13,7 +13,7 @@
         selected: activeUsers.length,
         focused: isFocused,
         diff: showDiff,
-        linked: element.isLinkedCopy && !showDiff,
+        linked: element.isLinkedCopy && isElementEntryPoint,
       },
     ]"
     class="content-element"
@@ -75,7 +75,11 @@
           class="active-users"
         />
         <DiffChip :change-type="element.diffChange" />
-        <div v-if="!props.isReadonly" @click.stop>
+        <ElementLinkedChip
+          v-if="isReadonly && element.isLinkedCopy && isElementEntryPoint"
+          class="mr-1"
+        />
+        <div v-else-if="!isReadonly" @click.stop>
           <ElementActions
             v-bind="actionBindings"
             @delete="emit('delete')"
@@ -106,7 +110,7 @@
     />
     <VExpandTransition>
       <div v-show="isExpanded">
-        <div class="card-body">
+        <div :class="isField ? 'field-body' : 'card-body'">
           <QuestionElement
             v-if="isQuestion"
             v-bind="{ ...editBindings, componentName, autosave, isDirty }"
@@ -184,6 +188,7 @@ import ActiveUsersGroup from '../ActiveUsersGroup.vue';
 import DiffChip from './DiffChip.vue';
 import DeprecationWarning from '../DeprecationWarning.vue';
 import ElementActions from './ElementActions/index.vue';
+import ElementLinkedChip from './ElementActions/ElementLinkedChip.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
 import { isDeprecated } from '../../utils/deprecated-elements';
 import QuestionElement from '../QuestionElement/index.vue';
@@ -547,14 +552,11 @@ $accent-selected: #ff4081;
     }
   }
 
-  &.linked::before {
-    content: '';
-    display: block;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: rgba(var(--v-theme-secondary-container), 0.2);
-    pointer-events: none;
+  &.linked .card-header {
+    background-image: linear-gradient(
+      rgba(var(--v-theme-secondary-container), 0.45),
+      rgba(var(--v-theme-secondary-container), 0.45)
+    );
   }
 }
 
@@ -566,10 +568,14 @@ $accent-selected: #ff4081;
 .field {
   border: 1px solid rgba(var(--v-theme-outline), 0.3);
   padding: 1rem;
+}
 
-  .card-body, :deep(.tiptap) {
-    padding: 0;
-  }
+/**
+ * The field frame supplies the padding, so the editor inside must not.
+ * Scoped to this element's own editor; embedded elements keep theirs.
+ */
+.field-body > :deep(.tce-container > * > .tiptap) {
+  padding: 0;
 }
 
 .quiet .header-reveal {
@@ -592,6 +598,9 @@ $accent-selected: #ff4081;
     border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);
   }
 
+  &:not(.expanded) {
+    border-radius: 7px;
+  }
   .drag-handle {
     flex-shrink: 0;
     width: 1.5rem;

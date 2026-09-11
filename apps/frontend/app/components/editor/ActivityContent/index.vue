@@ -173,7 +173,6 @@ const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 const commentStore = useCommentStore();
-const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 useContentLinking(editorChannel);
 
@@ -207,7 +206,6 @@ const createActivity = async (payload: any) =>
 
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
-provide('$storageService', storageService);
 provide('$rpc', repositoryStore.rpc);
 provide('$createActivity', createActivity);
 if (config.props.aiUiEnabled) {

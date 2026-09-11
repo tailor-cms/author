@@ -9,11 +9,11 @@
     <template #activator="{ props: activatorProps }">
       <VBtn
         v-bind="activatorProps"
-        aria-label="Add user group"
+        aria-label="Add group"
         class="add-user"
         color="primary"
         prepend-icon="mdi-plus"
-        text="Add user group"
+        text="Add group"
         variant="flat"
       />
     </template>

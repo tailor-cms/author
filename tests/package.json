@@ -26,6 +26,7 @@
     "jsdom": "^29.1.1",
     "lodash-es": "^4.18.1",
     "mailtrap": "^4.7.0",
+    "pluralize-esm": "^9.0.5",
     "tailor-seed": "workspace:^"
   }
 }

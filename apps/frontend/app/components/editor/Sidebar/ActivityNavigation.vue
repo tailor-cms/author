@@ -1,25 +1,30 @@
 <template>
   <div class="navigation-container">
     <div class="controls px-3 pt-2">
-      <VTextField
-        v-model="searchInput"
-        bg-color="surface-container"
-        clear-icon="mdi-close"
-        density="compact"
-        placeholder="Search..."
-        prepend-inner-icon="mdi-magnify"
-        rounded="lg"
-        variant="solo"
-        flat
-        clearable
-        hide-details
-      />
-      <div v-if="treeRef?.hasItems" class="d-flex justify-end mt-3">
-        <VBtn
+      <div class="d-flex align-center ga-2">
+        <VTextField
+          v-model="searchInput"
+          class="flex-grow-1"
+          bg-color="surface-container"
+          clear-icon="mdi-close"
+          density="compact"
+          placeholder="Search..."
+          prepend-inner-icon="mdi-magnify"
           rounded="lg"
-          size="small"
-          variant="text"
-          :text="treeRef?.isFullyExpanded ? 'Collapse all' : 'Expand all'"
+          variant="solo"
+          flat
+          clearable
+          hide-details
+        />
+        <VBtn
+          v-if="treeRef?.hasItems"
+          v-tooltip:bottom="{ text: toggleLabel, openDelay: 500 }"
+          :aria-label="toggleLabel"
+          :icon="treeRef?.isFullyExpanded
+            ? 'mdi-unfold-less-horizontal'
+            : 'mdi-unfold-more-horizontal'"
+          size="x-small"
+          variant="tonal"
           @click="treeRef?.toggleExpand()"
         />
       </div>
@@ -56,6 +61,10 @@ const props = defineProps<{
 
 const searchInput = ref('');
 const treeRef = useTemplateRef<InstanceType<typeof TailorTreeview>>('treeRef');
+
+const toggleLabel = computed(() =>
+  treeRef.value?.isFullyExpanded ? 'Collapse all' : 'Expand all',
+);
 
 const attachActivityAttrs = (activity: Activity) => ({
   id: activity.id,

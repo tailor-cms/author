@@ -124,7 +124,7 @@ export const toSeededRepositorySettings = async (
 ) => {
   const { data } = await SeedClient.seedTestRepository({ authorEmail });
   const { repository, activity } = data;
-  await page.goto(`/repository/${repository.id}/root/settings/general`);
+  await page.goto(`/repository/${repository.id}/root/settings`);
   return { repository, activity };
 };
 
@@ -160,18 +160,18 @@ export const collectionSeed = {
   entities: {
     ARTICLE: {
       type: 'TEST_COLLECTION/ARTICLE',
-      label: 'Articles',
+      label: 'Article',
       titleLabel: 'Title',
     },
     AUTHOR: {
       type: 'TEST_COLLECTION/AUTHOR',
-      label: 'Authors',
+      label: 'Author',
       titleLabel: 'Full name',
     },
-    TAG: { type: 'TEST_COLLECTION/TAG', label: 'Tags', titleLabel: 'Name' },
+    TAG: { type: 'TEST_COLLECTION/TAG', label: 'Tag', titleLabel: 'Name' },
     CATEGORY: {
       type: 'TEST_COLLECTION/CATEGORY',
-      label: 'Categories',
+      label: 'Category',
       titleLabel: 'Name',
     },
   },

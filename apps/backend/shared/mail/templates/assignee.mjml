@@ -1,8 +1,8 @@
 <mjml>
   <mj-include path="./components/head.mjml"/>
-  <mj-body background-color="#F2F4F7" width="520px">
+  <mj-body background-color="#FFFFFF" width="520px">
     <mj-section padding="16px 0 0" />
-    <mj-wrapper background-color="#FFFFFF" border-radius="16px" padding="0">
+    <mj-wrapper background-color="#FAFBFC" border="1px solid #E6E9ED" border-radius="16px" padding="0">
       <mj-include path="./components/header.mjml"/>
       <mj-section padding="0 12px 24px" text-align="left">
         <mj-column>

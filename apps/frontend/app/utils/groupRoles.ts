@@ -11,7 +11,8 @@ export interface GroupRole {
 
 const ROLE_META: Record<string, { description: string; icon: string }> = {
   [UserRole.ADMIN]: {
-    description: `Manages the group's members and their roles.`,
+    description: `Manages the group's members and has admin access to all
+      of the group's shared repositories.`,
     icon: 'mdi-account-cog',
   },
   [UserRole.USER]: {

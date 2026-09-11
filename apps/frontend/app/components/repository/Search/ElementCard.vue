@@ -68,7 +68,7 @@
     <SearchSnippet
       v-if="element.searchSnippet"
       :snippet="element.searchSnippet"
-      class="mx-4 mt-3"
+      class="mx-4 my-3"
     />
     <VExpandTransition>
       <div v-if="showPreview" class="preview-region mx-4 mb-3">
@@ -135,6 +135,7 @@ const openInNewTab = () => {
 
   .expand-btn {
     position: absolute;
+    z-index: 1;
     top: 0.5rem;
     right: 0.5rem;
     opacity: 0;

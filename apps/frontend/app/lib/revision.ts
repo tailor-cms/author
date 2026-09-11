@@ -150,7 +150,11 @@ export function isSameInstance(a: Revision, b: Revision) {
 }
 
 export function isSameRun(a: Revision, b: Revision) {
-  return isSameInstance(a, b) && a.operation === b.operation;
+  return (
+    isSameInstance(a, b) &&
+    a.operation === b.operation &&
+    a.userId === b.userId
+  );
 }
 
 const asElementState = (state: Revision['state']) =>

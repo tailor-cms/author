@@ -12,7 +12,7 @@ import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
 import BaseClient from '../../../api/BaseClient';
 import { Editor } from '../../../pom/editor/Editor';
 import { EditorToolbar } from '../../../pom/editor/EditorToolbar';
-import { GeneralSettings } from '../../../pom/repository/RepositorySettings';
+import { RepositorySettings } from '../../../pom/repository/RepositorySettings';
 import { OutlineSidebar } from '../../../pom/repository/OutlineSidebar';
 import { RevisionHistory } from '../../../pom/repository/RevisionHistory';
 import SeedClient from '../../../api/SeedClient';
@@ -172,9 +172,9 @@ test('export and reimport strips linked content fields', async ({ page }) => {
   const { linkedActivity } = await seedLinkedRepositories();
   const targetRepoId = linkedActivity.repositoryId;
   // Navigate to linked repository settings and export
-  await page.goto(`/repository/${targetRepoId}/root/settings/general`);
+  await page.goto(`/repository/${targetRepoId}/root/settings`);
   await page.waitForLoadState('networkidle');
-  const settingsPage = new GeneralSettings(page);
+  const settingsPage = new RepositorySettings(page);
   const exportPath = await settingsPage.rail.export();
   // Import the exported archive via catalog UI
   await page.goto('/');
@@ -226,17 +226,17 @@ test('unlinking from editor toolbar enables editing', async ({ page }) => {
   // Verify disabled state
   await toolbar.expectLinkedState();
   await expect(editor.addElementDialog.addBtn).not.toBeVisible();
-  await editor.expectAllElementsLinked();
+  await editor.expectAllElementsReadonly();
   // Unlink
   await toolbar.unlink();
   // Toolbar reverts, elements unlocked, add button visible
   await toolbar.expectDefaultState();
-  await editor.expectAllElementsLinked(false);
+  await editor.expectAllElementsReadonly(false);
   await expect(editor.addElementDialog.addBtn).toBeVisible();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
   await toolbar.expectDefaultState();
-  await editor.expectAllElementsLinked(false);
+  await editor.expectAllElementsReadonly(false);
   // Linked indicator should be gone on structure page
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);

@@ -55,23 +55,13 @@
           @delete:group="remove"
         />
       </div>
-      <div
-        v-if="totalItems"
-        class="d-flex align-center justify-space-between mt-2 px-1"
-      >
-        <span class="text-body-medium">
-          Showing {{ pageStart }}–{{ pageEnd }} of {{ totalItems }}
-        </span>
-        <VPagination
-          v-if="pageCount > 1"
-          :length="pageCount"
-          :model-value="dataTable.page"
-          :total-visible="7"
-          density="comfortable"
-          rounded
-          @update:model-value="(page) => fetch({ page })"
-        />
-      </div>
+      <PaginationFooter
+        :page="dataTable.page"
+        :page-count="pageCount"
+        :items-count="totalItems"
+        :items-per-page="dataTable.itemsPerPage"
+        @update:page="(page) => fetch({ page })"
+      />
     </template>
     <UserGroupDialog
       v-model:visible="isGroupDialogVisible"
@@ -92,6 +82,7 @@ import { api } from '@/api';
 import UserGroupCard from '@/components/admin/UserGroupCard/index.vue';
 import type { UserGroupRow } from '@/components/admin/UserGroupCard/types';
 import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
+import PaginationFooter from '@/components/common/PaginationFooter.vue';
 
 definePageMeta({ name: 'user-groups' });
 useHead({ title: 'User group management' });
@@ -114,12 +105,6 @@ const editedGroup = ref<UserGroup | null>(null);
 
 const pageCount = computed(() =>
   Math.ceil(totalItems.value / dataTable.itemsPerPage),
-);
-const pageStart = computed(
-  () => (dataTable.page - 1) * dataTable.itemsPerPage + 1,
-);
-const pageEnd = computed(() =>
-  Math.min(dataTable.page * dataTable.itemsPerPage, totalItems.value),
 );
 
 const sortOrder = computed(() => dataTable.sortBy[0]?.order ?? 'asc');

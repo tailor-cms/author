@@ -30,6 +30,7 @@ export class NavigationRail {
       | 'Progress'
       | 'History'
       | 'Assets'
+      | 'Access'
       | 'Settings',
   ) {
     return this.el.getByRole('tab', { name, exact: true });
@@ -53,6 +54,10 @@ export class NavigationRail {
 
   goToAssets() {
     return this.getTab('Assets').click();
+  }
+
+  goToAccess() {
+    return this.getTab('Access').click();
   }
 
   goToSettings() {

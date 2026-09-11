@@ -46,6 +46,7 @@
         v-model="roleInput"
         :error-messages="errors.role"
         :items="roles"
+        :menu-props="{ maxWidth: 420 }"
         class="role-select mb-3 required"
         item-title="title"
         item-value="value"
@@ -56,7 +57,9 @@
         <template #item="{ item, props: itemProps }">
           <VListItem
             v-bind="itemProps"
+            :prepend-icon="item.icon"
             :subtitle="item.description"
+            lines="two"
             class="py-3"
           />
         </template>
@@ -118,9 +121,19 @@ const MIN_LOADING_MS = 800;
 const UserRole = role.user;
 
 const availableRoles = {
-  [UserRole.COLLABORATOR]: 'Can access only assigned repositories',
-  [UserRole.USER]: 'Can create new and access assigned repositories',
-  [UserRole.ADMIN]: 'Can fully manage the application and access all data',
+  [UserRole.ADMIN]: {
+    description: 'Can fully manage the application and access all data',
+    icon: 'mdi-account-cog',
+  },
+  [UserRole.USER]: {
+    description: `Can create repositories and access assigned and
+      group-shared ones`,
+    icon: 'mdi-account-edit',
+  },
+  [UserRole.COLLABORATOR]: {
+    description: 'Can access assigned and group-shared repositories',
+    icon: 'mdi-account',
+  },
 };
 
 export interface Props {
@@ -149,10 +162,11 @@ const isDialogVisible = computed({
 
 const isNewUser = computed(() => !props.userData?.id);
 const roles = computed(() =>
-  map(availableRoles, (description, value) => ({
+  map(availableRoles, ({ description, icon }, value) => ({
     title: titleCase(value),
     value,
     description,
+    icon,
   })),
 );
 

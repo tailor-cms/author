@@ -78,12 +78,12 @@ export class Editor {
     return elements;
   }
 
-  async expectAllElementsLinked(linked = true) {
+  async expectAllElementsReadonly(readonly = true) {
     await expect(this.page.locator(ContentElement.selector).first()).toBeVisible();
     const elements = await this.getElements();
     expect(elements.length).toBeGreaterThanOrEqual(1);
     for (const element of elements) {
-      await (linked ? element.expectLinked() : element.expectNotLinked());
+      await (readonly ? element.expectReadonly() : element.expectEditable());
     }
   }
 
