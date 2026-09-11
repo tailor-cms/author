@@ -1,5 +1,6 @@
 import type { Model, ModelStatic } from 'sequelize';
 import type { ThreadType } from '@tailor-cms/interfaces/comment';
+import type { UserThread } from './user-thread.model.js';
 
 export interface ThreadAttrs {
   id: number;
@@ -13,6 +14,7 @@ export interface ThreadAttrs {
   lastMessageAt: string | null;
   subscriptions: string[];
   participantIds: number[];
+  reader?: UserThread | null;
   createdAt: string;
   updatedAt: string;
 }

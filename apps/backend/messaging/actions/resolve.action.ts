@@ -1,8 +1,7 @@
 import { RepositoryScopedParams } from '#shared/request/schemas.ts';
-import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
+import { toHttpError } from '../errors.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
@@ -25,12 +24,9 @@ export default defineAction({
   },
   async handler({ body, req }) {
     try {
-      await service.updateResolvement(req.repository!, body);
+      await service.setResolved(req.repository!, body);
     } catch (error) {
-      if (error instanceof service.InvalidResolveSelectorError) {
-        return createError(StatusCodes.BAD_REQUEST, error.message);
-      }
-      throw error;
+      return toHttpError(error);
     }
   },
 });

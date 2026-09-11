@@ -6,7 +6,7 @@ import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 import * as schemas from '../schemas/index.ts';
-import * as service from '../thread.service.ts';
+import * as service from '../subscription.service.ts';
 
 export default defineAction({
   name: 'getTopics',

@@ -1,7 +1,7 @@
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
-import { toHttpError } from '../errors.ts';
+import { toHttpError } from '../../errors.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../thread.service.ts';
 
@@ -23,19 +23,15 @@ export default defineAction({
         schema: dataEnvelope(schemas.ReaderThread),
       },
       400: { description: 'A free-standing thread has nothing to resolve.' },
-      404: { description: 'Thread not found in this repository.' },
+      404: { description: 'Thread not found.' },
     },
   },
-  async handler({ body, params, req, user }) {
+  async handler({ body, req, user }) {
     try {
-      return await service.setResolved(
-        req.repository!.id,
-        params.threadId,
-        body.resolved,
-        user.id,
-      );
+      await service.setResolved(req.thread!, body.resolved);
     } catch (error) {
       return toHttpError(error);
     }
+    return service.getReaderThread(req.thread!, user.id);
   },
 });

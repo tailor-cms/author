@@ -29,8 +29,9 @@ export const Uid = (desc = 'UID identifier.') =>
 export const timestamps = () => ({
   createdAt: Timestamp('Insertion timestamp.'),
   updatedAt: Timestamp('Last mutation timestamp.'),
-  deletedAt: Timestamp('Soft-delete timestamp; non-null for archived rows.')
-    .nullable(),
+  deletedAt: Timestamp(
+    'Soft-delete timestamp; non-null for archived rows.',
+  ).nullable(),
 });
 
 // Schema-driven JSONB blob. Used for `data` / `meta` fields where the
@@ -45,7 +46,9 @@ export const JsonObject = (desc = 'Schema-driven JSON blob.') =>
 export const Paginated = <T extends ZodType>(items: T, id?: string) => {
   const schema = z.object({
     items: z.array(items).describe('Page of rows.'),
-    total: UInt().describe('Total rows matching the query (ignoring pagination).'),
+    total: UInt().describe(
+      'Total rows matching the query (ignoring pagination).',
+    ),
   });
   return id ? schema.meta({ id }) : schema;
 };
@@ -72,10 +75,7 @@ export const Relationship = z
     id: Int().describe('Referenced entity id.'),
     // Resolved by `detectMissingReferences`; without it the pointer is
     // looked up in the owning entity's own table and pruned as missing.
-    entity: z
-      .string()
-      .optional()
-      .describe(oneLine`
+    entity: z.string().optional().describe(oneLine`
         Model the pointer resolves against. Omit for same-entity refs
         (element -> element); set to \`Activity\` for an element -> activity
         ref such as an exam question's objective.

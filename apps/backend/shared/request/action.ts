@@ -28,6 +28,7 @@ import type { ContentElement }
   from '../../content-element/models/content-element.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';
 import type { Revision } from '../../revision/models/revision.model.js';
+import type { Thread } from '../../messaging/thread/models/thread.model.js';
 import type { User } from '../../user/models/user.model.js';
 import type { UserGroup } from '../../user-group/models/user-group.model.js';
 
@@ -115,6 +116,7 @@ export interface ActionContext<
     // for the IDE to discover ambient declarations from.
     repository?: Repository;
     comment?: Comment;
+    thread?: Thread;
     contentElement?: ContentElement;
     revision?: Revision;
     activity?: Activity;

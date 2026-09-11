@@ -4,10 +4,9 @@ import {
 } from '#shared/request/schemas.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../integration.service.ts';
-import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
+import { toHttpError } from '../../errors.ts';
 
 export default defineAction({
   name: 'createIntegration',
@@ -33,15 +32,12 @@ export default defineAction({
     try {
       const { integration, token } = await service.create(
         req.repository!.id,
-        (user as any).id,
+        user.id,
         body,
       );
       return { ...integration.toJSON(), token };
-    } catch (err) {
-      if (err instanceof service.IntegrationKeyTakenError) {
-        return createError(StatusCodes.CONFLICT, err.message);
-      }
-      throw err;
+    } catch (error) {
+      return toHttpError(error);
     }
   },
 });

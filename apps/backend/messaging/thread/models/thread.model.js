@@ -19,8 +19,9 @@ class Thread extends Model {
       // the rest have references to the entity they are attached to.
       title: { type: TEXT },
       messageCount: { type: INTEGER, allowNull: false, defaultValue: 0 },
-      // How many are still open. A thread on a content element is resolved
-      // once this hits zero, and its comments stop showing on the element.
+      // How many are still open. An anchored thread is resolved once this
+      // hits zero, and an element's comments stop showing on it. Always 0
+      // on a free-standing thread, which has nothing to resolve.
       unresolvedCount: { type: INTEGER, allowNull: false, defaultValue: 0 },
       // What this thread subscribes to: event types, or `integration:<key>`.
       subscriptions: {
@@ -38,8 +39,15 @@ class Thread extends Model {
     };
   }
 
-  static associate({ Activity, Comment, ContentElement, Repository }) {
+  static associate({
+    Activity,
+    Comment,
+    ContentElement,
+    Repository,
+    UserThread,
+  }) {
     this.hasMany(Comment, { as: 'comments', foreignKey: 'threadId' });
+    this.hasOne(UserThread, { as: 'reader', foreignKey: 'threadId' });
     this.belongsTo(Repository, { foreignKey: 'repositoryId' });
     this.belongsTo(Activity, { foreignKey: 'activityId' });
     this.belongsTo(ContentElement, {

@@ -19,9 +19,10 @@ export default defineAction({
         description: 'Where your reading now stands.',
         schema: dataEnvelope(schemas.ReadWatermark),
       },
+      404: { description: 'Thread not found.' },
     },
   },
-  handler({ params, user }) {
-    return service.markRead(params.threadId, user.id);
+  handler({ user, req }) {
+    return service.markRead(req.thread!, user.id);
   },
 });

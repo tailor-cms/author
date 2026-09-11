@@ -1,9 +1,8 @@
 import * as schemas from '../schemas/index.ts';
 import * as service from '../integration.service.ts';
-import { StatusCodes } from 'http-status-codes';
 import { oneLine } from 'common-tags';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
+import { toHttpError } from '../../errors.ts';
 
 export default defineAction({
   name: 'postIntegrationMessage',
@@ -29,14 +28,8 @@ export default defineAction({
     try {
       const integration = await service.resolveByToken(params.token);
       await service.postFromWebhook(integration, body);
-    } catch (err) {
-      if (err instanceof service.IntegrationNotFoundError) {
-        return createError(StatusCodes.NOT_FOUND, err.message);
-      }
-      if (err instanceof service.NoSubscriberError) {
-        return createError(StatusCodes.CONFLICT, err.message);
-      }
-      throw err;
+    } catch (error) {
+      return toHttpError(error);
     }
   },
 });

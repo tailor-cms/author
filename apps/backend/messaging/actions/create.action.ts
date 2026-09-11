@@ -2,10 +2,9 @@ import {
   RepositoryScopedParams,
   dataEnvelope,
 } from '#shared/request/schemas.ts';
-import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
+import { toHttpError } from '../errors.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../comment.service.ts';
 
@@ -26,6 +25,7 @@ export default defineAction({
         description: 'The posted comment.',
         schema: dataEnvelope(schemas.Comment),
       },
+      400: { description: 'No activity, element or thread to post on.' },
       404: { description: 'The message being replied to is gone.' },
     },
   },
@@ -33,10 +33,7 @@ export default defineAction({
     try {
       return await service.create(req.repository!, user, body);
     } catch (error) {
-      if (error instanceof service.ParentNotFoundError) {
-        return createError(StatusCodes.NOT_FOUND, error.message);
-      }
-      throw error;
+      return toHttpError(error);
     }
   },
 });

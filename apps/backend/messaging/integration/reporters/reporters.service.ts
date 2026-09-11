@@ -1,8 +1,8 @@
 import type { AnyReporter, WindowContext } from './lib/types.ts';
 import * as commentService from '../../comment.service.ts';
 import * as integrationService from '../integration.service.ts';
-import * as threadService from '../../thread/thread.service.ts';
 import { subscribe, type CloudEvent } from '#shared/events/bus.ts';
+import { subscribedThreads } from '../../thread/subscription.service.ts';
 import { createLogger } from '#logger';
 import { sharedValue } from './lib/format.ts';
 import User from '#app/user/models/user.model.js';
@@ -26,7 +26,7 @@ async function loadAuthorContext(actorId: number | null): Promise<WindowContext>
 async function deliver(reporter: AnyReporter, events: CloudEvent[]) {
   const { repositoryId, type } = events[0];
   // Check subscribed threads for this repository and event type.
-  const threads = await threadService.subscribedThreads(repositoryId, type);
+  const threads = await subscribedThreads(repositoryId, type);
   if (!threads.length) return;
   // N people in one window is no one person's doing: naming one would
   // misplace the byline and suppress their unread badge.

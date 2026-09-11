@@ -1,9 +1,10 @@
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
-import { toHttpError } from '../errors.ts';
+import { toHttpError } from '../../errors.ts';
 import * as schemas from '../schemas/index.ts';
-import * as service from '../thread.service.ts';
+import * as service from '../subscription.service.ts';
+import * as threads from '../thread.service.ts';
 
 export default defineAction({
   name: 'setSubscriptions',
@@ -24,21 +25,15 @@ export default defineAction({
           anchored to content and cannot subscribe at all.
         `,
       },
-      404: { description: 'Thread not found in this repository.' },
+      404: { description: 'Thread not found.' },
     },
   },
-  async handler({ body, params, req, user }) {
-    const repositoryId = req.repository!.id;
+  async handler({ body, req, user }) {
     try {
-      await service.assertKnownTopics(repositoryId, body.topics);
-      return await service.setSubscriptions(
-        repositoryId,
-        params.threadId,
-        body.topics,
-        user.id,
-      );
+      await service.setSubscriptions(req.thread!, body.topics);
     } catch (error) {
       return toHttpError(error);
     }
+    return threads.getReaderThread(req.thread!, user.id);
   },
 });

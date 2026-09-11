@@ -24,7 +24,8 @@ export default defineAction({
       },
     },
   },
-  handler({ body, user, req }) {
-    return service.createThread(req.repository!, user, body);
+  async handler({ body, user, req }) {
+    const thread = await service.createThread(req.repository!, user, body);
+    return service.getReaderThread(thread, user.id);
   },
 });

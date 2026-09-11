@@ -1,7 +1,7 @@
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
-import { toHttpError } from '../errors.ts';
+import { toHttpError } from '../../errors.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../thread.service.ts';
 
@@ -22,16 +22,12 @@ export default defineAction({
         schema: dataEnvelope(schemas.RemoveResult),
       },
       403: { description: 'Not the author, or the thread is anchored.' },
-      404: { description: 'Thread not found in this repository.' },
+      404: { description: 'Thread not found.' },
     },
   },
-  async handler({ params, user, req }) {
+  async handler({ user, req }) {
     try {
-      return await service.removeThread(
-        req.repository!.id,
-        params.threadId,
-        user,
-      );
+      return await service.removeThread(req.thread!, user);
     } catch (error) {
       return toHttpError(error);
     }

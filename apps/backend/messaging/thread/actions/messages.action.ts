@@ -24,7 +24,7 @@ export default defineAction({
       },
     },
   },
-  handler({ params, query }) {
-    return service.listMessages(params.threadId, query);
+  handler({ query, req }) {
+    return service.listMessages(req.thread!, query);
   },
 });

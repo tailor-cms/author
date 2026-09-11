@@ -1,7 +1,6 @@
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
-import { toHttpError } from '../errors.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../thread.service.ts';
 
@@ -21,19 +20,10 @@ export default defineAction({
         description: 'Updated thread.',
         schema: dataEnvelope(schemas.ReaderThread),
       },
-      404: { description: 'Thread not found in this repository.' },
+      404: { description: 'Thread not found.' },
     },
   },
-  async handler({ body, params, req, user }) {
-    try {
-      return await service.setStarred(
-        req.repository!.id,
-        params.threadId,
-        user.id,
-        body.isStarred,
-      );
-    } catch (error) {
-      return toHttpError(error);
-    }
+  handler({ body, req, user }) {
+    return service.setStarred(req.thread!, user.id, body.isStarred);
   },
 });

@@ -11,12 +11,17 @@ import type {
   SlackAttachment,
 } from './schemas/index.ts';
 import type { Integration } from './models/integration.model.js';
-import * as commentService from '../comment.service.ts';
-import * as threadService from '../thread/thread.service.ts';
+import {
+  IntegrationKeyTakenError,
+  IntegrationNotFoundError,
+  NoSubscriberError,
+} from '../errors.ts';
+import { subscribedThreads } from '../thread/subscription.service.ts';
 import { Op } from 'sequelize';
 import { IntegrationType } from '@tailor-cms/interfaces/comment.ts';
 import { createLogger } from '#logger';
 import { parseShortcode } from '@tailor-cms/utils';
+import * as commentService from '../comment.service.ts';
 import crypto from 'node:crypto';
 import IntegrationModel from './models/integration.model.js';
 
@@ -42,29 +47,6 @@ export const hashToken = (token: string) =>
 // What an attachment says in one line.
 const resolveAttachmentSummary = (attachment: SlackAttachment) =>
   attachment.fallback || attachment.title || attachment.text || '';
-
-export class NoSubscriberError extends Error {
-  constructor(
-    message = 'No thread in this repository subscribes to this integration',
-  ) {
-    super(message);
-    this.name = 'NoSubscriberError';
-  }
-}
-
-export class IntegrationKeyTakenError extends Error {
-  constructor(key: string) {
-    super(`Integration key "${key}" is already taken`);
-    this.name = 'IntegrationKeyTakenError';
-  }
-}
-
-export class IntegrationNotFoundError extends Error {
-  constructor(message = 'Integration not found') {
-    super(message);
-    this.name = 'IntegrationNotFoundError';
-  }
-}
 
 /**
  * Registers a built-in integration, or hands back the one already
@@ -152,7 +134,7 @@ export async function postFromWebhook(
   payload: InboundWebhookInput,
 ) {
   const { id: integrationId, repositoryId, key, name } = integration;
-  const threads = await threadService.subscribedThreads(
+  const threads = await subscribedThreads(
     repositoryId,
     `integration:${key}`,
   );

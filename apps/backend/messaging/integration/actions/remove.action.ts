@@ -1,8 +1,7 @@
 import * as schemas from '../schemas/index.ts';
 import * as service from '../integration.service.ts';
-import { StatusCodes } from 'http-status-codes';
-import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
+import { toHttpError } from '../../errors.ts';
 
 export default defineAction({
   name: 'removeIntegration',
@@ -19,11 +18,8 @@ export default defineAction({
   async handler({ params, req }) {
     try {
       await service.remove(req.repository!.id, params.integrationId);
-    } catch (err) {
-      if (err instanceof service.IntegrationNotFoundError) {
-        return createError(StatusCodes.NOT_FOUND, err.message);
-      }
-      throw err;
+    } catch (error) {
+      return toHttpError(error);
     }
   },
 });

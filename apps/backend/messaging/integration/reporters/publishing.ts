@@ -6,7 +6,7 @@ const publishing: Reporter<ActivityData> = {
   key: 'publishing',
   name: 'Publishing',
   icon: 'mdi-cloud-upload-outline',
-  events: [EventType.RepositoryPublished],
+  events: [EventType.ActivityPublished],
   // A publish of entire repository is one request per activity with
   // no completion signal, so this is a aprox at how long a run takes.
   windowMs: 10000,
