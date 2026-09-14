@@ -81,6 +81,19 @@ exports.up = async (qi, Sequelize) => {
     ...timestamps(Sequelize),
   });
 
+  // A repository thread is opened with a subject, anchored threads
+  // borrow the title from their anchor.
+  await qi.addConstraint('comment_thread', {
+    name: 'comment_thread_title_check',
+    type: 'check',
+    fields: ['type', 'title'],
+    where: {
+      [Sequelize.Op.or]: [
+        { type: { [Sequelize.Op.ne]: 'REPOSITORY' } },
+        { title: { [Sequelize.Op.ne]: null } },
+      ],
+    },
+  });
   // One thread per anchored entity.
   await qi.addIndex('comment_thread', {
     name: 'comment_thread_element_uniq',
