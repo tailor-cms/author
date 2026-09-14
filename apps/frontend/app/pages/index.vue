@@ -17,7 +17,10 @@
       border
     >
       <div class="catalog-scroll">
-        <VContainer class="catalog px-md-10 py-md-8" max-width="1360">
+        <VContainer
+          class="catalog d-flex flex-column px-md-10 py-md-8"
+          max-width="1360"
+        >
           <div
             v-if="hasRepositories || hasAnyQueryConstraint"
             class="catalog-actions ga-3 mb-4"
@@ -68,14 +71,6 @@
           <RepositoryFilterSelection
             @clear:all="(queryParams.filter = []) && refetchRepositories()"
             @close="onFilterChange"
-          />
-          <BulkActionBar
-            :count="selectedRepos.size"
-            :is-all-selected="isAllSelected"
-            :is-deleting="isDeleting"
-            @clear="selectedRepos.clear()"
-            @toggle-all="toggleSelectAll"
-            @delete="deleteSelected"
           />
           <CloneModal
             v-if="cloneTarget"
@@ -141,6 +136,24 @@
             :title="emptyState.title"
             @click:action="clearSearchAndFilters"
           />
+          <BulkActionBar
+            :count="selectedRepos.size"
+            :is-all-selected="isAllSelected"
+            @clear="selectedRepos.clear()"
+            @toggle-all="toggleSelectAll"
+          >
+            <VBtn
+              :loading="isDeleting"
+              :disabled="isDeleting"
+              color="error"
+              prepend-icon="mdi-trash-can-outline"
+              rounded="pill"
+              size="small"
+              text="Delete"
+              variant="tonal"
+              @click="deleteSelected"
+            />
+          </BulkActionBar>
         </VContainer>
       </div>
     </VSheet>
@@ -159,7 +172,7 @@ import pluralize from 'pluralize-esm';
 import Promise from 'bluebird';
 
 import AddRepository from '@/components/catalog/AddRepository/index.vue';
-import BulkActionBar from '@/components/catalog/BulkActionBar.vue';
+import BulkActionBar from '@/components/common/BulkActionBar.vue';
 import CatalogEmptyState from '@/components/catalog/EmptyState/index.vue';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';
 import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
@@ -472,6 +485,11 @@ onBeforeMount(async () => {
   &::-webkit-scrollbar {
     display: none;
   }
+}
+
+// Fills the scroll area so the bulk action bar can dock at the bottom.
+.catalog {
+  min-height: 100%;
 }
 
 .catalog-actions {
