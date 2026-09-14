@@ -89,7 +89,7 @@
           />
           <VInfiniteScroll
             v-if="!isLoading && hasRepositories"
-            class="d-flex ma-0 mt-8 pa-0"
+            class="d-flex ma-0 mt-4 pa-0"
             empty-text=""
             mode="manual"
             @load="loadMore"
@@ -490,6 +490,11 @@ onBeforeMount(async () => {
 // Fills the scroll area so the bulk action bar can dock at the bottom.
 .catalog {
   min-height: 100%;
+}
+
+// VRow is flex: 1 1 auto and would grow into the column's free height.
+.catalog :deep(.selected-tags) {
+  flex-grow: 0;
 }
 
 .catalog-actions {
