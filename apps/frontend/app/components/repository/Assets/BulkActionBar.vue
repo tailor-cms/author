@@ -1,38 +1,18 @@
 <template>
-  <VSlideYTransition>
-    <VSheet
-      v-if="hasSelection"
-      color="surface-container-high"
-      class="bulk-action-bar mb-4 pa-4 ga-2"
-      rounded="lg"
-    >
-      <VBtn
-        v-tooltip:bottom="'Clear selection'"
-        aria-label="Clear selection"
-        icon="mdi-close"
-        size="small"
-        variant="text"
-        density="comfortable"
-        @click="$emit('clear')"
-      />
-      <span class="selection-count text-label-large font-weight-semibold">
-        {{ selected.size }} selected
-      </span>
-      <VBtn
-        :text="isAllSelected ? 'Deselect all' : 'Select all'"
-        class="ml-1"
-        size="small"
-        variant="text"
-        rounded="lg"
-        @click="$emit('toggle-all', !isAllSelected)"
-      />
-      <VSpacer />
-      <div v-tooltip:bottom="indexTooltip">
+  <BulkActionBar
+    :count="selected.size"
+    :is-all-selected="isAllSelected"
+    @clear="$emit('clear')"
+    @toggle-all="$emit('toggle-all', $event)"
+  >
+    <template v-if="mdAndUp">
+      <div v-tooltip:top="indexTooltip">
         <VBtn
           :disabled="!hasIndexable || isIndexing"
           :loading="isIndexing"
           color="secondary"
           prepend-icon="mdi-brain"
+          rounded="pill"
           size="small"
           text="Index"
           variant="tonal"
@@ -40,25 +20,51 @@
         />
       </div>
       <VBtn
-        :disabled="!hasSelection"
         prepend-icon="mdi-folder-move-outline"
+        rounded="pill"
         size="small"
         text="Move"
         variant="tonal"
         @click="$emit('move')"
       />
-      <VBtn
-        :loading="isBulkDeleting"
-        :disabled="isBulkDeleting || !hasSelection"
-        prepend-icon="mdi-trash-can-outline"
-        color="error"
-        size="small"
-        text="Delete"
-        variant="tonal"
-        @click="$emit('delete')"
-      />
-    </VSheet>
-  </VSlideYTransition>
+    </template>
+    <VBtn
+      :loading="isBulkDeleting"
+      :disabled="isBulkDeleting"
+      color="error"
+      prepend-icon="mdi-trash-can-outline"
+      rounded="pill"
+      size="small"
+      text="Delete"
+      variant="tonal"
+      @click="$emit('delete')"
+    />
+    <VMenu v-if="!mdAndUp">
+      <template #activator="{ props: menuProps }">
+        <VBtn
+          v-bind="menuProps"
+          aria-label="More actions"
+          icon="mdi-dots-vertical"
+          size="small"
+          variant="text"
+          density="comfortable"
+        />
+      </template>
+      <VList density="compact" nav>
+        <VListItem
+          :disabled="!hasIndexable || isIndexing"
+          prepend-icon="mdi-brain"
+          title="Index"
+          @click="$emit('index')"
+        />
+        <VListItem
+          prepend-icon="mdi-folder-move-outline"
+          title="Move"
+          @click="$emit('move')"
+        />
+      </VList>
+    </VMenu>
+  </BulkActionBar>
 </template>
 
 <script lang="ts" setup>
@@ -66,6 +72,8 @@ import type { Asset } from '@tailor-cms/interfaces/asset';
 import { ProcessingStatus } from '@tailor-cms/interfaces/asset';
 import { canIndex } from './utils';
 import { oneLine } from 'common-tags';
+import { useDisplay } from 'vuetify';
+import BulkActionBar from '@/components/common/BulkActionBar.vue';
 
 const props = defineProps<{
   selected: Map<number, Asset>;
@@ -82,7 +90,8 @@ defineEmits<{
   'toggle-all': [selected: boolean];
 }>();
 
-const hasSelection = computed(() => props.selected.size > 0);
+// Below md, Index and Move fold into a menu.
+const { mdAndUp } = useDisplay();
 
 // props.selected is a Map, so spread its values into an array the index
 // checks below can filter/iterate over
@@ -112,11 +121,3 @@ const indexTooltip = computed(() => {
   `;
 });
 </script>
-
-<style lang="scss" scoped>
-.bulk-action-bar {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-}
-</style>
