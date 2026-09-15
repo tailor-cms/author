@@ -1,13 +1,15 @@
 <template>
   <VCol
     :cols="elementWidth"
-    class="d-flex align-start my-1 content-preview"
+    class="d-flex align-start content-preview"
   >
     <VCheckbox
       v-if="selectable"
       :disabled="selectionDisabled && !isSelected"
       :model-value="isSelected"
       class="flex-shrink-0 mr-2"
+      density="compact"
+      hide-details
       @update:model-value="$emit('toggle')"
     />
     <VHover v-slot="{ isHovering, props: hoverProps }">
