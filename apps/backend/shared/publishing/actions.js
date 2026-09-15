@@ -20,7 +20,7 @@ async function updateRepositoryCatalog(
   log(oneLine`
     [updateRepositoryCatalog] initiated,
     repository id: ${repository.id},
-    publishedAt: ${publishedAt.toISOString()}
+    publishedAt: ${publishedAt?.toISOString()}
   `);
   const catalog = await getRepositoryCatalog();
   const existing = catalog.find((it) => it.id === repository.id);
@@ -76,8 +76,8 @@ async function unpublishActivity(activity, env = PublishEnv.DEFAULT) {
   `);
   const repository = await activity.getRepository();
   const manifest = await RepositoryManifest.load(repository, env);
-  const publishedManifest = manifest.unpublishActivity(activity);
-  await updateRepositoryCatalog(repository, publishedManifest.publishedAt);
+  const publishedManifest = await manifest.unpublishActivity(activity);
+  await updateRepositoryCatalog(repository, publishedManifest?.publishedAt);
   activity.publishedAt = new Date();
   await activity.save();
   log('[unpublishActivity] completed');
