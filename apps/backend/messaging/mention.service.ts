@@ -4,6 +4,7 @@ import type { Comment } from './models/comment.model.js';
 import { createLogger } from '#logger';
 import { extractMentions } from '@tailor-cms/utils';
 import { Op } from 'sequelize';
+import { subQuery } from '#shared/database/helpers.js';
 import db from '#shared/database/index.js';
 
 // Models are resolved lazily
@@ -12,6 +13,36 @@ const logger = createLogger('messages:mentions');
 
 interface WriteOpts {
   transaction?: Transaction;
+}
+
+// Which messages: a whole repository, or one thread.
+type MessageWhere = { repositoryId: number } | { threadId: number };
+
+/**
+ * `Mention` query options for the reader's unread mentions in messages
+ * that still exist.
+ */
+const unreadMentions = (userId: number, where: MessageWhere) => {
+  const { Comment } = models();
+  const liveMessageIds = subQuery(Comment, {
+    attributes: ['id'],
+    where: { ...where, deletedAt: null },
+  });
+  return {
+    where: { userId, readAt: null, commentId: { [Op.in]: liveMessageIds } },
+  };
+};
+
+// How many mentions still await the reader.
+export function countUnreadMentions(userId: number, where: MessageWhere) {
+  const { Mention } = models();
+  return Mention.count(unreadMentions(userId, where));
+}
+
+// Marks the reader's mentions read.
+export function clearMentions(userId: number, where: MessageWhere) {
+  const { Mention } = models();
+  return Mention.update({ readAt: new Date() }, unreadMentions(userId, where));
 }
 
 // Records who a new message mentions and returns their ids.

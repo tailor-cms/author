@@ -135,12 +135,12 @@ const threadQuery = (userId?: number) => ({
 const mentionedThreadIds = (userId: number) => {
   const { Comment, Mention } = models();
   const mentionedCommentIds = subQuery(Mention, {
-    attributes: ['comment_id'],
-    where: { user_id: userId },
+    attributes: ['commentId'],
+    where: { userId },
   });
   return {
     [Op.in]: subQuery(Comment, {
-      attributes: ['thread_id'],
+      attributes: ['threadId'],
       where: { id: { [Op.in]: mentionedCommentIds } },
     }),
   };
@@ -415,7 +415,7 @@ export async function markRead(thread: Thread, userId: number) {
   const threadId = thread.id;
   const lastReadAt = new Date();
   await advanceWatermark(threadId, userId, lastReadAt);
-  await clearMentions(userId, { thread_id: threadId });
+  await clearMentions(userId, { threadId });
   logger.debug({ threadId, userId }, 'Thread marked read');
   return { threadId, lastReadAt: lastReadAt.toISOString() };
 }
@@ -436,7 +436,7 @@ export async function markAllRead(repositoryId: number, userId: number) {
     threads.map(({ id }: any) => ({ threadId: id, userId, lastReadAt })),
     { updateOnDuplicate: ['lastReadAt', 'updatedAt'] },
   );
-  await clearMentions(userId, { repository_id: repositoryId });
+  await clearMentions(userId, { repositoryId });
   return unreadSummary(repositoryId, userId);
 }
 
@@ -446,7 +446,7 @@ export async function markAllRead(repositoryId: number, userId: number) {
 export async function unreadSummary(repositoryId: number, userId: number) {
   const [threads, mentions] = await Promise.all([
     countUnreadThreads(repositoryId, userId),
-    countUnreadMentions(userId, { repository_id: repositoryId }),
+    countUnreadMentions(userId, { repositoryId }),
   ]);
   return { threads, mentions };
 }
