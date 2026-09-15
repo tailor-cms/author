@@ -1,7 +1,10 @@
 <template>
   <VLayout class="assets-page h-100">
     <VMain scrollable>
-      <VContainer class="px-md-10 py-md-8" max-width="1400">
+      <VContainer
+        class="assets d-flex flex-column px-md-10 py-md-8"
+        max-width="1400"
+      >
         <div v-if="isInitialLoading" class="d-flex justify-center py-16">
           <VProgressCircular indeterminate />
         </div>
@@ -53,31 +56,13 @@
               />
             </VCol>
           </VRow>
-          <template v-if="processedAssets.length">
-            <VSlideYTransition mode="out-in">
-              <BulkActionBar
-                v-if="selection.selected.size"
-                :selected="selection.selected"
-                :is-all-selected="isAllSelected"
-                :is-indexing="indexing.isIndexing.value"
-                :is-bulk-deleting="assetStore.isBulkRemoving"
-                @clear="selection.clear"
-                @index="indexSelected"
-                @move="openMove([...selection.selected.keys()])"
-                @delete="confirmDelete([...selection.selected.keys()])"
-                @toggle-all="
-                  $event ? selection.selectAll() : selection.deselectAll()
-                "
-              />
-              <DisplayControls
-                v-else
-                v-model:items-per-page="assetStore.itemsPerPage"
-                v-model:view-mode="viewMode"
-                :sort-direction="sortDirection"
-                @toggle-sort="toggleSortDirection"
-              />
-            </VSlideYTransition>
-          </template>
+          <DisplayControls
+            v-if="processedAssets.length"
+            v-model:items-per-page="assetStore.itemsPerPage"
+            v-model:view-mode="viewMode"
+            :sort-direction="sortDirection"
+            @toggle-sort="toggleSortDirection"
+          />
           <AssetList
             :active-asset-id="activeAsset?.id ?? null"
             :assets="processedAssets"
@@ -123,6 +108,19 @@
           :existing-names="subfolders.map((folder) => folder.name)"
           :parent-path="currentPath"
           @create="onCreateFolder"
+        />
+        <BulkActionBar
+          :selected="selection.selected"
+          :is-all-selected="isAllSelected"
+          :is-indexing="indexing.isIndexing.value"
+          :is-bulk-deleting="assetStore.isBulkRemoving"
+          @clear="selection.clear"
+          @index="indexSelected"
+          @move="openMove([...selection.selected.keys()])"
+          @delete="confirmDelete([...selection.selected.keys()])"
+          @toggle-all="
+            $event ? selection.selectAll() : selection.deselectAll()
+          "
         />
       </VContainer>
     </VMain>
@@ -486,3 +484,15 @@ onMounted(async () => {
 
 onBeforeUnmount(() => debouncedSearch.cancel());
 </script>
+
+<style lang="scss" scoped>
+// Fills the scroll area so the bulk action bar can dock at the bottom.
+.assets {
+  min-height: 100%;
+}
+
+// VRow is flex: 1 1 auto and would grow into the column's free height.
+.folder-container {
+  flex-grow: 0;
+}
+</style>
