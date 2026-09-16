@@ -19,8 +19,10 @@ import type {
 } from './schemas/index.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { User } from '../user/models/user.model.js';
+
 import { applyReferentialDeletion } from './reference.service.ts';
 import { createLogger } from '#logger';
+import * as eventBus from '#shared/events/bus.ts';
 import db from '#shared/database/index.js';
 import linkService from '#shared/content-library/link.service.js';
 import publishingService from '#shared/publishing/publishing.service.js';
@@ -207,13 +209,32 @@ export function reorder(
   return activity.reorder(position, context);
 }
 
-// Publishes / unpublishes (when the activity is already soft-deleted)
-// the activity through the publishing service.
-export async function publish(activity: Activity): Promise<unknown> {
+/**
+ * Publishes the activity, or unpublishes it when already soft-deleted.
+ * Only a publish is announced.
+ */
+export async function publish(
+  activity: Activity,
+  user?: User,
+): Promise<unknown> {
   logger.info({ activityId: activity.id }, '[publish] initiated');
-  return activity.deletedAt
-    ? publishingService.unpublishActivity(activity)
-    : publishingService.publishActivity(activity);
+  if (activity.deletedAt) {
+    return publishingService.unpublishActivity(activity);
+  }
+  const published = await publishingService.publishActivity(activity);
+  eventBus.publish({
+    type: eventBus.EventType.ActivityPublished,
+    repositoryId: activity.repositoryId,
+    actorId: user?.id ?? null,
+    subject: `repository/${activity.repositoryId}/activity/${activity.id}`,
+    data: {
+      activityId: activity.id,
+      name: (activity as any).data?.name ?? null,
+      type: activity.type,
+      typeLabel: schema.getLevel(activity.type)?.label ?? null,
+    },
+  });
+  return published;
 }
 
 // Deep-clones the activity into the target (repository, parent, position).

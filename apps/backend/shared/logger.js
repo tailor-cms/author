@@ -96,11 +96,19 @@ const sensitiveQuery = new RegExp(
   'gi',
 );
 
+// The integration webhook is Slack-style: the URL is the credential, e.g.
+// `POST /api/hooks/messaging/integrations/k3Jx9QwLm2vB7nR4pT8sY1uZ0cF6hA5d`.
+// Only its hash is stored, so an unmasked request line would leave the
+// token's sole plaintext copy in the logs
+const sensitivePath = /(\/hooks\/messaging\/integrations\/)[^/?#]+/gi;
+
 // The logger is mounted on `/api`, so Express strips that prefix from
 // `req.url`; `originalUrl` keeps the full request path in the logs. Sensitive
 // query values are masked so tokens in the URL never reach the logs.
 const fullUrl = (req) =>
-  (req.originalUrl ?? req.url).replace(sensitiveQuery, '$1[redacted]');
+  (req.originalUrl ?? req.url)
+    .replace(sensitiveQuery, '$1[redacted]')
+    .replace(sensitivePath, '$1[redacted]');
 
 const requestSummary = (req, res, detail) =>
   `${req.method} ${fullUrl(req)} ${res.statusCode} (${detail})`;

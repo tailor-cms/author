@@ -159,6 +159,12 @@ export const IntArrayFromForm = () =>
     return v;
   }, z.array(z.number().int()).optional());
 
+// Query param that `qs` hands over as a bare value for one occurrence
+// (`?k=1`) and as an array for two or more (`?k=1&k=2`). Normalises both
+// to an array so handlers only ever see the plural shape.
+export const OneOrMany = <T extends ZodType>(schema: T) =>
+  z.union([z.array(schema), schema]).transform((v) => [v].flat());
+
 // Array of strings that may arrive as a single string or as
 // a real array (multiple). Used for `schemas[]`, `tagIds[]`, etc. URL
 // query params, where qs may return either shape depending on cardinality.
@@ -169,6 +175,24 @@ export const StringArrayFromQuery = () =>
     if (typeof v === 'string') return v ? [v] : undefined;
     return v;
   }, z.array(z.string()).optional());
+
+// Material Design Icons name (`mdi-<name>`)
+export const MdiIcon = (desc = 'MDI icon name, e.g. `mdi-webhook`.') =>
+  z
+    .string()
+    .trim()
+    .min(5)
+    .max(60)
+    .regex(/^mdi-[a-z0-9-]+$/)
+    .describe(desc);
+
+// Array of UIDs that may arrive as a real array or as a comma-separated
+// string (`?uids=a,b`). Validates every member.
+export const UidArrayFromQuery = () =>
+  z.preprocess(
+    (v) => (typeof v === 'string' ? v.split(',').filter(Boolean) : v),
+    z.array(z.uuid()).optional(),
+  );
 
 // Binary file field for multipart/form-data action bodies. Emits
 // `{ type: 'string', format: 'binary' }` in JSON Schema;

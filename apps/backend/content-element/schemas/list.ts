@@ -17,6 +17,10 @@ export const ListFilter = z
       (the FE's bulk "load every element under these containers" call).
       Accepts a real array, a single value, or a comma-separated string.
     `),
+    uids: UidArrayFromQuery().describe(oneLine`
+      Restrict to elements with these UIDs. Elements are referenced by
+      uid across the app (editor deep links, discussion references).
+    `),
     detached: QueryBoolean.optional().describe(oneLine`
       Include detached elements (rows unreachable in the outline because
       an ancestor was deleted). Default: false.

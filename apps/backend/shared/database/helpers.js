@@ -31,10 +31,16 @@ export const hasColumn = (Model, col) => {
   return !!parsedPath.length;
 };
 
+// A model query rendered as a `(SELECT ...)` literal, for `Op.in` and similar operators.
 export const subQuery = (model, options) => {
-  const sql = model.queryGenerator.selectQuery(model.tableName, options, model);
+  const mapped = Utils.mapOptionFieldNames({ ...options }, model);
+  const sql = model.queryGenerator.selectQuery(model.tableName, mapped, model);
   return Sequelize.literal(`(${sql.slice(0, -1)})`);
 };
+
+// Runs `fn` once the write is committed, or immediately if there is no transaction.
+export const afterCommit = (transaction, fn) =>
+  transaction ? transaction.afterCommit(fn) : fn();
 
 function parsePath(Model, path) {
   if (!path.includes('.')) return [dbColumn(path, Model)];

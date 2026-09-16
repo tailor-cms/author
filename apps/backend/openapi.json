@@ -10903,7 +10903,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Restrict to elements with these UIDs. Elements are referenced by uid across the app (editor deep links, discussion references), so this is how a caller resolves one without knowing its numeric id. Accepts an array or a comma-separated string.",
+              "description": "Restrict to elements with these UIDs. Elements are referenced by uid across the app (editor deep links, discussion references).",
               "type": "array",
               "items": {
                 "type": "string",

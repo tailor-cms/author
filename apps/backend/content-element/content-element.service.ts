@@ -44,6 +44,9 @@ const logger = createLogger('content-element:svc');
 // the result is scoped to the supplied parent activities.
 export async function list(opts: any, filters: ListFilter) {
   if (!filters.detached) opts.where = { ...opts.where, detached: false };
+  if (filters.uids?.length) {
+    opts.where = { ...opts.where, uid: filters.uids };
+  }
   if (filters.activityIds) {
     const where = { id: filters.activityIds };
     opts.include = { model: Activity.unscoped(), attributes: [], where };

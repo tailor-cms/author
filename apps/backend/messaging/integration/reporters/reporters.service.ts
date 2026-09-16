@@ -15,7 +15,7 @@ const DEFAULT_WINDOW_MS = 2500;
 
 // A window is per repository, per reporter, per topic.
 const windowKey = (reporter: AnyReporter, event: CloudEvent) =>
-  `${event.repositoryId}:${reporter.key}:${event.type}`;
+  `${event.repositoryid}:${reporter.key}:${event.type}`;
 
 async function loadAuthorContext(actorId: number | null): Promise<WindowContext> {
   if (!actorId) return { actorLabel: null };
@@ -24,13 +24,13 @@ async function loadAuthorContext(actorId: number | null): Promise<WindowContext>
 }
 
 async function deliver(reporter: AnyReporter, events: CloudEvent[]) {
-  const { repositoryId, type } = events[0];
+  const { repositoryid: repositoryId, type } = events[0];
   // Check subscribed threads for this repository and event type.
   const threads = await subscribedThreads(repositoryId, type);
   if (!threads.length) return;
   // N people in one window is no one person's doing: naming one would
   // misplace the byline and suppress their unread badge.
-  const actorId = sharedValue(events.map((it) => it.actorId ?? null));
+  const actorId = sharedValue(events.map((it) => it.actorid ?? null));
   const ctx = await loadAuthorContext(actorId);
   const announcement = reporter.format(events, ctx);
   if (!announcement?.content) return;
