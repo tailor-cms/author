@@ -7,7 +7,7 @@ import * as service from '../comment.service.ts';
 
 export default defineAction({
   name: 'getReplies',
-  params: schemas.CommentItemParams,
+  params: schemas.MessageItemParams,
   openapi: {
     authenticated: true,
     summary: 'List replies to a message',
@@ -23,6 +23,6 @@ export default defineAction({
     },
   },
   handler({ params, req }) {
-    return service.listReplies(req.repository!.id, params.commentId);
+    return service.listReplies(req.repository!.id, params.messageId);
   },
 });

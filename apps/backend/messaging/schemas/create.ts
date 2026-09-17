@@ -26,6 +26,6 @@ export const CreateInput = z
     `),
     content: Comment.shape.content,
   })
-  .describe('A new comment.');
+  .describe('A new message.');
 
 export type CreateInput = z.infer<typeof CreateInput>;

@@ -15,11 +15,11 @@ import { z } from 'zod';
 // Re-exported for convenience
 export { CommentType };
 
-export const CommentItemParams = RepositoryScopedParams.extend({
-  commentId: IntParam().describe('Numeric comment id (path param).'),
+export const MessageItemParams = RepositoryScopedParams.extend({
+  messageId: IntParam().describe('Numeric message id (path param).'),
 });
 
-export type CommentItemParams = z.infer<typeof CommentItemParams>;
+export type MessageItemParams = z.infer<typeof MessageItemParams>;
 
 export const CommentElementRef = z
   .object({

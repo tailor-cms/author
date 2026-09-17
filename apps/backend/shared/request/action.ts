@@ -115,7 +115,7 @@ export interface ActionContext<
     // module augmentation) because there's no tsconfig at apps/backend
     // for the IDE to discover ambient declarations from.
     repository?: Repository;
-    comment?: Comment;
+    message?: Comment;
     thread?: Thread;
     contentElement?: ContentElement;
     revision?: Revision;

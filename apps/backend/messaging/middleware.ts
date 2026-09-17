@@ -6,39 +6,39 @@ import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 
 const { Comment: CommentModel, User } = db;
 
-// Param middleware: loads the Comment (with its author projection) onto
+// Param middleware: loads the message (with its author projection) onto
 // req and enforces repository scoping. paranoid:false because PATCH/DELETE
-// flows can target soft-deleted rows. 404 when missing, 403 when the comment
+// flows can target soft-deleted rows. 404 when missing, 403 when the message
 // belongs to a different repository than the one in scope.
-export async function getComment(
+export async function getMessage(
   req: any,
   _res: Response,
   next: NextFunction,
-  commentId: string,
+  messageId: string,
 ) {
-  if (!Number.isInteger(Number(commentId))) {
+  if (!Number.isInteger(Number(messageId))) {
     return createError(StatusCodes.BAD_REQUEST, 'Invalid id format');
   }
   const include = [
     { model: User, as: 'author', attributes: USER_SUMMARY_ATTRS },
   ];
-  const comment = await CommentModel.findByPk(commentId, {
+  const message = await CommentModel.findByPk(messageId, {
     include,
     paranoid: false,
   });
-  if (!comment) return createError(StatusCodes.NOT_FOUND, 'Comment not found');
-  if (comment.repositoryId !== req.repository?.id) {
+  if (!message) return createError(StatusCodes.NOT_FOUND, 'Message not found');
+  if (message.repositoryId !== req.repository?.id) {
     return createError(StatusCodes.FORBIDDEN, 'Access restricted');
   }
-  req.comment = comment;
+  req.message = message;
   next();
 }
 
-// Only the comment author may edit or delete it. Mounted after
-// `getComment` so `req.comment` is always populated.
+// Only the message author may edit or delete it. Mounted after
+// `getMessage` so `req.message` is always populated.
 export function canEdit(req: any, _res: Response, next: NextFunction) {
-  const { user, comment } = req;
-  if (user.id !== comment.authorId) {
+  const { user, message } = req;
+  if (user.id !== message.authorId) {
     return createError(StatusCodes.FORBIDDEN, 'Forbidden');
   }
   next();

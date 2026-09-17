@@ -6,25 +6,25 @@ import * as service from '../comment.service.ts';
 
 export default defineAction({
   name: 'update',
-  params: schemas.CommentItemParams,
+  params: schemas.MessageItemParams,
   body: schemas.PatchInput,
   openapi: {
     authenticated: true,
-    summary: 'Edit a comment',
+    summary: 'Edit a message',
     description: oneLine`
-      Replaces the text. Only the author can edit, and the comment
+      Replaces the text. Only the author can edit, and the message
       carries an "edited" mark from then on.
     `,
     responses: {
       200: {
-        description: 'The edited comment.',
+        description: 'The edited message.',
         schema: dataEnvelope(schemas.Comment),
       },
       403: { description: 'Not the author.' },
-      404: { description: 'Comment not found.' },
+      404: { description: 'Message not found.' },
     },
   },
   handler({ body, req }) {
-    return service.update(req.comment!, body.content);
+    return service.update(req.message!, body.content);
   },
 });

@@ -226,7 +226,7 @@ export async function publish(
     type: eventBus.EventType.ActivityPublished,
     repositoryId: activity.repositoryId,
     actorId: user?.id ?? null,
-    subject: `repository/${activity.repositoryId}/activity/${activity.id}`,
+    subject: eventBus.subjectOf.activity(activity.id),
     data: {
       activityId: activity.id,
       name: (activity as any).data?.name ?? null,

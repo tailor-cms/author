@@ -6,24 +6,24 @@ import * as service from '../comment.service.ts';
 
 export default defineAction({
   name: 'delete',
-  params: schemas.CommentItemParams,
+  params: schemas.MessageItemParams,
   openapi: {
     authenticated: true,
-    summary: 'Delete a comment',
+    summary: 'Delete a message',
     description: oneLine`
-      Only the author can delete. The comment keeps its place as a
+      Only the author can delete. The message keeps its place as a
       "deleted" placeholder so the replies around it still read.
     `,
     responses: {
       200: {
-        description: 'Id of the deleted comment.',
+        description: 'Id of the deleted message.',
         schema: dataEnvelope(schemas.RemoveResult),
       },
       403: { description: 'Not the author.' },
-      404: { description: 'Comment not found.' },
+      404: { description: 'Message not found.' },
     },
   },
   handler({ req }) {
-    return service.remove(req.comment!);
+    return service.remove(req.message!);
   },
 });

@@ -14,7 +14,7 @@ export default defineAction({
   body: schemas.CreateInput,
   openapi: {
     authenticated: true,
-    summary: 'Post a comment',
+    summary: 'Post a message',
     description: oneLine`
       Posts on an activity or a content element, or into an existing
       thread. Conversations stay one level deep, so replying to a reply
@@ -22,7 +22,7 @@ export default defineAction({
     `,
     responses: {
       200: {
-        description: 'The posted comment.',
+        description: 'The posted message.',
         schema: dataEnvelope(schemas.Comment),
       },
       400: { description: 'No activity, element or thread to post on.' },
