@@ -1,15 +1,16 @@
 // ActivityStatus lifecycle hooks: SSE broadcast on create + email
 // notification when the assignee changes.
-import type { Transaction } from 'sequelize';
-import forEach from 'lodash/forEach.js';
-import get from 'lodash/get.js';
-import { Op } from 'sequelize';
-import { schema } from '@tailor-cms/config';
-import mail from '#shared/mail/index.js';
-import sse from '#shared/sse/index.js';
 import type { Activity } from './activity.model.js';
 import type { ActivityStatus } from './activity-status.model.js';
 import type { User } from '../../user/models/user.model.js';
+import type { Transaction } from 'sequelize';
+import { Op } from 'sequelize';
+import { schema, workflow } from '@tailor-cms/config';
+import * as eventBus from '#shared/events/bus.ts';
+import forEach from 'lodash/forEach.js';
+import get from 'lodash/get.js';
+import mail from '#shared/mail/index.js';
+import sse from '#shared/sse/index.js';
 
 // Hook options shape used by ActivityStatus's hooks. The
 // `context.user` field carries the actor so the
@@ -23,7 +24,9 @@ const add = (ActivityStatus: any, Hooks: any) => {
   const { Events } = ActivityStatus;
 
   const mappings: Record<string, any[]> = {
-    [Hooks.afterCreate]: [withActivity(sseUpdate, notifyAssignee)],
+    [Hooks.afterCreate]: [
+      withActivity(sseUpdate, notifyAssignee, emitStatusChanged),
+    ],
   };
 
   forEach(mappings, (hooks, type) => {
@@ -31,6 +34,57 @@ const add = (ActivityStatus: any, Hooks: any) => {
       ActivityStatus.addHook(type, Hooks.withType(type, hook));
     });
   });
+
+  async function emitStatusChanged(
+    _hookType: string,
+    activity: Activity,
+    status: ActivityStatus,
+    { context }: StatusHookOptions = {},
+  ) {
+    const previousStatus = await findPreviousStatus(status);
+    if (!previousStatus) return;
+    const from = describeStatus(activity, previousStatus);
+    const to = describeStatus(activity, status);
+    if (from.id === to.id) return;
+    eventBus.publish({
+      type: eventBus.EventType.ActivityStatusChanged,
+      repositoryId: activity.repositoryId,
+      actorId: context?.user?.id ?? null,
+      subject: eventBus.subjectOf.activity(activity.id),
+      data: {
+        id: activity.id,
+        name: activity.data?.name ?? null,
+        typeLabel: schema.getLevel(activity.type)?.label ?? null,
+        status: to.id,
+        statusLabel: to.label,
+        statusColor: to.color,
+        previousStatus: from.id,
+        previousStatusLabel: from.label,
+        assigneeId: status.assigneeId,
+      },
+    });
+  }
+
+  function findPreviousStatus(status: ActivityStatus) {
+    return ActivityStatus.findOne({
+      where: { [Op.not]: { id: status.id }, activityId: status.activityId },
+      order: [['createdAt', 'DESC']],
+    });
+  }
+
+  function describeStatus(activity: Activity, { status: id }: ActivityStatus) {
+    const config = findStatusConfig(activity, id);
+    return { id, label: config?.label ?? id, color: config?.color ?? null };
+  }
+
+  function findStatusConfig(activity: Activity, id: string) {
+    const schemaId = schema.getSchemaId(activity.type);
+    if (!schemaId) return null;
+    const { workflowId } = schema.getSchema(schemaId);
+    if (!workflowId) return null;
+    const statuses = workflow.getWorkflow(workflowId)?.statuses ?? [];
+    return statuses.find((it) => it.id === id) ?? null;
+  }
 
   function sseUpdate(_hookType: string, activity: Activity) {
     sse.channel(activity.repositoryId).send(Events.Update, activity);
@@ -47,13 +101,7 @@ const add = (ActivityStatus: any, Hooks: any) => {
   ) {
     const userId = get(context, 'user.id');
     if (!status.assigneeId) return;
-    const previousStatus = await ActivityStatus.findOne({
-      where: {
-        [Op.not]: { id: status.id },
-        activityId: status.activityId,
-      },
-      order: [['createdAt', 'DESC']],
-    });
+    const previousStatus = await findPreviousStatus(status);
     const isUnchanged = previousStatus?.assigneeId === status.assigneeId;
     const isSelfAssign = status.assigneeId === userId;
     if (isUnchanged || isSelfAssign) return;
