@@ -15,8 +15,8 @@ import omitBy from 'lodash/omitBy.js';
  * to its plain name, then to `an item`.
  */
 export const activityRef = (data: ActivityData) =>
-  data.activityId
-    ? formatReference('activity', data.activityId, data.name ?? 'activity')
+  data.id
+    ? formatReference('activity', data.id, data.name ?? 'activity')
     : (data.name ?? 'an item');
 
 /** The same for a file: `<#asset:5|logo.png>`, its name, then `a file`. */

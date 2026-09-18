@@ -228,7 +228,7 @@ export async function publish(
     actorId: user?.id ?? null,
     subject: eventBus.subjectOf.activity(activity.id),
     data: {
-      activityId: activity.id,
+      id: activity.id,
       name: (activity as any).data?.name ?? null,
       type: activity.type,
       typeLabel: schema.getLevel(activity.type)?.label ?? null,

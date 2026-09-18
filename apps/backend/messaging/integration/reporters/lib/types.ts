@@ -34,7 +34,7 @@ export interface WindowContext {
 
 // The part every Activity (structural entity) event carries
 export interface ActivityData {
-  activityId?: number | null;
+  id?: number | null;
   name?: string | null;
   typeLabel?: string | null;
 }
