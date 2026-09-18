@@ -29,7 +29,7 @@ export default defineAction({
       405: { description: 'Cannot publish a detached activity.' },
     },
   },
-  async handler({ req }) {
+  async handler({ req, user }) {
     const activity = req.activity!;
     if (activity.detached) {
       return createError(
@@ -37,6 +37,6 @@ export default defineAction({
         'Cannot publish a deleted activity',
       );
     }
-    return service.publish(activity);
+    return service.publish(activity, user);
   },
 });
