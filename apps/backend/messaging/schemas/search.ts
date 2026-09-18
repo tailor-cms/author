@@ -6,8 +6,18 @@ import {
   ShortText,
 } from '#shared/request/schemas.ts';
 import { Message, ThreadRef } from './entity.ts';
+import { ReferenceType } from '@tailor-cms/utils';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
+
+// `type:id`
+const REFERENCE = new RegExp(
+  `^(${Object.values(ReferenceType).join('|')}):[0-9a-zA-Z.-]+$`,
+);
+const Reference = z
+  .string()
+  .max(120)
+  .regex(REFERENCE, 'Expected `type:id`, e.g. `activity:12`');
 
 export const SearchFilter = z
   .object({
@@ -18,7 +28,7 @@ export const SearchFilter = z
     mentions: OneOrMany(IntParam())
       .optional()
       .describe('User ids the message must mention.'),
-    references: OneOrMany(ShortText(3, 120))
+    references: OneOrMany(Reference)
       .optional()
       .describe(oneLine`
         Entities the message must reference, as \`type:id\` (e.g.
