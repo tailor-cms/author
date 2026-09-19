@@ -3677,28 +3677,6 @@
         ],
         "additionalProperties": false
       },
-      "CommentReactionResult": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991
-          },
-          "reactions": {
-            "type": "array",
-            "items": {
-              "description": "One reader reaction to a comment.",
-              "$ref": "#/components/schemas/CommentReaction"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "reactions"
-        ],
-        "additionalProperties": false
-      },
       "CommentRemoveResult": {
         "type": "object",
         "properties": {
@@ -12231,11 +12209,6 @@
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
                 "properties": {
-                  "uid": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "UID identifier; persists across clones / imports."
-                  },
                   "activityId": {
                     "description": "Activity the comment is on. Element comments carry it too, so they show up in the activity's thread; a repository-level message has neither.",
                     "type": "integer",
@@ -12389,7 +12362,7 @@
         ],
         "responses": {
           "200": {
-            "description": "The message reactions after the toggle.",
+            "description": "The message, with its reactions after the toggle.",
             "content": {
               "application/json": {
                 "schema": {
@@ -12397,8 +12370,8 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "The comment reactions after a toggle.",
-                      "$ref": "#/components/schemas/CommentReactionResult"
+                      "description": "A comment on an activity, or inline on a content element.",
+                      "$ref": "#/components/schemas/Comment"
                     }
                   },
                   "required": [

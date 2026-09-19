@@ -18,8 +18,8 @@ export default defineAction({
     `,
     responses: {
       200: {
-        description: 'The message reactions after the toggle.',
-        schema: dataEnvelope(schemas.ReactionResult),
+        description: 'The message, with its reactions after the toggle.',
+        schema: dataEnvelope(schemas.Comment),
       },
       404: { description: 'Message not found.' },
     },

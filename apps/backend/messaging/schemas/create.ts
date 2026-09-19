@@ -5,7 +5,6 @@ import { z } from 'zod';
 
 export const CreateInput = z
   .object({
-    uid: Comment.shape.uid.optional(),
     activityId: Comment.shape.activityId.unwrap().optional().describe(oneLine`
       Activity the comment is on. Element comments carry it too, so they
       show up in the activity's thread; a repository-level message has
