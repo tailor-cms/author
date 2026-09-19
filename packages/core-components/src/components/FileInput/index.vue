@@ -1,6 +1,19 @@
 <template>
+  <Dropzone
+    v-if="isDropzone && !resolvedFileKey"
+    :allow-url-source="allowUrlSource"
+    :disabled="readonly"
+    :error-message="uploadError"
+    :extensions="allowedExtensions"
+    :icon="resolvedIcon"
+    :is-uploading="uploading"
+    :progress="progress"
+    :title="dropzoneTitle"
+    @open="openDialog"
+    @select="onUploadFile"
+  />
   <VTextField
-    v-if="!resolvedFileKey"
+    v-else-if="!resolvedFileKey"
     :density="density"
     :label="resolvedLabel"
     :max-width="maxWidth"
@@ -9,8 +22,50 @@
     :prepend-inner-icon="resolvedIcon"
     :variant="variant"
     readonly
-    @click="!readonly && (dialogOpen = true)"
+    @click="!readonly && openDialog()"
   />
+  <div v-else-if="isDropzone && $slots.default">
+    <slot
+      :file-name="resolvedFileName"
+      :is-loading="isLoadingPublicUrl"
+      :url="previewUrl"
+    />
+    <VExpandTransition>
+      <VSheet
+        v-if="showActions && !readonly"
+        class="bottom-0 pa-3 pl-1 mb-n3"
+        color="surface-raised"
+        position="sticky"
+      >
+        <div class="d-flex align-center ga-2">
+          <VIcon :icon="resolvedIcon" size="small" />
+          <span class="text-body-small text-medium-emphasis text-truncate">
+            {{ resolvedFileName }}
+          </span>
+          <VSpacer />
+          <div class="d-flex align-center mr-n3">
+            <slot name="actions" :remove="onClear" :replace="openDialog">
+              <VBtn
+                prepend-icon="mdi-swap-horizontal"
+                size="small"
+                text="Replace"
+                variant="text"
+                @click="openDialog()"
+              />
+              <VBtn
+                color="error"
+                prepend-icon="mdi-trash-can-outline"
+                size="small"
+                text="Remove"
+                variant="text"
+                @click="onClear"
+              />
+            </slot>
+          </div>
+        </div>
+      </VSheet>
+    </VExpandTransition>
+  </div>
   <FilePreview
     v-else
     :density="density"
@@ -27,7 +82,7 @@
     :readonly="readonly"
     @delete="onClear"
     @download="downloadFile(resolvedFileKey, resolvedFileName)"
-    @replace="dialogOpen = true"
+    @replace="openDialog()"
   />
   <PickerDialog
     v-model="dialogOpen"
@@ -36,6 +91,7 @@
     :allowed-extensions="allowedExtensions"
     :heading="dialogHeading"
     :icon="resolvedIcon"
+    :initial-tab="dialogTab"
     :is-uploading="uploading"
     :upload-error="uploadError"
     :upload-progress="progress"
@@ -47,11 +103,17 @@
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
 import { AssetType, inferAssetType } from '@tailor-cms/interfaces/asset';
+import Dropzone from './Dropzone.vue';
 import FilePreview from './FilePreview.vue';
 import PickerDialog from './PickerDialog/index.vue';
+import type { PickerTab } from './PickerDialog/index.vue';
 import { useUpload } from '../../composables/useUpload';
 
-import { getAssetIcon, getAssetLabel } from '#utils';
+import {
+  getAssetDropzoneTitle,
+  getAssetIcon,
+  getAssetLabel,
+} from '#utils';
 import type { VTextField } from 'vuetify/components';
 
 defineOptions({ inheritAttrs: false });
@@ -77,6 +139,14 @@ interface Props {
   placeholder?: string;
   // Override the auto-inferred icon (derived from extensions)
   icon?: string;
+  // 'field': a form control; the empty state is a click-to-add text field.
+  // 'dropzone': an inline drag & drop area for the empty state, while the
+  // filled state renders the media from the default slot with a file name +
+  // replace/remove row beneath it (falls back to the file card without a slot).
+  mode?: 'field' | 'dropzone';
+  // Dropzone mode: whether the replace/remove row is shown below the media;
+  // bind to the element's focus state
+  showActions?: boolean;
   // Vuetify props passed to VTextField (empty state in field input mode)
   variant?: VTextField['variant'];
   density?: VTextField['density'];
@@ -96,6 +166,8 @@ const props = withDefaults(defineProps<Props>(), {
   allowUrlSource: false,
   publicUrl: null,
   showPreview: false,
+  mode: 'field',
+  showActions: true,
   variant: 'outlined',
   density: 'default',
   dark: false,
@@ -120,6 +192,14 @@ const {
 } = useUpload(emit as any);
 
 const dialogOpen = ref(false);
+const dialogTab = ref<PickerTab>('upload');
+
+const openDialog = (tab: PickerTab = 'upload') => {
+  dialogTab.value = tab;
+  dialogOpen.value = true;
+};
+
+const isDropzone = computed(() => props.mode === 'dropzone');
 
 // Discard a stale failure message from the previous session
 watch(dialogOpen, (isOpen) => {
@@ -131,9 +211,7 @@ const dialogHeading = computed(() => {
   return resolvedFileKey.value ? `Change ${base.toLowerCase()}` : base;
 });
 
-const acceptedFileTypes = computed(() =>
-  props.allowedExtensions.join(','),
-);
+const acceptedFileTypes = computed(() => props.allowedExtensions.join(','));
 
 // External URLs are rendered as-is; any other value (storage:// URI or a bare
 // storage key) is a storage reference that gets stripped and signed. Testing
@@ -154,6 +232,8 @@ const resolvedLabel = computed(
 const resolvedIcon = computed(
   () => props.icon || getAssetIcon(category.value),
 );
+
+const dropzoneTitle = computed(() => getAssetDropzoneTitle(category.value));
 
 const isPreviewEnabled = computed(
   () => props.showPreview || category.value === AssetType.Image,

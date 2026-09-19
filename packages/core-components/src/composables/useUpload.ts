@@ -52,6 +52,7 @@ export const useUpload = (emit: Emit) => {
       const payload = {
         key: data.key,
         name: file.name,
+        size: file.size,
         url: data.url,
         publicUrl: data.publicUrl,
       };

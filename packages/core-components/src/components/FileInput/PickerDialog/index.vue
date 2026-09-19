@@ -3,7 +3,6 @@
     :model-value="modelValue"
     :header-icon="icon"
     :persistent="isUploading"
-    :theme="$vuetify.theme.global.name"
     :title="heading"
     width="800"
     @close="onClose"
@@ -97,9 +96,13 @@ import LibraryTab from './LibraryTab/index.vue';
 import UploadTab from './UploadTab.vue';
 import UrlTab from './UrlTab.vue';
 
+export type PickerTab = 'upload' | 'library' | 'url';
+
 interface Props {
   modelValue: boolean;
   heading?: string;
+  // Tab shown when the dialog opens
+  initialTab?: PickerTab;
   icon?: string;
   // MIME/extension filter for the native file picker
   // accept attribute (e.g. '.jpg,.png,image/*')
@@ -119,6 +122,7 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   heading: 'Add file',
+  initialTab: 'upload',
   icon: 'mdi-file',
   accept: '',
   allowedExtensions: () => [],
@@ -140,7 +144,7 @@ const emit = defineEmits<{
 
 // Incremented on each open; remounts tab content for fresh state
 const sessionKey = ref(0);
-const activeTab = ref('upload');
+const activeTab = ref<PickerTab>(props.initialTab);
 const selectedAssets = ref<Asset | Asset[] | null>(null);
 const urlTabRef = ref<InstanceType<typeof UrlTab> | null>(null);
 
@@ -192,7 +196,7 @@ watch(
   (open) => {
     if (!open) return;
     sessionKey.value++;
-    activeTab.value = 'upload';
+    activeTab.value = props.initialTab;
     selectedAssets.value = props.multiple ? [] : null;
   },
 );
