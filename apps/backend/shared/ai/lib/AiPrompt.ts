@@ -15,23 +15,19 @@ import { createAiLogger, formatPrompt } from '../logger.ts';
 
 const logger = createAiLogger('prompt');
 
-// Models that accept the `reasoning.effort` parameter.
-// Passing `reasoning` to a non-reasoning model
-// is rejected by the API, so gate before adding it to the request.
-const REASONING_MODEL_PREFIXES = ['gpt-5', 'o1', 'o3', 'o4'];
+const GPT_MODEL_NAME = /^gpt-(\d+)/i;
+const MIN_REASONING = 5;
+const COMPACT_MODEL = /-(mini|nano|luna)\b/i;
 
 export function supportsReasoning(modelId: string | undefined): boolean {
   if (!modelId) return false;
-  return REASONING_MODEL_PREFIXES.some((prefix) => modelId.startsWith(prefix));
+  const generation = Number(modelId.match(GPT_MODEL_NAME)?.[1]);
+  return generation >= MIN_REASONING;
 }
 
-/**
- * Compact-class model detector: mini / nano variants whose context
- * windows are smaller than the default for that model family.
- */
 export function isCompactModel(modelId: string | undefined): boolean {
   if (!modelId) return false;
-  return /-mini\b|-nano\b/i.test(modelId);
+  return COMPACT_MODEL.test(modelId);
 }
 
 const systemPrompt = stripIndent`
