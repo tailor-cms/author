@@ -21,8 +21,9 @@ const COMPACT_MODEL = /-(mini|nano|luna)\b/i;
 
 export function supportsReasoning(modelId: string | undefined): boolean {
   if (!modelId) return false;
-  const generation = Number(modelId.match(GPT_MODEL_NAME)?.[1]);
-  return generation >= MIN_REASONING;
+  const match = modelId.match(GPT_MODEL_NAME);
+  if (!match) return false;
+  return Number(match[1]) >= MIN_REASONING;
 }
 
 export function isCompactModel(modelId: string | undefined): boolean {
