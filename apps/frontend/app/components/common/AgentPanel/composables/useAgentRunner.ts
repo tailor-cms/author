@@ -9,6 +9,8 @@ import {
 import type { ActiveRun, TranscriptMessage } from './useAgentSession';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
 import { promiseTimeout, useDebounceFn } from '@vueuse/core';
+import { getToolSummary } from '../AgentToolCard/toolSummary';
+import { useToolLabel } from './useToolLabel';
 
 import aiApi from '@/api/ai';
 
@@ -40,6 +42,7 @@ interface SendResult {
  */
 export function useAgentRunner(opts: UseAgentRunnerOptions) {
   const { $pluginRegistry } = useNuxtApp() as any;
+  const { getLabel } = useToolLabel();
 
   const pendingQuestion = ref<AgentPendingQuestion | null>(null);
   const error = ref<string | null>(null);
@@ -51,12 +54,20 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
   // Tools finish in bursts; refetch once they settle.
   const refreshData = useDebounceFn(() => $pluginRegistry.invalidateData(), 500);
 
-  let isDisposed = false;
-  onScopeDispose(() => (isDisposed = true));
-
   // Each trackRun() takes the next id; an older loop stops even when
   // both track the same run (e.g. after a repo switch and back).
   let latestTrackId = 0;
+  let isDisposed = false;
+
+  // Abort controller for cleanup on unmount / run lock management
+  const unmount = new AbortController();
+  // When the panel unmounts
+  onScopeDispose(() => {
+    // stop the progress loop if this tab is following a run,
+    isDisposed = true;
+    // stop waiting for the lock (if tab is following it)
+    unmount.abort();
+  });
 
   function clearRunState() {
     pendingQuestion.value = null;
@@ -153,6 +164,12 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
       !isDisposed &&
       trackId === latestTrackId &&
       opts.activeRun.value?.id === runId;
+    await withRunLock(runId, unmount.signal, () =>
+      followRun(runId, isCurrent),
+    );
+  }
+
+  async function followRun(runId: string, isCurrent: () => boolean) {
     while (isCurrent()) {
       const { repositoryId, lastSeq } = opts.activeRun.value!;
       try {
@@ -161,7 +178,7 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
           wait: POLL_WAIT,
         });
         if (!isCurrent()) return;
-        run.events.forEach(applyEvent);
+        run.events.forEach((event) => applyEvent(runId, event));
         if (run.events.length) {
           const seq = run.events.at(-1)!.seq;
           opts.activeRun.value = { id: runId, repositoryId, lastSeq: seq };
@@ -170,20 +187,36 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
         if (run.status !== RunStatus.Running) return finish(run);
       } catch (err: any) {
         if (!isCurrent()) return;
-        if (err?.response?.status === 404) return interrupt();
+        if (!canRetry(err?.response?.status)) return interrupt();
         await promiseTimeout(RETRY_DELAY);
       }
     }
   }
 
-  function applyEvent(event: RunEvent) {
-    // Each message the run picks up starts a turn; open an empty
-    // reply that the message and tool events below fill in.
+  /**
+   * Apply progress event to the transcript.
+   * Can be safely called multiple times for the same event.
+   */
+  function applyEvent(runId: string, event: RunEvent) {
+    const messages = opts.messages.value;
     if (event.type === 'input') {
-      opts.messages.value.push({ role: 'assistant', content: '', toolCalls: [] });
+      const isOpened = messages.some(
+        (it) => it.runId === runId && it.inputSeq === event.seq,
+      );
+      if (isOpened) return;
+      messages.push({
+        role: 'assistant',
+        content: '',
+        toolCalls: [],
+        runId,
+        inputSeq: event.seq,
+      });
       return;
     }
-    const reply = opts.messages.value.findLast((it) => it.role === 'assistant');
+    // The reply for the turn this event belongs to
+    const reply = messages.findLast(
+      (it) => it.runId === runId && it.inputSeq! < event.seq,
+    );
     if (!reply) return;
     const toolCalls = (reply.toolCalls ??= []);
     switch (event.type) {
@@ -191,6 +224,7 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
         reply.content = event.text;
         break;
       case 'tool:start':
+        if (toolCalls.some((it) => it.callId === event.callId)) break;
         toolCalls.push({
           callId: event.callId,
           name: event.name,
@@ -199,7 +233,12 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
         break;
       case 'tool:end': {
         const index = toolCalls.findIndex((it) => it.callId === event.callId);
-        const call = { ...event.call, callId: event.callId };
+        const done = { ...event.call, callId: event.callId };
+        const call = {
+          ...done,
+          label: getLabel(done),
+          summary: getToolSummary(done.name, done.result),
+        };
         if (index < 0) toolCalls.push(call);
         else toolCalls[index] = call;
         if (event.invalidates.length) refreshData();
@@ -219,10 +258,6 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
 
   // The server no longer knows the run, e.g. after a restart
   function interrupt() {
-    const reply = opts.messages.value.findLast((it) => it.role === 'assistant');
-    if (reply?.toolCalls) {
-      reply.toolCalls = reply.toolCalls.filter((it) => it.ok !== undefined);
-    }
     opts.activeRun.value = null;
     error.value = 'Renoir was interrupted. Send a message to continue.';
   }
@@ -230,6 +265,13 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
   watch(
     () => opts.activeRun.value?.id,
     (runId) => runId && trackRun(runId),
+    { immediate: true },
+  );
+
+  // If there is no active run, drop any unfinished tool calls from the messages.
+  watch(
+    [() => opts.activeRun.value?.id, () => opts.messages.value],
+    ([runId]) => !runId && dropUnfinishedCalls(opts.messages.value),
     { immediate: true },
   );
 
@@ -244,6 +286,41 @@ export function useAgentRunner(opts: UseAgentRunnerOptions) {
     clearRunState,
     resetSession,
   };
+}
+
+/**
+ * Multi-tab coordination for agent runs.
+ * Make sure that only one tab is actively tracking a run at any given time.
+ */
+async function withRunLock(
+  runId: string,
+  signal: AbortSignal,
+  fn: () => Promise<void>,
+): Promise<void> {
+  // No lock support in this browser, just follow the run.
+  if (!navigator.locks) return fn();
+  try {
+    // One tab follows the run; others wait to take over.
+    await navigator.locks.request(`agent-run:${runId}`, { signal }, fn);
+  } catch (err) {
+    // Aborted when the panel unmounts while waiting for the lock.
+    if (!signal.aborted) throw err;
+  }
+}
+
+function dropUnfinishedCalls(messages: TranscriptMessage[]) {
+  messages.forEach((message) => {
+    const isUnfinished = message.toolCalls?.some((it) => it.ok === undefined);
+    if (!isUnfinished) return;
+    message.toolCalls = message.toolCalls!.filter((it) => it.ok !== undefined);
+  });
+}
+
+const TRY_AGAIN_STATUSES = [408, 429];
+
+function canRetry(status?: number): boolean {
+  if (!status || status >= 500) return true;
+  return TRY_AGAIN_STATUSES.includes(status);
 }
 
 function toMessage(err: any): string {

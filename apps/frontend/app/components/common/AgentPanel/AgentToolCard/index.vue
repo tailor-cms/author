@@ -46,7 +46,10 @@ const { getLabel } = useToolLabel();
 
 const isOpen = ref(false);
 
-const label = computed(() => getLabel(props.toolCall));
+// Saved calls have a label; their input is not kept.
+const label = computed(
+  () => props.toolCall.label ?? getLabel(props.toolCall),
+);
 
 const isPending = computed(() => props.toolCall.ok === undefined);
 
@@ -62,8 +65,11 @@ const hasInput = computed(() => {
 
 const hasResult = computed(() => props.toolCall.result != null);
 
-const summary = computed(() =>
-  getToolSummary(props.toolCall.name, props.toolCall.result),
+// If saved, use the summary; otherwise, generate one from the result.
+const summary = computed(
+  () =>
+    props.toolCall.summary ??
+    getToolSummary(props.toolCall.name, props.toolCall.result),
 );
 
 /**

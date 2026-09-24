@@ -1,12 +1,24 @@
 import { useLocalStorage } from '@vueuse/core';
 
+import {
+  isQuotaError,
+  removeLegacyKeys,
+  saveTrimmedTranscript,
+  serializeTranscript,
+  transcriptKey,
+} from '../transcriptStorage';
+
 // A tool call in the transcript. `ok` is missing while it still runs.
 export interface TranscriptToolCall {
-  callId?: string;
+  callId: string;
   name: string;
-  input: unknown;
   ok?: boolean;
+  // Input and result are kept in memory only;
+  // Only label and summary are saved.
+  input?: unknown;
   result?: unknown;
+  label?: string;
+  summary?: string;
   durationMs?: number;
 }
 
@@ -14,6 +26,8 @@ export interface TranscriptMessage {
   role: 'user' | 'assistant';
   content: string;
   toolCalls?: TranscriptToolCall[];
+  runId?: string;
+  inputSeq?: number;
 }
 
 // The run in progress
@@ -24,16 +38,29 @@ export interface ActiveRun {
 }
 
 export function useAgentSession(repositoryUid: Ref<string | null>) {
+  removeLegacyKeys();
+
   const storageKey = (name: string) =>
     computed(() =>
-      repositoryUid.value ? `agent-panel:${name}:${repositoryUid.value}` : '',
+      repositoryUid.value ? transcriptKey(name, repositoryUid.value) : '',
     );
 
   const sessionId = useLocalStorage<string | null>(storageKey('session'), null, {
     writeDefaults: false,
   });
-  const messages = useLocalStorage<TranscriptMessage[]>(storageKey('messages'), [], {
+
+  const messagesKey = storageKey('messages');
+  const messages = useLocalStorage<TranscriptMessage[]>(messagesKey, [], {
     writeDefaults: false,
+    serializer: {
+      read: (raw) => (raw ? JSON.parse(raw) : []),
+      write: (value) => serializeTranscript(value),
+    },
+    // If full should not freeze transcript at an old state;
+    onError: (err) => {
+      if (!isQuotaError(err) || !messagesKey.value) return console.error(err);
+      saveTrimmedTranscript(messagesKey.value, messages.value);
+    },
   });
   const activeRun = useLocalStorage<ActiveRun | null>(storageKey('run'), null, {
     writeDefaults: false,

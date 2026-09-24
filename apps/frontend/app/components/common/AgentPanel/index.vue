@@ -29,8 +29,7 @@
           <AgentMessageList
             ref="messageListEl"
             :messages="messages"
-            :is-running="isRunning"
-            :status-text="statusText"
+            :is-thinking="isThinking"
             :error="runnerError"
           />
           <div v-if="pendingQuestion" class="question-host ma-5 mt-0">
@@ -126,7 +125,7 @@ const isPanelEnabled = computed(() =>
 
 const { focusChip, focusPayload } = useAgentFocus();
 const { sessionId, messages, activeRun } = useAgentSession(repositoryUid);
-const { getLabel, findRunningCall } = useToolLabel();
+const { findRunningCall } = useToolLabel();
 
 const mode = useLocalStorage<AgentMode>('agent-panel:mode', AgentMode.Edit);
 if (!(AGENT_MODES as readonly string[]).includes(mode.value)) {
@@ -148,11 +147,6 @@ const {
   close: closePanel,
   toggle: togglePanel,
 } = usePanelVisibility({ inputEl, isEnabled: isPanelEnabled });
-
-const statusText = computed(() => {
-  const call = findRunningCall(messages.value);
-  return call ? getLabel(call) : 'Thinking';
-});
 
 // Wrapped in nextTick because the trigger usually coincides with a DOM
 // mutation (new message, focus flip on panel open); layout needs to
@@ -184,6 +178,12 @@ const {
   lastToolCount,
   pendingQuestion,
 } = runner;
+
+// A running tool call already shows its own progress card
+// so the panel should not indicate thinking while a tool call is in progress.
+const isThinking = computed(
+  () => isRunning.value && !findRunningCall(messages.value),
+);
 
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {

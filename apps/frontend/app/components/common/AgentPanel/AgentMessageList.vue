@@ -8,13 +8,13 @@
       :role="message.role"
       :tool-calls="message.toolCalls"
     />
-    <div v-if="isRunning" class="list-status text-label-medium ga-2 mt-3 mx-1">
+    <div v-if="isThinking" class="list-status text-label-medium ga-2 mt-3 mx-1">
       <span class="thinking-dots" aria-hidden="true">
         <span class="dot" />
         <span class="dot" />
         <span class="dot" />
       </span>
-      <span>{{ statusText }}</span>
+      <span>Thinking</span>
     </div>
     <VAlert
       v-if="error"
@@ -33,9 +33,9 @@ import AgentEmptyState from './AgentEmptyState.vue';
 import type { TranscriptMessage } from './composables/useAgentSession';
 
 interface Props {
-  isRunning: boolean;
+  // Working with no tool card in progress to show it.
+  isThinking: boolean;
   messages: TranscriptMessage[];
-  statusText: string;
   error: string | null;
 }
 

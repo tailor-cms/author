@@ -82,7 +82,7 @@ async function execute(input: Input, ctx: ToolContext) {
       ...(activity.parentId ? [`activity:${activity.parentId}`] : []),
     ],
   };
-  recordOperation(TOOL, input, result, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: 'delete_activity',
     input: { id: activity.id },
   });

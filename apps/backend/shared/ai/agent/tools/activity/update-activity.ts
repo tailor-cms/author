@@ -72,7 +72,7 @@ async function execute(input: Input, ctx: ToolContext) {
     });
   }
   const summary = summarizeActivity(activity);
-  recordOperation(TOOL, input, summary, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: TOOL,
     input: { id: input.id, data: previousData },
   });
