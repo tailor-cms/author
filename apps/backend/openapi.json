@@ -1009,6 +1009,31 @@
         ],
         "additionalProperties": false
       },
+      "AgentRunStarted": {
+        "type": "object",
+        "properties": {
+          "runId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agent run UID."
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agent session UID."
+          },
+          "isQueued": {
+            "type": "boolean",
+            "description": "True when a run was already working on the session and the message joined it."
+          }
+        },
+        "required": [
+          "runId",
+          "sessionId",
+          "isQueued"
+        ],
+        "additionalProperties": false
+      },
       "AgentToolError": {
         "type": "object",
         "properties": {
@@ -1098,6 +1123,127 @@
           }
         ]
       },
+      "AgentRunEvent": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "seq": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Event number, starting at 1."
+              },
+              "type": {
+                "type": "string",
+                "const": "input"
+              },
+              "message": {
+                "type": "string",
+                "description": "User message the run picked up."
+              }
+            },
+            "required": [
+              "seq",
+              "type",
+              "message"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "seq": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Event number, starting at 1."
+              },
+              "type": {
+                "type": "string",
+                "const": "message"
+              },
+              "text": {
+                "type": "string",
+                "description": "The model's latest text."
+              }
+            },
+            "required": [
+              "seq",
+              "type",
+              "text"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "seq": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Event number, starting at 1."
+              },
+              "type": {
+                "type": "string",
+                "const": "tool:start"
+              },
+              "callId": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "input": {}
+            },
+            "required": [
+              "seq",
+              "type",
+              "callId",
+              "name",
+              "input"
+            ],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "seq": {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991,
+                "description": "Event number, starting at 1."
+              },
+              "type": {
+                "type": "string",
+                "const": "tool:end"
+              },
+              "callId": {
+                "type": "string"
+              },
+              "call": {
+                "description": "Single tool-call audit row from a run turn.",
+                "$ref": "#/components/schemas/AgentToolCallRecord"
+              },
+              "invalidates": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Data the client should refetch (e.g. `activity:42`, `outline`)."
+              }
+            },
+            "required": [
+              "seq",
+              "type",
+              "callId",
+              "call",
+              "invalidates"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
       "AgentPendingQuestionOption": {
         "type": "object",
         "properties": {
@@ -1154,48 +1300,28 @@
       "AgentRunResult": {
         "type": "object",
         "properties": {
-          "sessionId": {
-            "type": "string",
-            "format": "uuid",
-            "description": "Session this turn ran against."
-          },
           "replyText": {
             "type": "string",
-            "description": "Assistant's reply text after the loop ended (the model's last text-only message). Empty string when the run produced no text."
-          },
-          "toolCalls": {
-            "type": "array",
-            "items": {
-              "description": "Single tool-call audit row from a run turn.",
-              "$ref": "#/components/schemas/AgentToolCallRecord"
-            },
-            "description": "Tool-call audit log for this turn."
+            "description": "The model's last reply. Empty when it produced no text."
           },
           "turns": {
             "type": "integer",
             "minimum": 0,
             "maximum": 9007199254740991,
-            "description": "Number of (model call -> tool dispatch) iterations the loop ran."
+            "description": "Number of model calls the run made."
+          },
+          "toolCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Number of tool calls the run made."
           },
           "truncated": {
             "type": "boolean",
-            "description": "True when the run was cut off (today only by maxTurns)."
-          },
-          "invalidates": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Namespaced cache keys the client should refetch after this run (e.g. `activity:42`, `element:17`, `outline`, `assets`). Emitted by write-tools via their internal `_invalidates` field."
-          },
-          "transactionLog": {
-            "type": "array",
-            "items": {},
-            "description": "Cumulative write-operation log across the whole session.",
-            "$ref": "#/components/schemas/AgentTransactionLog"
+            "description": "True when the run hit its turn limit."
           },
           "pendingQuestion": {
-            "description": "Most recent `ask_user_question` call (if any); the dock renders it as a clickable picker above the input.",
+            "description": "Set when the run ended on `ask_user_question`; the dock renders it as a clickable picker above the input.",
             "anyOf": [
               {
                 "description": "Clickable picker the model can attach to a turn.",
@@ -1208,13 +1334,74 @@
           }
         },
         "required": [
-          "sessionId",
           "replyText",
-          "toolCalls",
           "turns",
-          "truncated",
-          "invalidates",
-          "transactionLog"
+          "toolCount",
+          "truncated"
+        ],
+        "additionalProperties": false
+      },
+      "AgentRunSnapshot": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agent run UID."
+          },
+          "sessionId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Agent session UID."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "RUNNING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ]
+          },
+          "events": {
+            "type": "array",
+            "items": {
+              "description": "Progress reported while a run works.",
+              "$ref": "#/components/schemas/AgentRunEvent"
+            },
+            "description": "Events after the requested cursor."
+          },
+          "result": {
+            "anyOf": [
+              {
+                "description": "Summary of a finished agent run.",
+                "$ref": "#/components/schemas/AgentRunResult"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set once the run has ended."
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Set when the run failed."
+          }
+        },
+        "required": [
+          "id",
+          "sessionId",
+          "status",
+          "events",
+          "result",
+          "error"
         ],
         "additionalProperties": false
       },
@@ -7172,20 +7359,20 @@
         ]
       }
     },
-    "/agent/run": {
+    "/agent/runs": {
       "post": {
         "tags": [
           "AI / Agent"
         ],
-        "operationId": "aiRunAgent",
+        "operationId": "aiStartAgentRun",
         "x-tailor-slice": "ai",
-        "x-tailor-method": "runAgent",
-        "summary": "Run an agent turn",
-        "description": "Resumes or creates a session and dispatches one model + tool round-trip; returns the reply, tool log, and Frontend invalidation hints.",
+        "x-tailor-method": "startAgentRun",
+        "summary": "Start an agent run",
+        "description": "Starts a run in the background and returns its id right away; follow it with the get endpoint. When the session already has a run in progress, the message joins that run.",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "Reply text, tool-call audit log, frontend invalidation hints, and an optional clickable picker the model attached to the turn.",
+          "202": {
+            "description": "Run id and the session it works on.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7193,8 +7380,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "Result of a single agent turn.",
-                      "$ref": "#/components/schemas/AgentRunResult"
+                      "$ref": "#/components/schemas/AgentRunStarted"
                     }
                   },
                   "required": [
@@ -7257,6 +7443,148 @@
                 "description": "Single-turn agent run payload."
               }
             }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/agent/runs/{runId}": {
+      "get": {
+        "tags": [
+          "AI / Agent"
+        ],
+        "operationId": "aiGetAgentRun",
+        "x-tailor-slice": "ai",
+        "x-tailor-method": "getAgentRun",
+        "summary": "Get agent run progress",
+        "description": "Returns the run status and the events after `after`. With `wait`, holds the request until something new happens.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Agent run UID."
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Return only events after this number. Defaults to 0 (all).",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "wait",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Seconds to hold the request until a new event arrives or the run ends. Defaults to 0 (answer right away).",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 25
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run status, new events, and the result once ended.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A run as seen by a polling client.",
+                      "$ref": "#/components/schemas/AgentRunSnapshot"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Run belongs to a different user."
+          },
+          "404": {
+            "description": "Run not found or no longer kept."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/agent/runs/{runId}/cancel": {
+      "post": {
+        "tags": [
+          "AI / Agent"
+        ],
+        "operationId": "aiCancelAgentRun",
+        "x-tailor-slice": "ai",
+        "x-tailor-method": "cancelAgentRun",
+        "summary": "Stop an agent run",
+        "description": "The run stops after the step in progress.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Agent run UID."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Stop requested."
+          },
+          "403": {
+            "description": "Run belongs to a different user."
+          },
+          "404": {
+            "description": "Run not found or no longer kept."
           }
         },
         "security": [
