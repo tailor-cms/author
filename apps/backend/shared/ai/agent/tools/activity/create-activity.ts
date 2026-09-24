@@ -184,7 +184,7 @@ async function execute(input: Input, ctx: ToolContext) {
 
     const summary = summarizeActivity(created);
     // Inverse: delete what we just created (for undo)
-    recordOperation(TOOL, input, summary, ctx, {
+    recordOperation(TOOL, ctx, {
       tool: 'delete_activity',
       input: { id: created.id },
     });

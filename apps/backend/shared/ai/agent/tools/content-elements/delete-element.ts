@@ -60,7 +60,7 @@ async function execute(input: Input, ctx: ToolContext) {
   };
   // TODO: implement restore_element tool (clear deletedAt)
   // for proper undo, same pattern as restore_activity
-  recordOperation(TOOL, input, result, ctx);
+  recordOperation(TOOL, ctx);
   return result;
 }
 

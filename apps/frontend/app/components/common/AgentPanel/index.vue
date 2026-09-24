@@ -29,8 +29,7 @@
           <AgentMessageList
             ref="messageListEl"
             :messages="messages"
-            :is-running="isRunning"
-            :status-text="activeStatus"
+            :is-thinking="isThinking"
             :error="runnerError"
           />
           <div v-if="pendingQuestion" class="question-host ma-5 mt-0">
@@ -45,11 +44,12 @@
             v-model="prompt"
             v-model:mode="mode"
             v-model:effort="effort"
-            :disabled="isRunning"
+            :is-running="isRunning"
             :is-lens-running="isLensRunning"
             :focus-chip="focusChip"
             @autorun="runner.send"
             @focus="scrollToLatest"
+            @stop="runner.stop"
             @submit="sendPrompt"
           />
           <AgentSessionStats
@@ -86,7 +86,7 @@ import ResetSessionDialog from './ResetSessionDialog.vue';
 import { useAgentFocus } from './composables/useAgentFocus';
 import { useAgentRunner } from './composables/useAgentRunner';
 import { useAgentSession } from './composables/useAgentSession';
-import { useAgentStatusRotation } from './composables/useAgentStatusRotation';
+import { useToolLabel } from './composables/useToolLabel';
 import { usePanelVisibility } from './composables/usePanelVisibility';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -124,7 +124,8 @@ const isPanelEnabled = computed(() =>
 );
 
 const { focusChip, focusPayload } = useAgentFocus();
-const { sessionId, messages } = useAgentSession(repositoryUid);
+const { sessionId, messages, activeRun } = useAgentSession(repositoryUid);
+const { findRunningCall } = useToolLabel();
 
 const mode = useLocalStorage<AgentMode>('agent-panel:mode', AgentMode.Edit);
 if (!(AGENT_MODES as readonly string[]).includes(mode.value)) {
@@ -147,12 +148,6 @@ const {
   toggle: togglePanel,
 } = usePanelVisibility({ inputEl, isEnabled: isPanelEnabled });
 
-const {
-  activeStatus,
-  start: startStatus,
-  stop: stopStatus,
-} = useAgentStatusRotation();
-
 // Wrapped in nextTick because the trigger usually coincides with a DOM
 // mutation (new message, focus flip on panel open); layout needs to
 // settle before we measure scrollHeight.
@@ -168,13 +163,12 @@ const runner = useAgentRunner({
   repositoryId,
   sessionId,
   messages,
+  activeRun,
   mode,
   effort,
   focusPayload,
   isBlocked: isLensRunning,
   onScroll: scrollToLatest,
-  onRunStart: startStatus,
-  onRunEnd: stopStatus,
 });
 
 const {
@@ -185,11 +179,16 @@ const {
   pendingQuestion,
 } = runner;
 
+// A running tool call already shows its own progress card
+// so the panel should not indicate thinking while a tool call is in progress.
+const isThinking = computed(
+  () => isRunning.value && !findRunningCall(messages.value),
+);
+
 // Repo switch wipes transient UI state.
 watch(repositoryId, () => {
   prompt.value = '';
   runner.clearRunState();
-  stopStatus();
 });
 
 // Confirm before wiping the transcript (no undo). The header disables
@@ -204,7 +203,7 @@ async function sendPrompt() {
   const message = prompt.value;
   prompt.value = '';
   const result = await runner.send(message);
-  // Restore the text if the send was rejected (no repo or already running)
+  // Restore the text if the send was rejected (no repo or Lens running)
   // so the user doesn't lose what they typed.
   if (result.cancelled) prompt.value = message;
 }
@@ -220,7 +219,7 @@ const onPanelToggle = () => {
 };
 
 const onPromptSet = ({ prompt: text }: { prompt: string }) => {
-  if (!isPanelEnabled.value || isRunning.value) return;
+  if (!isPanelEnabled.value) return;
   openPanel();
   prompt.value = text;
 };

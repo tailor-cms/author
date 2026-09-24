@@ -1,10 +1,19 @@
 // Wire shape for an agent run.
-import { AgentMode, AgentTransactionLog, SessionId } from './entity.ts';
-import { Int, UInt } from '#shared/request/schemas.ts';
+import { AgentMode, RunId, SessionId } from './entity.ts';
+import {
+  Int,
+  RepositoryScopedParams,
+  UInt,
+  UIntParam,
+} from '#shared/request/schemas.ts';
 import { Entity } from '@tailor-cms/interfaces/revision.ts';
-import { oneLine } from 'common-tags';
 import { ReasoningEffort } from '@tailor-cms/interfaces/ai.ts';
+import { RunStatus } from '@tailor-cms/interfaces/agent.ts';
+import { oneLine } from 'common-tags';
 import { z } from 'zod';
+
+// Longest a run state request may wait for new events.
+export const MAX_WAIT_SECONDS = 25;
 
 // One entry in the editor's focus context - what the user is looking at
 // when they send the message. Lets the agent resolve "this" / "the topic"
@@ -131,37 +140,90 @@ const PendingQuestion = z
   .meta({ id: 'AgentPendingQuestion' })
   .describe('Clickable picker the model can attach to a turn.');
 
-// Wire response shape for `POST /agent/run`.
-export const RunResult = z
+// Summary of a finished run; tool calls arrive earlier as events.
+const RunResult = z
   .object({
-    sessionId: SessionId().describe('Session this turn ran against.'),
-    replyText: z.string().describe(oneLine`
-      Assistant's reply text after the loop ended (the model's last
-      text-only message). Empty string when the run produced no text.
-    `),
-    toolCalls: z
-      .array(ToolCallRecord)
-      .describe('Tool-call audit log for this turn.'),
-    turns: UInt().describe(
-      'Number of (model call -> tool dispatch) iterations the loop ran.',
-    ),
-    truncated: z.boolean().describe(oneLine`
-      True when the run was cut off (today only by maxTurns).
-    `),
-    invalidates: z.array(z.string()).describe(oneLine`
-      Namespaced cache keys the client should refetch after this run
-      (e.g. \`activity:42\`, \`element:17\`, \`outline\`, \`assets\`).
-      Emitted by write-tools via their internal \`_invalidates\` field.
-    `),
-    transactionLog: AgentTransactionLog.describe(
-      'Cumulative write-operation log across the whole session.',
-    ),
+    replyText: z.string().describe(`The model's final reply.`),
+    turns: UInt().describe('Number of model calls the run made.'),
+    toolCount: UInt().describe('Number of tool calls the run made.'),
+    truncated: z.boolean().describe('True when the run hit its turn limit.'),
     pendingQuestion: PendingQuestion.nullable().optional().describe(oneLine`
-      Most recent \`ask_user_question\` call (if any); the dock renders
+      Set when the run ended on \`ask_user_question\`; the dock renders
       it as a clickable picker above the input.
     `),
   })
   .meta({ id: 'AgentRunResult' })
-  .describe('Result of a single agent turn.');
+  .describe('Summary of agent run.');
 
-export type RunResult = z.infer<typeof RunResult>;
+const SharedEventAttrs = {
+  seq: Int().describe('Event number, starting at 1.'),
+};
+
+const RunEvent = z
+  .discriminatedUnion('type', [
+    z.object({
+      ...SharedEventAttrs,
+      type: z.literal('input'),
+      message: z.string().describe('User message the run picked up.'),
+    }),
+    z.object({
+      ...SharedEventAttrs,
+      type: z.literal('message'),
+      text: z.string().describe(`The model's latest text.`),
+    }),
+    z.object({
+      ...SharedEventAttrs,
+      type: z.literal('tool:start'),
+      callId: z.string(),
+      name: z.string(),
+      input: z.unknown(),
+    }),
+    z.object({
+      ...SharedEventAttrs,
+      type: z.literal('tool:end'),
+      callId: z.string(),
+      call: ToolCallRecord,
+      invalidates: z.array(z.string()).describe(oneLine`
+        Data the client should refetch (e.g. \`activity:42\`, \`outline\`).
+      `),
+    }),
+  ])
+  .meta({ id: 'AgentRunEvent' })
+  .describe('Progress reported while a run works.');
+
+export const RunStarted = z
+  .object({
+    runId: RunId(),
+    sessionId: SessionId(),
+    isQueued: z.boolean().describe(oneLine`
+      True when the message joined a run already working on this
+      session instead of starting a new one; \`runId\` is that run.
+    `),
+  })
+  .meta({ id: 'AgentRunStarted' });
+
+export const RunSnapshot = z
+  .object({
+    id: RunId(),
+    sessionId: SessionId(),
+    status: z.enum(RunStatus),
+    events: z.array(RunEvent).describe('Events after the requested marker.'),
+    result: RunResult.nullable().describe('Set once ended.'),
+    error: z.string().nullable().describe('Set when failed.'),
+  })
+  .meta({ id: 'AgentRunSnapshot' })
+  .describe('State of a run at a specific point in time.');
+
+export const RunItemParams = RepositoryScopedParams.extend({
+  runId: RunId(),
+});
+
+export const RunSnapshotQuery = z.object({
+  after: UIntParam().optional().describe(oneLine`
+    Return events after this marker. Defaults to 0 (all).
+  `),
+  wait: UIntParam().max(MAX_WAIT_SECONDS).optional().describe(oneLine`
+    Seconds to hold the request until a new event arrives or the run
+    ends. Defaults to 0 (immediately).
+  `),
+});

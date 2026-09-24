@@ -4,8 +4,15 @@
     class="tool-card-header"
     @click="$emit('toggle')"
   >
+    <VProgressCircular
+      v-if="isPending"
+      class="card-status"
+      size="16"
+      width="2"
+      indeterminate
+    />
     <VIcon
-      v-if="isSuccess"
+      v-else-if="isSuccess"
       class="card-status"
       color="success"
       icon="mdi-check-circle"
@@ -18,7 +25,7 @@
       icon="mdi-alert-circle"
       size="16"
     />
-    <code class="card-name font-weight-bold">{{ name }}</code>
+    <span class="card-label text-truncate">{{ label }}</span>
     <span class="card-summary text-truncate">{{ summary }}</span>
     <span v-if="durationMs" class="card-time">{{ formatDuration(durationMs) }}</span>
     <VIcon
@@ -31,11 +38,12 @@
 
 <script lang="ts" setup>
 interface Props {
-  name: string;
+  label: string;
   summary: string;
+  isPending: boolean;
   isSuccess: boolean;
   isOpen: boolean;
-  durationMs: number;
+  durationMs?: number;
 }
 
 defineProps<Props>();
@@ -69,8 +77,14 @@ function formatDuration(ms: number): string {
   color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
 }
 
+.card-label {
+  flex-shrink: 0;
+  max-width: 70%;
+  font-weight: 500;
+}
+
 .card-summary {
-  flex: 1
+  flex: 1;
 }
 
 .card-time {

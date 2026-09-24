@@ -5,6 +5,7 @@ import { StatusCodes } from 'http-status-codes';
 import * as actions from './actions/index.ts';
 import { createActionMounter } from '#shared/request/action.ts';
 import { createError } from '#shared/error/helpers.js';
+import { runRegistry } from './run/index.ts';
 import { sessionStore } from './session/index.ts';
 
 // `mergeParams: true` so the parent's `:repositoryId` propagates into
@@ -17,13 +18,16 @@ const mount = createActionMounter(router, '/agent', {
 });
 
 router.param('sessionId', loadSession);
+router.param('runId', loadRun);
 
 mount
   .get('/sessions', actions.list)
   .post('/sessions', actions.create)
   .get('/sessions/:sessionId', actions.get)
   .delete('/sessions/:sessionId', actions.remove)
-  .post('/run', actions.run);
+  .post('/runs', actions.startRun)
+  .get('/runs/:runId', actions.getRun)
+  .post('/runs/:runId/cancel', actions.cancelRun);
 
 // Loads the session row, enforces the (user, repository) scope, and
 // attaches it as `req.agentSession`. 404 when the session doesn't
@@ -45,6 +49,25 @@ async function loadSession(
     return createError(StatusCodes.FORBIDDEN, 'Access restricted');
   }
   req.agentSession = session;
+  next();
+}
+
+// Attaches the run row as `req.agentRun`
+// Enforces user and repository scope.
+async function loadRun(
+  req: any,
+  _res: Response,
+  next: NextFunction,
+  runId: string,
+) {
+  const run = runRegistry.get(runId);
+  if (!run || run.repositoryId !== req.repository?.id) {
+    return createError(StatusCodes.NOT_FOUND, 'Run not found');
+  }
+  if (run.userId !== req.user?.id) {
+    return createError(StatusCodes.FORBIDDEN, 'Access restricted');
+  }
+  req.agentRun = run;
   next();
 }
 

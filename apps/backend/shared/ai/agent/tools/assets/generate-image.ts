@@ -317,7 +317,7 @@ async function execute(input: Input, ctx: ToolContext) {
       : {}),
     _invalidates: ['assets'],
   };
-  recordOperation(TOOL, input, result, ctx);
+  recordOperation(TOOL, ctx);
   return result;
 }
 

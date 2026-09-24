@@ -1,7 +1,7 @@
 <template>
   <div class="ma-4 mt-0">
     <VSheet
-      :class="{ 'input-running': disabled }"
+      :class="{ 'input-running': isRunning }"
       class="agent-input"
       color="surface-canvas"
       border
@@ -9,7 +9,6 @@
       <VTextarea
         ref="inputEl"
         v-model="text"
-        :disabled="disabled"
         :placeholder="placeholder"
         class="input-field"
         density="comfortable"
@@ -43,8 +42,20 @@
           <AgentModeSelect v-model="mode" :compact="compact" />
           <AgentEffortSelect v-model="effort" :compact="compact" />
           <VBtn
+            v-if="isRunning && isEmpty"
+            aria-label="Stop"
+            class="input-send"
+            color="primary"
+            density="comfortable"
+            icon="mdi-stop"
+            rounded="lg"
+            size="small"
+            variant="flat"
+            @click="emit('stop')"
+          />
+          <VBtn
+            v-else
             :disabled="!canSubmit"
-            :loading="disabled"
             icon="mdi-arrow-up"
             aria-label="Send"
             class="input-send"
@@ -76,7 +87,8 @@ interface FocusChip {
 }
 
 interface Props {
-  disabled?: boolean;
+  // Messages sent while Renoir works join the current run.
+  isRunning?: boolean;
   // A Lens review is reading the content; only sending is blocked (the
   // agent must not edit mid-scan) - typing stays available.
   isLensRunning?: boolean;
@@ -85,7 +97,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  disabled: false,
+  isRunning: false,
   isLensRunning: false,
   placeholder:
     'Ask Renoir - generate, refine, restructure. Press / for shortcuts.',
@@ -94,6 +106,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   submit: [];
+  stop: [];
   autorun: [prompt: string, label: string];
   focus: [];
 }>();
@@ -116,9 +129,7 @@ const effort = defineModel<ReasoningEffortLiteral>('effort', {
 });
 
 const isEmpty = computed(() => text.value.trim().length === 0);
-const canSubmit = computed(
-  () => !isEmpty.value && !props.disabled && !props.isLensRunning,
-);
+const canSubmit = computed(() => !isEmpty.value && !props.isLensRunning);
 
 function onKeydown(e: KeyboardEvent) {
   if (cmdMenuEl.value?.handleKeydown(e)) {

@@ -1,24 +1,29 @@
-// Embedded authoring agent; non-streaming agent loop for v1. Wraps the
-// existing OpenAI Responses API. The loop:
-//   1. Build input array (system prompt + history)
-//   2. responses.create({ model, input, tools })
-//   3. For each function_call output item, dispatch the matching tool and
-//      append a function_call_output item to history
-//   4. Loop until no more tool calls or maxTurns hit
-import { isCompactModel, supportsReasoning } from '../lib/AiPrompt.ts';
-import { AgentMode } from '@tailor-cms/interfaces/agent.ts';
-import { ai as aiConfig } from '#config';
-import { oneLine } from 'common-tags';
-import OpenAI from 'openai';
+// Runs the embedded authoring agent. A run works alone in the
+// background, looping on the OpenAI Responses API:
+//   1. Take the messages the user has queued
+//   2. Ask the model what to do next (system prompt, history, tools)
+//   3. Execute the tools it picked and record their results
+//   4. Repeat until it has answered and nothing more is queued
+// Nobody waits on the loop: clients follow it through the run's events
+// and collect the result when it ends (see run/AgentRun.ts).
+import {
+  AgentMode,
+  type AgentPendingQuestion,
+} from '@tailor-cms/interfaces/agent.ts';
+import { AgentRun, runRegistry } from './run/index.ts';
+import type { RunInput, RunResult, ToolCallRecord } from './types.ts';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
+import type { ToolDef } from './tools/types.ts';
 
+import { isCompactModel, supportsReasoning } from '../lib/AiPrompt.ts';
+import { buildOpenAITools, findTool, type ToolContext } from './tools/index.ts';
+import { sessionStore, type AgentSession } from './session/index.ts';
+import { ai as aiConfig } from '#config';
 import { buildFocusHeader } from './context/FocusContext.ts';
 import { buildSystemPrompt } from './systemPrompt.ts';
-import { sessionStore, type AgentSession } from './session/index.ts';
-import { buildOpenAITools, findTool, type ToolContext } from './tools/index.ts';
-import type { ToolDef } from './tools/types.ts';
 import { createAiLogger } from '../logger.ts';
-import type { RunInput, RunResult, ToolCallRecord } from './types.ts';
+import { oneLine } from 'common-tags';
+import OpenAI from 'openai';
 
 const logger = createAiLogger('agent.runner');
 
@@ -28,10 +33,8 @@ const openaiClient = aiConfig.isEnabled
   ? new OpenAI({ apiKey: aiConfig.secretKey })
   : null;
 
-// Hard cap on (model call -> tool dispatch) iterations per run. Prevents
-// runaway tool-call loops from chewing through API credits or hanging
-// the request indefinitely.
-const MAX_TURNS = 80;
+// Cap on model calls per run, against runaway tool loops.
+const MAX_TURNS = 100;
 
 // Approximate char budgets for the session history we send back to the
 // model on each turn. Picked conservatively below known model context
@@ -62,9 +65,26 @@ const CONTENT_BLOCK = {
 
 // Tool that pauses the loop so the dock renders a picker without the
 // model producing a plain-text copy of the options on the next turn.
-// Detected both during loop iteration (to break early) and at run end
-// (to attach `pendingQuestion` to the result).
 const PAUSING_TOOL = 'ask_user_question';
+
+// Stub results for skipped tool calls; they tell the model why
+// a call never ran.
+const SKIPPED = {
+  paused: {
+    skipped: true,
+    reason: 'pausing_call_took_precedence',
+    message: oneLine`
+      Skipped: ask_user_question was in the same batch and
+      this tool has side effects. Re-emit if still needed
+      after the user answers.
+    `,
+  },
+  cancelled: {
+    skipped: true,
+    reason: 'cancelled',
+    message: 'Skipped: the user stopped the run.',
+  },
+};
 
 // OpenAI Responses API output items - the SDK has discriminated types
 // but the union is broad and not export-friendly
@@ -76,366 +96,244 @@ type FunctionCall = {
   arguments?: string;
 };
 
-/**
- * Mutable accumulator for a single `run()` call. Lives only for the
- * duration of the loop; the durable record is `session.history`.
- * Fields are mutated in place by `runTurn` / `handleCall`.
- */
+type ParseResult = { input: any } | { error: 'invalid_json'; message: string };
+
+// Per-run bookkeeping; anything durable lives on the session.
 interface RunState {
-  // Number of (model call -> tool dispatch) iterations completed.
-  // Used to enforce MAX_TURNS and reported as `turns` in the result.
+  // Model calls made so far; the run ends at MAX_TURNS.
   turns: number;
-  // Latest assistant text reply, overwritten each turn that produces
-  // a message item. The final value is what the user sees in the dock.
+  // The model's latest text; what the user sees when the run ends.
   replyText: string;
-  // Audit log of every tool call made in this run (success + failure).
-  // Source for `toolCalls` and `pendingQuestion` in the result.
-  toolCalls: ToolCallRecord[];
-  // Cache keys (assets, outline, etc.) the frontend should refetch
-  // after the run. Tools attach `_invalidates: string[]` to their
-  // result; `extractInvalidationKeys` strips and accumulates them here.
-  invalidates: Set<string>;
-  // Per-run reasoning effort. Applied only when the configured model
-  // supports the `reasoning.effort` parameter.
+  // Tool calls made so far.
+  toolCount: number;
+  // Set when the latest turn ended on ask_user_question.
+  pendingQuestion: AgentPendingQuestion | null;
+  // Passed to the model when it supports reasoning.
   reasoningEffort?: ReasoningEffortLiteral;
 }
 
+// What start() hands back: the run to follow, and whether the message
+// joined a run already in progress.
+export interface RunStart {
+  run: AgentRun;
+  isQueued: boolean;
+}
+
 export class AgentRunner {
-  async run(input: RunInput): Promise<RunResult> {
-    // Fail fast if AI isn't configured or repo is missing
+  /**
+   * Start a run in the background and return right away. When the
+   * session already has a run in progress, the message joins it.
+   */
+  async start(input: RunInput): Promise<RunStart> {
     assertReady(input);
-
-    // Explicit sessionId wins; otherwise reuse or lazily create the
-    // user's active session for this repo. Per-turn mode override is
-    // applied so the dock's picker takes effect immediately on
-    // existing sessions.
     const session = await this.resolveSession(input);
-
-    // Push two history items: an editor-state preamble (what the user
-    // is currently focused on, so the model can resolve "this", "the
-    // topic", etc.) followed by the user's literal message.
-    //
-    // Focus is bound to its turn in the durable transcript, NOT
-    // injected as runtime-only context: deictic references in older
-    // messages can only be reconstructed if each turn's focus snapshot
-    // is preserved alongside it ("fix it" three turns ago meant the
-    // element that was focused at THAT turn, not the currently-focused
-    // one). Token cost is small - ~5-10 lines per turn vs a 128K
-    // context window - and matches what mainstream chat-agent
-    // frameworks (LangChain, ChatGPT) do for per-turn user metadata.
-    await appendFocusContext(session, input);
-    appendUserMessage(session, input);
-
-    // The "developer"-role preamble sent on every model call. Composed
-    // from the live repository schema (outline levels, container types,
-    // allowed element types) plus the session's mode rules. Re-used as
-    // the first input item every turn so the model is grounded in this
-    // repo's vocabulary. See systemPrompt.ts for the exact composition.
-    const systemPrompt = buildSystemPromptFor(session, input.repository);
-
-    // Repo-scoped context handed to every tool's execute(). Acts as the
-    // ACL boundary - tools never read repositoryId off `input`, they
-    // pull it from ctx.repository so they cannot escape the scope.
-    // Also exposes `transactionLog` (the session's mutable op log) so
-    // tools can record write operations for undo/audit.
-    // Example: { userId: 7, repository: <Repository#42>, transactionLog: [] }
-    const ctx = buildToolContext(input, session);
-
-    // Tool manifest sent on every responses.create() call. This is how
-    // OpenAI's function-calling works in two halves:
-    //
-    //  1. We declare each tool as a JSON Schema (name + description +
-    //     parameter shape). The model sees the manifest and, on each
-    //     turn, decides whether to reply with plain text OR emit one or
-    //     more `function_call` items - each carrying the tool name it
-    //     picked plus a JSON-encoded `arguments` string conforming to
-    //     that tool's parameter schema.
-    //
-    //  2. The runner parses the args, looks the tool up in the registry
-    //     (findTool by name), gates by mode (isToolAllowed), executes
-    //     server-side, then appends a `function_call_output` item to
-    //     history so the model can read the result on its next turn.
-    //
-    // Built-in tools like `file_search` are different: OpenAI runs them
-    // server-side against the vector store IDs we declare - there's no
-    // local executor for those. They live in the same manifest because
-    // the model picks them the same way.
-    //
-    // Example:
-    //   [{ type: 'function', name: 'create_outline', parameters: {...} },
-    //    { type: 'function', name: 'add_elements_to_activity', ... },
-    //    { type: 'file_search', vector_store_ids: ['vs_abc...'] }]
-    const tools = buildOpenAITools(input.repository.getVectorStoreId());
-
-    // Mutable accumulator for THIS run only. Lives just for the loop;
-    // anything durable goes onto `session` instead. Tracks turn count
-    // (for MAX_TURNS), the latest assistant reply text, the per-tool
-    // audit log, and invalidation keys for the FE to refetch.
-    // Example after a 3-turn outline build:
-    //   { turns: 3, replyText: 'Created module + 2 topics.',
-    //     toolCalls: [...], .... }
-    const state = createRunState();
-    state.reasoningEffort = input.reasoningEffort;
-
-    // Each iteration calls the model with the running history,
-    // executes any tool calls returned, and appends function_call_output
-    // items back into history. Stops when the model emits no more tool
-    // calls, or a pausing tool (ask_user_question) fires.
-    while (state.turns < MAX_TURNS) {
-      const done = await this.runTurn(systemPrompt, tools, ctx, session, state);
-      if (done) break;
+    const message = {
+      message: input.message,
+      focus: input.focus,
+      mode: input.mode,
+    };
+    const active = runRegistry.findActive(session.id);
+    if (active) {
+      active.enqueue(message);
+      return { run: active, isQueued: true };
     }
+    const run = new AgentRun(session.id, input.repository.id, input.userId);
+    run.enqueue(message);
+    runRegistry.add(run);
+    void this.execute(run, input);
+    return { run, isQueued: false };
+  }
 
-    // Persist the session (history, transactionLog, mode) and return
-    // RunResult: replyText, toolCalls audit, invalidation keys,
-    // pending question, etc.
-    await sessionStore.save(session);
-    return assembleResult(session, state);
+  private async execute(run: AgentRun, input: RunInput): Promise<void> {
+    const state = createRunState(input.reasoningEffort);
+    let session: AgentSession | undefined;
+    try {
+      // Loaded fresh, so it includes everything the previous run saved.
+      session = await loadSession(run.sessionId);
+      const ctx = buildToolContext(input, session);
+      // Our tools, plus OpenAI's server-side file_search when the
+      // repository has a vector store.
+      const tools = buildOpenAITools(input.repository.getVectorStoreId());
+      let isFinished = false;
+      while (!isFinished) {
+        await this.takeQueued(run, session, input.repository);
+        // Done = the model answered in text or asked the user. After
+        // tool calls it needs another turn to read their results.
+        const isDone = await this.runTurn(tools, ctx, session, run, state);
+        await sessionStore.save(session);
+        // Nothing is awaited between this check and finish(), so a message
+        // sent meanwhile is either picked up here or starts a new run.
+        isFinished = run.isCancelled
+          || state.turns >= MAX_TURNS
+          || (isDone && !run.hasQueued);
+      }
+      // The turn cap can end the loop with queued messages
+      // (also more can arrive during flushing). Keep in history
+      // so the next run picks them up; a stopped run drops queue.
+      while (run.hasQueued && !run.isCancelled) {
+        await this.takeQueued(run, session, input.repository);
+        await sessionStore.save(session);
+      }
+      run.finish(assembleResult(state));
+    } catch (err: any) {
+      if (!run.isCancelled) {
+        logger.error({ err, runId: run.id }, 'agent run failed');
+      }
+      if (session) await saveQuietly(session);
+      run.finish(assembleResult(state), run.isCancelled ? null : err.message);
+    } finally {
+      runRegistry.release(run);
+    }
   }
 
   /**
-   * One iteration of the agent loop. Mutates state and session.history.
-   * Returns true when the loop should stop (no more tool calls, model
-   * error, or a paused-for-user question).
+   * Add queued user messages to the history.
+   */
+  private async takeQueued(
+    run: AgentRun,
+    session: AgentSession,
+    repository: any,
+  ): Promise<void> {
+    for (const { message, focus, mode } of run.takeQueued()) {
+      session.applyMode(mode);
+      const header = await buildFocusHeader(focus, repository);
+      if (header) session.history.push({ role: ROLE.User, content: header });
+      session.history.push({ role: ROLE.User, content: message });
+      run.push({ type: 'input', message });
+    }
+  }
+
+  /**
+   * One model call plus the tools it asks for. Returns true when the
+   * model is done (made no tool calls or asked the user question)
    */
   private async runTurn(
-    systemPrompt: string,
     tools: any[],
     ctx: ToolContext,
     session: AgentSession,
+    run: AgentRun,
     state: RunState,
   ): Promise<boolean> {
     state.turns++;
-    logger.debug(
-      { turn: state.turns, sessionId: session.id },
-      'agent loop iteration',
-    );
+    state.pendingQuestion = null;
     compactSession(session);
-
-    const response = await this.callModel(
-      systemPrompt,
-      session.history,
-      tools,
-      state.reasoningEffort,
-    );
-    if (response.error) {
-      state.replyText = `Agent error: ${response.error}`;
-      return true;
+    const output = await this.callModel(session, ctx.repository, tools, {
+      signal: run.signal,
+      reasoningEffort: state.reasoningEffort,
+    });
+    session.history.push(...output);
+    const text = extractAssistantText(output);
+    if (text) {
+      state.replyText = text;
+      run.push({ type: 'message', text });
     }
-
-    // Whatever the model emitted (assistant messages + function_call
-    // requests) becomes part of the durable transcript.
-    //
-    // A typical `response.output` for a tool-calling turn looks like:
-    //   [
-    //     {
-    //       type: 'message',
-    //       role: 'assistant',
-    //       content: [{
-    //         type: 'output_text',
-    //         text: "I'll draft that outline now."
-    //       }]
-    //     },
-    //     {
-    //       type: 'function_call',
-    //       call_id: 'call_abc',
-    //       name: 'create_outline',
-    //       arguments: '{"activities":[{"type":"MODULE",...}]}'
-    //     }
-    //   ]
-    // A finishing turn typically emits a single `message` item with no
-    // function_calls; a tool-only turn (model just dispatching, no
-    // narration) emits just function_call items.
-    session.history.push(...response.output);
-
-    // Capture any assistant text the model produced this turn. The
-    // `|| state.replyText` keeps the prior reply when this turn was
-    // tool-calls-only (empty text) - otherwise an earlier
-    // turn would be wiped out by a silent intermediate one.
-    state.replyText = extractAssistantText(response.output) || state.replyText;
-
-    // No tool calls means the model is done thinking - it emitted only
-    // text (or nothing) and is signaling end of turn. Returning `true`
-    // tells run()'s while-loop to break.
-    const calls = response.output.filter(isFunctionCall);
-    if (!calls.length) return true;
-
-    // When ask_user_question is in the batch, treat the question as
-    // an uncertainty signal and gate the other calls by scope:
-    //   - read tools execute (no side effects; the model may have
-    //     dispatched them deliberately to gather context for the
-    //     question, e.g. get_outline before "which topic?")
-    //   - write/destructive/generate tools are skipped - they would
-    //     act on the very uncertainty the model just flagged, and the
-    //     model can re-emit them after the user answers
-    // For each skipped call we push a synthetic function_call_output
-    // event into session.history (see the loop below) - same shape as
-    // a real result, but the `output` field is a stub explaining why
-    // we didn't run the tool. This keeps the OpenAI Responses API's
-    // function_call <-> function_call_output pairing invariant
-    // satisfied; without that paired event the next responses.create()
-    // request returns HTTP 400 ("No tool call found for function call
-    // output") on the dangling call. Pattern aligned with OpenAI
-    // Agents SDK / Microsoft Agent Framework's "per-tool approval
-    // rule evaluation".
-    const pausing = calls.some(isPausingCall);
-
-    // Sequential dispatch, not Promise.all: each handleCall appends a
-    // function_call_output to session.history, a later tool may inspect
-    // earlier results via the shared transactionLog on ctx, and the
-    // call_id ordering the model expects on the next turn would get
-    // mangled by parallelism.
+    const calls = output.filter(isFunctionCall);
+    // A question means the model is unsure, so tools with side effects
+    // wait for the answer. Read tools still run; they often gather
+    // context for the question itself.
+    const isPausing = calls.some(isPausingCall);
+    // One at a time, so results land in history in the order of the calls.
     for (const call of calls) {
-      if (pausing && !isPausingCall(call) && !isReadCall(call)) {
-        session.history.push(formatToolResult(call.call_id, {
-          skipped: true,
-          reason: 'pausing_call_took_precedence',
-          message: oneLine`
-            Skipped: ask_user_question was in the same batch and
-            this tool has side effects. Re-emit if still needed
-            after the user answers.
-          `,
-        }));
+      const skipped = getSkippedResult(call, run, isPausing);
+      if (skipped) {
+        session.history.push(formatToolResult(call.call_id, skipped));
         continue;
       }
-      await this.handleCall(call, ctx, session, state);
+      await this.handleCall(call, ctx, session, run, state);
     }
-
-    // Stop the loop if the model is now waiting on the human to pick.
-    // Continuing would let the model speculate about the choice or
-    // repeat the picker as plain text on the next turn.
-    return pausing;
+    return !calls.length || isPausing;
   }
 
-  /**
-   * Dispatch a single tool call, record the outcome, and append the
-   * function_call_output back to history for the next turn.
-   */
+  // Run one tool call: record the result in history and report it
+  // as tool:start / tool:end events.
   private async handleCall(
     call: FunctionCall,
     ctx: ToolContext,
     session: AgentSession,
+    run: AgentRun,
     state: RunState,
   ): Promise<void> {
-    const record = await this.dispatchTool(call, ctx, session);
-    state.toolCalls.push(record);
-
-    // Tools attach `_invalidates: string[]` to their result for the
-    // frontend (cache keys to refetch). It's a server-only contract -
-    // we strip the field before forwarding to the model so the model
-    // doesn't accidentally treat it as part of the answer, and we
-    // accumulate the keys into state.invalidates so RunResult can
-    // ship them to the dock.
-    //
-    // Before:
-    //   record.result = {
-    //     "ok": true,
-    //     "activity": { "id": 42, "type": "MODULE", "name": "Intro" },
-    //     "_invalidates": ["outline", "activity:42"]
-    //   }
-    //
-    // After:
-    //   modelResult = {
-    //     "ok": true,
-    //     "activity": { "id": 42, "type": "MODULE", "name": "Intro" }
-    //   }
-    //   state.invalidates += { "outline", "activity:42" }
-    const modelResult = extractInvalidationKeys(record.result, state.invalidates);
-    session.history.push(formatToolResult(call.call_id, modelResult));
+    const args = parseToolArgs(call);
+    const callId = call.call_id;
+    run.push({
+      type: 'tool:start',
+      callId,
+      name: call.name,
+      input: 'input' in args ? args.input : call.arguments,
+    });
+    const record = await this.dispatchTool(call, args, ctx, session);
+    const { result, invalidates } = extractInvalidates(record.result);
+    const finished = { ...record, result } as ToolCallRecord;
+    state.toolCount++;
+    if (finished.ok && finished.name === PAUSING_TOOL) {
+      state.pendingQuestion = toPendingQuestion(finished.input);
+    }
+    session.history.push(formatToolResult(callId, result));
+    run.push({ type: 'tool:end', callId, call: finished, invalidates });
   }
 
   /**
-   * Resolve which session this run targets. Two lookups:
-   *  - explicit sessionId (UUID) - client resuming a known conversation
-   *  - implicit active pointer (`${userId}:${repoId}`) - the user's
-   *    current session for this repo, lazily created if none active
-   * If the explicit sessionId is given but missing (expired or never existed),
-   * fall through to the implicit lookup so the run still has a session;
-   * the client's localStorage will catch up via RunResult.sessionId
-   * on the response.
+   * Finds or creates the appropriate session for the run.
    */
   private async resolveSession(input: RunInput): Promise<AgentSession> {
-    const session =
-      (input.sessionId && (await sessionStore.get(input.sessionId)))
-      || (await sessionStore.getOrCreate(
-        input.repository.id,
-        input.userId,
-        input.mode ?? AgentMode.Edit,
-      ));
-    session.applyMode(input.mode);
-    return session;
+    const session = input.sessionId
+      ? await sessionStore.get(input.sessionId)
+      : undefined;
+    return session ?? sessionStore.getOrCreate(
+      input.repository.id,
+      input.userId,
+      input.mode ?? AgentMode.Edit,
+    );
   }
 
   private async callModel(
-    systemPrompt: string,
-    history: ApiItem[],
+    session: AgentSession,
+    repository: any,
     tools: any[],
-    reasoningEffort?: ReasoningEffortLiteral,
-  ): Promise<{ output: ApiItem[]; error?: string }> {
-    try {
-      // Gate the reasoning param: passing it to a non-reasoning model
-      // (e.g. gpt-4o) is rejected by the API. Only attach when the
-      // configured model is in the reasoning family.
-      const params: any = {
-        model: aiConfig.modelId!,
-        input: [
-          { role: ROLE.Developer, content: systemPrompt },
-          ...history,
-        ] as any,
-        tools,
-      };
-      if (reasoningEffort && supportsReasoning(aiConfig.modelId)) {
-        params.reasoning = { effort: reasoningEffort };
-      }
-      // Approximate-size log so context-window blow-ups have an
-      // observable trail.
-      if (logger.isLevelEnabled('debug')) {
-        const promptChars = systemPrompt.length;
-        const historyChars = approxChars(history);
-        const toolsChars = approxChars(tools);
-        const totalChars = promptChars + historyChars + toolsChars;
-        logger.debug(
-          {
-            promptChars,
-            historyChars,
-            toolsChars,
-            totalChars,
-            approxTokens: Math.round(totalChars / 4),
-            historyItems: history.length,
-            toolCount: tools.length,
-          },
-          'agent input size (4 chars per token estimate)',
-        );
-      }
-      const response = await openaiClient!.responses.create(params);
-      return { output: response.output || [] };
-    } catch (err: any) {
-      logger.error(err, 'OpenAI responses.create failed');
-      return { output: [], error: err.message };
+    opts: { signal: AbortSignal; reasoningEffort?: ReasoningEffortLiteral },
+  ): Promise<ApiItem[]> {
+    // Rebuilt each turn since a queued message may switch the mode.
+    const systemPrompt = buildSystemPromptFor(session, repository);
+    const params: any = {
+      model: aiConfig.modelId!,
+      input: [
+        { role: ROLE.Developer, content: systemPrompt },
+        ...session.history,
+      ],
+      tools,
+    };
+    if (opts.reasoningEffort && supportsReasoning(aiConfig.modelId)) {
+      params.reasoning = { effort: opts.reasoningEffort };
     }
+    if (logger.isLevelEnabled('debug')) {
+      logInputSize(systemPrompt, session.history, tools);
+    }
+    const response = await openaiClient!.responses.create(params, {
+      signal: opts.signal,
+    });
+    return response.output || [];
   }
 
   /**
-   * Parse args, look up the tool, gate by mode, then execute. Each
-   * step's failure becomes a structured ToolCallRecord the model can
-   * recover from on the next turn.
+   * Look up the tool, gate by mode, then execute. Each failure becomes a
+   * structured ToolCallRecord the model can recover from on the next turn.
    */
   private async dispatchTool(
     call: FunctionCall,
+    args: ParseResult,
     ctx: ToolContext,
     session: AgentSession,
   ): Promise<ToolCallRecord> {
-    const parsed = parseToolArgs(call);
-    if ('error' in parsed) return failure(call.name, call.arguments, parsed);
+    if ('error' in args) return failure(call.name, call.arguments, args);
 
     const tool = findTool(call.name);
-    if (!tool) return unknownToolFailure(call, parsed.input);
+    if (!tool) return unknownToolFailure(call, args.input);
 
     if (!session.canRun(tool)) {
-      return modeBlockedFailure(call, tool, session, parsed.input);
+      return modeBlockedFailure(call, tool, session, args.input);
     }
 
-    return this.executeTool(tool, call.name, parsed.input, ctx, session);
+    return this.executeTool(tool, call.name, args.input, ctx, session);
   }
 
   private async executeTool(
@@ -464,22 +362,20 @@ export class AgentRunner {
   }
 }
 
-function appendUserMessage(session: AgentSession, input: RunInput): void {
-  session.history.push({ role: ROLE.User, content: input.message });
+async function loadSession(id: string): Promise<AgentSession> {
+  const session = await sessionStore.get(id);
+  if (!session) throw new Error('Session not found');
+  return session;
 }
 
-// Push an editor-state preamble describing what the user is currently
-// focused on, so the agent can resolve "this", "the topic", etc.
-// without an extra read. No-op when the client supplied no focus.
-async function appendFocusContext(
-  session: AgentSession,
-  input: RunInput,
-): Promise<void> {
-  const header = await buildFocusHeader(input.focus, input.repository);
-  if (!header) return;
-  session.history.push({ role: ROLE.User, content: header });
+// Save session and ignore any errors; logging them instead.
+function saveQuietly(session: AgentSession): Promise<void> {
+  return sessionStore
+    .save(session)
+    .catch((err) => logger.warn({ err }, 'session save failed'));
 }
 
+// Grounds the model in this repository's schema and the mode's rules
 function buildSystemPromptFor(session: AgentSession, repository: any): string {
   return buildSystemPrompt({
     repository: {
@@ -501,8 +397,34 @@ function buildToolContext(input: RunInput, session: AgentSession): ToolContext {
   };
 }
 
-function createRunState(): RunState {
-  return { turns: 0, replyText: '', toolCalls: [], invalidates: new Set() };
+function createRunState(reasoningEffort?: ReasoningEffortLiteral): RunState {
+  return {
+    turns: 0,
+    replyText: '',
+    toolCount: 0,
+    pendingQuestion: null,
+    reasoningEffort,
+  };
+}
+
+// Size log so context-window blow-ups leave a trail.
+function logInputSize(systemPrompt: string, history: ApiItem[], tools: any[]) {
+  const promptChars = systemPrompt.length;
+  const historyChars = approxChars(history);
+  const toolsChars = approxChars(tools);
+  const totalChars = promptChars + historyChars + toolsChars;
+  logger.debug(
+    {
+      promptChars,
+      historyChars,
+      toolsChars,
+      totalChars,
+      approxTokens: Math.round(totalChars / 4),
+      historyItems: history.length,
+      toolCount: tools.length,
+    },
+    'agent input size (4 chars per token estimate)',
+  );
 }
 
 // Rough character-count for any JSON-serialisable payload. Used only
@@ -595,8 +517,6 @@ async function safeExecute(
     return { error: 'tool_threw', message: err.message };
   }
 }
-
-type ParseResult = { input: any } | { error: 'invalid_json'; message: string };
 
 function parseToolArgs(call: FunctionCall): ParseResult {
   if (!call.arguments) return { input: {} };
@@ -691,53 +611,47 @@ function formatToolResult(callId: string, result: unknown): ApiItem {
 }
 
 /**
- * Tool results may include a server-only `_invalidates` array of cache
- * keys the frontend should refetch. Strip it before forwarding to the
- * model and accumulate it in the run-level set.
+ * Every call needs a result in history, or the next model request is
+ * rejected.
  */
-function extractInvalidationKeys(result: any, invalidates: Set<string>): any {
-  if (!result || typeof result !== 'object') return result;
-  if (!('_invalidates' in result)) return result;
-  const { _invalidates, ...rest } = result;
-  if (Array.isArray(_invalidates)) {
-    for (const key of _invalidates) invalidates.add(key);
+function getSkippedResult(
+  call: FunctionCall,
+  run: AgentRun,
+  isPausing: boolean,
+) {
+  if (run.isCancelled) return SKIPPED.cancelled;
+  if (isPausing && !isPausingCall(call) && !isReadCall(call)) {
+    return SKIPPED.paused;
   }
-  return rest;
+  return null;
 }
 
-function assembleResult(session: AgentSession, state: RunState): RunResult {
-  return {
-    sessionId: session.id,
-    replyText: state.replyText,
-    toolCalls: state.toolCalls,
-    turns: state.turns,
-    truncated: state.turns >= MAX_TURNS,
-    invalidates: Array.from(state.invalidates),
-    transactionLog: session.transactionLog,
-    pendingQuestion: lastPendingQuestion(state.toolCalls),
-  };
+// Data client should refetch
+function extractInvalidates(result: any): { result: any; invalidates: string[] } {
+  if (!result || typeof result !== 'object' || !('_invalidates' in result)) {
+    return { result, invalidates: [] };
+  }
+  const { _invalidates, ...rest } = result;
+  const invalidates = Array.isArray(_invalidates) ? _invalidates : [];
+  return { result: rest, invalidates };
 }
 
-/**
- * Pick the question the dock should render as a clickable picker.
- *
- * The model can call ask_user_question more than once in
- * a single run (e.g. it asked, retracted, asked something else). The
- * dock can only show one picker at a time, and the natural choice is
- * the most recent successful one - earlier questions are superseded
- * the moment the model emits a new ask.
- */
-function lastPendingQuestion(
-  toolCalls: ToolCallRecord[],
-): RunResult['pendingQuestion'] {
-  const last = toolCalls.findLast((tc) => tc.name === PAUSING_TOOL && tc.ok);
-  if (!last) return null;
-  const input = last.input as any;
+function toPendingQuestion(input: any): AgentPendingQuestion {
   return {
     title: input?.title ?? '',
     question: input?.question ?? '',
     options: input?.options ?? [],
     allowOther: input?.allowOther !== false,
+  };
+}
+
+function assembleResult(state: RunState): RunResult {
+  return {
+    replyText: state.replyText,
+    turns: state.turns,
+    toolCount: state.toolCount,
+    truncated: state.turns >= MAX_TURNS,
+    pendingQuestion: state.pendingQuestion,
   };
 }
 

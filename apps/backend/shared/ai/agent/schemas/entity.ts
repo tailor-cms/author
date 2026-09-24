@@ -14,6 +14,9 @@ export { AgentMode };
 // UUID identifier for an agent session.
 export const SessionId = () => Uid('Agent session UID.');
 
+// UUID identifier for an agent run.
+export const RunId = () => Uid('Agent run UID.');
+
 // Conversation history; the OpenAI Responses-API input array, growing
 // across turns. Entries are passed through verbatim;
 export const AgentHistory = z
