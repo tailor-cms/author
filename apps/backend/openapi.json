@@ -1024,7 +1024,7 @@
           },
           "isQueued": {
             "type": "boolean",
-            "description": "True when a run was already working on the session and the message joined it."
+            "description": "True when the message joined a run already working on this session instead of starting a new one; `runId` is that run."
           }
         },
         "required": [
@@ -1302,7 +1302,7 @@
         "properties": {
           "replyText": {
             "type": "string",
-            "description": "The model's last reply. Empty when it produced no text."
+            "description": "The model's final reply."
           },
           "turns": {
             "type": "integer",
@@ -1369,19 +1369,19 @@
               "description": "Progress reported while a run works.",
               "$ref": "#/components/schemas/AgentRunEvent"
             },
-            "description": "Events after the requested cursor."
+            "description": "Events after the requested marker."
           },
           "result": {
             "anyOf": [
               {
-                "description": "Summary of a finished agent run.",
+                "description": "Summary of agent run.",
                 "$ref": "#/components/schemas/AgentRunResult"
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Set once the run has ended."
+            "description": "Set once ended."
           },
           "error": {
             "anyOf": [
@@ -1392,7 +1392,7 @@
                 "type": "null"
               }
             ],
-            "description": "Set when the run failed."
+            "description": "Set when failed."
           }
         },
         "required": [
@@ -7367,12 +7367,12 @@
         "operationId": "aiStartAgentRun",
         "x-tailor-slice": "ai",
         "x-tailor-method": "startAgentRun",
-        "summary": "Start an agent run",
-        "description": "Starts a run in the background and returns its id right away; follow it with the get endpoint. When the session already has a run in progress, the message joins that run.",
+        "summary": "Start a run",
+        "description": "Starts a run in the background and returns its identifier;",
         "parameters": [],
         "responses": {
           "202": {
-            "description": "Run id and the session it works on.",
+            "description": "Run identifier and the session info.",
             "content": {
               "application/json": {
                 "schema": {
@@ -7460,8 +7460,8 @@
         "operationId": "aiGetAgentRun",
         "x-tailor-slice": "ai",
         "x-tailor-method": "getAgentRun",
-        "summary": "Get agent run progress",
-        "description": "Returns the run status and the events after `after`. With `wait`, holds the request until something new happens.",
+        "summary": "Get run progress",
+        "description": "Returns the run state and the events. With `wait`, holds the request until new events are available.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -7489,7 +7489,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Return only events after this number. Defaults to 0 (all).",
+              "description": "Return events after this marker. Defaults to 0 (all).",
               "type": "integer",
               "minimum": 0,
               "maximum": 9007199254740991
@@ -7500,7 +7500,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Seconds to hold the request until a new event arrives or the run ends. Defaults to 0 (answer right away).",
+              "description": "Seconds to hold the request until a new event arrives or the run ends. Defaults to 0 (immediately).",
               "type": "integer",
               "minimum": 0,
               "maximum": 25
@@ -7517,7 +7517,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "A run as seen by a polling client.",
+                      "description": "State of a run at a specific point in time.",
                       "$ref": "#/components/schemas/AgentRunSnapshot"
                     }
                   },
@@ -7530,10 +7530,10 @@
             }
           },
           "403": {
-            "description": "Run belongs to a different user."
+            "description": "Belongs to a different user."
           },
           "404": {
-            "description": "Run not found or no longer kept."
+            "description": "Not found."
           }
         },
         "security": [
@@ -7551,8 +7551,8 @@
         "operationId": "aiCancelAgentRun",
         "x-tailor-slice": "ai",
         "x-tailor-method": "cancelAgentRun",
-        "summary": "Stop an agent run",
-        "description": "The run stops after the step in progress.",
+        "summary": "Stop run",
+        "description": "The in-progress step will be stopped.",
         "parameters": [
           {
             "name": "repositoryId",
