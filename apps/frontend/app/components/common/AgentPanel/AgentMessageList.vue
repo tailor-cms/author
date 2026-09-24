@@ -30,11 +30,11 @@
 <script lang="ts" setup>
 import AgentChatMessage from './AgentChatMessage.vue';
 import AgentEmptyState from './AgentEmptyState.vue';
-import type { ChatMessage } from './composables/useAgentSession';
+import type { TranscriptMessage } from './composables/useAgentSession';
 
 interface Props {
   isRunning: boolean;
-  messages: ChatMessage[];
+  messages: TranscriptMessage[];
   statusText: string;
   error: string | null;
 }

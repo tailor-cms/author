@@ -31,13 +31,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { ChatToolCall } from '../composables/useAgentSession';
+import type { TranscriptToolCall } from '../composables/useAgentSession';
 import { getToolSummary } from './toolSummary';
 import { useToolLabel } from '../composables/useToolLabel';
 import ToolCardHeader from './ToolCardHeader.vue';
 
 interface Props {
-  toolCall: ChatToolCall;
+  toolCall: TranscriptToolCall;
 }
 
 const props = defineProps<Props>();

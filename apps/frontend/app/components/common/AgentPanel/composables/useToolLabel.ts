@@ -1,4 +1,4 @@
-import type { ChatMessage, ChatToolCall } from './useAgentSession';
+import type { TranscriptMessage, TranscriptToolCall } from './useAgentSession';
 import { getToolLabel } from '../AgentToolCard/toolLabel';
 import { useActivityStore } from '@/stores/activity';
 
@@ -17,7 +17,7 @@ export function useToolLabel() {
     return activity?.data?.name;
   }
 
-  function getLabel(call: ChatToolCall): string {
+  function getLabel(call: TranscriptToolCall): string {
     return getToolLabel(call.name, call.input, {
       isDone: call.ok === true,
       findName,
@@ -25,7 +25,9 @@ export function useToolLabel() {
   }
 
   // The tool call still running in the latest reply, if any.
-  function findRunningCall(messages: ChatMessage[]): ChatToolCall | undefined {
+  function findRunningCall(
+    messages: TranscriptMessage[],
+  ): TranscriptToolCall | undefined {
     const reply = messages.findLast((it) => it.role === 'assistant');
     return reply?.toolCalls?.findLast((it) => it.ok === undefined);
   }
