@@ -29,8 +29,8 @@
           @click="areToolsExpanded = !areToolsExpanded"
         />
         <AgentToolCard
-          v-for="(toolCall, i) in visibleToolCalls"
-          :key="i"
+          v-for="toolCall in visibleToolCalls"
+          :key="toolCall.callId"
           :tool-call="toolCall"
         />
       </div>
@@ -39,17 +39,18 @@
 </template>
 
 <script lang="ts" setup>
-import AgentToolCard from './AgentToolCard/index.vue';
+import type { TranscriptToolCall } from './composables/useAgentSession';
 import { activityHref, elementHref } from './entityLinks';
 import { renderMarkdown } from './markdown';
 import { useCurrentRepository } from '@/stores/current-repository';
+import AgentToolCard from './AgentToolCard/index.vue';
 
 const TOOL_CALL_PREVIEW = 4;
 
 interface Props {
   role: 'user' | 'assistant';
   content?: string;
-  toolCalls?: any[];
+  toolCalls?: TranscriptToolCall[];
 }
 
 const props = defineProps<Props>();

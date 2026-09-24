@@ -196,7 +196,7 @@ async function execute(input: Input, ctx: ToolContext) {
       ...(parent?.id ? [`activity:${parent.id}`] : []),
     ],
   };
-  recordOperation(TOOL, input, result, ctx);
+  recordOperation(TOOL, ctx);
   return result;
 }
 

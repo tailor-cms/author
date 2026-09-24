@@ -24,23 +24,23 @@ export function toolError(opts: ToolErrorOptions) {
   };
 }
 
-// Record an operation in the transaction log for
-// undo and audit purposes.
+const MAX_LOG_ENTRIES = 100;
+
+// Record an operation in the transaction log for undo and audit
+// purposes. Only what undo needs is kept;
 export function recordOperation(
   tool: string,
-  input: any,
-  result: any,
   ctx: ToolContext,
   inverse?: OperationEntry['inverse'],
 ) {
-  ctx.transactionLog.push({
-    seq: ctx.transactionLog.length + 1,
+  const log = ctx.transactionLog;
+  log.push({
+    seq: (log.at(-1)?.seq ?? 0) + 1,
     tool,
-    input,
-    result,
     inverse,
     timestamp: Date.now(),
   });
+  if (log.length > MAX_LOG_ENTRIES) log.splice(0, log.length - MAX_LOG_ENTRIES);
 }
 
 // Build the Sequelize operation context required by

@@ -127,7 +127,7 @@ async function execute(input: Input, ctx: ToolContext) {
     },
     _invalidates: [`activity:${activity.id}`, 'outline'],
   };
-  recordOperation(TOOL, input, result, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: 'update_activity',
     input: {
       id: activity.id,

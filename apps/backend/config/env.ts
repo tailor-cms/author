@@ -135,7 +135,7 @@ const Shape = z.object({
   // Chat/completion model id.
   AI_MODEL_ID: z.string().default('gpt-5.4-mini'),
   // Model used for image generation/editing.
-  AI_IMAGE_MODEL_ID: z.string().default('gpt-image-2'),
+  AI_IMAGE_MODEL_ID: z.string().default('gpt-image-2.5-flare'),
   // Days of inactivity before an AI vector store is cleaned up.
   AI_VECTOR_STORE_EXPIRY_DAYS: posInt(60),
 

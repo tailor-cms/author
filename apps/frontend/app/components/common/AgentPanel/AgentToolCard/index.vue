@@ -1,13 +1,14 @@
 <template>
   <VCard
-    :border="`sm opacity-50 ${toolCall.ok ? 'success' : 'error'}`"
+    :border="`sm opacity-50 ${borderColor}`"
     class="tool-card text-body-small"
     color="surface-container-low"
     elevation="0"
   >
     <ToolCardHeader
-      :name="toolCall.name"
-      :is-success="toolCall.ok"
+      :label="label"
+      :is-pending="isPending"
+      :is-success="!!toolCall.ok"
       :is-open="isOpen"
       :duration-ms="toolCall.durationMs"
       :summary="summary"
@@ -15,6 +16,7 @@
     />
     <VExpandTransition>
       <div v-if="isOpen" class="card-body ga-2">
+        <code class="card-name">{{ toolCall.name }}</code>
         <details v-if="hasInput" open>
           <summary>input</summary>
           <pre>{{ stringify(toolCall.input) }}</pre>
@@ -29,17 +31,32 @@
 </template>
 
 <script lang="ts" setup>
-import ToolCardHeader from './ToolCardHeader.vue';
+import type { TranscriptToolCall } from '../composables/useAgentSession';
 import { getToolSummary } from './toolSummary';
-import type { ToolCallRecord } from '@tailor-cms/interfaces/agent.ts';
+import { useToolLabel } from '../composables/useToolLabel';
+import ToolCardHeader from './ToolCardHeader.vue';
 
 interface Props {
-  toolCall: ToolCallRecord;
+  toolCall: TranscriptToolCall;
 }
 
 const props = defineProps<Props>();
 
+const { getLabel } = useToolLabel();
+
 const isOpen = ref(false);
+
+// Saved calls have a label; their input is not kept.
+const label = computed(
+  () => props.toolCall.label ?? getLabel(props.toolCall),
+);
+
+const isPending = computed(() => props.toolCall.ok === undefined);
+
+const borderColor = computed(() => {
+  if (isPending.value) return '';
+  return props.toolCall.ok ? 'success' : 'error';
+});
 
 const hasInput = computed(() => {
   const { input } = props.toolCall;
@@ -48,8 +65,11 @@ const hasInput = computed(() => {
 
 const hasResult = computed(() => props.toolCall.result != null);
 
-const summary = computed(() =>
-  getToolSummary(props.toolCall.name, props.toolCall.result),
+// If saved, use the summary; otherwise, generate one from the result.
+const summary = computed(
+  () =>
+    props.toolCall.summary ??
+    getToolSummary(props.toolCall.name, props.toolCall.result),
 );
 
 /**
@@ -75,6 +95,11 @@ function stringify(value: unknown): string {
   display: flex;
   flex-direction: column;
   padding: 0.5rem 0.75rem 0.75rem;
+}
+
+.card-name {
+  opacity: 0.6;
+  font-size: 0.75rem;
 }
 
 .card-body details summary {

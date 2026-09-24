@@ -73,18 +73,15 @@ export interface ToolContext {
 
 /**
  * A single recorded operation in the transaction log.
- * Captures what tool was called, what it did, and how
- * to reverse it. Used by the dock's "Undo run" feature.
+ * Captures which tool ran, when, and the call that would
+ * reverse it, for undo and audit. What it did lives in the
+ * session history.
  */
 export interface OperationEntry {
-  // 1-based sequence number within the run
+  // 1-based sequence number within the session
   seq: number;
   // Tool name that was called (e.g. 'create_activity')
   tool: string;
-  // The input the LLM passed to the tool
-  input: any;
-  // The result the tool returned
-  result: any;
   /**
    * The tool call that would reverse this operation.
    * E.g. create_activity's inverse is delete_activity.

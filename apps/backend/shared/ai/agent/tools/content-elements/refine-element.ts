@@ -157,7 +157,7 @@ async function execute(input: Input, ctx: ToolContext) {
     element,
     _invalidates: [`element:${element.id}`, `activity:${element.activityId}`],
   };
-  recordOperation(TOOL, input, result, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: 'update_element',
     input: { id: element.id, data: previousData },
   });
