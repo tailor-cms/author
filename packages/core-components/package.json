@@ -34,11 +34,14 @@
     "yup": "^1.4.0"
   },
   "dependencies": {
+    "@tiptap/extension-emoji": "^3.30.3",
+    "@tiptap/extension-mention": "^3.30.2",
     "@tiptap/extension-subscript": "^3.28.0",
     "@tiptap/extension-superscript": "^3.28.0",
     "@tiptap/extensions": "^3.28.0",
     "@tiptap/pm": "^3.28.0",
     "@tiptap/starter-kit": "^3.28.0",
+    "@tiptap/suggestion": "^3.30.2",
     "@tiptap/vue-3": "^3.28.0",
     "@vueuse/core": "^14.3.0",
     "chart.js": "^4.5.1",
