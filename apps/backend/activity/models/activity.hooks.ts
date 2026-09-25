@@ -3,18 +3,19 @@
 // change), and repository / outline-activity touch-up for the
 // hasUnpublishedChanges propagation chain.
 import type { Transaction } from 'sequelize';
+import type { Activity } from './activity.model.js';
+import type { Repository } from '../../repository/models/repository.model.js';
+import type { OperationContext } from '#shared/database/types.ts';
+import type ActivityModel from './activity.model.js';
+import type RepositoryModel from '../../repository/models/repository.model.js';
+
+import * as eventBus from '#shared/events/bus.ts';
+import { createLogger } from '#logger';
+import { schema } from '@tailor-cms/config';
 import forEach from 'lodash/forEach.js';
 import groupBy from 'lodash/groupBy.js';
-import { schema } from '@tailor-cms/config';
-
-import { createLogger } from '#logger';
 import linkService from '#shared/content-library/link.service.js';
 import sse from '#shared/sse/index.js';
-import type { OperationContext } from '#shared/database/types.ts';
-import type RepositoryModel from '../../repository/models/repository.model.js';
-import type { Repository } from '../../repository/models/repository.model.js';
-import type ActivityModel from './activity.model.js';
-import type { Activity } from './activity.model.js';
 
 // Eagerly-included Repository belongsTo association on an Activity instance.
 type ActivityWithRepository = Activity & { repository: Repository };
@@ -44,6 +45,7 @@ function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
       touchOutline,
       propagateActivityCreation,
       sseCreate,
+      emitCreated,
     ],
     // Order matters: touchOutline must run before propagateToLinkedActivities
     // so modifiedAt is set before propagation uses it.
@@ -62,9 +64,19 @@ function add(Activity: typeof ActivityModel, Hooks: any, Models: ModelsBag) {
       touchRepository,
       touchOutline,
       sseDelete,
+      emitRemoved,
     ],
     [Hooks.afterRestore]: [touchRepository, touchOutline, sseUpdate],
   };
+
+  // Announce structural changes on the repository event bus
+  function emitCreated(_hookType: string, activity: Activity, opts: CtxOpts) {
+    emitStructureEvent(eventBus.EventType.ActivityCreated, activity, opts);
+  }
+
+  function emitRemoved(_hookType: string, activity: Activity, opts: CtxOpts) {
+    emitStructureEvent(eventBus.EventType.ActivityRemoved, activity, opts);
+  }
 
   // Unlink the parent tree when a structural change breaks the link.
   async function unlinkParentOnStructuralChange(
@@ -349,3 +361,19 @@ const afterTransaction = <T extends SequelizeHookFn>(method: T): T =>
   } as T;
 
 export default { add };
+
+function emitStructureEvent(type: string, activity: any, opts?: CtxOpts) {
+  if (!isOutlineActivity(activity.type)) return;
+  eventBus.publish({
+    type,
+    repositoryId: activity.repositoryId,
+    actorId: opts?.context?.userId ?? null,
+    subject: eventBus.subjectOf.activity(activity.id),
+    data: {
+      id: activity.id,
+      name: activity.data?.name ?? null,
+      type: activity.type,
+      typeLabel: schema.getLevel(activity.type)?.label ?? null,
+    },
+  });
+}

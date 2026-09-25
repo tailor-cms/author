@@ -24,11 +24,12 @@ import type { Activity } from '../../activity/models/activity.model.js';
 import type { AgentRun } from '../ai/agent/run/index.ts';
 import type { AgentSession } from '../ai/agent/session/index.ts';
 import type { Asset } from '../../asset/models/asset.model.js';
-import type { Comment } from '../../comment/models/comment.model.js';
+import type { Comment } from '../../messaging/models/comment.model.js';
 import type { ContentElement }
   from '../../content-element/models/content-element.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';
 import type { Revision } from '../../revision/models/revision.model.js';
+import type { Thread } from '../../messaging/thread/models/thread.model.js';
 import type { User } from '../../user/models/user.model.js';
 import type { UserGroup } from '../../user-group/models/user-group.model.js';
 
@@ -115,7 +116,8 @@ export interface ActionContext<
     // module augmentation) because there's no tsconfig at apps/backend
     // for the IDE to discover ambient declarations from.
     repository?: Repository;
-    comment?: Comment;
+    message?: Comment;
+    thread?: Thread;
     contentElement?: ContentElement;
     revision?: Revision;
     activity?: Activity;

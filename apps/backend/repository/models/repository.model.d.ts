@@ -17,7 +17,7 @@ import type {
   User,
 } from '@tailor-cms/interfaces';
 import type { OperationContext } from '#shared/database/types.ts';
-import type { Comment } from '../../comment/models/comment.model.js';
+import type { Comment } from '../../messaging/models/comment.model.js';
 
 // Helper: attach the platform's hook context option to a Sequelize options shape.
 type WithContext<T> = T & { context?: OperationContext };

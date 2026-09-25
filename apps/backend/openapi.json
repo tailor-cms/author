@@ -11,12 +11,20 @@
   ],
   "tags": [
     {
+      "name": "Workspace / Emoji",
+      "x-displayName": "Emoji"
+    },
+    {
       "name": "Health / Classic",
       "x-displayName": "Classic"
     },
     {
       "name": "Health / Probes",
       "x-displayName": "Probes"
+    },
+    {
+      "name": "Messaging / Webhooks",
+      "x-displayName": "Webhooks"
     },
     {
       "name": "Activity / CRUD",
@@ -59,12 +67,28 @@
       "x-displayName": "Asset"
     },
     {
-      "name": "Comment / CRUD",
+      "name": "Messaging / Integrations",
+      "x-displayName": "Integrations"
+    },
+    {
+      "name": "Messaging / Threads",
+      "x-displayName": "Threads"
+    },
+    {
+      "name": "Messaging / Read state",
+      "x-displayName": "Read state"
+    },
+    {
+      "name": "Messaging / CRUD",
       "x-displayName": "CRUD"
     },
     {
-      "name": "Comment / Resolution",
+      "name": "Messaging / Resolution",
       "x-displayName": "Resolution"
+    },
+    {
+      "name": "Messaging / Search",
+      "x-displayName": "Search"
     },
     {
       "name": "Content Element / CRUD",
@@ -164,10 +188,28 @@
   ],
   "x-tagGroups": [
     {
+      "name": "Workspace",
+      "tags": [
+        "Workspace / Emoji"
+      ]
+    },
+    {
       "name": "Health",
       "tags": [
         "Health / Classic",
         "Health / Probes"
+      ]
+    },
+    {
+      "name": "Messaging",
+      "tags": [
+        "Messaging / Webhooks",
+        "Messaging / Integrations",
+        "Messaging / Threads",
+        "Messaging / Read state",
+        "Messaging / CRUD",
+        "Messaging / Resolution",
+        "Messaging / Search"
       ]
     },
     {
@@ -194,13 +236,6 @@
         "Library / Discovery",
         "Library / Indexing",
         "Library / Asset"
-      ]
-    },
-    {
-      "name": "Comment",
-      "tags": [
-        "Comment / CRUD",
-        "Comment / Resolution"
       ]
     },
     {
@@ -271,6 +306,135 @@
       }
     },
     "schemas": {
+      "Emoji": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
+            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+          },
+          "url": {
+            "type": "string",
+            "description": "Content-addressed and served with a far-future cache, so a client fetches it once and keeps it. Replacing an emoji mints a new URL rather than asking anybody to revalidate the old one."
+          },
+          "isAnimated": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the emoji was added."
+          },
+          "createdBy": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Numeric primary key."
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+                  },
+                  "imgUrl": {
+                    "type": "string",
+                    "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "imgUrl"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who added it."
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "url",
+          "isAnimated",
+          "createdAt",
+          "createdBy"
+        ],
+        "additionalProperties": false
+      },
+      "SlackAttachment": {
+        "type": "object",
+        "properties": {
+          "fallback": {
+            "description": "Plain-text summary.",
+            "type": "string"
+          },
+          "color": {
+            "type": "string"
+          },
+          "pretext": {
+            "type": "string"
+          },
+          "author_name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "title_link": {
+            "type": "string",
+            "format": "uri"
+          },
+          "text": {
+            "type": "string"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "value": {
+                  "type": "string"
+                },
+                "short": {
+                  "type": "boolean"
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "footer": {
+            "type": "string"
+          },
+          "ts": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
       "Relationship": {
         "type": "object",
         "properties": {
@@ -2008,6 +2172,80 @@
         ],
         "additionalProperties": false
       },
+      "UrlDescription": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string",
+            "description": "Page title, or empty behind a sign-in."
+          },
+          "description": {
+            "type": "string"
+          },
+          "siteName": {
+            "type": "string",
+            "description": "Publisher name, where it differs from the domain."
+          },
+          "domain": {
+            "type": "string"
+          },
+          "favicon": {
+            "type": "string"
+          },
+          "thumbnail": {
+            "type": "string",
+            "description": "Preview image URL; empty when there is none."
+          },
+          "thumbnailWidth": {
+            "type": "number",
+            "description": "Advertised width; 0 when the page did not say."
+          },
+          "thumbnailHeight": {
+            "type": "number"
+          },
+          "provider": {
+            "type": "string",
+            "description": "Recognised service, e.g. google-docs, sharepoint. Empty unless the URL names one; the client turns it into an icon, a colour and a label."
+          },
+          "contentType": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "VIDEO",
+                  "IMAGE",
+                  "DOCUMENT",
+                  "AUDIO",
+                  "ARTICLE",
+                  "RESEARCH",
+                  "OTHER"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "What the link points at; null when the URL does not say."
+          }
+        },
+        "required": [
+          "url",
+          "title",
+          "description",
+          "siteName",
+          "domain",
+          "favicon",
+          "thumbnail",
+          "thumbnailWidth",
+          "thumbnailHeight",
+          "provider",
+          "contentType"
+        ],
+        "additionalProperties": false
+      },
       "AssetBulkRemoveResult": {
         "type": "object",
         "properties": {
@@ -2111,6 +2349,489 @@
           "$ref": "#/components/schemas/AssetUsage"
         }
       },
+      "Integration": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable identifier; the address a thread subscribes to as `integration:<key>`."
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "MDI icon name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
+          },
+          "repositoryId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null for the built-in integrations, which are available everywhere."
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "type",
+          "repositoryId",
+          "isEnabled",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "IntegrationCreateResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable identifier; the address a thread subscribes to as `integration:<key>`."
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "MDI icon name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
+          },
+          "repositoryId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null for the built-in integrations, which are available everywhere."
+          },
+          "isEnabled": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "token": {
+            "type": "string",
+            "description": "Inbound webhook token. Returned once, never stored raw."
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "type",
+          "repositoryId",
+          "isEnabled",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "token"
+        ],
+        "additionalProperties": false
+      },
+      "SubscriptionTopic": {
+        "type": "object",
+        "properties": {
+          "topic": {
+            "type": "string",
+            "description": "Integration identifier."
+          },
+          "label": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic",
+          "label",
+          "description"
+        ],
+        "additionalProperties": false
+      },
+      "UnreadSummary": {
+        "type": "object",
+        "properties": {
+          "threads": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Threads holding messages the reader has not seen."
+          },
+          "mentions": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Unread mentions of the reader."
+          }
+        },
+        "required": [
+          "threads",
+          "mentions"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadActivity": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "uid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UID identifier."
+          },
+          "type": {
+            "type": "string"
+          },
+          "data": {
+            "type": "object",
+            "propertyNames": {
+              "type": "string"
+            },
+            "additionalProperties": {}
+          }
+        },
+        "required": [
+          "id",
+          "uid",
+          "type",
+          "data"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadElement": {
+        "type": "object",
+        "properties": {
+          "uid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Content-element UID identifier."
+          },
+          "type": {
+            "type": "string",
+            "description": "Content-element type id."
+          },
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "uid",
+          "type",
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ReaderThread": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "REPOSITORY",
+              "ACTIVITY",
+              "ELEMENT"
+            ],
+            "description": "The repository-level thread, or the comments left on an activity or a content element."
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentElementId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activity": {
+            "anyOf": [
+              {
+                "description": "Anchor activity projection, for labels and deep links.",
+                "$ref": "#/components/schemas/ThreadActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentElement": {
+            "anyOf": [
+              {
+                "description": "Anchor content-element projection.",
+                "$ref": "#/components/schemas/ThreadElement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "repositoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Repository the thread belongs to."
+          },
+          "participantIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "messageCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lastMessageAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp (ISO-8601, with offset)."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "subscriptions": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Integration sources this thread receives. Repository-level threads only; empty means nothing posts here but people."
+          },
+          "isResolved": {
+            "type": "boolean",
+            "description": "True once an anchored thread's comments are all resolved. Always false for a repository-level thread, which is deleted rather than closed out."
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isUnread": {
+            "type": "boolean"
+          },
+          "isStarred": {
+            "type": "boolean",
+            "description": "Starred by the reader"
+          },
+          "lastReadAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp (ISO-8601, with offset)."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "activityId",
+          "contentElementId",
+          "activity",
+          "contentElement",
+          "repositoryId",
+          "participantIds",
+          "messageCount",
+          "lastMessageAt",
+          "subscriptions",
+          "isResolved",
+          "createdAt",
+          "updatedAt",
+          "deletedAt",
+          "isUnread",
+          "isStarred",
+          "lastReadAt"
+        ],
+        "additionalProperties": false
+      },
+      "CommentThreadListResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "A thread as one reader sees it.",
+              "$ref": "#/components/schemas/ReaderThread"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
       "CommentElementRef": {
         "type": "object",
         "properties": {
@@ -2130,14 +2851,77 @@
         ],
         "additionalProperties": false
       },
-      "Comment": {
+      "CommentReaction": {
+        "type": "object",
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "description": "The emoji character."
+          },
+          "userId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Who reacted."
+          }
+        },
+        "required": [
+          "emoji",
+          "userId"
+        ],
+        "additionalProperties": false
+      },
+      "IntegrationRef": {
         "type": "object",
         "properties": {
           "id": {
             "type": "integer",
             "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Numeric primary key."
+            "maximum": 9007199254740991
+          },
+          "key": {
+            "type": "string",
+            "description": "Stable identifier; the address a thread subscribes to as `integration:<key>`."
+          },
+          "name": {
+            "type": "string"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "MDI icon name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
+          }
+        },
+        "required": [
+          "id",
+          "key",
+          "name",
+          "icon",
+          "type"
+        ],
+        "additionalProperties": false
+      },
+      "Message": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
           },
           "uid": {
             "type": "string",
@@ -2147,8 +2931,20 @@
           "repositoryId": {
             "type": "integer",
             "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Repository the comment belongs to."
+            "maximum": 9007199254740991
+          },
+          "threadId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Thread it belongs to. An activity or element has a single thread; a repository-level one is opened on its own."
           },
           "activityId": {
             "anyOf": [
@@ -2161,7 +2957,7 @@
                 "type": "null"
               }
             ],
-            "description": "Parent activity id. Cleared to null when the parent element is removed, so the comment drops out of the activity-thread view but stays attached to its element for provenance."
+            "description": "Activity the comment is on. Cleared when the parent element is removed, so it drops out of the activity's thread."
           },
           "contentElementId": {
             "anyOf": [
@@ -2174,111 +2970,63 @@
                 "type": "null"
               }
             ],
-            "description": "Parent content-element id; null for activity-level discussion."
+            "description": "Element the comment is pinned to; null when it sits on the activity itself."
           },
           "authorId": {
-            "type": "integer",
-            "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Author user id."
-          },
-          "author": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "type": "integer",
-                "exclusiveMinimum": 0,
-                "maximum": 9007199254740991,
-                "description": "Numeric primary key."
-              },
-              "email": {
-                "type": "string",
-                "format": "email",
-                "description": "Account email; lower-cased + trimmed."
-              },
-              "firstName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "First name (2..50 chars when present)."
-              },
-              "lastName": {
-                "anyOf": [
-                  {
-                    "type": "string",
-                    "minLength": 2,
-                    "maxLength": 50
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Last name (2..50 chars when present)."
-              },
-              "fullName": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "null"
-                  }
-                ],
-                "description": "Computed full name; null when both names are unset."
-              },
-              "label": {
-                "type": "string",
-                "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
-              },
-              "imgUrl": {
-                "type": "string",
-                "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
-              }
-            },
-            "required": [
-              "id",
-              "email",
-              "firstName",
-              "lastName",
-              "fullName",
-              "label",
-              "imgUrl"
-            ],
-            "additionalProperties": false,
-            "description": "Eager-loaded author.",
-            "$ref": "#/components/schemas/UserSummary"
-          },
-          "content": {
-            "type": "string",
-            "minLength": 1,
-            "maxLength": 2000,
-            "description": "Comment body. The model's `len: [1, 2000]` validator caps the length. For soft-deleted comments the getter returns a \"This comment has been deleted\" placeholder; `deletedAt` is the authoritative deletion signal."
-          },
-          "contentElement": {
             "anyOf": [
               {
-                "description": "Slim content-element projection attached to a comment.",
-                "$ref": "#/components/schemas/CommentElementRef"
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
               },
               {
                 "type": "null"
               }
             ],
-            "description": "Eager-loaded element pointer; null when activity-level."
+            "description": "Null when an integration posted."
+          },
+          "author": {
+            "anyOf": [
+              {
+                "description": "Slim user projection attached to records that include the user.",
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "INTEGRATION"
+            ],
+            "description": "`USER` for a person, `INTEGRATION` for a non-human post."
+          },
+          "contentElement": {
+            "anyOf": [
+              {
+                "description": "The element a comment is pinned to.",
+                "$ref": "#/components/schemas/CommentElementRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
           },
           "resolvedAt": {
             "anyOf": [
               {
                 "type": "string",
                 "format": "date-time",
-                "description": "Timestamp the thread was resolved at; null for open threads."
+                "description": "When it was resolved; null while open."
               },
               {
                 "type": "null"
@@ -2290,12 +3038,823 @@
               {
                 "type": "string",
                 "format": "date-time",
-                "description": "Last edit timestamp; null when never edited."
+                "description": "When it was last edited; null if never."
               },
               {
                 "type": "null"
               }
             ]
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "description": "One reader reaction to a comment.",
+              "$ref": "#/components/schemas/CommentReaction"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parentId": {
+            "description": "Message this replies to. Replies are one level deep, so a message with a parent never has replies of its own.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "integrationId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "integration": {
+            "anyOf": [
+              {
+                "description": "Slim projection of a non-human posting identity.",
+                "$ref": "#/components/schemas/IntegrationRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actorId": {
+            "description": "The person an integration post is about - \"Jane published the course\". The post itself has no author.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actor": {
+            "anyOf": [
+              {
+                "description": "Slim user projection attached to records that include the user.",
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isBroadcast": {
+            "description": "A reply its author also sent to the thread itself, so it shows in the transcript as well as under its parent.",
+            "type": "boolean"
+          },
+          "senderName": {
+            "description": "What this one post calls itself, when the webhook payload asked for a name of its own. Null means it shows the integration's own name.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "senderEmoji": {
+            "description": "Emoji shortcode, without its colons, standing in for the integration's icon on this post. Unknown names fall back to it.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attachments": {
+            "description": "Slack-compatible attachment payload on integration posts.",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replyAuthorIds": {
+            "description": "Who has replied, for the avatar row on the reply footer.",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "replyCount": {
+            "description": "Replies hanging off this one.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lastReplyAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp (ISO-8601, with offset)."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "uid",
+          "repositoryId",
+          "threadId",
+          "activityId",
+          "contentElementId",
+          "authorId",
+          "author",
+          "type",
+          "contentElement",
+          "content",
+          "resolvedAt",
+          "editedAt",
+          "reactions",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadRemoveResult": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadRef": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "REPOSITORY",
+              "ACTIVITY",
+              "ELEMENT"
+            ]
+          },
+          "title": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentElementId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "activity": {
+            "anyOf": [
+              {
+                "description": "Anchor activity projection, for labels and deep links.",
+                "$ref": "#/components/schemas/ThreadActivity"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "contentElement": {
+            "anyOf": [
+              {
+                "description": "Anchor content-element projection.",
+                "$ref": "#/components/schemas/ThreadElement"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "activityId",
+          "contentElementId"
+        ],
+        "additionalProperties": false
+      },
+      "MessageSearchHit": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "uid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UID identifier; persists across clones / imports."
+          },
+          "repositoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "threadId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Thread it belongs to. An activity or element has a single thread; a repository-level one is opened on its own."
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Activity the comment is on. Cleared when the parent element is removed, so it drops out of the activity's thread."
+          },
+          "contentElementId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Element the comment is pinned to; null when it sits on the activity itself."
+          },
+          "authorId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Null when an integration posted."
+          },
+          "author": {
+            "anyOf": [
+              {
+                "description": "Slim user projection attached to records that include the user.",
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "INTEGRATION"
+            ],
+            "description": "`USER` for a person, `INTEGRATION` for a non-human post."
+          },
+          "contentElement": {
+            "anyOf": [
+              {
+                "description": "The element a comment is pinned to.",
+                "$ref": "#/components/schemas/CommentElementRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+          },
+          "resolvedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "When it was resolved; null while open."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "When it was last edited; null if never."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "description": "One reader reaction to a comment.",
+              "$ref": "#/components/schemas/CommentReaction"
+            }
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Insertion timestamp."
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Last mutation timestamp."
+          },
+          "deletedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Soft-delete timestamp; non-null for archived rows."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "parentId": {
+            "description": "Message this replies to. Replies are one level deep, so a message with a parent never has replies of its own.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "integrationId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "integration": {
+            "anyOf": [
+              {
+                "description": "Slim projection of a non-human posting identity.",
+                "$ref": "#/components/schemas/IntegrationRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actorId": {
+            "description": "The person an integration post is about - \"Jane published the course\". The post itself has no author.",
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actor": {
+            "anyOf": [
+              {
+                "description": "Slim user projection attached to records that include the user.",
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "isBroadcast": {
+            "description": "A reply its author also sent to the thread itself, so it shows in the transcript as well as under its parent.",
+            "type": "boolean"
+          },
+          "senderName": {
+            "description": "What this one post calls itself, when the webhook payload asked for a name of its own. Null means it shows the integration's own name.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "senderEmoji": {
+            "description": "Emoji shortcode, without its colons, standing in for the integration's icon on this post. Unknown names fall back to it.",
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attachments": {
+            "description": "Slack-compatible attachment payload on integration posts.",
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "propertyNames": {
+                    "type": "string"
+                  },
+                  "additionalProperties": {}
+                }
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "replyAuthorIds": {
+            "description": "Who has replied, for the avatar row on the reply footer.",
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          "replyCount": {
+            "description": "Replies hanging off this one.",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991
+          },
+          "lastReplyAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "Timestamp (ISO-8601, with offset)."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "thread": {
+            "anyOf": [
+              {
+                "description": "Slim thread projection.",
+                "$ref": "#/components/schemas/ThreadRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "id",
+          "uid",
+          "repositoryId",
+          "threadId",
+          "activityId",
+          "contentElementId",
+          "authorId",
+          "author",
+          "type",
+          "contentElement",
+          "content",
+          "resolvedAt",
+          "editedAt",
+          "reactions",
+          "createdAt",
+          "updatedAt",
+          "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "MessageSearchResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "A message matching a search, with its thread.",
+              "$ref": "#/components/schemas/MessageSearchHit"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadAsset": {
+        "type": "object",
+        "properties": {
+          "entityId": {
+            "type": "string",
+            "description": "Asset id."
+          },
+          "threadId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Thread it was last shared in."
+          },
+          "lastSharedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When it was last shared."
+          },
+          "shareCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "How many messages reference it."
+          }
+        },
+        "required": [
+          "entityId",
+          "threadId",
+          "lastSharedAt",
+          "shareCount"
+        ],
+        "additionalProperties": false
+      },
+      "ThreadAssetsResult": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "description": "One asset shared in a thread: the pointer and the stats only. The asset itself is read from the asset library, which signs its own short-lived URLs.",
+              "$ref": "#/components/schemas/ThreadAsset"
+            },
+            "description": "Page of rows."
+          },
+          "total": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Total rows matching the query (ignoring pagination)."
+          }
+        },
+        "required": [
+          "items",
+          "total"
+        ],
+        "additionalProperties": false
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "uid": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UID identifier; persists across clones / imports."
+          },
+          "repositoryId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "threadId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Thread it belongs to. An activity or element has a single thread; a repository-level one is opened on its own."
+          },
+          "activityId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Activity the comment is on. Cleared when the parent element is removed, so it drops out of the activity's thread."
+          },
+          "contentElementId": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Element the comment is pinned to; null when it sits on the activity itself."
+          },
+          "authorId": {
+            "type": "integer",
+            "exclusiveMinimum": 0,
+            "maximum": 9007199254740991
+          },
+          "author": {
+            "description": "Slim user projection attached to records that include the user.",
+            "$ref": "#/components/schemas/UserSummary"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "USER",
+              "INTEGRATION"
+            ],
+            "description": "`USER` for a person, `INTEGRATION` for a non-human post."
+          },
+          "contentElement": {
+            "anyOf": [
+              {
+                "description": "The element a comment is pinned to.",
+                "$ref": "#/components/schemas/CommentElementRef"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "content": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2000,
+            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+          },
+          "resolvedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "When it was resolved; null while open."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "editedAt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time",
+                "description": "When it was last edited; null if never."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reactions": {
+            "type": "array",
+            "items": {
+              "description": "One reader reaction to a comment.",
+              "$ref": "#/components/schemas/CommentReaction"
+            }
           },
           "createdAt": {
             "type": "string",
@@ -2324,17 +3883,35 @@
           "id",
           "uid",
           "repositoryId",
+          "threadId",
           "activityId",
           "contentElementId",
           "authorId",
           "author",
-          "content",
+          "type",
           "contentElement",
+          "content",
           "resolvedAt",
           "editedAt",
+          "reactions",
           "createdAt",
           "updatedAt",
           "deletedAt"
+        ],
+        "additionalProperties": false
+      },
+      "CommentToggleReactionInput": {
+        "type": "object",
+        "properties": {
+          "emoji": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 32,
+            "description": "The emoji character."
+          }
+        },
+        "required": [
+          "emoji"
         ],
         "additionalProperties": false
       },
@@ -2344,8 +3921,7 @@
           "id": {
             "type": "integer",
             "exclusiveMinimum": 0,
-            "maximum": 9007199254740991,
-            "description": "Id of the soft-deleted comment."
+            "maximum": 9007199254740991
           }
         },
         "required": [
@@ -5235,6 +6811,199 @@
     }
   },
   "paths": {
+    "/emoji": {
+      "get": {
+        "tags": [
+          "Workspace / Emoji"
+        ],
+        "operationId": "workspaceGetEmoji",
+        "x-tailor-slice": "workspace",
+        "x-tailor-method": "getEmoji",
+        "summary": "List emoji",
+        "description": "Every emoji in the platform, with a content-addressed URL for each. Small and unpaginated by design: it is the dictionary a client needs before rendering a message.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The emoji manifest.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "An emoji available to everybody in the workspace.",
+                        "$ref": "#/components/schemas/Emoji"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Workspace / Emoji"
+        ],
+        "operationId": "workspaceCreateEmoji",
+        "x-tailor-slice": "workspace",
+        "x-tailor-method": "createEmoji",
+        "summary": "Add an emoji",
+        "description": "Multipart upload of a raster image, normalised to a 128px WebP. Animation is preserved. SVG is refused due to security concerns.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "The emoji that was added.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "An emoji available to everybody in the workspace.",
+                      "$ref": "#/components/schemas/Emoji"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing image, unusable image, or bad name."
+          },
+          "409": {
+            "description": "That shortcode is already taken."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
+                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+                  },
+                  "image": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "PNG, JPEG, WebP, GIF or AVIF. SVG is refused."
+                  }
+                },
+                "required": [
+                  "name",
+                  "image"
+                ],
+                "additionalProperties": false,
+                "description": "Emoji upload payload."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/emoji/{contentHash}/image": {
+      "get": {
+        "tags": [
+          "Workspace / Emoji"
+        ],
+        "operationId": "workspaceGetEmojiImage",
+        "x-tailor-slice": "workspace",
+        "x-tailor-method": "getEmojiImage",
+        "summary": "Fetch an emoji image",
+        "description": "Emojis are served from our own origin.",
+        "parameters": [
+          {
+            "name": "contentHash",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{32}$",
+              "description": "Truncated SHA-256 of the encoded image (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The image, as WebP."
+          },
+          "404": {
+            "description": "No such emoji."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/emoji/{emojiId}": {
+      "delete": {
+        "tags": [
+          "Workspace / Emoji"
+        ],
+        "operationId": "workspaceRemoveEmoji",
+        "x-tailor-slice": "workspace",
+        "x-tailor-method": "removeEmoji",
+        "summary": "Remove an emoji",
+        "description": "Messages that already used the shortcode keep it and render it as plain text.",
+        "parameters": [
+          {
+            "name": "emojiId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric emoji id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Removed."
+          },
+          "404": {
+            "description": "No such emoji."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/healthcheck": {
       "get": {
         "tags": [
@@ -5700,6 +7469,85 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/hooks/messaging/integrations/{token}": {
+      "post": {
+        "tags": [
+          "Messaging / Webhooks"
+        ],
+        "operationId": "messagingPostIntegrationMessage",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "postIntegrationMessage",
+        "summary": "Post a message through an incoming webhook",
+        "description": "Posts into every thread subscribed to this integration. The body is Slack-compatible, so anything that already posts to Slack works unchanged; a CI pipeline announcing a release, an alerting tool, a translation vendor returning a finished job.",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 8,
+              "maxLength": 128,
+              "description": "Inbound webhook token."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Message posted."
+          },
+          "400": {
+            "description": "Payload carried neither text nor attachments."
+          },
+          "404": {
+            "description": "Unknown or disabled token."
+          },
+          "409": {
+            "description": "No thread subscribes to this integration."
+          },
+          "429": {
+            "description": "Too many posts; slow down and retry."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "text": {
+                    "description": "Message body (markdown-ish).",
+                    "type": "string"
+                  },
+                  "username": {
+                    "description": "Name this post shows instead of the integration's own, so one credential can speak as \"Deploy\" and as \"Tests\". The BOT marker stays either way.",
+                    "type": "string"
+                  },
+                  "icon_emoji": {
+                    "description": "Emoji shortcode (`:rocket:`) to show instead of the integration's icon. Resolved against the workspace's emoji; an unknown name falls back to the icon.",
+                    "type": "string"
+                  },
+                  "icon_url": {
+                    "description": "Not applied. An icon is either the integration's own or one of the workspace's emoji, so a post never hotlinks a remote image.",
+                    "type": "string"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/SlackAttachment"
+                    }
+                  }
+                },
+                "additionalProperties": false,
+                "description": "Slack-compatible incoming webhook payload. Unknown fields are dropped. Either `text` or at least one attachment is required."
+              }
+            }
+          }
+        }
       }
     },
     "/repositories/{repositoryId}/activities/link": {
@@ -8285,6 +10133,61 @@
         ]
       }
     },
+    "/assets/url-description": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryDescribeUrl",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "describeUrl",
+        "summary": "Describe a URL",
+        "description": "Collects OG metadata for a pasted link and names the service where the URL gives it away.",
+        "parameters": [
+          {
+            "name": "url",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uri",
+              "description": "Public https URL to describe."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Link description.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "What is on the other end of a link.",
+                      "$ref": "#/components/schemas/UrlDescription"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid URL or private/localhost address."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
     "/assets/import/link": {
       "post": {
         "tags": [
@@ -9016,16 +10919,218 @@
         ]
       }
     },
-    "/repositories/{repositoryId}/comments/resolve": {
+    "/repositories/{repositoryId}/messaging/integrations": {
+      "get": {
+        "tags": [
+          "Messaging / Integrations"
+        ],
+        "operationId": "messagingGetIntegrations",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getIntegrations",
+        "summary": "List integrations",
+        "description": "Tailor's built-in integrations plus those registered on this repository.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Integrations visible to this repository.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "A non-human posting identity.",
+                        "$ref": "#/components/schemas/Integration"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "post": {
         "tags": [
-          "Comment / Resolution"
+          "Messaging / Integrations"
         ],
-        "operationId": "commentResolve",
-        "x-tailor-slice": "comment",
-        "x-tailor-method": "resolve",
-        "summary": "Toggle the resolved state of a comment or element thread",
-        "description": "Toggle the resolved state for a single comment or entire thread.",
+        "operationId": "messagingCreateIntegration",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "createIntegration",
+        "summary": "Register an integration",
+        "description": "Returns the token to post with. It is shown once; only its digest is stored.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registered integration and its one-time token.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Newly registered integration, including its one-time token.",
+                      "$ref": "#/components/schemas/IntegrationCreateResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Repository admin access required."
+          },
+          "409": {
+            "description": "Key already taken in this repository."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "key": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 60,
+                    "pattern": "^[a-z0-9][a-z0-9_-]*$",
+                    "description": "Stable identifier, unique per repository. This is the key a thread subscribes to as `integration:<key>`, so it is lowercase and URL-safe rather than a display name."
+                  },
+                  "name": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "description": "Display name shown on its posts."
+                  },
+                  "icon": {
+                    "type": "string",
+                    "minLength": 5,
+                    "maxLength": 60,
+                    "pattern": "^mdi-[a-z0-9-]+$",
+                    "description": "MDI icon name, e.g. `mdi-webhook`."
+                  }
+                },
+                "required": [
+                  "key",
+                  "name"
+                ],
+                "additionalProperties": false,
+                "description": "Registers an external integration. Where it posts is a separate decision: a thread subscribes to `integration:<key>`."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/integrations/{integrationId}": {
+      "delete": {
+        "tags": [
+          "Messaging / Integrations"
+        ],
+        "operationId": "messagingRemoveIntegration",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "removeIntegration",
+        "summary": "Remove an integration",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "integrationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Integration id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Integration removed."
+          },
+          "403": {
+            "description": "Repository admin access required."
+          },
+          "404": {
+            "description": "Integration not found for this repository."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/typing": {
+      "post": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingReportTyping",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "reportTyping",
+        "summary": "Broadcast a typing signal",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9041,10 +11146,1008 @@
         ],
         "responses": {
           "204": {
-            "description": "Resolved state toggled."
+            "description": "Signal broadcast."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "threadId": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Thread being typed in."
+                  }
+                },
+                "required": [
+                  "threadId"
+                ],
+                "additionalProperties": false,
+                "description": "Ephemeral typing signal; never persisted."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/topics": {
+      "get": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingGetTopics",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getTopics",
+        "summary": "List subscribable sources",
+        "description": "Everything a thread in this repository can subscribe to: the built-in event catalog plus any registered integration.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available topics.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "Something a thread can subscribe to.",
+                        "$ref": "#/components/schemas/SubscriptionTopic"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/unread": {
+      "get": {
+        "tags": [
+          "Messaging / Read state"
+        ],
+        "operationId": "messagingGetUnread",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getUnread",
+        "summary": "Unread badge counts",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Unread threads and mentions for the caller.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Thread badge counts for one repository.",
+                      "$ref": "#/components/schemas/UnreadSummary"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/seen": {
+      "post": {
+        "tags": [
+          "Messaging / Read state"
+        ],
+        "operationId": "messagingMarkAllRead",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "markAllRead",
+        "summary": "Mark every thread in the repository read",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Refreshed unread counts.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "Thread badge counts for one repository.",
+                      "$ref": "#/components/schemas/UnreadSummary"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads": {
+      "get": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingGetThreads",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getThreads",
+        "summary": "List threads",
+        "description": "Threads ordered by most recent activity.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Narrow by thread type.",
+              "type": "string",
+              "enum": [
+                "REPOSITORY",
+                "ACTIVITY",
+                "ELEMENT"
+              ]
+            }
+          },
+          {
+            "name": "activityId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Only threads anchored to this activity.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Matches a thread by its title or the name of the activity it is anchored to. To find what was *said* use search",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "scope",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Which filter tab the rail is on: unread, mentions (of reader), still open, or ones the reader post in. Defaults to all.",
+              "type": "string",
+              "enum": [
+                "all",
+                "unread",
+                "mentions",
+                "unresolved",
+                "mine"
+              ]
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Page of threads.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "description": "A page of threads.",
+                  "$ref": "#/components/schemas/CommentThreadListResult"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingCreateThread",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "createThread",
+        "summary": "Start a thread",
+        "description": "Creates a repository-level thread and posts its opening message.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The new thread.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A thread as one reader sees it.",
+                      "$ref": "#/components/schemas/ReaderThread"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 120,
+                    "description": "Subject of the thread. Required for a repository-level thread."
+                  },
+                  "content": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 2000,
+                    "description": "Opening message."
+                  }
+                },
+                "required": [
+                  "title",
+                  "content"
+                ],
+                "additionalProperties": false,
+                "description": "Opens a new repository-level thread with its first message."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}": {
+      "get": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingGetThread",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getThread",
+        "summary": "Get a thread",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A thread with a reader state.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A thread as one reader sees it.",
+                      "$ref": "#/components/schemas/ReaderThread"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingDeleteThread",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "deleteThread",
+        "summary": "Delete a thread",
+        "description": "Deletes a repository-level thread and its messages. A thread attached to an activity or element cannot be deleted - its messages are the comments shown in the editor. Resolve it instead.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Id of the deleted thread.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "The thread that was deleted.",
+                      "$ref": "#/components/schemas/ThreadRemoveResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Not the author, or the thread is anchored."
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}/messages": {
+      "get": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingGetMessages",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getMessages",
+        "summary": "List messages in a thread",
+        "description": "A thread's messages, oldest first. Older ones load a page at a time.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages older than this one; what scrolling up the thread asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Messages, oldest first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "description": "A message in a thread.",
+                        "$ref": "#/components/schemas/Message"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}/resolve": {
+      "post": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingResolveThread",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "resolveThread",
+        "summary": "Resolve or reopen a thread",
+        "description": "Settles every comment in the thread at once, or reopens them. A resolved thread stays in the list unless it is filtered to open ones only. Anyone with access to the repository can do either.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated thread.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A thread as one reader sees it.",
+                      "$ref": "#/components/schemas/ReaderThread"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
           },
           "400": {
-            "description": "`id` or `contentElementId` required."
+            "description": "A free-standing thread has nothing to resolve."
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "resolved": {
+                    "type": "boolean",
+                    "description": "Target state; false reopens."
+                  }
+                },
+                "required": [
+                  "resolved"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}/subscriptions": {
+      "put": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingSetSubscriptions",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "setSubscriptions",
+        "summary": "Set what a thread subscribes to",
+        "description": "Replaces the thread's integration subscriptions",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated thread.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A thread as one reader sees it.",
+                      "$ref": "#/components/schemas/ReaderThread"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "One or more topics are not subscribable, or the thread is anchored to content and cannot subscribe at all."
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "topics": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 120
+                    },
+                    "description": "Sources this thread receives. Replaces the current set; an empty array unsubscribes from everything."
+                  }
+                },
+                "required": [
+                  "topics"
+                ],
+                "additionalProperties": false,
+                "description": "Replaces a repository-level thread's subscriptions. A anchored thread cannot subscribe."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}/star": {
+      "put": {
+        "tags": [
+          "Messaging / Threads"
+        ],
+        "operationId": "messagingSetStarred",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "setStarred",
+        "summary": "Star or unstar a thread",
+        "description": "A star is personal: it keeps the thread at the top of your own list.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated thread.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A thread as one reader sees it.",
+                      "$ref": "#/components/schemas/ReaderThread"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "type": "object",
+                "properties": {
+                  "isStarred": {
+                    "type": "boolean",
+                    "description": "Whether the reader starred it."
+                  }
+                },
+                "required": [
+                  "isStarred"
+                ],
+                "additionalProperties": false,
+                "description": "Stars or unstars a thread for the calling user."
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/threads/{threadId}/seen": {
+      "post": {
+        "tags": [
+          "Messaging / Read state"
+        ],
+        "operationId": "messagingMarkThreadRead",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "markThreadRead",
+        "summary": "Mark a thread read",
+        "description": "Marks everything in the thread as read for you, and clears its mentions.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric thread id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Where your reading now stands.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "threadId": {
+                          "type": "number"
+                        },
+                        "lastReadAt": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "threadId",
+                        "lastReadAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Thread not found."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/resolve": {
+      "post": {
+        "tags": [
+          "Messaging / Resolution"
+        ],
+        "operationId": "messagingResolve",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "resolve",
+        "summary": "Resolve or reopen editor comments",
+        "description": "Marks a comment settled, or every comment on a content element at once; the \"resolve\" control in the element flyout. Sending the current state back reopens it.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Resolved state flipped."
+          },
+          "400": {
+            "description": "No comment or element named."
           }
         },
         "requestBody": {
@@ -9056,19 +12159,19 @@
                 "type": "object",
                 "properties": {
                   "id": {
-                    "description": "Single-comment selector.",
+                    "description": "A single comment.",
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
                   "contentElementId": {
-                    "description": "Bulk selector; every comment attached to the given element is toggled together.",
+                    "description": "Every comment on this element, settled together.",
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
                   "resolvedAt": {
-                    "description": "Current resolution state echoed back to flip: truthy -> unresolve (set resolvedAt to null), absent / null -> resolve (stamp resolvedAt = now).",
+                    "description": "The state being flipped: send the comment's current `resolvedAt` to reopen it, send nothing to resolve it.",
                     "anyOf": [
                       {
                         "type": "number"
@@ -9084,7 +12187,7 @@
                   }
                 },
                 "additionalProperties": false,
-                "description": "Toggle the resolved state of a single comment (by `id`) or every comment attached to a content element (by `contentElementId`). Exactly one selector is required."
+                "description": "Specify a comment, or an element to settle all of its comments."
               }
             }
           }
@@ -9096,16 +12199,204 @@
         ]
       }
     },
-    "/repositories/{repositoryId}/comments": {
+    "/repositories/{repositoryId}/messaging/search": {
       "get": {
         "tags": [
-          "Comment / CRUD"
+          "Messaging / Search"
         ],
-        "operationId": "commentList",
-        "x-tailor-slice": "comment",
+        "operationId": "messagingSearchMessages",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "searchMessages",
+        "summary": "Search messages",
+        "description": "Finds something that was said, anywhere in the repository: text, mentions and references. Filters combine, and every hit names the thread it came from.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "q",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Free-text query over message bodies (Postgres `websearch` syntax: quoted phrases, `-exclusions`).",
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 200
+            }
+          },
+          {
+            "name": "mentions",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "User ids the message must mention."
+            }
+          },
+          {
+            "name": "references",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Entities the message must reference, as `type:id` (e.g. `activity:12`, `asset:88`)."
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matching messages, newest first.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A page of message search results.",
+                      "$ref": "#/components/schemas/MessageSearchResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/assets": {
+      "get": {
+        "tags": [
+          "Messaging / Search"
+        ],
+        "operationId": "messagingGetAssets",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getAssets",
+        "summary": "List assets shared in threads",
+        "description": "Everything shared in the repository's conversations, most recent first. Returns pointers and counts; resolve them through the asset library.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "threadId",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to one thread. Left out, the result covers every thread in the repository.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination offset.",
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Assets shared in threads.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A page of assets shared in threads.",
+                      "$ref": "#/components/schemas/ThreadAssetsResult"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging": {
+      "get": {
+        "tags": [
+          "Messaging / CRUD"
+        ],
+        "operationId": "messagingList",
+        "x-tailor-slice": "messaging",
         "x-tailor-method": "list",
-        "summary": "List comments in the repository",
-        "description": "Returns the repository's comments in newest-first order.",
+        "summary": "List comments",
+        "description": "Comments on one activity, or on a single content element. The editor asks for a whole activity at once and splits the result per element. Newest first; deleted ones stay as placeholders so a reply never loses what it was answering.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9123,7 +12414,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Restrict to comments on a single activity (the activity-thread view).",
+              "description": "Only comments on this activity - the activity's own thread.",
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991
@@ -9134,7 +12425,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Restrict to comments on a single content element (the inline thread). May be combined with `activityId`; the client typically sends one or the other.",
+              "description": "Only comments on this content element - the inline thread in the editor.",
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991
@@ -9145,7 +12436,7 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Set false to include soft-deleted comments (default: true). The list route's default already opts into `paranoid: false` so deleted comments stay visible in the thread (their body renders as a placeholder via the model getter); this flag is exposed for completeness.",
+              "description": "Set true to leave deleted comments out. They are included by default, so a reply keeps the message it was answering.",
               "anyOf": [
                 {
                   "type": "boolean"
@@ -9208,7 +12499,7 @@
         ],
         "responses": {
           "200": {
-            "description": "List of comments matching the filter.",
+            "description": "Comments matching the filter.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9218,7 +12509,7 @@
                     "data": {
                       "type": "array",
                       "items": {
-                        "description": "A repository comment. Either an activity-level discussion or an inline thread attached to a specific content element.",
+                        "description": "A comment on an activity, or inline on a content element.",
                         "$ref": "#/components/schemas/Comment"
                       }
                     }
@@ -9240,13 +12531,13 @@
       },
       "post": {
         "tags": [
-          "Comment / CRUD"
+          "Messaging / CRUD"
         ],
-        "operationId": "commentCreate",
-        "x-tailor-slice": "comment",
+        "operationId": "messagingCreate",
+        "x-tailor-slice": "messaging",
         "x-tailor-method": "create",
-        "summary": "Create a comment",
-        "description": "Creates a comment under the scoped repository.",
+        "summary": "Post a message",
+        "description": "Posts on an activity or a content element, or into an existing thread. Conversations stay one level deep, so replying to a reply lands next to it rather than under it.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9262,7 +12553,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Created comment.",
+            "description": "The posted message.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9270,7 +12561,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "A repository comment. Either an activity-level discussion or an inline thread attached to a specific content element.",
+                      "description": "A comment on an activity, or inline on a content element.",
                       "$ref": "#/components/schemas/Comment"
                     }
                   },
@@ -9281,6 +12572,12 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "No activity, element or thread to post on."
+          },
+          "404": {
+            "description": "The message being replied to is gone."
           }
         },
         "requestBody": {
@@ -9291,35 +12588,45 @@
                 "$schema": "https://json-schema.org/draft/2020-12/schema",
                 "type": "object",
                 "properties": {
-                  "uid": {
-                    "type": "string",
-                    "format": "uuid",
-                    "description": "UID identifier; persists across clones / imports."
-                  },
                   "activityId": {
+                    "description": "Activity the comment is on. Element comments carry it too, so they show up in the activity's thread; a repository-level message has neither.",
                     "type": "integer",
                     "exclusiveMinimum": 0,
-                    "maximum": 9007199254740991,
-                    "description": "Activity this comment belongs to; required for element-scoped comments so the activity-thread view sees them (outline activity id)."
+                    "maximum": 9007199254740991
                   },
                   "contentElementId": {
                     "type": "integer",
                     "exclusiveMinimum": 0,
                     "maximum": 9007199254740991
                   },
+                  "threadId": {
+                    "description": "Thread to post into. Only needed for a repository-level thread - an anchored comment finds its own.",
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "parentId": {
+                    "description": "Message this replies to. Replies are one level deep, so naming a reply here attaches to what that reply was answering.",
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991
+                  },
+                  "isBroadcast": {
+                    "description": "Also show the reply in the thread itself, not only under its parent. Only meaningful with `parentId`.",
+                    "type": "boolean"
+                  },
                   "content": {
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000,
-                    "description": "Comment body. The model's `len: [1, 2000]` validator caps the length. For soft-deleted comments the getter returns a \"This comment has been deleted\" placeholder; `deletedAt` is the authoritative deletion signal."
+                    "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
                   }
                 },
                 "required": [
-                  "activityId",
                   "content"
                 ],
                 "additionalProperties": false,
-                "description": "Create comment payload."
+                "description": "A new message."
               }
             }
           }
@@ -9331,16 +12638,16 @@
         ]
       }
     },
-    "/repositories/{repositoryId}/comments/{commentId}": {
-      "patch": {
+    "/repositories/{repositoryId}/messaging/{messageId}/replies": {
+      "get": {
         "tags": [
-          "Comment / CRUD"
+          "Messaging / CRUD"
         ],
-        "operationId": "commentUpdate",
-        "x-tailor-slice": "comment",
-        "x-tailor-method": "update",
-        "summary": "Edit a comment",
-        "description": "Replaces the body of an existing comment.",
+        "operationId": "messagingGetReplies",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "getReplies",
+        "summary": "List replies to a message",
+        "description": "The side conversation under one message, oldest first. Fetched on demand so a long reply chain does not slow the thread down.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9354,20 +12661,20 @@
             }
           },
           {
-            "name": "commentId",
+            "name": "messageId",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991,
-              "description": "Numeric comment id (path param)."
+              "description": "Numeric message id (path param)."
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Updated comment row.",
+            "description": "Replies to the message.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9375,7 +12682,153 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "A repository comment. Either an activity-level discussion or an inline thread attached to a specific content element.",
+                      "type": "array",
+                      "items": {
+                        "description": "A message in a thread.",
+                        "$ref": "#/components/schemas/Message"
+                      }
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/{messageId}/reactions": {
+      "post": {
+        "tags": [
+          "Messaging / CRUD"
+        ],
+        "operationId": "messagingToggleReaction",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "toggleReaction",
+        "summary": "Add or remove a reaction",
+        "description": "Reacting again with the same emoji takes it back, so a double-tap cannot leave a reaction stuck. Anyone who can read the message can react to it.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric message id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The message, with its reactions after the toggle.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A comment on an activity, or inline on a content element.",
+                      "$ref": "#/components/schemas/Comment"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Message not found."
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$schema": "https://json-schema.org/draft/2020-12/schema",
+                "description": "A reaction to add, or to take back if it is already there.",
+                "$ref": "#/components/schemas/CommentToggleReactionInput"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      }
+    },
+    "/repositories/{repositoryId}/messaging/{messageId}": {
+      "patch": {
+        "tags": [
+          "Messaging / CRUD"
+        ],
+        "operationId": "messagingUpdate",
+        "x-tailor-slice": "messaging",
+        "x-tailor-method": "update",
+        "summary": "Edit a message",
+        "description": "Replaces the text. Only the author can edit, and the message carries an \"edited\" mark from then on.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "messageId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric message id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The edited message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A comment on an activity, or inline on a content element.",
                       "$ref": "#/components/schemas/Comment"
                     }
                   },
@@ -9388,10 +12841,10 @@
             }
           },
           "403": {
-            "description": "Caller is not the comment author."
+            "description": "Not the author."
           },
           "404": {
-            "description": "Comment not found."
+            "description": "Message not found."
           }
         },
         "requestBody": {
@@ -9406,14 +12859,14 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000,
-                    "description": "Comment body. The model's `len: [1, 2000]` validator caps the length. For soft-deleted comments the getter returns a \"This comment has been deleted\" placeholder; `deletedAt` is the authoritative deletion signal."
+                    "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
                   }
                 },
                 "required": [
                   "content"
                 ],
                 "additionalProperties": false,
-                "description": "Patch payload for a comment update operation."
+                "description": "New text for a comment."
               }
             }
           }
@@ -9426,13 +12879,13 @@
       },
       "delete": {
         "tags": [
-          "Comment / CRUD"
+          "Messaging / CRUD"
         ],
-        "operationId": "commentDelete",
-        "x-tailor-slice": "comment",
+        "operationId": "messagingDelete",
+        "x-tailor-slice": "messaging",
         "x-tailor-method": "delete",
-        "summary": "Soft-delete a comment",
-        "description": "Soft-deletes the comment; the row stays for provenance.",
+        "summary": "Delete a message",
+        "description": "Only the author can delete. The message keeps its place as a \"deleted\" placeholder so the replies around it still read.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -9446,20 +12899,20 @@
             }
           },
           {
-            "name": "commentId",
+            "name": "messageId",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991,
-              "description": "Numeric comment id (path param)."
+              "description": "Numeric message id (path param)."
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Id of the soft-deleted comment.",
+            "description": "Id of the deleted message.",
             "content": {
               "application/json": {
                 "schema": {
@@ -9467,7 +12920,7 @@
                   "type": "object",
                   "properties": {
                     "data": {
-                      "description": "Acknowledgement of a comment soft-delete.",
+                      "description": "The comment that was deleted.",
                       "$ref": "#/components/schemas/CommentRemoveResult"
                     }
                   },
@@ -9480,10 +12933,10 @@
             }
           },
           "403": {
-            "description": "Caller is not the comment author."
+            "description": "Not the author."
           },
           "404": {
-            "description": "Comment not found."
+            "description": "Message not found."
           }
         },
         "security": [
@@ -9623,6 +13076,19 @@
                 "type": "integer",
                 "minimum": -9007199254740991,
                 "maximum": 9007199254740991
+              }
+            }
+          },
+          {
+            "name": "uids",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Restrict to elements with these UIDs. Elements are referenced by uid across the app (editor deep links, discussion references).",
+              "type": "array",
+              "items": {
+                "type": "string",
+                "format": "uuid"
               }
             }
           },

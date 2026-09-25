@@ -45,7 +45,7 @@ const isOIDCError = (err: unknown): err is Error =>
   OIDCErrors.some((Ctor) => err instanceof Ctor);
 
 router
-  .use(requestLimiter())
+  .use(requestLimiter({ event: 'auth:oidc:throttled' }))
   .get('/', authRequestHandler)
   .get('/callback', idpCallbackHandler, (_req, res) => res.redirect(origin))
   .use(accessDeniedHandler);

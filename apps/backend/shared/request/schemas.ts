@@ -29,8 +29,9 @@ export const Uid = (desc = 'UID identifier.') =>
 export const timestamps = () => ({
   createdAt: Timestamp('Insertion timestamp.'),
   updatedAt: Timestamp('Last mutation timestamp.'),
-  deletedAt: Timestamp('Soft-delete timestamp; non-null for archived rows.')
-    .nullable(),
+  deletedAt: Timestamp(
+    'Soft-delete timestamp; non-null for archived rows.',
+  ).nullable(),
 });
 
 // Schema-driven JSONB blob. Used for `data` / `meta` fields where the
@@ -45,7 +46,9 @@ export const JsonObject = (desc = 'Schema-driven JSON blob.') =>
 export const Paginated = <T extends ZodType>(items: T, id?: string) => {
   const schema = z.object({
     items: z.array(items).describe('Page of rows.'),
-    total: UInt().describe('Total rows matching the query (ignoring pagination).'),
+    total: UInt().describe(
+      'Total rows matching the query (ignoring pagination).',
+    ),
   });
   return id ? schema.meta({ id }) : schema;
 };
@@ -72,10 +75,7 @@ export const Relationship = z
     id: Int().describe('Referenced entity id.'),
     // Resolved by `detectMissingReferences`; without it the pointer is
     // looked up in the owning entity's own table and pruned as missing.
-    entity: z
-      .string()
-      .optional()
-      .describe(oneLine`
+    entity: z.string().optional().describe(oneLine`
         Model the pointer resolves against. Omit for same-entity refs
         (element -> element); set to \`Activity\` for an element -> activity
         ref such as an exam question's objective.
@@ -159,6 +159,12 @@ export const IntArrayFromForm = () =>
     return v;
   }, z.array(z.number().int()).optional());
 
+// Query param that `qs` hands over as a bare value for one occurrence
+// (`?k=1`) and as an array for two or more (`?k=1&k=2`). Normalises both
+// to an array so handlers only ever see the plural shape.
+export const OneOrMany = <T extends ZodType>(schema: T) =>
+  z.union([z.array(schema), schema]).transform((v) => [v].flat());
+
 // Array of strings that may arrive as a single string or as
 // a real array (multiple). Used for `schemas[]`, `tagIds[]`, etc. URL
 // query params, where qs may return either shape depending on cardinality.
@@ -169,6 +175,24 @@ export const StringArrayFromQuery = () =>
     if (typeof v === 'string') return v ? [v] : undefined;
     return v;
   }, z.array(z.string()).optional());
+
+// Material Design Icons name (`mdi-<name>`)
+export const MdiIcon = (desc = 'MDI icon name, e.g. `mdi-webhook`.') =>
+  z
+    .string()
+    .trim()
+    .min(5)
+    .max(60)
+    .regex(/^mdi-[a-z0-9-]+$/)
+    .describe(desc);
+
+// Array of UIDs that may arrive as a real array or as a comma-separated
+// string (`?uids=a,b`). Validates every member.
+export const UidArrayFromQuery = () =>
+  z.preprocess(
+    (v) => (typeof v === 'string' ? v.split(',').filter(Boolean) : v),
+    z.array(z.uuid()).optional(),
+  );
 
 // Binary file field for multipart/form-data action bodies. Emits
 // `{ type: 'string', format: 'binary' }` in JSON Schema;

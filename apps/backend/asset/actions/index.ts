@@ -2,6 +2,7 @@
 export { default as list } from './list.action.ts';
 export { default as create } from './create.action.ts';
 export { default as importFromLink } from './import-from-link.action.ts';
+export { default as describeUrl } from './describe-url.action.ts';
 export { default as bulkRemove } from './bulk-remove.action.ts';
 export { default as listFolders } from './folders.action.ts';
 export { default as move } from './move.action.ts';

@@ -1,5 +1,13 @@
 import type { UserSummary } from './user';
 
+export const ThreadType = {
+  Repository: 'REPOSITORY',
+  Activity: 'ACTIVITY',
+  Element: 'ELEMENT',
+} as const;
+
+export type ThreadType = (typeof ThreadType)[keyof typeof ThreadType];
+
 // Slim content-element projection eager-loaded onto Comment
 export interface CommentElementRef {
   uid: string;

@@ -43,6 +43,11 @@ const routes = computed(() => {
       name: 'installed-elements',
       icon: 'puzzle',
     },
+    authStore.isAdmin && {
+      label: 'Emoji',
+      name: 'emoji',
+      icon: 'emoticon-outline',
+    },
   ]
     .filter((it) => it)
     .map((it) => ({ ...it, query: route.query }));

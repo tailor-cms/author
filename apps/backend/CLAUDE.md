@@ -17,8 +17,11 @@ a minimal reference slice.
 - **Errors**: services throw domain error classes; actions map them via
   `instanceof` and `return createError(code, msg)` (not `throw`). Never
   build HTTP errors inside a service.
-- **Action filenames** are verb-first (`get-source.ts`); use an entity
-  prefix only inside resource-cluster subfolders.
+- **Action filenames** are verb-first (`get-source.ts`). An entity prefix
+  is only for a resource-cluster subfolder that does *not* already name
+  that entity (`members/user-list.ts`); inside a sub-slice's own
+  `actions/` (`messaging/thread/actions/`) the files stay `create.ts` /
+  `list.ts`, never `thread-create.ts`.
 - **Multiline definition / prompt text** uses backtick template literals,
   not `+` string concatenation.
 - **Schema `ai.definition` / `outputRules`** describe activity-level purpose

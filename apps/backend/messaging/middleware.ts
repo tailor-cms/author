@@ -1,0 +1,45 @@
+import type { NextFunction, Response } from 'express';
+import { StatusCodes } from 'http-status-codes';
+import { createError } from '#shared/error/helpers.js';
+import db from '#shared/database/index.js';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
+
+const { Comment: CommentModel, User } = db;
+
+// Param middleware: loads the message (with its author projection) onto
+// req and enforces repository scoping. paranoid:false because PATCH/DELETE
+// flows can target soft-deleted rows. 404 when missing, 403 when the message
+// belongs to a different repository than the one in scope.
+export async function getMessage(
+  req: any,
+  _res: Response,
+  next: NextFunction,
+  messageId: string,
+) {
+  if (!Number.isInteger(Number(messageId))) {
+    return createError(StatusCodes.BAD_REQUEST, 'Invalid id format');
+  }
+  const include = [
+    { model: User, as: 'author', attributes: USER_SUMMARY_ATTRS },
+  ];
+  const message = await CommentModel.findByPk(messageId, {
+    include,
+    paranoid: false,
+  });
+  if (!message) return createError(StatusCodes.NOT_FOUND, 'Message not found');
+  if (message.repositoryId !== req.repository?.id) {
+    return createError(StatusCodes.FORBIDDEN, 'Access restricted');
+  }
+  req.message = message;
+  next();
+}
+
+// Only the message author may edit or delete it. Mounted after
+// `getMessage` so `req.message` is always populated.
+export function canEdit(req: any, _res: Response, next: NextFunction) {
+  const { user, message } = req;
+  if (user.id !== message.authorId) {
+    return createError(StatusCodes.FORBIDDEN, 'Forbidden');
+  }
+  next();
+}

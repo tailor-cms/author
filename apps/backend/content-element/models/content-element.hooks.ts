@@ -21,7 +21,7 @@ import sse from '#shared/sse/index.js';
 import type { OperationContext } from '#shared/database/types.ts';
 import type ActivityModel from '../../activity/models/activity.model.js';
 import type { Activity } from '../../activity/models/activity.model.js';
-import type CommentModel from '../../comment/models/comment.model.js';
+import type CommentModel from '../../messaging/models/comment.model.js';
 import type RepositoryModel from '../../repository/models/repository.model.js';
 import type { Repository } from '../../repository/models/repository.model.js';
 import type ContentElementModelDefault from './content-element.model.js';
