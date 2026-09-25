@@ -9,6 +9,7 @@ export * as activity from './activity';
 export * from './changeCase';
 export * from './html';
 export * as Events from './events';
+export * from './emoji';
 export { default as InsertLocation } from './insertLocation';
 export { default as numberToLetter } from './numberToLetter';
 export { default as uuid } from './uuid';

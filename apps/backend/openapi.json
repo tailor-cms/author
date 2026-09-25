@@ -316,8 +316,8 @@
           },
           "name": {
             "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9_+-]{1,29}$",
-            "description": "The shortcode without its colons - `party` is written `:party:`. Lowercase, URL-safe and 2-30 characters, so it can be typed, searched and put in a path; a single character would turn times and ratios (\"3:4:5\") into emoji."
+            "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
+            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
           },
           "url": {
             "type": "string",
@@ -325,13 +325,53 @@
           },
           "isAnimated": {
             "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the emoji was added."
+          },
+          "createdBy": {
+            "anyOf": [
+              {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "exclusiveMinimum": 0,
+                    "maximum": 9007199254740991,
+                    "description": "Numeric primary key."
+                  },
+                  "label": {
+                    "type": "string",
+                    "description": "Display label fallback. Resolves to `fullName` when present, otherwise the email; safe to render directly."
+                  },
+                  "imgUrl": {
+                    "type": "string",
+                    "description": "Avatar URL. Defaults to a Gravatar identicon derived from the email when no custom image was uploaded."
+                  }
+                },
+                "required": [
+                  "id",
+                  "label",
+                  "imgUrl"
+                ],
+                "additionalProperties": false
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who added it."
           }
         },
         "required": [
           "id",
           "name",
           "url",
-          "isAnimated"
+          "isAnimated",
+          "createdAt",
+          "createdBy"
         ],
         "additionalProperties": false
       },
@@ -2153,7 +2193,8 @@
             "enum": [
               "BUILTIN",
               "EXTERNAL"
-            ]
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           },
           "repositoryId": {
             "anyOf": [
@@ -2239,7 +2280,8 @@
             "enum": [
               "BUILTIN",
               "EXTERNAL"
-            ]
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           },
           "repositoryId": {
             "anyOf": [
@@ -2667,13 +2709,22 @@
               }
             ],
             "description": "MDI icon name."
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           }
         },
         "required": [
           "id",
           "key",
           "name",
-          "icon"
+          "icon",
+          "type"
         ],
         "additionalProperties": false
       },
@@ -6665,8 +6716,8 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "pattern": "^[a-z0-9][a-z0-9_+-]{1,29}$",
-                    "description": "The shortcode without its colons - `party` is written `:party:`. Lowercase, URL-safe and 2-30 characters, so it can be typed, searched and put in a path; a single character would turn times and ratios (\"3:4:5\") into emoji."
+                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
+                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
                   },
                   "image": {
                     "type": "string",

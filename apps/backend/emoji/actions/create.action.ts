@@ -1,3 +1,4 @@
+import { EMOJI_NAME_RULE } from '@tailor-cms/utils';
 import { StatusCodes } from 'http-status-codes';
 import { createError } from '#shared/error/helpers.js';
 import { dataEnvelope } from '#shared/request/schemas.ts';
@@ -41,7 +42,7 @@ export default defineAction({
         return createError(StatusCodes.CONFLICT, `:${name}: already exists`);
       }
       if (error instanceof service.EmojiNameInvalidError) {
-        return createError(StatusCodes.BAD_REQUEST, schemas.EMOJI_NAME_RULE);
+        return createError(StatusCodes.BAD_REQUEST, EMOJI_NAME_RULE);
       }
       if (error instanceof service.EmojiImageInvalidError) {
         return createError(StatusCodes.BAD_REQUEST, oneLine`

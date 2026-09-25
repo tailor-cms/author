@@ -20,7 +20,7 @@ import { subscribedThreads } from '../thread/subscription.service.ts';
 import { Op } from 'sequelize';
 import { IntegrationType } from '@tailor-cms/interfaces/comment.ts';
 import { createLogger } from '#logger';
-import { parseShortcode } from '@tailor-cms/utils';
+import { parseEmojiShortcode } from '@tailor-cms/utils';
 import * as commentService from '../comment.service.ts';
 import crypto from 'node:crypto';
 import IntegrationModel from './models/integration.model.js';
@@ -145,7 +145,7 @@ export async function postFromWebhook(
     attachments.map(resolveAttachmentSummary).filter(Boolean).join('\n') ||
     `${name} posted an update`;
   const senderEmoji = payload.icon_emoji
-    ? parseShortcode(payload.icon_emoji.trim())
+    ? parseEmojiShortcode(payload.icon_emoji.trim())
     : null;
   return Promise.all(
     threads.map((thread: any) =>

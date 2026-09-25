@@ -1,8 +1,10 @@
 import type { Emoji } from './schemas/index.ts';
 import EmojiModel, { type Emoji as EmojiRow } from './models/emoji.model.js';
-import { EMOJI_NAME } from '@tailor-cms/interfaces/emoji';
+import { EMOJI_NAME } from '@tailor-cms/utils';
+import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import { createKvStore } from '#shared/kvStore.ts';
 import crypto from 'node:crypto';
+import db from '#shared/database/index.js';
 import sharp from 'sharp';
 import storage from './storage.ts';
 
@@ -10,6 +12,8 @@ export class EmojiNameTakenError extends Error {}
 export class EmojiNameInvalidError extends Error {}
 export class EmojiImageInvalidError extends Error {}
 export class EmojiNotFoundError extends Error {}
+
+const { User } = db;
 
 // The largest an emoji is drawn is the 40px preview in the admin
 // dialog; 128px still covers that on a 3x screen
@@ -56,12 +60,27 @@ const storageKey = (contentHash: string) =>
 const hashImage = (image: Buffer) =>
   crypto.createHash('sha256').update(image).digest('hex').slice(0, 32);
 
-const toEmoji = ({ id, name, contentHash, isAnimated }: EmojiRow): Emoji => ({
-  id,
-  name,
-  url: imageUrl(contentHash),
-  isAnimated,
-});
+// Includes archived users, so an emoji keeps showing who added it
+const CREATOR_INCLUDE = {
+  model: User,
+  as: 'createdBy',
+  paranoid: false,
+  attributes: [...USER_SUMMARY_ATTRS],
+};
+
+const toEmoji = (row: EmojiRow): Emoji => {
+  const { id, name, contentHash, isAnimated, createdAt, createdBy } = row;
+  return {
+    id,
+    name,
+    url: imageUrl(contentHash),
+    isAnimated,
+    createdAt: new Date(createdAt).toISOString(),
+    createdBy: createdBy
+      ? { id: createdBy.id, label: createdBy.label, imgUrl: createdBy.imgUrl }
+      : null,
+  };
+};
 
 /**
  * Every emoji, in one list. Deliberately unpaginated: it is the
@@ -70,7 +89,10 @@ const toEmoji = ({ id, name, contentHash, isAnimated }: EmojiRow): Emoji => ({
 export async function list(): Promise<Emoji[]> {
   const cached = await cache.get(MANIFEST_KEY);
   if (cached) return cached;
-  const rows = await EmojiModel.findAll({ order: [['name', 'ASC']] });
+  const rows = await EmojiModel.findAll({
+    include: [CREATOR_INCLUDE],
+    order: [['name', 'ASC']],
+  });
   const manifest = rows.map(toEmoji);
   await cache.set(MANIFEST_KEY, manifest);
   return manifest;
@@ -103,6 +125,7 @@ export async function create(
     createdById: userId,
   });
   await cache.delete(MANIFEST_KEY);
+  await emoji.reload({ include: [CREATOR_INCLUDE] });
   return toEmoji(emoji);
 }
 

@@ -1,4 +1,5 @@
 import type { Model, ModelStatic, Optional } from 'sequelize';
+import type { User } from '../../user/models/user.model.js';
 
 export interface EmojiAttrs {
   id: number;
@@ -14,7 +15,12 @@ export interface EmojiAttrs {
 
 type GeneratedAttrs = 'id' | 'isAnimated' | 'createdAt' | 'updatedAt';
 
+export interface EmojiAssociations {
+  createdBy?: Pick<User, 'id' | 'label' | 'imgUrl'> | null;
+}
+
 export type Emoji = EmojiAttrs &
+  EmojiAssociations &
   Model<EmojiAttrs, Optional<EmojiAttrs, GeneratedAttrs>>;
 
 declare const Emoji: ModelStatic<Emoji>;

@@ -1,8 +1,9 @@
-import { EMOJI_NAME } from '@tailor-cms/interfaces/emoji';
+import { EMOJI_NAME, EMOJI_NAME_RULE } from '@tailor-cms/utils';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
-import { Int, IntParam } from '#shared/request/schemas.ts';
+import { Int, IntParam, Timestamp } from '#shared/request/schemas.ts';
+import { UserSummary } from '#app/user/schemas/entity.ts';
 
 // Path param shape for every `/:emojiId` route.
 export const EmojiParams = z.object({
@@ -11,19 +12,13 @@ export const EmojiParams = z.object({
 
 export type EmojiParams = z.infer<typeof EmojiParams>;
 
-export const EMOJI_NAME_RULE = oneLine`
-  A shortcode is 2-30 characters of lowercase letters, digits, "_", "+"
-  or "-".
-`;
-
 export const EmojiName = z
   .string()
-  .regex(EMOJI_NAME, EMOJI_NAME_RULE).describe(oneLine`
-  The shortcode without its colons - \`party\` is written \`:party:\`.
-  Lowercase, URL-safe and 2-30 characters, so it can be typed, searched
-  and put in a path; a single character would turn times and ratios
-  ("3:4:5") into emoji.
-`);
+  .regex(EMOJI_NAME, EMOJI_NAME_RULE)
+  .describe(oneLine`
+    The shortcode without its colons - \`party\` is written
+    \`:party:\`. ${EMOJI_NAME_RULE}
+  `);
 
 export const Emoji = z
   .object({
@@ -35,6 +30,10 @@ export const Emoji = z
       rather than asking anybody to revalidate the old one.
     `),
     isAnimated: z.boolean(),
+    createdAt: Timestamp('When the emoji was added.'),
+    createdBy: UserSummary.pick({ id: true, label: true, imgUrl: true })
+      .nullable()
+      .describe('Who added it.'),
   })
   .meta({ id: 'Emoji' })
   .describe('An emoji available to everybody in the workspace.');
