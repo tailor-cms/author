@@ -1,12 +1,13 @@
-import { CUSTOM_EMOJI, type CustomEmoji, type CustomEmojiSource } from './keys';
-import { inject } from 'vue';
+import type { CustomEmoji } from './types';
+
 import { parseEmojiShortcode } from '@tailor-cms/utils';
+import { useDiscussionContext } from './context';
 
 /**
  * The workspace's custom emojis; provided by the host app.
  */
 export const useCustomEmoji = () => {
-  const source = inject<CustomEmojiSource | null>(CUSTOM_EMOJI, null);
+  const { customEmoji: source } = useDiscussionContext();
 
   // `:xyz:` -> the `xyz` emoji; a standard emoji resolves to nothing
   const resolve = (value: string): CustomEmoji | undefined => {

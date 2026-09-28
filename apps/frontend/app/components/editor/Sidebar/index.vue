@@ -127,12 +127,13 @@ import { getElementId } from '@tailor-cms/utils';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 import { useDisplay } from 'vuetify';
 
+import ActivityDiscussion
+  from '@/components/repository/Discussion/ActivityDiscussion/index.vue';
+import ActivityHistory from '@/components/repository/Revisions/ActivityHistory.vue';
 import ActivityNavigation from './ActivityNavigation.vue';
 import ElementSidebar from './ElementSidebar/index.vue';
-import ActivityDiscussion from '@/components/repository/Discussion/index.vue';
-import ActivityHistory from '@/components/repository/Revisions/ActivityHistory.vue';
-import { useCurrentRepository } from '@/stores/current-repository';
 import CollectionNavigation from '@/components/editor/Sidebar/CollectionNavigation.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const modelValue = defineModel<boolean>({ required: true });
 
