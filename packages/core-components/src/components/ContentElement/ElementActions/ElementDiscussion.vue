@@ -29,6 +29,7 @@
           isVisible,
         }"
         v-model:confirmation-active="isConfirmationActive"
+        @react="reactToComment"
         @remove="removeComment"
         @resolve="updateResolvement"
         @save="save"
@@ -143,6 +144,13 @@ const updateResolvement = ({
       contentElementId: props.id,
       resolvedAt,
     },
+  });
+};
+
+const reactToComment = (comment: Comment, emoji: string) => {
+  editorBus.emit('comment', {
+    action: Events.Discussion.React,
+    payload: { id: comment.id, emoji },
   });
 };
 

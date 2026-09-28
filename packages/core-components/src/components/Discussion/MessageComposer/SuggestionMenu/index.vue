@@ -27,7 +27,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { SuggestionItem } from '../../keys';
+import type { SuggestionItem } from '../../types';
 
 import { computed } from 'vue';
 

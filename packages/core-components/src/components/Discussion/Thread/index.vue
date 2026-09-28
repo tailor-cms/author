@@ -10,6 +10,8 @@
         user,
         comments: visibleComments.seen,
       }"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="emit('remove', $event)"
       @resolve="emit('resolve', $event)"
       @unresolve="emit('unresolve', $event)"
@@ -27,6 +29,8 @@
         user,
         comments: visibleComments.unseen,
       }"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="emit('remove', $event)"
       @resolve="emit('resolve', $event)"
       @unresolve="emit('unresolve', $event)"
@@ -60,6 +64,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits([
+  'react',
   'remove',
   'resolve',
   'unresolve',

@@ -48,13 +48,13 @@
 </template>
 
 <script lang="ts" setup>
-import type { User } from '@tailor-cms/interfaces/user';
+import type { UserSummary } from '@tailor-cms/interfaces/user';
 import { VAvatarGroup } from 'vuetify/labs/VAvatarGroup';
 
 import UserAvatar from './UserAvatar.vue';
 
 interface Props {
-  users: User[];
+  users: UserSummary[];
   limit?: number;
   size?: number | string;
   vertical?: boolean;

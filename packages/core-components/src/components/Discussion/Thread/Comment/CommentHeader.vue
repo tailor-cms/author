@@ -26,6 +26,22 @@
         />
       </div>
     </div>
+    <EmojiPicker
+      v-if="!isDeleted && !isEditing"
+      @select="emit('react', $event)"
+    >
+      <template #activator="{ props: picker }">
+        <VBtn
+          v-tooltip:top="'Add reaction'"
+          v-bind="picker"
+          aria-label="Add reaction"
+          density="comfortable"
+          icon="mdi-emoticon-plus-outline"
+          size="x-small"
+          variant="text"
+        />
+      </template>
+    </EmojiPicker>
     <VMenu
       v-if="showOptions && !isEditing"
       :close-on-content-click="false"
@@ -65,6 +81,7 @@ import type { User } from '@tailor-cms/interfaces/user';
 import { useDateFormat, useTimeAgo } from '@vueuse/core';
 
 import EditorLink from '../../../EditorLink.vue';
+import EmojiPicker from '../../EmojiPicker/index.vue';
 
 type Action = 'resolve' | 'enableEdit' | 'remove';
 
@@ -91,7 +108,7 @@ const props = withDefaults(defineProps<Props>(), {
   elementLabel: '',
 });
 
-const emit = defineEmits(['remove', 'resolve', 'enableEdit']);
+const emit = defineEmits(['remove', 'resolve', 'enableEdit', 'react']);
 
 const OPTIONS = {
   resolve: {
@@ -134,6 +151,10 @@ const showOptions = computed(
 </script>
 
 <style lang="scss" scoped>
+.v-theme--dark .author {
+  color: #edf1f7;
+}
+
 .header {
   display: flex;
   align-items: flex-start;
@@ -150,6 +171,7 @@ const showOptions = computed(
     .author {
       flex: 0 1 auto;
       min-width: 0;
+      color: rgb(var(--v-theme-on-surface));
     }
 
     .meta {

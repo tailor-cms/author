@@ -1,6 +1,6 @@
 import type { Content, Editor } from '@tiptap/vue-3';
 import type { SuggestionOptions, SuggestionProps } from '@tiptap/suggestion';
-import type { SuggestionFetcher, SuggestionItem } from '../../keys';
+import type { SuggestionFetcher, SuggestionItem } from '../../types';
 import type { Box } from './index.vue';
 
 import { VueRenderer } from '@tiptap/vue-3';

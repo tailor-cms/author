@@ -22,7 +22,7 @@
     />
     <div v-if="!isSearch" class="d-flex align-center px-2 pb-2">
       <AttachButton
-        v-if="uploadFiles"
+        v-if="canAttach"
         :disabled="disabled || isUploading"
         @attach="attachFiles"
       />
@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { Attachment, SuggestionFetcher, SuggestionItem } from '../keys';
+import type { SuggestionItem } from '../types';
 
 import { ReferenceType, toEmojiShortcode } from '@tailor-cms/utils';
 import {
@@ -63,6 +63,7 @@ import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { createExtensions } from './tiptap/extensions';
 import { searchEmoji } from '../EmojiPicker/emoji';
 import { useCustomEmoji } from '../useCustomEmoji';
+import { useDiscussionContext } from '../context';
 import AttachButton from './AttachButton.vue';
 import ComposerHint from './ComposerHint.vue';
 import EmojiPicker from '../EmojiPicker/index.vue';
@@ -76,10 +77,6 @@ interface Props {
   autofocus?: boolean;
   // Editing a posted message
   isEditing?: boolean;
-  suggestUsers?: SuggestionFetcher;
-  suggestReferences?: SuggestionFetcher;
-  // Uploads to the asset library and returns what to reference
-  uploadFiles?: (files: File[]) => Promise<Attachment[]>;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -88,9 +85,6 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   autofocus: false,
   isEditing: false,
-  suggestUsers: () => [],
-  suggestReferences: () => [],
-  uploadFiles: undefined,
 });
 
 const emit = defineEmits<{
@@ -101,6 +95,7 @@ const emit = defineEmits<{
   'edit:last': [];
 }>();
 
+const { services } = useDiscussionContext();
 const customEmoji = useCustomEmoji();
 
 // Message text, with mentions and references as tokens
@@ -111,7 +106,9 @@ const isDragging = ref(false);
 const isUploading = ref(false);
 const isSearch = computed(() => props.variant === 'search');
 const isEmpty = computed(() => !content.value);
-const canAttach = computed(() => !!props.uploadFiles);
+
+// A search box takes no files
+const canAttach = computed(() => !isSearch.value && !!services);
 
 const openMenus = new Set<string>();
 const CUSTOM_EMOJI_LIMIT = 10;
@@ -148,8 +145,8 @@ const editor = useEditor({
   },
   extensions: createExtensions({
     placeholder: () => props.placeholder,
-    suggestUsers: (query) => props.suggestUsers(query),
-    suggestReferences: (query) => props.suggestReferences(query),
+    suggestUsers: (query) => services?.suggestUsers(query) ?? [],
+    suggestReferences: (query) => services?.suggestReferences(query) ?? [],
     suggestEmoji,
     hooks: {
       onOpen: (char) => openMenus.add(char),
@@ -177,11 +174,10 @@ const insertEmoji = (value: string) => insert(`${value} `);
 
 // Files go to the asset library and are added as chips
 const attachFiles = async (files: File[]) => {
-  const { uploadFiles } = props;
-  if (!files.length || !uploadFiles || isUploading.value) return;
+  if (!files.length || !canAttach.value || isUploading.value) return;
   isUploading.value = true;
   try {
-    const attachments = await uploadFiles(files);
+    const attachments = (await services?.uploadFiles(files)) ?? [];
     insert(
       attachments.flatMap(({ id, label }) =>
         withSpace(referenceNode(ReferenceType.Asset, id, label)),
@@ -208,7 +204,7 @@ const attachDropped = ({ dataTransfer }: DragEvent) => {
 // Pasted text is left to the editor; only files are attached
 const attachPasted = (event: ClipboardEvent) => {
   const files = Array.from(event.clipboardData?.files ?? []);
-  if (!files.length) return;
+  if (!files.length || !canAttach.value) return;
   event.preventDefault();
   attachFiles(files);
 };

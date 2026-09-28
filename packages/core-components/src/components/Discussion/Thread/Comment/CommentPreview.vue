@@ -17,16 +17,38 @@
         />
       </div>
       <div class="body">
-        {{ content.trimEnd() }}
-        <span v-if="isEdited" class="edited text-medium-emphasis">(edited)</span>
+        <MessageBody
+          :content="isImageOnly ? '' : content"
+          :current-user-id="currentUserId"
+        >
+          <template v-if="referenceViews" #reference="{ token, icon }">
+            <component :is="referenceViews.chip" :icon="icon" :token="token" />
+          </template>
+          <template #trailing>
+            <span v-if="isEdited" class="edited text-medium-emphasis">
+              (edited)
+            </span>
+          </template>
+        </MessageBody>
       </div>
+      <component
+        :is="referenceViews.previews"
+        v-if="referenceViews"
+        v-model:is-image-only="isImageOnly"
+        :content="content"
+      />
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
+import { ref } from 'vue';
+import { useDiscussionContext } from '../../context';
+import MessageBody from '../../MessageBody.vue';
+
 interface Props {
   content?: string;
+  currentUserId?: number | null;
   isResolved?: boolean;
   isDeleted?: boolean;
   isEdited?: boolean;
@@ -34,12 +56,17 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   content: '',
+  currentUserId: null,
   isResolved: false,
   isDeleted: false,
   isEdited: false,
 });
 
 const emit = defineEmits(['unresolve']);
+
+const { referenceViews } = useDiscussionContext();
+
+const isImageOnly = ref(false);
 </script>
 
 <style lang="scss" scoped>

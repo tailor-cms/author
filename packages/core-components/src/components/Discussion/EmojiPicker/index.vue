@@ -66,7 +66,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { CustomEmoji } from '../keys';
+import type { CustomEmoji } from '../types';
 
 import { EMOJI_GROUPS, type EmojiEntry, searchEmoji } from './emoji';
 import { computed, ref } from 'vue';
