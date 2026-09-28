@@ -1,4 +1,4 @@
-import { EMOJI_NAME, EMOJI_NAME_RULE } from '@tailor-cms/utils';
+import { EMOJI_NAME_PATTERN, EMOJI_NAME_REQUIREMENTS } from '@tailor-cms/utils';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
@@ -14,10 +14,10 @@ export type EmojiParams = z.infer<typeof EmojiParams>;
 
 export const EmojiName = z
   .string()
-  .regex(EMOJI_NAME, EMOJI_NAME_RULE)
+  .regex(EMOJI_NAME_PATTERN, EMOJI_NAME_REQUIREMENTS)
   .describe(oneLine`
     The shortcode without its colons - \`party\` is written
-    \`:party:\`. ${EMOJI_NAME_RULE}
+    \`:party:\`. ${EMOJI_NAME_REQUIREMENTS}
   `);
 
 export const Emoji = z

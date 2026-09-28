@@ -1,6 +1,6 @@
 import type { Emoji } from './schemas/index.ts';
 import EmojiModel, { type Emoji as EmojiRow } from './models/emoji.model.js';
-import { EMOJI_NAME } from '@tailor-cms/utils';
+import { EMOJI_NAME_PATTERN } from '@tailor-cms/utils';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import { createKvStore } from '#shared/kvStore.ts';
 import crypto from 'node:crypto';
@@ -107,7 +107,7 @@ export async function create(
   userId: number,
 ): Promise<Emoji> {
   const name = input.name.trim().toLowerCase();
-  if (!EMOJI_NAME.test(name)) throw new EmojiNameInvalidError(name);
+  if (!EMOJI_NAME_PATTERN.test(name)) throw new EmojiNameInvalidError(name);
   if (input.image.byteLength > MAX_UPLOAD_BYTES) {
     throw new EmojiImageInvalidError('too large');
   }

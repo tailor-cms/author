@@ -2,9 +2,10 @@
 const NAME = '[a-z0-9][a-z0-9_+\\-]{1,29}';
 const SHORTCODE = `:(${NAME}):`;
 
-export const EMOJI_NAME = new RegExp(`^${NAME}$`);
+// Tests a custom emoji name
+export const EMOJI_NAME_PATTERN = new RegExp(`^${NAME}$`);
 
-export const EMOJI_NAME_RULE = `A shortcode is 2-30 characters of \
+export const EMOJI_NAME_REQUIREMENTS = `A shortcode is 2-30 characters of \
   lowercase letters, digits, "_", "+" or "-".`;
 
 // Finds every emoji inside text, custom or standard:

@@ -10,11 +10,13 @@
       <VTextField
         v-model.trim="name"
         :error-messages="nameError"
+        :rules="[nameFormatRule]"
         class="mb-4"
         hide-details="auto"
         label="Shortcode"
         prefix=":"
         suffix=":"
+        validate-on="invalid-input"
         variant="outlined"
       />
       <VFileInput
@@ -71,7 +73,11 @@
 </template>
 
 <script lang="ts" setup>
-import { EMOJI_NAME, EMOJI_NAME_RULE, toEmojiShortcode } from '@tailor-cms/utils';
+import {
+  EMOJI_NAME_PATTERN,
+  EMOJI_NAME_REQUIREMENTS,
+  toEmojiShortcode,
+} from '@tailor-cms/utils';
 import { TailorDialog } from '@tailor-cms/core-components';
 import { useObjectUrl } from '@vueuse/core';
 import { useEmojiStore } from '@/stores/emoji';
@@ -92,14 +98,20 @@ const serverError = ref<{ field: 'name' | 'file'; message: string }>();
 
 const previewUrl = useObjectUrl(file);
 const normalizedName = computed(() => name.value.toLowerCase());
-const isNameValid = computed(() => EMOJI_NAME.test(normalizedName.value));
+const isNameValid = computed(() =>
+  EMOJI_NAME_PATTERN.test(normalizedName.value),
+);
 
 const serverErrorFor = (field: 'name' | 'file') =>
   serverError.value?.field === field ? serverError.value.message : '';
 
+const nameFormatRule = () => {
+  if (!normalizedName.value || isNameValid.value) return true;
+  return EMOJI_NAME_REQUIREMENTS;
+};
+
 const nameError = computed(() => {
-  if (!normalizedName.value) return '';
-  if (!isNameValid.value) return EMOJI_NAME_RULE;
+  if (!isNameValid.value) return '';
   if (emojiStore.get(normalizedName.value)) return 'That shortcode is taken.';
   return serverErrorFor('name');
 });
