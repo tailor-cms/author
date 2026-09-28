@@ -1,4 +1,8 @@
-import { CommentType, ThreadType } from '@tailor-cms/interfaces/comment.ts';
+import {
+  CommentType,
+  IntegrationType,
+  ThreadType,
+} from '@tailor-cms/interfaces/comment.ts';
 import {
   Int,
   IntParam,
@@ -35,6 +39,10 @@ export type CommentElementRef = z.infer<typeof CommentElementRef>;
 export const IntegrationRef = z
   .object({
     id: Int(),
+    type: z.enum(IntegrationType).describe(oneLine`
+      \`BUILTIN\` is Tailor reporting on itself, \`EXTERNAL\` is another
+      system posting through the inbound webhook.
+    `),
     key: z.string().describe(oneLine`
       Stable identifier; the address a thread subscribes to as
       \`integration:<key>\`.

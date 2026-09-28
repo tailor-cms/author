@@ -20,7 +20,6 @@ export const IntegrationItemParams = RepositoryScopedParams.extend({
 export type IntegrationItemParams = z.infer<typeof IntegrationItemParams>;
 
 export const Integration = IntegrationRef.extend({
-  type: z.enum(IntegrationType),
   repositoryId: Int().nullable().describe(oneLine`
     Null for the built-in integrations, which are available everywhere.
   `),

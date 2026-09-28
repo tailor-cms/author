@@ -2170,6 +2170,14 @@
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
+          },
           "key": {
             "type": "string",
             "description": "Stable identifier; the address a thread subscribes to as `integration:<key>`."
@@ -2187,14 +2195,6 @@
               }
             ],
             "description": "MDI icon name."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "BUILTIN",
-              "EXTERNAL"
-            ],
-            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           },
           "repositoryId": {
             "anyOf": [
@@ -2237,10 +2237,10 @@
         },
         "required": [
           "id",
+          "type",
           "key",
           "name",
           "icon",
-          "type",
           "repositoryId",
           "isEnabled",
           "createdAt",
@@ -2256,6 +2256,14 @@
             "type": "integer",
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           },
           "key": {
             "type": "string",
@@ -2274,14 +2282,6 @@
               }
             ],
             "description": "MDI icon name."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "BUILTIN",
-              "EXTERNAL"
-            ],
-            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           },
           "repositoryId": {
             "anyOf": [
@@ -2328,10 +2328,10 @@
         },
         "required": [
           "id",
+          "type",
           "key",
           "name",
           "icon",
-          "type",
           "repositoryId",
           "isEnabled",
           "createdAt",
@@ -2692,6 +2692,14 @@
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "BUILTIN",
+              "EXTERNAL"
+            ],
+            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
+          },
           "key": {
             "type": "string",
             "description": "Stable identifier; the address a thread subscribes to as `integration:<key>`."
@@ -2709,22 +2717,14 @@
               }
             ],
             "description": "MDI icon name."
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "BUILTIN",
-              "EXTERNAL"
-            ],
-            "description": "`BUILTIN` is Tailor reporting on itself, `EXTERNAL` is another system posting through the inbound webhook."
           }
         },
         "required": [
           "id",
+          "type",
           "key",
           "name",
-          "icon",
-          "type"
+          "icon"
         ],
         "additionalProperties": false
       },
