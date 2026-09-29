@@ -55,7 +55,6 @@
     <ActivityDiscussion
       :key="activity.id"
       :activity="activity"
-      panel
       show-heading
     />
   </div>
@@ -65,7 +64,7 @@
 import { RichTextEditor } from '@tailor-cms/core-components';
 import { workflow as workflowConfig } from '@tailor-cms/config';
 
-import ActivityDiscussion from '../../Discussion/index.vue';
+import ActivityDiscussion from '../../Discussion/ActivityDiscussion/index.vue';
 import SelectAssignee from './SelectAssignee.vue';
 import SelectPriority from './SelectPriority.vue';
 import SelectStatus from './SelectStatus.vue';

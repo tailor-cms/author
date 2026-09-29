@@ -28,7 +28,6 @@
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
 import { api } from '@/api';
 
 interface Props {
