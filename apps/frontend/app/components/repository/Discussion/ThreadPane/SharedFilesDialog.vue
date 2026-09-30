@@ -45,7 +45,7 @@
       />
       <div v-else class="d-flex flex-wrap ga-3 py-4">
         <div v-for="item in items" :key="item.entityId" class="shared-item">
-          <ThumbnailTile
+          <AssetTile
             :reference="{ entityType: 'asset', entityId: item.entityId }"
           />
           <div class="text-body-small text-medium-emphasis text-truncate mt-1">
@@ -62,7 +62,7 @@ import { TailorDialog } from '@tailor-cms/core-components';
 import { formatTimeAgo } from '@vueuse/core';
 import { useDiscussionStore } from '@/stores/discussion';
 
-import ThumbnailTile from '../ThumbnailTile.vue';
+import AssetTile from '../AssetTile.vue';
 
 interface SharedAsset {
   entityId: string;
