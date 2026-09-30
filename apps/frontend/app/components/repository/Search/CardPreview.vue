@@ -28,7 +28,6 @@
 <script lang="ts" setup>
 import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { ContentElement as ContentElementWrapper } from '@tailor-cms/core-components';
-import { useSearchHighlight } from './composables';
 
 const props = defineProps<{
   element: ContentElement;

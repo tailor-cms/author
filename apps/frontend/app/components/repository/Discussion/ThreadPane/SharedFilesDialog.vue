@@ -44,14 +44,15 @@
         title="Nothing shared yet"
       />
       <div v-else class="d-flex flex-wrap ga-3 py-4">
-        <div v-for="item in items" :key="item.entityId" class="shared-item">
-          <AssetTile
-            :reference="{ entityType: 'asset', entityId: item.entityId }"
-          />
-          <div class="text-body-small text-medium-emphasis text-truncate mt-1">
-            {{ formatTimeAgo(new Date(item.lastSharedAt)) }}
-          </div>
-        </div>
+        <AssetTile
+          v-for="item in items"
+          :key="item.entityId"
+          :reference="{ entityType: 'asset', entityId: item.entityId }"
+        >
+          <template #subtitle>
+            Shared {{ formatTimeAgo(new Date(item.lastSharedAt)) }}
+          </template>
+        </AssetTile>
       </div>
     </template>
   </TailorDialog>
@@ -116,9 +117,3 @@ watch(
   { immediate: true },
 );
 </script>
-
-<style lang="scss" scoped>
-.shared-item {
-  width: 8rem;
-}
-</style>

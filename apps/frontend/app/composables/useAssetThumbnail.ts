@@ -3,7 +3,7 @@ import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
 import repositoryAsset from '@/api/repositoryAsset';
 
 // The minimal asset shape this composable needs.
-interface AssetThumbnailSource {
+export interface AssetThumbnailSource {
   id: number;
   repositoryId: number;
   type: AssetType;
@@ -52,7 +52,7 @@ export function useAssetThumbnail(
   return { src, onError };
 }
 
-function thumbnailCandidates(asset: AssetThumbnailSource): string[] {
+export function thumbnailCandidates(asset: AssetThumbnailSource): string[] {
   const fallback = fallbackImage(asset);
   // Images always have a generatable thumbnail; links only when a preview
   // exists to build one from.
