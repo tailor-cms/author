@@ -81,7 +81,7 @@ export const useEditorStore = defineStore('editor', () => {
     action: Events.Discussion;
     payload: unknown;
   }) => {
-    const { Save, Remove, SetLastSeen, Resolve } = Events.Discussion;
+    const { Save, Remove, React, SetLastSeen, Resolve } = Events.Discussion;
     const editorContext = {
       repositoryId: repositoryId.value,
       activityId: selectedActivityId.value!,
@@ -94,6 +94,10 @@ export const useEditorStore = defineStore('editor', () => {
         });
       case Remove:
         return commentStore.remove(repositoryId.value, payload as number);
+      case React: {
+        const { id, emoji } = payload as { id: number; emoji: string };
+        return commentStore.toggleReaction(repositoryId.value, id, emoji);
+      }
       case SetLastSeen:
         return commentStore.markSeenComments(
           payload as Parameters<typeof commentStore.markSeenComments>[0],
