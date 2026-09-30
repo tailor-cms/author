@@ -31,6 +31,7 @@
       <MessageComposer
         v-model="draft"
         :placeholder="messages.length ? 'Reply...' : 'Start the discussion...'"
+        class="thread-composer"
         @edit:last="editLast"
         @submit="emit('submit', $event)"
         @typing="emit('typing')"
@@ -103,5 +104,9 @@ const participants = computed(() =>
 .thread-pane {
   min-width: 0;
   min-height: 0;
+}
+
+.thread-composer {
+  --composer-min-height: 3.5rem;
 }
 </style>
