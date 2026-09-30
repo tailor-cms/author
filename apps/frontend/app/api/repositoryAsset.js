@@ -101,6 +101,12 @@ function importFromLink(repositoryId, url, meta) {
     .then(extractData);
 }
 
+function describeUrl(repositoryId, url) {
+  return request
+    .get(`${urls.root(repositoryId)}/url-description`, { params: { url } })
+    .then(extractData);
+}
+
 function attachFile(repositoryId, assetId, fileKey, file) {
   const formData = new FormData();
   formData.append('file', file);
@@ -155,6 +161,7 @@ export default {
   deleteFolder,
   updateAsset,
   importFromLink,
+  describeUrl,
   attachFile,
   indexAssets,
   getIndexingStatus,
