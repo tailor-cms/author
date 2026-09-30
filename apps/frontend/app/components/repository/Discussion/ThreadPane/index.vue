@@ -49,7 +49,7 @@ import {
   provideEditingMessage,
 } from '@tailor-cms/core-components';
 import { compact, uniqBy } from 'lodash-es';
-import { lastOwnMessage } from '../composables/useLastOwnMessage';
+import { lastOwnMessage } from '../utils';
 import ThreadHeader from './ThreadHeader.vue';
 import ThreadIntro from './ThreadIntro.vue';
 import ThreadMenu from './ThreadMenu.vue';

@@ -10,10 +10,8 @@
 <script lang="ts" setup>
 import type { DiscussionThread } from '@/stores/discussion';
 
-import {
-  isChannelThread,
-  useThreadAnchor,
-} from '../composables/useThreadAnchor';
+import { isChannelThread } from '../utils';
+import { useThreadAnchor } from '../composables/useThreadAnchor';
 import { ThreadType } from '@tailor-cms/interfaces/comment';
 import { useDateFormat } from '@vueuse/core';
 

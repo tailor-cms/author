@@ -45,10 +45,8 @@
 import type { DiscussionThread } from '@/stores/discussion';
 import type { UserSummary } from '@tailor-cms/interfaces/user';
 
-import {
-  isChannelThread,
-  useThreadAnchor,
-} from '../composables/useThreadAnchor';
+import { isChannelThread } from '../utils';
+import { useThreadAnchor } from '../composables/useThreadAnchor';
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 
 const props = defineProps<{

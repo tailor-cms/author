@@ -61,14 +61,17 @@ import CardPreview from '@/components/repository/Search/CardPreview.vue';
 import { MessageToken } from '@tailor-cms/core-components';
 import { useAsyncState } from '@vueuse/core';
 import { useReferencePreview } from '../composables/useReferencePreview';
-import { useEntityHref } from '../composables/useEntityHref';
+import { referenceHref } from '@/utils/entityLinks';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{ token: ReferenceToken; icon: string }>();
 
-const { hrefFor } = useEntityHref();
+const repoStore = useCurrentRepository();
 const { resolve } = useReferencePreview();
 
-const href = computed(() => hrefFor(props.token));
+const href = computed(() =>
+  referenceHref(repoStore.repositoryId, props.token),
+);
 
 const isOpen = ref(false);
 

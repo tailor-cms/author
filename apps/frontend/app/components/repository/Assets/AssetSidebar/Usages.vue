@@ -24,10 +24,7 @@
 </template>
 
 <script lang="ts" setup>
-import {
-  activityHref,
-  elementHref,
-} from '@/components/common/AgentPanel/entityLinks';
+import { activityHref, elementHref } from '@/utils/entityLinks';
 import type { Asset } from '@tailor-cms/interfaces/asset';
 import type { AssetUsage } from '@tailor-cms/api-client';
 import { startCase } from 'lodash-es';

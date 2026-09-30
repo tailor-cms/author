@@ -28,7 +28,7 @@
 <script lang="ts" setup>
 import type { DiscussionThread } from '@/stores/discussion';
 
-import { isChannelThread } from '../composables/useThreadAnchor';
+import { isChannelThread } from '../utils';
 
 interface ThreadAction {
   title: string;

@@ -40,7 +40,7 @@
 
 <script lang="ts" setup>
 import AgentToolCard from './AgentToolCard/index.vue';
-import { activityHref, elementHref } from './entityLinks';
+import { activityHref, elementHref } from '@/utils/entityLinks';
 import { renderMarkdown } from './markdown';
 import { useCurrentRepository } from '@/stores/current-repository';
 
