@@ -6,6 +6,13 @@ export const modelId = env.AI_MODEL_ID;
 export const imageModelId = env.AI_IMAGE_MODEL_ID;
 export const isEnabled = !!(secretKey && modelId);
 
+// Headless browser used to run and check AI-written interactive content.
+export const browser = {
+  url: env.AI_SANDBOX_BROWSER_URL,
+  protocol: env.AI_SANDBOX_BROWSER_PROTOCOL,
+  maxPages: env.AI_SANDBOX_MAX_PAGES,
+};
+
 const envSuffix = isProduction ? '' : `-${env.NODE_ENV}`;
 
 export const vectorStore = {
