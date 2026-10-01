@@ -18,7 +18,7 @@ const LAUNCH_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
 const IDLE_CLOSE_MS = 5 * 60 * 1000;
 
 // A remote browser is billed while connected, so it is let go at once.
-const isRemote = !!aiConfig.browser.wsEndpoint;
+const isRemote = !!aiConfig.browser.url;
 
 export class BrowserUnavailableError extends Error {}
 
@@ -102,15 +102,15 @@ class BrowserPool {
  * generated code next to the app's secrets (see README).
  */
 async function openBrowser(): Promise<Browser> {
-  const { wsEndpoint, protocol } = aiConfig.browser;
-  if (!wsEndpoint && isProduction) {
-    throw new Error('no remote browser configured (AI_BROWSER_WS_ENDPOINT)');
+  const { url, protocol } = aiConfig.browser;
+  if (!url && isProduction) {
+    throw new Error('no remote browser configured (AI_SANDBOX_BROWSER_URL)');
   }
-  if (!wsEndpoint) return chromium.launch({ args: LAUNCH_ARGS });
+  if (!url) return chromium.launch({ args: LAUNCH_ARGS });
   logger.debug({ protocol }, 'connecting to remote browser');
   return protocol === 'cdp'
-    ? chromium.connectOverCDP(wsEndpoint)
-    : chromium.connect(wsEndpoint);
+    ? chromium.connectOverCDP(url)
+    : chromium.connect(url);
 }
 
 export const browserPool = new BrowserPool();

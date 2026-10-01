@@ -22,7 +22,7 @@ Generated code is untrusted, so it never runs with access to the app:
 
 ## Production browser
 
-**Browserless** (default choice): set `AI_BROWSER_WS_ENDPOINT` to
+**Browserless** (default choice): set `AI_SANDBOX_BROWSER_URL` to
 `wss://production-sfo.browserless.io/chromium/playwright?token=...`. It is
 billed per 30s of connection, so the connection closes after every run;
 
