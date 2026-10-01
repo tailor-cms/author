@@ -1,20 +1,18 @@
 import { oneLine, stripIndent } from 'common-tags';
-import { schema as schemaAPI } from '@tailor-cms/config';
 import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
-  getAllowedElementTypes,
   recordOperation,
   toolError,
 } from '../helpers/index.ts';
-import { findActivity } from '../activity/helpers.ts';
+import { resolveElementHost } from '../activity/helpers.ts';
 import { nextElementPosition, normalizeElementData } from './helpers.ts';
 import { createAiLogger } from '../../../logger.ts';
 
 const logger = createAiLogger('agent.tools.add-elements');
 
-const { Activity, ContentElement } = db as any;
+const { ContentElement } = db as any;
 
 const TOOL = 'add_elements_to_activity';
 
@@ -104,48 +102,9 @@ function validateTypes(elements: ElementItem[], allowed: string[]) {
  * skipped elements are logged, successful ones returned.
  */
 async function execute(input: Input, ctx: ToolContext) {
-  const target = await findActivity(input.activityId, ctx);
-  if (!target) {
-    return toolError({
-      tool: TOOL,
-      reason: 'not_found',
-      message: `Activity #${input.activityId} not found.`,
-    });
-  }
-
-  // Outline activities don't host elements directly
-  if ((schemaAPI as any).isOutlineActivity(target.type)) {
-    return toolError({
-      tool: TOOL,
-      reason: 'outline_activity',
-      message: oneLine`
-        Activity #${target.id} is an outline activity
-        (${target.type}). Elements must be added to a
-        content container inside it. Call get_activity_subtree to
-        find container ids.
-      `,
-    });
-  }
-
-  const parent = target.parentId
-    ? await Activity.findByPk(target.parentId)
-    : null;
-  const allowed = getAllowedElementTypes(
-    ctx.repository.schema,
-    target.type,
-    parent?.type,
-  );
-  if (!allowed.length) {
-    return toolError({
-      tool: TOOL,
-      reason: 'no_config',
-      message: oneLine`
-        Activity #${target.id} (${target.type}) cannot host
-        elements. Use get_activity_subtree to find the correct
-        subcontainer id.
-      `,
-    });
-  }
+  const resolved = await resolveElementHost(TOOL, input.activityId, ctx);
+  if ('error' in resolved) return resolved;
+  const { host: target, allowedTypes: allowed } = resolved;
 
   const typeError = validateTypes(input.elements, allowed);
   if (typeError) return typeError;
@@ -193,7 +152,7 @@ async function execute(input: Input, ctx: ToolContext) {
     ...(failed.length ? { failed } : {}),
     _invalidates: [
       `activity:${target.id}`,
-      ...(parent?.id ? [`activity:${parent.id}`] : []),
+      ...(target.parentId ? [`activity:${target.parentId}`] : []),
     ],
   };
   recordOperation(TOOL, ctx);

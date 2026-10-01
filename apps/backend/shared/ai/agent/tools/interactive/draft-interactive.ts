@@ -59,6 +59,20 @@ const description = stripIndent`
   Every write is followed by a startup check (startupCheck): the HTML is
   loaded briefly and errors on load are reported. Use test_interactive
   for screenshots and interaction checks.
+  HTML rules:
+  - One complete document with its data inside; no calls to APIs.
+    Libraries only from cdn.jsdelivr.net, cdnjs.cloudflare.com or
+    unpkg.com (fonts: Google Fonts), with pinned versions; prefer classic
+    <script src> builds (they are inlined on save). Plain JS, SVG or
+    Canvas is fine for simple pieces.
+  - It runs in a sandbox: no localStorage, cookies, alerts or pop-ups;
+    keep state in memory.
+  - Fluid width; on narrow screens stack instead of squeezing, and avoid
+    inner scrolling (the frame grows to fit the content).
+  - Accessible: a <title>, visible labels on controls, keyboard
+    operable, readable contrast, honors prefers-reduced-motion.
+  - Teach one idea clearly: a short caption or legend, sensible
+    defaults, visible feedback to every input.
 `;
 
 const parameters = {
