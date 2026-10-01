@@ -2,6 +2,7 @@ import type { FocusedTarget } from '@tailor-cms/interfaces/agent.ts';
 import { Entity } from '@tailor-cms/interfaces/revision.ts';
 
 import db from '#shared/database/index.js';
+import elementRegistry from '#shared/content-plugins/elementRegistry.js';
 
 const { Activity, ContentElement } = db as any;
 
@@ -57,5 +58,7 @@ async function formatElement(
   const type = `(${element.type}) `;
   const label = focus.label ? `${focus.label}` : '';
   const embed = focus.embedUid ? ` [embed:${focus.embedUid}]` : '';
-  return `- Focused element: #${element.id} ${type}${label}${embed}`;
+  // Tells "fill this element" apart from "change it".
+  const empty = elementRegistry.isEmpty(element) ? ' (empty)' : '';
+  return `- Focused element: #${element.id} ${type}${label}${embed}${empty}`;
 }
