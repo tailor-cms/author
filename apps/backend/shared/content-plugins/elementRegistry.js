@@ -35,6 +35,15 @@ class ElementsRegistry {
     return this._aiSchemas[elementType];
   }
 
+  isEmpty(element) {
+    const manifest = this._registry.find((it) => it.type === element.type);
+    try {
+      return manifest?.isEmpty?.(element.data ?? {});
+    } catch {
+      return undefined;
+    }
+  }
+
   isQuestion(type) {
     return this._questionTypes.includes(type);
   }
