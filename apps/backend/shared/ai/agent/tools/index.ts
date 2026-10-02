@@ -41,6 +41,12 @@ import {
 } from './interaction/index.ts';
 
 import {
+  draft_interactive,
+  save_interactive,
+  test_interactive,
+} from './interactive/index.ts';
+
+import {
   get_outline_context,
   get_repository,
   get_schema_info,
@@ -82,6 +88,10 @@ export const TOOL_DEFS: ToolDef[] = [
   import_resource,
   generate_image_asset,
   index_assets,
+  // interactive element
+  draft_interactive,
+  test_interactive,
+  save_interactive,
   // interaction
   ask_user_question,
 ];

@@ -1,13 +1,16 @@
 // Activity-domain helpers: lookups, summaries, positioning, and tree queries.
 // Content-element tools that need activity lookups import from here -
 // the cross-slice import makes the domain boundary explicit.
+import { oneLine } from 'common-tags';
 import { schema as schemaAPI } from '@tailor-cms/config';
 
 import {
+  getAllowedElementTypes,
   getContainerActivityMeta,
   metaInputsForActivity,
   resolveLabel,
   stripSchemaPrefix,
+  toolError,
 } from '../helpers/index.ts';
 import db from '#shared/database/index.js';
 import type { ToolContext } from '../types.ts';
@@ -21,6 +24,53 @@ const api = schemaAPI as any;
 export async function findActivity(id: number, ctx: ToolContext) {
   const a = await Activity.findByPk(id);
   return a?.repositoryId === ctx.repository.id ? a : null;
+}
+
+/**
+ * Detect if an activity can host content elements and resolve its
+ * allowed element types.
+ */
+export async function resolveElementHost(
+  tool: string,
+  activityId: number,
+  ctx: ToolContext,
+) {
+  const host = await findActivity(activityId, ctx);
+  if (!host) {
+    return toolError({
+      tool,
+      reason: 'not_found',
+      message: `Activity #${activityId} not found.`,
+    });
+  }
+  if (api.isOutlineActivity(host.type)) {
+    return toolError({
+      tool,
+      reason: 'outline_activity',
+      message: oneLine`
+        Activity #${host.id} (${host.type}) is an outline activity.
+        Elements go into a content container inside it; call
+        get_activity_subtree to find container ids.
+      `,
+    });
+  }
+  const parent = host.parentId ? await Activity.findByPk(host.parentId) : null;
+  const allowedTypes: string[] = getAllowedElementTypes(
+    ctx.repository.schema,
+    host.type,
+    parent?.type,
+  );
+  if (!allowedTypes.length) {
+    return toolError({
+      tool,
+      reason: 'no_config',
+      message: oneLine`
+        Activity #${host.id} (${host.type}) cannot hold elements. Use
+        get_activity_subtree to find the correct subcontainer id.
+      `,
+    });
+  }
+  return { host, allowedTypes };
 }
 
 // Compact summary for the model - includes the schema-derived label.

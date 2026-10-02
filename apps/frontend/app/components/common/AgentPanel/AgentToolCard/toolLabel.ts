@@ -137,6 +137,21 @@ const assetLabels: Record<string, LabelSpec> = {
   },
 };
 
+const interactivePageLabels: Record<string, LabelSpec> = {
+  draft_interactive: {
+    verb: ['Writing', 'Wrote'],
+    target: (input) => quoted(input.title) || 'an interactive page',
+  },
+  save_interactive: {
+    verb: ['Saving', 'Saved'],
+    target: (input) => quoted(input.title) || 'an interactive page',
+  },
+  test_interactive: {
+    verb: ['Testing', 'Tested'],
+    target: () => 'an interactive page',
+  },
+};
+
 const interactionLabels: Record<string, LabelSpec> = {
   ask_user_question: { verb: ['Asking', 'Asked'], target: () => 'a question' },
 };
@@ -146,6 +161,7 @@ const LABELS: Record<string, LabelSpec> = {
   ...activityLabels,
   ...elementLabels,
   ...assetLabels,
+  ...interactivePageLabels,
   ...interactionLabels,
 };
 
