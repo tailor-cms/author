@@ -6,17 +6,14 @@ import {
   inspectPage,
 } from '../../../sandbox/index.ts';
 import {
-  findElement,
-  pickElementFields,
-} from '../content-elements/helpers.ts';
-import { toolError } from '../helpers/index.ts';
-import {
   ELEMENT_TYPE,
-  isToolError,
+  findInteractive,
   loadDraft,
-  runtimeError,
+  sandboxError,
 } from './helpers.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
+import { isToolError, toolError } from '../helpers/index.ts';
+import { pickElementFields } from '../content-elements/helpers.ts';
 import { createAiLogger } from '../../../logger.ts';
 import { draftStore, type InteractiveDraft } from './drafts.ts';
 import { addResizeReporter } from './resize-reporter.ts';
@@ -114,12 +111,19 @@ async function execute(input: Input, ctx: ToolContext) {
   if (isToolError(page)) return page;
 
   const title = input.title || draft.title;
+  const textAlternative =
+    input.description ?? target.element?.data?.description ?? '';
+
   const html = addResizeReporter(page.html);
 
-  const { storageKey, storageUri } = await storePage(html, title, input, ctx);
+  const { storageKey, storageUri } = await storePage(
+    html,
+    { title, description: textAlternative || title },
+    ctx,
+  );
   const data = {
     title,
-    description: input.description ?? target.element?.data?.description ?? '',
+    description: textAlternative,
     height: clampHeight(
       input.height ?? target.element?.data?.height ?? DEFAULT_HEIGHT,
     ),
@@ -158,13 +162,8 @@ async function resolveTarget(
   const elementId =
     input.elementId ?? (input.activityId ? null : draft.elementId);
   if (elementId) {
-    const element = await findElement(elementId, ctx);
-    if (element?.type === ELEMENT_TYPE) return { element };
-    return toolError({
-      tool: TOOL,
-      reason: 'element_not_found',
-      message: `No ${ELEMENT_TYPE} element #${elementId} in this repository.`,
-    });
+    const element = await findInteractive(TOOL, elementId, ctx);
+    return isToolError(element) ? element : { element };
   }
   if (!input.activityId) {
     return toolError({
@@ -174,7 +173,7 @@ async function resolveTarget(
     });
   }
   const resolved = await resolveElementHost(TOOL, input.activityId, ctx);
-  if ('error' in resolved) return resolved;
+  if (isToolError(resolved)) return resolved;
   const { host, allowedTypes } = resolved;
   if (allowedTypes.includes(ELEMENT_TYPE)) return { host };
   return toolError({
@@ -210,14 +209,13 @@ async function preparePage(html: string, isInlining: boolean) {
       blockedRequests: report.blockedRequests,
     });
   } catch (err) {
-    return runtimeError(TOOL, err);
+    return sandboxError(TOOL, err);
   }
 }
 
 async function storePage(
   html: string,
-  title: string,
-  input: Input,
+  { title, description }: { title: string; description: string },
   ctx: ToolContext,
 ): Promise<{ storageKey: string; storageUri: string }> {
   const buffer = Buffer.from(html, 'utf8');
@@ -230,7 +228,7 @@ async function storePage(
       mimetype: 'text/html',
       size: buffer.length,
     },
-    description: input.description || title,
+    description,
     tags: ASSET_TAGS,
   });
   const storageKey = asset.storageKey!;
@@ -247,7 +245,11 @@ async function dropSessionVersion(
   ctx: ToolContext,
 ) {
   try {
-    const previousKey = await draftStore.replaceSavedFile(ctx, elementId, storageKey);
+    const previousKey = await draftStore.replaceSavedFile(
+      ctx,
+      elementId,
+      storageKey,
+    );
     if (!previousKey || previousKey === storageKey) return;
     const [previous] = await assetService.findByStorageKeys([previousKey]);
     if (previous?.repositoryId !== ctx.repository.id) return;

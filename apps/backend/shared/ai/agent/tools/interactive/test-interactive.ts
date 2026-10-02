@@ -12,12 +12,8 @@ import {
   MAX_WAIT_MS,
   type Viewport,
 } from '../../../sandbox/index.ts';
-import {
-  describeReport,
-  isToolError,
-  loadDraft,
-  runtimeError,
-} from './helpers.ts';
+import { describeTestReport, loadDraft, sandboxError } from './helpers.ts';
+import { isToolError } from '../helpers/index.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 
 const TOOL = 'test_interactive';
@@ -136,11 +132,11 @@ async function execute(input: Input, ctx: ToolContext) {
     });
     return {
       draftId: draft.id,
-      ...describeReport(report),
+      ...describeTestReport(report),
       _images: report.screenshots,
     };
   } catch (err) {
-    return runtimeError(TOOL, err);
+    return sandboxError(TOOL, err);
   }
 }
 

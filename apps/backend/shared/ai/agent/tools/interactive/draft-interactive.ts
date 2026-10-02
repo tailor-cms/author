@@ -1,14 +1,11 @@
 import { oneLine, stripIndent } from 'common-tags';
 
 import {
-  applyEdits,
-  checkSize,
   describeStartupCheck,
-  ELEMENT_TYPE,
-  isToolError,
+  findInteractive,
   loadDraft,
-  type TextEdit,
 } from './helpers.ts';
+import { isToolError, toolError, type ToolError } from '../helpers/index.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import { stripResizeReporter } from './resize-reporter.ts';
 import {
@@ -21,8 +18,6 @@ import {
   isStorageAsset,
 } from '#shared/storage/helpers.js';
 import { inspectPage, unbundlePage } from '../../../sandbox/index.ts';
-import { findElement } from '../content-elements/helpers.ts';
-import { toolError } from '../helpers/index.ts';
 import Storage from '#storage';
 
 const TOOL = 'draft_interactive';
@@ -33,6 +28,12 @@ const STARTUP_ERROR_WINDOW_MS = 400;
 // A reopened page is returned to the model only up to this size, to keep
 // a large page from filling its context.
 const MAX_RETURNED_HTML_BYTES = 120 * 1024;
+const MAX_HTML_BYTES = 400 * 1024;
+
+interface TextEdit {
+  find: string;
+  replace: string;
+}
 
 interface Input {
   draftId?: string | null;
@@ -153,11 +154,9 @@ async function editDraft(id: string, input: Input, ctx: ToolContext) {
   const draft = await loadDraft(TOOL, id, ctx);
   if (isToolError(draft)) return draft;
   const html = input.html ?? draft.html;
-  const edited = input.edits?.length
-    ? applyEdits(TOOL, html, input.edits)
-    : { html };
+  const edited = input.edits?.length ? applyEdits(html, input.edits) : { html };
   if (isToolError(edited)) return edited;
-  const sizeError = checkSize(TOOL, edited.html);
+  const sizeError = checkSize(edited.html);
   if (sizeError) return sizeError;
   draft.html = edited.html;
   if (input.title) draft.title = input.title;
@@ -165,8 +164,44 @@ async function editDraft(id: string, input: Input, ctx: ToolContext) {
   return draft;
 }
 
+/**
+ * Applies find/replace edits in order
+ */
+function applyEdits(html: string, edits: TextEdit[]): { html: string } | ToolError {
+  let result = html;
+  for (const [index, { find, replace }] of edits.entries()) {
+    const count = find ? result.split(find).length - 1 : 0;
+    if (count !== 1) {
+      return toolError({
+        tool: TOOL,
+        reason: count ? 'edit_not_unique' : 'edit_not_found',
+        message: count
+          ? `Edit #${index}: "find" matches ${count} places; include more context.`
+          : `Edit #${index}: "find" text not found in the draft.`,
+        editIndex: index,
+      });
+    }
+    result = result.replace(find, () => replace);
+  }
+  return { html: result };
+}
+
+function checkSize(html: string): ToolError | null {
+  const bytes = Buffer.byteLength(html);
+  if (bytes <= MAX_HTML_BYTES) return null;
+  return toolError({
+    tool: TOOL,
+    reason: 'too_large',
+    message: oneLine`
+      The HTML is ${Math.round(bytes / 1024)}KB; the limit is
+      ${MAX_HTML_BYTES / 1024}KB. Load libraries from a CDN instead of
+      pasting them, and generate data in code rather than as literals.
+    `,
+  });
+}
+
 async function createDraft(ctx: ToolContext, data: NewDraft) {
-  const sizeError = checkSize(TOOL, data.html);
+  const sizeError = checkSize(data.html);
   if (sizeError) return sizeError;
   return draftStore.create(ctx, data);
 }
@@ -177,7 +212,7 @@ async function writeElementHtml(
   input: Input,
   ctx: ToolContext,
 ) {
-  const element = await findInteractive(elementId, ctx);
+  const element = await findInteractive(TOOL, elementId, ctx);
   if (isToolError(element)) return element;
   const title = titleOf(element, input);
   return createDraft(ctx, { title, html: input.html!, elementId });
@@ -193,7 +228,7 @@ async function reopenElement(
   input: Input,
   ctx: ToolContext,
 ) {
-  const element = await findInteractive(elementId, ctx);
+  const element = await findInteractive(TOOL, elementId, ctx);
   if (isToolError(element)) return element;
   const storedUri = element.data?.assets?.url;
   if (!storedUri) return describeEmptyElement(elementId);
@@ -225,16 +260,6 @@ function describeEmptyElement(elementId: number) {
       saving then fills this element.
     `,
   };
-}
-
-async function findInteractive(elementId: number, ctx: ToolContext) {
-  const element = await findElement(elementId, ctx);
-  if (element?.type === ELEMENT_TYPE) return element;
-  return toolError({
-    tool: TOOL,
-    reason: 'not_found',
-    message: `No ${ELEMENT_TYPE} element #${elementId} in this repository.`,
-  });
 }
 
 const titleOf = (element: any, input: Input): string =>

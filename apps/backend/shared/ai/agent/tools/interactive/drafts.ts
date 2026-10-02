@@ -1,5 +1,5 @@
-// Pages the assistant is still working on, kept per agent session in the
-// shared KV store until save_interactive stores them.
+// HTML the assistant is still working on, kept per agent session in the
+// shared KV store until save_interactive stores it.
 import { randomUUID } from 'node:crypto';
 import Keyv from 'keyv';
 
@@ -7,10 +7,11 @@ import { createAiLogger } from '../../../logger.ts';
 import { kvStore as kvConfig } from '#config';
 import type { ToolContext } from '../types.ts';
 
-const NAMESPACE = 'agent:ctx:interactive';
-const DRAFT_TTL_MS = 2 * 24 * 60 * 60 * 1000;
+const logger = createAiLogger('agent.tools.interactive');
 
-const logger = createAiLogger(NAMESPACE);
+export const DRAFT_TTL_DAYS = 2;
+const DRAFT_TTL_MS = DRAFT_TTL_DAYS * 24 * 60 * 60 * 1000;
+const NAMESPACE = 'agent:ctx:interactive';
 
 export interface InteractiveDraft {
   // Short id the model passes around.
@@ -72,7 +73,7 @@ class DraftStore {
     elementId: number,
     storageKey: string,
   ): Promise<string | undefined> {
-    const key = sessionKey(ctx, `element-${elementId}`);
+    const key = sessionKey(ctx, String(elementId));
     const previous = await this.savedFiles.get(key);
     await this.savedFiles.set(key, storageKey);
     return previous;
