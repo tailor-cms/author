@@ -3,9 +3,12 @@
 // that host versioned libraries. Everything else is blocked and reported,
 // since a single-file page can't rely on it once published.
 import type { BrowserContext, Route } from 'playwright-core';
-import { HTML_SANDBOX_CSP } from '#shared/storage/sandbox.ts';
 
 export const SANDBOX_ORIGIN = 'https://sandbox.tailor.invalid';
+
+// CSP sandbox applied to the iframe hosting the page under test.
+const FRAME_SANDBOX_CSP = 'sandbox allow-scripts allow-popups allow-pointer-lock';
+
 export const SANDBOX_URL = `${SANDBOX_ORIGIN}/index.html`;
 
 // Hosts generated pages may load libraries and fonts from.
