@@ -81,4 +81,4 @@ async function resolveLegacyQuestion(element) {
   return Promise.each(question, resolvePrimitive).then(() => element);
 }
 
-export { resolveStatics };
+export { extractStorageKey, isStorageAsset, resolveStatics };

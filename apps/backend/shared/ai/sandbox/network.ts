@@ -54,7 +54,7 @@ export async function applyNetworkPolicy(
       return route.fulfill({
         status: 200,
         contentType: 'text/html; charset=utf-8',
-        headers: { 'Content-Security-Policy': HTML_SANDBOX_CSP },
+        headers: { 'Content-Security-Policy': FRAME_SANDBOX_CSP },
         body: html,
       });
     }

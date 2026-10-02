@@ -1,10 +1,3 @@
-import {
-  addResizeReporter,
-  clampHeight,
-  DEFAULT_HEIGHT,
-  MAX_HEIGHT,
-  MIN_HEIGHT,
-} from '@tailor-cms/ce-interactive-manifest';
 import { oneLine, stripIndent } from 'common-tags';
 
 import {
@@ -26,6 +19,7 @@ import {
 import type { ToolContext, ToolDef } from '../types.ts';
 import { createAiLogger } from '../../../logger.ts';
 import { draftStore, type InteractiveDraft } from './drafts.ts';
+import { addResizeReporter } from './resize-reporter.ts';
 import { resolveElementHost } from '../activity/helpers.ts';
 import { add_elements_to_activity } from '../content-elements/add-elements.ts';
 import { update_element } from '../content-elements/update-element.ts';
@@ -37,6 +31,14 @@ const logger = createAiLogger('agent.tools.interactive');
 const TOOL = 'save_interactive';
 
 const ASSET_TAGS = ['interactive', 'ai-generated'];
+
+// Defaults, before reporting from the page.
+const DEFAULT_HEIGHT = 480;
+const MIN_HEIGHT = 120;
+const MAX_HEIGHT = 2000;
+
+const clampHeight = (height: number): number =>
+  Math.min(Math.max(Math.round(height), MIN_HEIGHT), MAX_HEIGHT);
 
 interface Input {
   draftId: string;

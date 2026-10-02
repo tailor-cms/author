@@ -1,5 +1,4 @@
 import { oneLine, stripIndent } from 'common-tags';
-import { stripResizeReporter } from '@tailor-cms/ce-interactive-manifest';
 
 import {
   applyEdits,
@@ -11,6 +10,7 @@ import {
   type TextEdit,
 } from './helpers.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
+import { stripResizeReporter } from './resize-reporter.ts';
 import {
   draftStore,
   type InteractiveDraft,

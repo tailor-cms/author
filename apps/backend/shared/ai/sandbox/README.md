@@ -12,8 +12,9 @@ see what learners will see before anything is saved.
 
 Generated code is untrusted, so it never runs with access to the app:
 
-- **No app access.** Pages run under the same CSP sandbox as stored HTML
-  (`shared/storage/sandbox.ts`): no cookies, storage or session.
+- **No app access.** Pages run with the same restrictions as the
+  element's frame, applied as a CSP sandbox (`network.ts`): no cookies,
+  storage or session.
 - **No network beyond library CDNs** (`network.ts`). Everything else,
   including internal services and WebSockets, is blocked.
 - **Bounded runs.** Each run gets a fresh browser context, with timeouts,
