@@ -10415,6 +10415,71 @@
       }
     },
     "/assets/{assetId}": {
+      "get": {
+        "tags": [
+          "Library / Asset"
+        ],
+        "operationId": "libraryGetAsset",
+        "x-tailor-slice": "library",
+        "x-tailor-method": "getAsset",
+        "summary": "Get an asset",
+        "description": "Returns a single asset from the repository library.",
+        "parameters": [
+          {
+            "name": "repositoryId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Repository the resource belongs to."
+            }
+          },
+          {
+            "name": "assetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991,
+              "description": "Numeric asset id (path param)."
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Asset row.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$schema": "https://json-schema.org/draft/2020-12/schema",
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "description": "A repository asset, either an uploaded file (image, video, document, audio, ...) or an external link.",
+                      "$ref": "#/components/schemas/Asset"
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Asset not found in this repository."
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ]
+      },
       "patch": {
         "tags": [
           "Library / Asset"

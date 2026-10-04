@@ -72,6 +72,7 @@ mount
   .post('/:assetId/file', actions.attachFile, {
     before: [attachmentUpload.single('file')],
   })
+  .get('/:assetId', actions.get)
   .patch('/:assetId', actions.update)
   .delete('/:assetId', actions.remove);
 
