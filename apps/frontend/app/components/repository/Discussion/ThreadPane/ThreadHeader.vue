@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
 import type { UserSummary } from '@tailor-cms/interfaces/user';
 
 import { isChannelThread } from '../utils';
@@ -50,7 +50,7 @@ import { useThreadAnchor } from '../composables/useThreadAnchor';
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 
 const props = defineProps<{
-  thread: DiscussionThread;
+  thread: ReaderThread;
   participants: UserSummary[];
 }>();
 

@@ -115,7 +115,6 @@ import {
   get,
   isEqual,
   map,
-  max,
   throttle,
   transform,
   uniqBy,
@@ -140,7 +139,7 @@ import PublishDiffProvider from './PublishDiffProvider.vue';
 import SubactivityList from './SubactivityList.vue';
 import { useActivityStore } from '@/stores/activity';
 import { useAuthStore } from '@/stores/auth';
-import { useCommentStore } from '@/stores/comments';
+import { useMessagingStore } from '@/stores/messaging';
 import { useConfigStore } from '@/stores/config';
 import { useContentElementStore } from '@/stores/content-elements';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -172,7 +171,7 @@ const authStore = useAuthStore();
 const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
-const commentStore = useCommentStore();
+const messagingStore = useMessagingStore();
 const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 useContentLinking(editorChannel);
@@ -246,17 +245,13 @@ const elementsWithComments = computed<any>(() => {
   return transform(
     elements.value,
     (elementMap: { [key: string]: any }, element: ContentElement) => {
-      const comments = commentStore.where(
-        (comment) => comment.contentElement?.uid === element.uid,
-      );
-      const lastSeen = max([
-        (commentStore.$seen.contentElement as any)[element.uid] || 0,
-        (commentStore.$seen.activity as any)[props.activity?.uid] || 0,
-      ]);
       elementMap[element.uid] = {
         ...element,
-        comments,
-        lastSeen: lastSeen || 0,
+        comments: messagingStore.getElementComments(element.uid),
+        lastSeen: messagingStore.getLastSeen({
+          activityUid: props.activity?.uid,
+          elementUid: element.uid,
+        }),
       };
     },
     {},

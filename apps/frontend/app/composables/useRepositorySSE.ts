@@ -4,7 +4,7 @@ import { isEqual } from 'lodash-es';
 
 import feed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
-import { useCommentStore } from '@/stores/comments';
+import { useMessagingStore } from '@/stores/messaging';
 import { useContentElementStore } from '@/stores/content-elements';
 
 // Report user activity every 30s
@@ -31,7 +31,7 @@ export const useRepositorySSE = () => {
 
   const route = useRoute();
   const activityStore = useActivityStore();
-  const commentStore = useCommentStore();
+  const messagingStore = useMessagingStore();
   const contentElementStore = useContentElementStore();
   const userTrackingStore = useUserTracking();
 
@@ -39,7 +39,7 @@ export const useRepositorySSE = () => {
     feed.connect(id, (conn: any) => {
       sseId.value = conn.id;
       activityStore.$subscribeToSSE();
-      commentStore.$subscribeToSSE();
+      messagingStore.$subscribeToSSE();
       contentElementStore.$subscribeToSSE();
       userTrackingStore.$subscribeToSSE();
 

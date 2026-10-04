@@ -9,6 +9,7 @@ import {
   canCloneRepository,
   canDeleteRepository,
   canExportRepository,
+  canManageIntegrations,
   canPublishRepository,
   InsertLocation,
 } from '@tailor-cms/utils';
@@ -86,6 +87,7 @@ export const useCurrentRepository = defineStore('currentRepository', () => {
       canClone: !!policy && canCloneRepository(policy),
       canDelete: !!policy && canDeleteRepository(policy),
       canExport: !!policy && canExportRepository(policy),
+      canManageIntegrations: !!policy && canManageIntegrations(policy),
       canPublish: !!policy && canPublishRepository(policy),
     };
   });

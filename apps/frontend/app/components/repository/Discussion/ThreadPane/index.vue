@@ -41,7 +41,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
 import type { Message } from '@tailor-cms/interfaces/comment';
 
 import {
@@ -57,7 +57,7 @@ import ThreadTimeline from './ThreadTimeline.vue';
 import TypingIndicator from './TypingIndicator.vue';
 
 interface Props {
-  thread: DiscussionThread;
+  thread: ReaderThread;
   messages: Message[];
   currentUserId?: number | null;
   lastReadAt?: string | null;

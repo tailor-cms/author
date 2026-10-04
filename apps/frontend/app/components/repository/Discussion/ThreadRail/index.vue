@@ -41,7 +41,8 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread, ThreadScope } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
+import type { ThreadScope } from '@/stores/messaging';
 
 import { partition } from 'lodash-es';
 import { useTimeoutFn } from '@vueuse/core';
@@ -52,7 +53,7 @@ import ThreadRow from './ThreadRow.vue';
 import ThreadsEmptyState from './ThreadsEmptyState.vue';
 
 interface Props {
-  threads: DiscussionThread[];
+  threads: ReaderThread[];
   unread: { threads: number; mentions: number };
   selectedId?: number | null;
   isLoading?: boolean;

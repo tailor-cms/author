@@ -61,7 +61,7 @@
 <script lang="ts" setup>
 import { TailorDialog } from '@tailor-cms/core-components';
 import { formatTimeAgo } from '@vueuse/core';
-import { useDiscussionStore } from '@/stores/discussion';
+import { useMessagingStore } from '@/stores/messaging';
 
 import AssetTile from '../AssetTile.vue';
 
@@ -84,7 +84,7 @@ const props = defineProps<{
 
 const isOpen = defineModel<boolean>({ default: false });
 
-const discussionStore = useDiscussionStore();
+const messagingStore = useMessagingStore();
 
 const scope = ref<Scope>('thread');
 const items = ref<SharedAsset[]>([]);
@@ -95,7 +95,7 @@ const load = async (isStale: () => boolean) => {
     scope.value === 'thread' ? (props.threadId ?? undefined) : undefined;
   isLoading.value = true;
   try {
-    const { items: assets } = await discussionStore.listAssets(
+    const { items: assets } = await messagingStore.listAssets(
       props.repositoryId,
       threadId,
     );

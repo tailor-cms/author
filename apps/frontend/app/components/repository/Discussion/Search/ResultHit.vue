@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { SearchHit } from '@/stores/discussion';
+import type { MessageSearchHit } from '@tailor-cms/api-client';
 
 import { MessageBody } from '@tailor-cms/core-components';
 import MessageHeader from '../MessageHeader.vue';
@@ -23,7 +23,7 @@ import SenderAvatar from '../SenderAvatar.vue';
 
 // A matching message, laid out like it is in the thread
 defineProps<{
-  hit: SearchHit;
+  hit: MessageSearchHit;
   currentUserId?: number | null;
 }>();
 </script>

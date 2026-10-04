@@ -8,14 +8,14 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
 
 import { isChannelThread } from '../utils';
 import { useThreadAnchor } from '../composables/useThreadAnchor';
 import { ThreadType } from '@tailor-cms/interfaces/comment';
 import { useDateFormat } from '@vueuse/core';
 
-const props = defineProps<{ thread: DiscussionThread }>();
+const props = defineProps<{ thread: ReaderThread }>();
 
 const anchor = useThreadAnchor(() => props.thread);
 

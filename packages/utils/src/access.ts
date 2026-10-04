@@ -36,6 +36,7 @@ export const canDeleteRepository = hasRepositoryAdminAccess;
 export const canPublishRepository = hasRepositoryAdminAccess;
 export const canCloneRepository = hasRepositoryAdminAccess;
 export const canExportRepository = hasRepositoryAdminAccess;
+export const canManageIntegrations = hasRepositoryAdminAccess;
 
 /**
  * Creating a repository outside a user group requires at least the USER

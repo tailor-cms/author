@@ -46,7 +46,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { SearchHit } from '@/stores/discussion';
+import type { MessageSearchHit } from '@tailor-cms/api-client';
 import type { ThreadAnchor } from '../composables/useThreadAnchor';
 
 import { TailorEmptyState } from '@tailor-cms/core-components';
@@ -56,7 +56,7 @@ import ResultHit from './ResultHit.vue';
 import pluralize from 'pluralize-esm';
 
 interface Props {
-  hits: SearchHit[];
+  hits: MessageSearchHit[];
   query: string;
   isSearching?: boolean;
   currentUserId?: number | null;
@@ -64,7 +64,7 @@ interface Props {
 
 interface HitGroup extends ThreadAnchor {
   threadId: number;
-  hits: SearchHit[];
+  hits: MessageSearchHit[];
 }
 
 const props = withDefaults(defineProps<Props>(), {

@@ -34,7 +34,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ThreadScope } from '@/stores/discussion';
+import type { ThreadScope } from '@/stores/messaging';
 
 const scope = defineModel<ThreadScope>('scope', { default: 'all' });
 const name = defineModel<string>('name', { default: '' });

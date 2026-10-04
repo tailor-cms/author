@@ -40,12 +40,12 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
 
 import { useThreadAnchor } from '../composables/useThreadAnchor';
 
 const props = defineProps<{
-  thread: DiscussionThread;
+  thread: ReaderThread;
   isSelected?: boolean;
 }>();
 

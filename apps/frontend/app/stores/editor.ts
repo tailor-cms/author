@@ -7,16 +7,16 @@ import type { HistoryEntry } from '@/lib/revision';
 import type { StoreActivity } from './activity';
 import type { StoreContentElement } from './content-elements';
 import { useActivityStore } from './activity';
-import { useCommentStore } from './comments';
 import { useCurrentRepository } from './current-repository';
 import { useContentElementStore } from './content-elements';
+import { useMessagingStore } from './messaging';
 
 const { getDescendants } = activityUtils;
 
 export const useEditorStore = defineStore('editor', () => {
   const repositoryStore = useCurrentRepository();
   const activityStore = useActivityStore();
-  const commentStore = useCommentStore();
+  const messagingStore = useMessagingStore();
   const elementStore = useContentElementStore();
 
   const repositoryId = computed(() => repositoryStore.repositoryId as number);
@@ -88,24 +88,24 @@ export const useEditorStore = defineStore('editor', () => {
     };
     switch (action) {
       case Save:
-        return commentStore.save({
-          ...(payload as Parameters<typeof commentStore.save>[0]),
+        return messagingStore.saveMessage({
+          ...(payload as Parameters<typeof messagingStore.saveMessage>[0]),
           ...editorContext,
         });
       case Remove:
-        return commentStore.remove(repositoryId.value, payload as number);
+        return messagingStore.removeMessage(repositoryId.value, payload as number);
       case React: {
         const { id, emoji } = payload as { id: number; emoji: string };
-        return commentStore.toggleReaction(repositoryId.value, id, emoji);
+        return messagingStore.toggleReaction(repositoryId.value, id, emoji);
       }
       case SetLastSeen:
-        return commentStore.markSeenComments(
-          payload as Parameters<typeof commentStore.markSeenComments>[0],
+        return messagingStore.markCommentsSeen(
+          payload as Parameters<typeof messagingStore.markCommentsSeen>[0],
         );
       case Resolve:
-        return commentStore.updateResolvement(
+        return messagingStore.resolveComments(
           repositoryId.value,
-          payload as Parameters<typeof commentStore.updateResolvement>[1],
+          payload as Parameters<typeof messagingStore.resolveComments>[1],
         );
     }
   };

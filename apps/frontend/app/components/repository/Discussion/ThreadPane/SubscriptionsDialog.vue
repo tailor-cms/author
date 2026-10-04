@@ -53,7 +53,7 @@
 <script lang="ts" setup>
 import { TailorDialog } from '@tailor-cms/core-components';
 
-import { useDiscussionStore } from '@/stores/discussion';
+import { useMessagingStore } from '@/stores/messaging';
 
 interface Topic {
   topic: string;
@@ -71,7 +71,7 @@ const emit = defineEmits<{ saved: [topics: string[]] }>();
 
 const isOpen = defineModel<boolean>({ default: false });
 
-const discussionStore = useDiscussionStore();
+const messagingStore = useMessagingStore();
 
 const topics = ref<Topic[]>([]);
 const selected = ref<string[]>([]);
@@ -82,7 +82,7 @@ const save = async () => {
   isSaving.value = true;
   try {
     const { repositoryId, threadId } = props;
-    await discussionStore.setSubscriptions(
+    await messagingStore.setSubscriptions(
       repositoryId,
       threadId,
       selected.value,
@@ -101,7 +101,9 @@ watch(isOpen, async (open) => {
   if (topics.value.length) return;
   isLoading.value = true;
   try {
-    topics.value = await discussionStore.fetchTopics(props.repositoryId);
+    topics.value = await messagingStore.fetchSubscriptionTopics(
+      props.repositoryId,
+    );
   } finally {
     isLoading.value = false;
   }

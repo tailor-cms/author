@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { ThreadScope } from '@/stores/discussion';
+import type { ThreadScope } from '@/stores/messaging';
 
 import { oneLine } from 'common-tags';
 import { TailorEmptyState } from '@tailor-cms/core-components';

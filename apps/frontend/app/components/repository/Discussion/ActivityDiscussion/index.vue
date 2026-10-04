@@ -29,7 +29,7 @@ import { Discussion } from '@tailor-cms/core-components';
 
 import LinkedCopyNotice from './LinkedCopyNotice.vue';
 import { useAuthStore } from '@/stores/auth';
-import { useCommentStore } from '@/stores/comments';
+import { useMessagingStore } from '@/stores/messaging';
 
 interface Props {
   activity: StoreActivity;
@@ -44,17 +44,17 @@ const { $ceRegistry } = useNuxtApp() as any;
 provide('$ceRegistry', $ceRegistry);
 
 const authStore = useAuthStore();
-const commentStore = useCommentStore();
+const messagingStore = useMessagingStore();
 
 const user = computed(() => authStore.user as User);
 
 const comments = computed(() => {
-  const comments = commentStore.getActivityComments(props.activity.id);
+  const comments = messagingStore.getActivityComments(props.activity.id);
   return orderBy(comments, 'createdAt', 'desc');
 });
 
 const unseenComments = computed(() =>
-  commentStore.getUnseenActivityComments(props.activity),
+  messagingStore.getUnseenActivityComments(props.activity),
 );
 
 const lastCommentAt = computed(() =>
@@ -63,7 +63,7 @@ const lastCommentAt = computed(() =>
 
 const saveComment = (comment: any) => {
   const { activity } = props;
-  return commentStore.save({
+  return messagingStore.saveMessage({
     ...comment,
     author: user.value,
     repositoryId: activity.repositoryId,
@@ -79,21 +79,25 @@ const markSeen = () => {
     activityUid: activity.uid,
     lastCommentAt: lastCommentAt.value,
   };
-  setTimeout(() => commentStore.markSeenComments(payload), SEEN_DELAY_MS);
+  setTimeout(() => messagingStore.markCommentsSeen(payload), SEEN_DELAY_MS);
 };
 
 const react = (comment: { id: number }, emoji: string) =>
-  commentStore.toggleReaction(props.activity.repositoryId, comment.id, emoji);
+  messagingStore.toggleReaction(
+    props.activity.repositoryId,
+    comment.id,
+    emoji,
+  );
 
 const remove = (id: number) =>
-  commentStore.remove(props.activity.repositoryId, id);
+  messagingStore.removeMessage(props.activity.repositoryId, id);
 
 const updateResolvement = (data: any) =>
-  commentStore.updateResolvement(props.activity.repositoryId, data);
+  messagingStore.resolveComments(props.activity.repositoryId, data);
 
 onBeforeMount(() => {
   if (props.activity.isLinkedCopy) return;
   const { id: activityId, repositoryId } = props.activity;
-  commentStore.fetch(repositoryId, { activityId });
+  messagingStore.fetchComments(repositoryId, { activityId });
 });
 </script>

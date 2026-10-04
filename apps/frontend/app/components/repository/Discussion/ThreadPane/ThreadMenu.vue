@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DiscussionThread } from '@/stores/discussion';
+import type { ReaderThread } from '@tailor-cms/api-client';
 
 import { isChannelThread } from '../utils';
 
@@ -38,7 +38,7 @@ interface ThreadAction {
   run: () => void;
 }
 
-const props = defineProps<{ thread: DiscussionThread }>();
+const props = defineProps<{ thread: ReaderThread }>();
 
 const emit = defineEmits<{
   'star': [isStarred: boolean];
