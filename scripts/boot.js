@@ -16,8 +16,8 @@ const config = await fs.readFile(configLocation, 'utf-8');
 const env = dotenv.parse(config);
 
 const testDatabaseConnection = async (dbConfig, times = 10, backoff = 2000) => {
+  const client = new PostgresClient(dbConfig);
   try {
-    const client = new PostgresClient(dbConfig);
     await client.connect();
     return true;
   } catch {
@@ -27,6 +27,9 @@ const testDatabaseConnection = async (dbConfig, times = 10, backoff = 2000) => {
     }
     console.error(`❗️ Could not connect to Postgres!\n`);
     process.exit(1);
+  } finally {
+    // The probe is only a readiness check
+    await client.end().catch(() => {});
   }
 };
 
