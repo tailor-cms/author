@@ -7,6 +7,12 @@
     @dragover.prevent
     @drop.prevent="attachDropped"
   >
+    <VIcon
+      v-if="isSearch"
+      class="composer-search-icon"
+      icon="mdi-magnify"
+      size="18"
+    />
     <EditorContent
       :class="{ 'composer-input--search': isSearch }"
       :editor="editor"
@@ -240,6 +246,8 @@ onBeforeUnmount(() => editor.value?.destroy());
 
 <style lang="scss" scoped>
 .message-composer {
+  position: relative;
+  min-width: 0;
   // Lets the hint fit itself to the composer's width
   container-type: inline-size;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
@@ -259,15 +267,27 @@ onBeforeUnmount(() => editor.value?.destroy());
   }
 }
 
+.composer-search-icon {
+  position: absolute;
+  top: 50%;
+  left: 0.6875rem;
+  z-index: 1;
+  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
 .composer-input {
+  min-height: var(--composer-min-height, auto);
   max-height: 12rem;
   padding: 0.75rem 0.875rem 0.25rem;
   overflow-y: auto;
   font-size: 0.875rem;
 
   &--search {
+    min-height: auto;
     max-height: 5rem;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
   }
 
   // The editor's content comes from Tiptap, outside this component's scope

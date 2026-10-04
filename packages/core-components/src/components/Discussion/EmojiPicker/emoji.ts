@@ -1,6 +1,6 @@
 // Standard emoji for the picker and the `:` autocomplete, from the
 // `@tiptap/extension-emoji` list.
-import { emojis } from '@tiptap/extension-emoji';
+import { emojis, shortcodeToEmoji } from '@tiptap/extension-emoji';
 
 export interface EmojiEntry {
   // What gets inserted and stored
@@ -52,6 +52,9 @@ export const EMOJI_GROUPS: EmojiGroup[] = Object.entries(GROUP_LABELS)
     entries: ENTRIES.filter((it) => it.group === group),
   }))
   .filter((it) => it.entries.length);
+
+export const emojiChar = (shortcode: string) =>
+  shortcodeToEmoji(shortcode, emojis)?.emoji;
 
 /**
  * Scores an emoji entry against a search term.
