@@ -225,7 +225,7 @@ const getExportModule = (entries) =>
 
 const generateTypeExport = (dir, packages, extensionType, serverExportPath) => {
   const isBuilt = extensionType === 'content element';
-  const defaultPath = isBuilt ? 'dist/index.cjs' : 'src/index.js';
+  const defaultPath = isBuilt ? 'dist/index.js' : 'src/index.js';
   const targetPath = serverExportPath || defaultPath;
   const packageTypes = packages.map((it) =>
     parseType(`${dir}/node_modules/${it.clientPackage}/${targetPath}`),
