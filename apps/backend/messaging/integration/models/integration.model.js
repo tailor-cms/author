@@ -1,5 +1,6 @@
 import { IntegrationType } from '@tailor-cms/interfaces/comment';
 import { Model } from 'sequelize';
+import omit from 'lodash/omit.js';
 
 // Built-in and external integrations both post as an integration.
 // Where it posts is up to the thread, which subscribes to `integration:<key>`.
@@ -32,6 +33,10 @@ class Integration extends Model {
       underscored: true,
       timestamps: true,
     };
+  }
+
+  toJSON() {
+    return omit(super.toJSON(), ['tokenHash']);
   }
 }
 

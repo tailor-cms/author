@@ -27,6 +27,9 @@ export const CreateIntegrationResult = Integration.extend({
   token: z
     .string()
     .describe('Inbound webhook token. Returned once, never stored raw.'),
+  webhookUrl: z
+    .string()
+    .describe('Public URL to post messages to; it carries the token.'),
 })
   .meta({ id: 'IntegrationCreateResult' })
   .describe('Newly registered integration, including its one-time token.');

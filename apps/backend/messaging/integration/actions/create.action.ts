@@ -16,12 +16,12 @@ export default defineAction({
     authenticated: true,
     summary: 'Register an integration',
     description: oneLine`
-      Returns the token to post with. It is shown once; only its digest
-      is stored.
+      Returns the token to post with and the webhook URL that carries
+      it. They are shown once; only the token's digest is stored.
     `,
     responses: {
       200: {
-        description: 'Registered integration and its one-time token.',
+        description: 'Registered integration, its token and webhook URL.',
         schema: dataEnvelope(schemas.CreateIntegrationResult),
       },
       403: { description: 'Repository admin access required.' },
@@ -30,12 +30,12 @@ export default defineAction({
   },
   async handler({ body, user, req }) {
     try {
-      const { integration, token } = await service.create(
+      const { integration, token, webhookUrl } = await service.create(
         req.repository!.id,
         user.id,
         body,
       );
-      return { ...integration.toJSON(), token };
+      return { ...integration.toJSON(), token, webhookUrl };
     } catch (error) {
       return toHttpError(error);
     }

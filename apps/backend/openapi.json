@@ -2324,6 +2324,10 @@
           "token": {
             "type": "string",
             "description": "Inbound webhook token. Returned once, never stored raw."
+          },
+          "webhookUrl": {
+            "type": "string",
+            "description": "Public URL to post messages to; it carries the token."
           }
         },
         "required": [
@@ -2337,7 +2341,8 @@
           "createdAt",
           "updatedAt",
           "deletedAt",
-          "token"
+          "token",
+          "webhookUrl"
         ],
         "additionalProperties": false
       },
@@ -10450,7 +10455,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Asset row.",
+            "description": "Asset entity.",
             "content": {
               "application/json": {
                 "schema": {
@@ -10719,7 +10724,7 @@
         "x-tailor-slice": "messaging",
         "x-tailor-method": "createIntegration",
         "summary": "Register an integration",
-        "description": "Returns the token to post with. It is shown once; only its digest is stored.",
+        "description": "Returns the token to post with and the webhook URL that carries it. They are shown once; only the token's digest is stored.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -10735,7 +10740,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Registered integration and its one-time token.",
+            "description": "Registered integration, its token and webhook URL.",
             "content": {
               "application/json": {
                 "schema": {

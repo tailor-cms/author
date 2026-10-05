@@ -23,6 +23,7 @@ import { createLogger } from '#logger';
 import { parseEmojiShortcode } from '@tailor-cms/utils';
 import * as commentService from '../comment.service.ts';
 import crypto from 'node:crypto';
+import config from '#config';
 import IntegrationModel from './models/integration.model.js';
 
 const logger = createLogger('comment:integration');
@@ -43,6 +44,10 @@ const visibleTo = (repositoryId: number) => ({
 // The token is used for webhook auth. We store only the hash.
 export const hashToken = (token: string) =>
   crypto.createHash('sha256').update(token).digest('hex');
+
+// Where an outside system posts
+const webhookUrl = (token: string) =>
+  `${config.origin}/api/hooks/messaging/integrations/${token}`;
 
 // What an attachment says in one line.
 const resolveAttachmentSummary = (attachment: SlackAttachment) =>
@@ -72,8 +77,9 @@ export function list(repositoryId: number) {
 }
 
 /**
- * Registers an external integration and returns the token it posts with.
- * Shown once; only the hash is stored, so it cannot be looked up again.
+ * Registers an external integration and returns the token it posts with,
+ * and the webhook URL that carries it. Shown once; only the hash is
+ * stored, so it cannot be looked up again.
  */
 export async function create(
   repositoryId: number,
@@ -95,7 +101,7 @@ export async function create(
     createdById: userId,
   });
   logger.info({ repositoryId, key: input.key }, 'Integration registered');
-  return { integration, token };
+  return { integration, token, webhookUrl: webhookUrl(token) };
 }
 
 /**

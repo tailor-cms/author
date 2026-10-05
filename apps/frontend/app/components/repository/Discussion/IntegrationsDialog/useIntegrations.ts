@@ -1,10 +1,9 @@
 import type {
   Integration,
   MessagingCreateIntegrationData,
-  MessagingPostIntegrationMessageReq,
 } from '@tailor-cms/api-client';
 import type { MaybeRefOrGetter } from 'vue';
-import { api, buildAbsoluteUrl } from '@/api';
+import { api } from '@/api';
 import { IntegrationType } from '@tailor-cms/interfaces/comment';
 
 export type { Integration };
@@ -14,14 +13,6 @@ export interface IssuedIntegration {
   integration: Integration;
   webhookUrl: string;
 }
-
-type WebhookRoute = Omit<MessagingPostIntegrationMessageReq, 'body'>;
-
-const webhookUrlFor = (token: string) =>
-  buildAbsoluteUrl<WebhookRoute>({
-    url: '/hooks/messaging/integrations/{token}',
-    path: { token },
-  });
 
 export function useIntegrations(repositoryId: MaybeRefOrGetter<number>) {
   const items = ref<Integration[]>([]);
@@ -50,12 +41,13 @@ export function useIntegrations(repositoryId: MaybeRefOrGetter<number>) {
   const register = async (input: RegisterInput): Promise<IssuedIntegration> => {
     isSaving.value = true;
     try {
-      const { token, ...integration } = await api.messaging.createIntegration({
-        params: scope(),
-        body: input,
-      });
+      const { token, webhookUrl, ...integration } =
+        await api.messaging.createIntegration({
+          params: scope(),
+          body: input,
+        });
       items.value = [...items.value, integration];
-      return { integration, webhookUrl: webhookUrlFor(token) };
+      return { integration, webhookUrl };
     } finally {
       isSaving.value = false;
     }
