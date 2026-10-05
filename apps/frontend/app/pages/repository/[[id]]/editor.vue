@@ -1,10 +1,6 @@
 <template>
   <div v-if="editorStore.selectedActivity" class="editor-root w-100">
-    <EditorToolbar
-      :key="editorStore.selectedContentElementId ?? 'activity'"
-      :active-users="activeUsers"
-      :element="editorStore.selectedContentElement as ContentElement"
-    />
+    <EditorToolbar :active-users="activeUsers" />
     <EditorSidebar
       v-model="showSidebar"
       :activities="repositoryStore.outlineActivities as Activity[]"

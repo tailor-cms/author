@@ -34,7 +34,6 @@
         :class="{ expanded: isExpanded }"
         class="card-header d-flex align-center"
         color="surface-container-low"
-        @click="toggleExpanded"
       >
         <span v-if="!isReadonly && isDraggable" class="drag-handle" @click.stop>
           <span class="mdi mdi-drag-vertical"></span>
@@ -103,6 +102,16 @@
         />
       </VSheet>
     </div>
+    <!-- Sticks to the top of the scroller so the tools stay reachable
+      inside a long element -->
+    <VSheet
+      v-if="showToolbar"
+      border="b"
+      color="surface-raised"
+      class="card-toolbar d-flex align-center justify-center pa-2"
+    >
+      <component :is="toolbarName" :element="element" @save="onSave" />
+    </VSheet>
     <DeprecationWarning
       v-if="!isReadonly && isDeprecated(element.type)"
       :element="element"
@@ -180,6 +189,7 @@ import { useElementHover, useFocusWithin } from '@vueuse/core';
 import {
   getElementId,
   getQuestionPromptPreview,
+  getToolbarName,
   htmlToText,
   titleCase,
 } from '@tailor-cms/utils';
@@ -310,6 +320,12 @@ const questionPreview = computed(() => {
 const isElementEmpty = computed(
   () => !!manifest.value?.isEmpty?.(props.element.data),
 );
+
+const toolbarName = computed(() => getToolbarName(props.element.type));
+const showToolbar = computed(() => {
+  if (props.isReadonly || showDiff.value || !isFocused.value) return false;
+  return isExpanded.value && !!manifest.value?.hasTopToolbar;
+});
 
 const editBindings = computed(() => ({
   ...attrs,
@@ -591,7 +607,6 @@ $accent-selected: #ff4081;
 .card-header {
   min-height: 2.75rem;
   padding: 0.375rem 0.5rem 0.375rem 0.25rem;
-  cursor: pointer;
   border-radius: 7px 7px 0 0;
 
   &.expanded {
@@ -624,7 +639,23 @@ $accent-selected: #ff4081;
 }
 
 .card-body {
-  padding: 0.625rem 1.25rem 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.card-toolbar {
+  z-index: 2;
+  text-align: left;
+  position: sticky;
+  top: 0;
+
+  :deep(.v-btn-group--density-compact.v-btn-group) {
+    height: unset;
+  }
+}
+
+// The field frame supplies the padding; bleed the strip to its edge
+.field > .card-toolbar {
+  margin: -1rem -1rem 1rem;
 }
 
 .active-users {

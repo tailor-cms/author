@@ -493,5 +493,11 @@ onBeforeUnmount(() => {
   max-width: 68.75rem;
   margin: auto;
   padding: 2rem;
+
+  // VCard's overflow: hidden would trap sticky element toolbars; clip keeps
+  // the rounded corners without becoming a scroll container.
+  :deep(.v-card) {
+    overflow: clip;
+  }
 }
 </style>
