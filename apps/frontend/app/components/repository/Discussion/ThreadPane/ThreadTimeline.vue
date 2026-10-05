@@ -31,7 +31,7 @@ import type { Message } from '@tailor-cms/interfaces/comment';
 
 import MessageRow from '../MessageRow/index.vue';
 import TimelineDivider from './TimelineDivider.vue';
-import { useTimelineEntries } from '../composables/useTimelineEntries';
+import { buildTimeline } from './timeline';
 
 interface Props {
   messages: Message[];
@@ -52,7 +52,7 @@ const emit = defineEmits<{
   update: [id: number, content: string];
 }>();
 
-const entries = useTimelineEntries(props);
+const entries = computed(() => buildTimeline(props));
 
 const scrollEl = ref<HTMLElement>();
 
