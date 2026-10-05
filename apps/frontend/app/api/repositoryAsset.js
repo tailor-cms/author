@@ -57,6 +57,10 @@ function getDownloadUrl(repositoryId, id) {
 
 // Browser <img> src for the thumbnail redirect route (not a fetch): the route
 // generates/caches on first hit, then 302-redirects.
+function get(repositoryId, id) {
+  return request.get(urls.resource(repositoryId, id)).then(extractData);
+}
+
 function getThumbnailUrl(repositoryId, id) {
   return `/api${urls.resource(repositoryId, id)}/thumbnail`;
 }
@@ -151,6 +155,7 @@ function discover(repositoryId, query, contentFilter = 'all', count = 20) {
 export default {
   list,
   upload,
+  get,
   getDownloadUrl,
   getThumbnailUrl,
   getUsages,
