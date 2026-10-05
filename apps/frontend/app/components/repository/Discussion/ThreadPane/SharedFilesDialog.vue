@@ -47,7 +47,7 @@
         <AssetTile
           v-for="item in items"
           :key="item.entityId"
-          :reference="{ entityType: 'asset', entityId: item.entityId }"
+          :reference="{ entityType: ReferenceType.Asset, entityId: item.entityId }"
         >
           <template #subtitle>
             Shared {{ formatTimeAgo(new Date(item.lastSharedAt)) }}
@@ -61,6 +61,7 @@
 <script lang="ts" setup>
 import { TailorDialog } from '@tailor-cms/core-components';
 import { formatTimeAgo } from '@vueuse/core';
+import { ReferenceType } from '@tailor-cms/utils';
 import { useMessagingStore } from '@/stores/messaging';
 
 import AssetTile from '../AssetTile.vue';
