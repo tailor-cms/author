@@ -48,6 +48,11 @@ const HISTORY_CHAR_CAP_COMPACT = 200_000;
 // Screenshots are large; only the most recent ones stay in the history.
 const MAX_HISTORY_IMAGES = 3;
 const PRUNED_IMAGE_NOTE = '[Older screenshot removed from history]';
+// Screenshots count by what the model is billed;
+// A 960x540 image is ~765 tokens in OpenAI's pricing (4
+// tiles x 170 + 85), ~3k chars at ~4 chars per token. Rough, like the
+// caps above.
+const IMAGE_CHARS = 3_000;
 
 // Message roles in the OpenAI Responses API "input" array.
 const ROLE = { Developer: 'developer', User: 'user' } as const;
@@ -437,11 +442,20 @@ function logInputSize(systemPrompt: string, history: ApiItem[], tools: any[]) {
 }
 
 // Rough character-count for any JSON-serialisable payload. Used only
-// for diagnostic logging of the agent's per-turn input size, so we
+// for diagnostic logging of the agent's per-turn input size; we
 // accept the cost of stringify and the lossiness of "approximate".
 function approxChars(value: unknown): number {
+  // An image costs the model a fixed amount by its size, not the length
+  // of its data URL; counting the URL would push real context out.
+  let images = 0;
+  const skipImageData = (key: string, val: unknown) => {
+    if (key !== 'image_url') return val;
+    images++;
+    return '';
+  };
   try {
-    return JSON.stringify(value).length;
+    const text = JSON.stringify(value, skipImageData);
+    return text.length + images * IMAGE_CHARS;
   } catch {
     return 0;
   }
