@@ -19,6 +19,7 @@ import { pickElementFields } from '../content-elements/helpers.ts';
 import { createAiLogger } from '../../../logger.ts';
 import { draftStore, type InteractiveDraft } from './drafts.ts';
 import { addResizeReporter } from './resize-reporter.ts';
+import { inlineImages } from './images.ts';
 import { resolveElementHost } from '../activity/helpers.ts';
 import { add_elements_to_activity } from '../content-elements/add-elements.ts';
 import { update_element } from '../content-elements/update-element.ts';
@@ -110,7 +111,23 @@ async function execute(input: Input, ctx: ToolContext) {
   const target = await resolveTarget(input, draft, ctx);
   if (isToolError(target)) return target;
 
-  const page = await preparePage(draft.html, input.inlineLibraries !== false);
+  const withImages = await inlineImages(draft.html, ctx.repository.id);
+  if (withImages.failed.length) {
+    return toolError({
+      tool: TOOL,
+      reason: 'images_failed',
+      message: oneLine`
+        Some images can't be copied into the page; imageErrors gives the
+        reason for each. Fix or remove those references, or use fewer or
+        smaller (#w=) images when the size limit is reached.
+      `,
+      imageErrors: withImages.failed,
+    });
+  }
+  const page = await preparePage(
+    withImages.html,
+    input.inlineLibraries !== false,
+  );
   if (isToolError(page)) return page;
 
   const title = input.title || draft.title;
@@ -132,6 +149,9 @@ async function execute(input: Input, ctx: ToolContext) {
     ),
     url: storageUri,
     assets: { url: storageUri },
+    // Library images copied into the page; listed so the asset library
+    // knows they are in use.
+    images: withImages.inlined,
   };
   const saved = target.element
     ? await updateElement(target.element, data, ctx)
@@ -146,6 +166,7 @@ async function execute(input: Input, ctx: ToolContext) {
     element: pickElementFields(saved),
     isUpdate: !!target.element,
     bundle: describeBundle(page.bundle),
+    ...(withImages.inlined.length && { images: withImages.inlined }),
     _invalidates: [
       `element:${saved.id}`,
       `activity:${saved.activityId}`,

@@ -13,7 +13,12 @@ import {
   MAX_WAIT_MS,
   type Viewport,
 } from '../../../sandbox/index.ts';
-import { describeTestReport, loadDraft, sandboxError } from './helpers.ts';
+import {
+  describeTestReport,
+  loadDraft,
+  sandboxError,
+} from './helpers.ts';
+import { inlineImages } from './images.ts';
 import { isToolError } from '../helpers/index.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 
@@ -127,8 +132,9 @@ async function execute(input: Input, ctx: ToolContext) {
   const draft = await loadDraft(TOOL, input.draftId, ctx);
   if (isToolError(draft)) return draft;
   try {
+    const withImages = await inlineImages(draft.html, ctx.repository.id);
     const report = await inspectPage({
-      html: draft.html,
+      html: withImages.html,
       viewport: resolveViewport(input.viewport),
       interactions: input.interactions ?? [],
       isScreenshotEnabled: input.screenshot !== false,
@@ -136,7 +142,7 @@ async function execute(input: Input, ctx: ToolContext) {
     });
     return {
       draftId: draft.id,
-      ...describeTestReport(report),
+      ...describeTestReport(report, withImages),
       _images: report.screenshots,
     };
   } catch (err) {

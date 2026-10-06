@@ -5,6 +5,7 @@ import {
   findInteractive,
   loadDraft,
 } from './helpers.ts';
+import { inlineImages, restoreImages } from './images.ts';
 import { isToolError, toolError, type ToolError } from '../helpers/index.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
 import { stripResizeReporter } from './resize-reporter.ts';
@@ -72,6 +73,15 @@ const description = stripIndent`
     working if the CDN goes away. ES modules (import ... from, e.g.
     esm.sh) keep loading from the CDN. Plain JS, SVG or Canvas is fine
     for simple pieces.
+  - Library images: use storage://<storageKey> as the image URL, e.g.
+    <img src="storage://...">, CSS url(...) or a JS string. Take the
+    storageKey from list_assets / get_asset; never use a publicUrl.
+    Add #w=<px> to set the width (default 1600). The image is copied
+    into the page, so write each URL in full and only once (reuse it
+    through a CSS class or JS variable). To show part of an image, use
+    CSS (object-position, background-position) or canvas drawImage.
+    For a changed version (restyled, reworked), create a new asset with
+    generate_image_asset (referenceAssetId) and use that one.
   - It runs in a sandbox: no localStorage, cookies, alerts or pop-ups;
     keep state in memory.
   - Fluid width; on narrow screens stack instead of squeezing, and avoid
@@ -126,10 +136,14 @@ async function execute(input: Input, ctx: ToolContext) {
   if (fromElementId && !html) return reopenElement(fromElementId, input, ctx);
   const draft = await resolveDraft(input, ctx);
   if (isToolError(draft)) return draft;
-  return describeDraft(draft);
+  return describeDraft(draft, ctx);
 }
 
-async function describeDraft(draft: InteractiveDraft, isReopened = false) {
+async function describeDraft(
+  draft: InteractiveDraft,
+  ctx: ToolContext,
+  isReopened = false,
+) {
   return {
     ok: true,
     draftId: draft.id,
@@ -138,7 +152,7 @@ async function describeDraft(draft: InteractiveDraft, isReopened = false) {
     bytes: Buffer.byteLength(draft.html),
     lines: draft.html.split('\n').length,
     ...(isReopened && describeReopenedHtml(draft.html)),
-    startupCheck: await checkStartup(draft.html),
+    startupCheck: await checkStartup(draft.html, ctx),
   };
 }
 
@@ -253,7 +267,7 @@ async function reopenElement(
   }
   const title = titleOf(element, input);
   const draft = await draftStore.create(ctx, { title, html, elementId });
-  return describeDraft(draft, true);
+  return describeDraft(draft, ctx, true);
 }
 
 function describeEmptyElement(elementId: number) {
@@ -276,7 +290,8 @@ async function readStoredPage(uri?: string | null): Promise<string | null> {
   if (!isStorageAsset(uri)) return null;
   const buffer = await Storage.getFile(extractStorageKey(uri));
   if (!buffer) return null;
-  return stripResizeReporter(unbundlePage(buffer.toString('utf8')));
+  const html = restoreImages(buffer.toString('utf8'));
+  return stripResizeReporter(unbundlePage(html));
 }
 
 function describeReopenedHtml(html: string) {
@@ -289,10 +304,14 @@ function describeReopenedHtml(html: string) {
   };
 }
 
-async function checkStartup(html: string) {
+async function checkStartup(html: string, ctx: ToolContext) {
   try {
-    const report = await inspectPage({ html, settleMs: STARTUP_ERROR_WINDOW_MS });
-    return describeStartupCheck(report);
+    const withImages = await inlineImages(html, ctx.repository.id);
+    const report = await inspectPage({
+      html: withImages.html,
+      settleMs: STARTUP_ERROR_WINDOW_MS,
+    });
+    return describeStartupCheck(report, withImages);
   } catch (err: any) {
     return { skipped: `Page could not be run: ${err.message}` };
   }
