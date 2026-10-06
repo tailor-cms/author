@@ -6,10 +6,12 @@ import {
   BrowserUnavailableError,
   LIBRARY_HOSTS,
 } from '../../../sandbox/index.ts';
+import type { InlineImagesResult } from './images.ts';
 import type { ToolContext } from '../types.ts';
 import { DRAFT_TTL_DAYS, draftStore, type InteractiveDraft } from './drafts.ts';
 import { toolError, type ToolError } from '../helpers/index.ts';
 import { findElement } from '../content-elements/helpers.ts';
+import { isStorageAsset } from '#shared/storage/helpers.js';
 
 export const ELEMENT_TYPE = ContentElementType.Interactive;
 
@@ -65,34 +67,66 @@ export function sandboxError(tool: string, err: unknown): ToolError {
   });
 }
 
-// The page loaded and threw no errors.
-const isPageRunClean = (report: InspectReport) =>
-  report.isLoaded && !report.errors.length;
+/**
+ * Joins the page run with the image step. Library images that could not
+ * be copied fail the run and are reported as imageErrors.
+ */
+function mergeImageResult(report: InspectReport, images: InlineImagesResult) {
+  const blockedRequests = report.blockedRequests.filter(
+    (url) => !isStorageAsset(url),
+  );
+  const ok = report.isLoaded && !report.errors.length && !images.failed.length;
+  return { ok, report: { ...report, blockedRequests } };
+}
 
 // Full outcome for test_interactive; screenshots go out as images.
-export function describeTestReport(report: InspectReport) {
+export function describeTestReport(
+  inspected: InspectReport,
+  images: InlineImagesResult,
+) {
+  const { ok, report } = mergeImageResult(inspected, images);
   const { screenshots, ...rest } = report;
   const hints = collectHints(report);
   return {
-    ok: isPageRunClean(report),
+    ok,
     ...rest,
     ...(screenshots.length && {
       screenshots: screenshots.map((it) => it.label),
     }),
+    ...describeImages(images),
     ...(hints.length && { hints }),
   };
 }
 
 // Short outcome of the startup check that follows every draft write.
-export function describeStartupCheck(report: InspectReport) {
+export function describeStartupCheck(
+  inspected: InspectReport,
+  images: InlineImagesResult,
+) {
+  const { ok, report } = mergeImageResult(inspected, images);
   const { isLoaded, errors, blockedRequests, failedRequests, metrics } = report;
   return {
-    ok: isPageRunClean(report),
+    ok,
     ...(!isLoaded && { isLoaded }),
     errors,
     ...(blockedRequests.length && { blockedRequests }),
     ...(failedRequests.length && { failedRequests }),
     ...(metrics?.isLikelyBlank && { isLikelyBlank: true }),
+    ...describeImages(images),
+  };
+}
+
+// Library images that could not be copied in, and ones copied many times.
+function describeImages({ failed, repeated }: InlineImagesResult) {
+  return {
+    ...(failed.length && { imageErrors: failed }),
+    ...(repeated.length && {
+      repeatedImages: repeated,
+      imageHint: oneLine`
+        Each time an image's storage URL is written, the page gets a full
+        copy. Write it once (a CSS class or a JS variable) and reuse that.
+      `,
+    }),
   };
 }
 
