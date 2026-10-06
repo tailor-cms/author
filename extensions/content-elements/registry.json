@@ -136,6 +136,7 @@
   },
   {
     "name": "@tailor-cms/ce-interactive",
-    "clientPackage": "@tailor-cms/ce-interactive-edit"
+    "clientPackage": "@tailor-cms/ce-interactive-edit",
+    "serverPackage": "@tailor-cms/ce-interactive-server"
   }
 ]
