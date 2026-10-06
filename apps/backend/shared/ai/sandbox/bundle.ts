@@ -235,7 +235,8 @@ async function download(url: string): Promise<Download> {
 
 // Follows redirects only while they stay on an allowed CDN
 async function fetchFromCdn(url: string, redirects = 0): Promise<Response> {
-  // Google Fonts tailors its CSS to the browser; a current one gets woff2 (for smaller file size)
+  // Google Fonts tailors its CSS to the browser; a current one gets woff2
+  // (for smaller file size)
   const USER_AGENT = [
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
     '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
