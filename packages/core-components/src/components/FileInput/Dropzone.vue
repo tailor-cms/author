@@ -17,6 +17,7 @@
       <VFileUpload
         :disabled="disabled"
         :filter-by-type="accept"
+        :model-value="[]"
         :scrim="false"
         class="file-dropzone-upload"
         color="transparent"
