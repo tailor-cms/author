@@ -94,8 +94,25 @@ async function runInteraction(
     const result = describeInteractionResult(value, MAX_RESULT_CHARS);
     return { ...base, ok: true, result };
   } catch (err: any) {
-    return { ...base, ok: false, error: firstLine(err.message) };
+    const error = await describeFailure(page, interaction, err);
+    return { ...base, ok: false, error };
   }
+}
+
+// A selector that matches nothing only shows up as a timeout; say so.
+async function describeFailure(
+  page: Page,
+  { selector, target }: Interaction,
+  err: any,
+): Promise<string> {
+  const message = firstLine(err.message);
+  if (err?.name !== 'TimeoutError') return message;
+  for (const it of [selector, target]) {
+    if (!it) continue;
+    const count = await page.locator(it).count().catch(() => 1);
+    if (!count) return `No element matches "${it}".`;
+  }
+  return message;
 }
 
 async function performAction(

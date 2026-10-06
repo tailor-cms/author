@@ -1,6 +1,7 @@
 // Load a single-file HTML page in the sandbox browser and report what
 // happened: errors, console output, refused and failed requests, layout
 // facts, results of interactions with the page, and screenshots.
+import clamp from 'lodash/clamp.js';
 import {
   type Interaction,
   type InteractionResult,
@@ -305,7 +306,5 @@ async function captureFinal(page: Page, report: InspectReport) {
   );
 }
 
-function settleTime(ms?: number | null): number {
-  if (ms === null || ms === undefined) return DEFAULT_SETTLE_MS;
-  return Math.min(Math.max(ms, 0), MAX_SETTLE_MS);
-}
+const settleTime = (ms?: number | null): number =>
+  clamp(ms ?? DEFAULT_SETTLE_MS, 0, MAX_SETTLE_MS);

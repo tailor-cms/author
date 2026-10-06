@@ -49,7 +49,14 @@ const USER_AGENT = [
 ].join(' ');
 
 const SOURCE_ATTR = 'data-inlined-from';
-const TARGETS = 'script[src], link[rel~="stylesheet"][href]';
+
+// "alternate stylesheet" is an optional theme the page doesn't use by
+// default; copied into the page it would always apply, so we skip it.
+const TARGETS = [
+  'script[src]',
+  'link[rel~="stylesheet"][href]:not([rel~="alternate"])',
+].join(', ');
+
 const EXPECTED_TYPE: Record<Kind, RegExp> = {
   script: /javascript|ecmascript/i,
   stylesheet: /^text\/css/i,
@@ -126,12 +133,18 @@ async function inline({ $el, kind, url }: Target, ctx: BundleContext) {
   inlineStylesheet(ctx.$, $el, url, content);
 }
 
-// The other attributes stay, so unbundling restores the tag as written;
-// browsers ignore `integrity` and `crossorigin` on inline code.
 function inlineScript($el: Cheerio<Node>, url: string, code: string) {
+  $el.attr(SOURCE_ATTR, url);
+  // Browsers ignore `defer` / `async` unless the script has a src, so the
+  // library would run too early. Instead, its code goes into the src.
+  if ($el.is('[defer], [async]')) {
+    const base64 = Buffer.from(code, 'utf8').toString('base64');
+    $el.attr('src', `data:text/javascript;base64,${base64}`);
+    return;
+  }
   $el.removeAttr('src');
   // A literal "</script" inside the code would end the tag early.
-  $el.attr(SOURCE_ATTR, url).text(code.replace(/<\/script/gi, '<\\/script'));
+  $el.text(code.replace(/<\/script/gi, '<\\/script'));
 }
 
 function inlineStylesheet(
