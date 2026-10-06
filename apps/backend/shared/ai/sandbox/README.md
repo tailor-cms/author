@@ -3,8 +3,8 @@
 A headless browser where the AI assistant runs the pages it writes, to
 see what learners will see before anything is saved.
 
-- **Checks** (`inspect.ts`, `interactions.ts`): errors with their line, blocked
-  requests, layout, scripted clicks and drags, screenshots.
+- **Checks** (`inspect.ts`, `interactions.ts`): script errors (with line
+  numbers), blocked requests, layout, clicks and drags, screenshots.
 - **Self-contained on save** (`bundle.ts`): CDN libraries are inlined so
   the page keeps working if a CDN goes away. ES modules stay on the CDN.
 
