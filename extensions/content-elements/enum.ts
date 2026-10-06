@@ -26,4 +26,5 @@ export enum ContentElementType {
   MuxVideo = 'MUX_VIDEO',
   Sequence = 'SEQUENCE',
   Flashcards = 'FLASHCARDS',
+  Interactive = 'INTERACTIVE',
 };

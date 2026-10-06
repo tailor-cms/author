@@ -26,6 +26,17 @@ import config, { env } from '#config';
 import auth from '#shared/auth/index.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Adds a Content-Security-Policy sandbox to uploaded HTML and SVG files
+// to isolate them.
+const sandboxStoredFiles = (res: Response, filePath: string) => {
+  if (!/\.(html?|xhtml|svg)$/i.test(filePath)) return;
+  res.setHeader(
+    'Content-Security-Policy',
+    'sandbox allow-scripts allow-popups allow-pointer-lock',
+  );
+};
+
 const { STORAGE_PATH } = process.env;
 const app = express();
 const logger = createLogger('app');
@@ -106,7 +117,10 @@ app.use(
     },
   }),
 );
-if (STORAGE_PATH) app.use(express.static(STORAGE_PATH));
+// Only if using local storage instead of S3 or another remote storage
+if (STORAGE_PATH) {
+  app.use(express.static(STORAGE_PATH, { setHeaders: sandboxStoredFiles }));
+}
 
 // Mount main router. `bindRequestContext` makes the request id available
 // to every log line written while handling the request (see #logger).

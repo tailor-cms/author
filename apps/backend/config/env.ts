@@ -138,6 +138,19 @@ const Shape = z.object({
   AI_IMAGE_MODEL_ID: z.string().default('gpt-image-2.5-flare'),
   // Days of inactivity before an AI vector store is cleaned up.
   AI_VECTOR_STORE_EXPIRY_DAYS: posInt(60),
+  // Browser the assistant uses to run and check the interactive content
+  // it writes, e.g. Browserless:
+  // wss://production-sfo.browserless.io/chromium/playwright?token=...
+  // Required in production, so generated code never runs next to the
+  // app. Empty in development = a local headless Chromium
+  // (pnpm exec playwright install chromium).
+  AI_SANDBOX_BROWSER_URL: optStr(),
+  // How to talk to the remote browser: `playwright` for a Playwright
+  // server endpoint, `cdp` for a plain Chrome DevTools endpoint.
+  AI_SANDBOX_BROWSER_PROTOCOL: z.enum(['playwright', 'cdp']).default('playwright'),
+  // How many test runs of AI-written pages may happen at once, across
+  // all users; more wait their turn.
+  AI_SANDBOX_MAX_CONCURRENT_RUNS: posInt(3),
 
   // Asset storage backend. `amazon` (S3) requires the credentials below.
   STORAGE_PROVIDER: z.enum(['filesystem', 'amazon']).default('filesystem'),

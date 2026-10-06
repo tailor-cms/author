@@ -5,8 +5,10 @@
 export {
   logger,
   dbContext,
+  isToolError,
   recordOperation,
   toolError,
+  type ToolError,
 } from './common.ts';
 
 // Schema-driven lookups (config domain, used by both slices)

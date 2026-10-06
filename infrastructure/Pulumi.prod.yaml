@@ -1,6 +1,7 @@
 config:
   ai:enabled: "true"
-  ai:modelId: gpt-6-sol
+  ai:modelId: gpt-6.1-sol
+  ai:sandboxBrowserEnabled: "true"
   aws:region: us-east-1
   dns:domain: tailor-cms.com
   dns:hostedZoneId: Z03469864NDBKNYE5TS1
