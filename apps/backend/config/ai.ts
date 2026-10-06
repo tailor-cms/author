@@ -10,7 +10,7 @@ export const isEnabled = !!(secretKey && modelId);
 export const browser = {
   url: env.AI_SANDBOX_BROWSER_URL,
   protocol: env.AI_SANDBOX_BROWSER_PROTOCOL,
-  maxPages: env.AI_SANDBOX_MAX_PAGES,
+  maxConcurrentRuns: env.AI_SANDBOX_MAX_CONCURRENT_RUNS,
   // Production can only run generated code in a remote browser
   isSandboxAvailable: !!env.AI_SANDBOX_BROWSER_URL || !isProduction,
 };

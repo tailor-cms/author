@@ -30,7 +30,8 @@ class BrowserPool {
 
   /**
    * Run `fn` with a fresh browser context; the context is closed afterwards
-   * whatever happens. Waits for a free slot when `maxPages` are busy.
+   * whatever happens. Waits for a free slot when `maxConcurrentRuns` runs
+   * are busy.
    */
   async withContext<T>(
     opts: BrowserContextOptions,
@@ -80,7 +81,7 @@ class BrowserPool {
   private async acquire(): Promise<void> {
     if (this.idleTimer) clearTimeout(this.idleTimer);
     this.idleTimer = null;
-    if (this.active < aiConfig.browser.maxPages) {
+    if (this.active < aiConfig.browser.maxConcurrentRuns) {
       this.active++;
       return;
     }

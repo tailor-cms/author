@@ -148,8 +148,9 @@ const Shape = z.object({
   // How to talk to the remote browser: `playwright` for a Playwright
   // server endpoint, `cdp` for a plain Chrome DevTools endpoint.
   AI_SANDBOX_BROWSER_PROTOCOL: z.enum(['playwright', 'cdp']).default('playwright'),
-  // How many pages the assistant may run at the same time.
-  AI_SANDBOX_MAX_PAGES: posInt(2),
+  // How many test runs of AI-written pages may happen at once, across
+  // all users; more wait their turn.
+  AI_SANDBOX_MAX_CONCURRENT_RUNS: posInt(3),
 
   // Asset storage backend. `amazon` (S3) requires the credentials below.
   STORAGE_PROVIDER: z.enum(['filesystem', 'amazon']).default('filesystem'),
