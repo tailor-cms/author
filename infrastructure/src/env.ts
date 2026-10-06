@@ -83,7 +83,7 @@ export const getSecrets = (db: studion.Database) => {
     'TCE_MUX_JWT_PRIVATE_KEY',
   ];
   if (aiConfig.getBoolean('enabled')) keys.push('AI_SECRET_KEY');
-  if (aiConfig.getBoolean('browserEnabled'))
+  if (aiConfig.getBoolean('sandboxBrowserEnabled'))
     keys.push('AI_SANDBOX_BROWSER_URL');
   if (statsigConfig.getBoolean('enabled')) keys.push('NUXT_PUBLIC_STATSIG_KEY');
   if (oidcConfg.getBoolean('enabled'))
