@@ -25,6 +25,7 @@
     <VDatePicker
       :model-value="modelDate"
       show-adjacent-months
+      bg-color="surface-overlay"
       @update:model-value="onSelect"
     >
       <template #actions>

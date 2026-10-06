@@ -16,7 +16,7 @@
       activator="parent"
       min-width="0"
     >
-      <VCard>
+      <VCard color="surface-overlay">
         <VWindow v-model="step">
           <VWindowItem :value="1">
             <VDatePicker
@@ -27,7 +27,12 @@
             />
           </VWindowItem>
           <VWindowItem :value="2">
-            <VTimePicker v-model="timeInput" color="primary" ampm-in-title />
+            <VTimePicker
+              v-model="timeInput"
+              bg-color="transparent"
+              color="primary"
+              ampm-in-title
+            />
           </VWindowItem>
         </VWindow>
         <VCardActions class="d-flex pa-4">
