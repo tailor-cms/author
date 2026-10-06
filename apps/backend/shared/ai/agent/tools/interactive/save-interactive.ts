@@ -4,6 +4,7 @@ import {
   bundlePage,
   type BundleResult,
   inspectPage,
+  isSameOriginUrl,
 } from '../../../sandbox/index.ts';
 import {
   ELEMENT_TYPE,
@@ -91,9 +92,10 @@ const parameters = {
       description: oneLine`
         Copy CDN libraries into the saved HTML so it works without the CDN
         (default true). Set false only when saving fails its offline check
-        because a library loads more files on its own (ES modules with
-        imports, web workers, wasm): copying the main file can't bring
-        those along. The saved HTML then loads its libraries from the CDN.
+        because a library loads more files on its own (web workers, wasm,
+        code split into chunks): copying the main file can't bring those
+        along. The saved HTML then loads its libraries from the CDN. ES
+        modules are never copied.
       `,
     },
   },
@@ -196,16 +198,21 @@ async function preparePage(html: string, isInlining: boolean) {
   if (!bundle.inlined.length) return { html, bundle };
   try {
     const report = await inspectPage({ html: bundle.html, isOffline: true });
-    if (!report.errors.length) return { html: bundle.html, bundle };
+    const missingFiles = report.blockedRequests.filter(isSameOriginUrl);
+    if (!report.errors.length && !missingFiles.length) {
+      return { html: bundle.html, bundle };
+    }
     return toolError({
       tool: TOOL,
       reason: 'offline_check_failed',
       message: oneLine`
-        With libraries inlined and the network off, the page fails. Fix
-        it (prefer classic <script src> builds of libraries) or save with
+        With libraries inlined and the network off, the page fails or
+        asks for files that won't exist once saved (missingFiles). Fix it
+        (prefer classic <script src> builds of libraries) or save with
         inlineLibraries: false.
       `,
       errors: report.errors,
+      ...(missingFiles.length && { missingFiles }),
       blockedRequests: report.blockedRequests,
     });
   } catch (err) {
@@ -292,7 +299,7 @@ function toFileName(title: string): string {
 function describeBundle(bundle: BundleResult | null) {
   if (!bundle) return { isInlined: false };
   return {
-    isInlined: true,
+    isInlined: bundle.inlined.length > 0,
     inlined: bundle.inlined,
     ...(bundle.failed.length && { notInlined: bundle.failed }),
   };

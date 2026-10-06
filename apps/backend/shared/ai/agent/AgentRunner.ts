@@ -24,9 +24,14 @@ import { buildSystemPrompt } from './systemPrompt.ts';
 import { createAiLogger } from '../logger.ts';
 import { oneLine } from 'common-tags';
 import OpenAI from 'openai';
+import cloneDeepWith from 'lodash/cloneDeepWith.js';
 import truncate from 'lodash/truncate.js';
 
-const logger = createAiLogger('agent.runner');
+// Tool inputs can hold a whole page of HTML; `input` is logged shortened.
+const logger = createAiLogger('agent.runner').child(
+  {},
+  { serializers: { input: shortenForLog } },
+);
 
 // Stays `null` in AI-disabled environments so the route module still loads
 // cleanly; `assertReady()` surfaces the misconfiguration on actual use.
@@ -360,10 +365,7 @@ export class AgentRunner {
     ctx: ToolContext,
     session: AgentSession,
   ): Promise<ToolCallRecord> {
-    logger.info(
-      { tool: name, sessionId: session.id, input: shortenForLog(input) },
-      '> tool call',
-    );
+    logger.info({ tool: name, sessionId: session.id, input }, '> tool call');
     const startedAt = Date.now();
     const result = await safeExecute(tool, name, input, ctx);
     const durationMs = Date.now() - startedAt;
@@ -537,12 +539,12 @@ function assertReady(input: RunInput): void {
 // Long text in a tool input (e.g. a page's full HTML) is logged as its
 // start and length.
 function shortenForLog(input: unknown): unknown {
-  const shorten = (_key: string, value: unknown) => {
-    if (typeof value !== 'string') return value;
+  return cloneDeepWith(input, (value) => {
+    // Anything else is copied as is.
+    if (typeof value !== 'string') return undefined;
     const omission = `… (${value.length} chars)`;
     return truncate(value, { length: MAX_LOGGED_TEXT, omission });
-  };
-  return JSON.parse(JSON.stringify(input, shorten));
+  });
 }
 
 async function safeExecute(

@@ -11,15 +11,18 @@ const FRAME_SANDBOX_CSP = 'sandbox allow-scripts allow-popups allow-pointer-lock
 
 export const SANDBOX_URL = `${SANDBOX_ORIGIN}/index.html`;
 
-// Hosts generated pages may load libraries and fonts from.
-export const CDN_HOSTS = [
+// CDNs generated pages may load libraries from, at pinned versions.
+// esm.sh serves ES modules.
+export const LIBRARY_HOSTS = [
   'cdn.jsdelivr.net',
   'cdnjs.cloudflare.com',
   'unpkg.com',
   'esm.sh',
-  'fonts.googleapis.com',
-  'fonts.gstatic.com',
 ];
+
+const FONT_HOSTS = ['fonts.googleapis.com', 'fonts.gstatic.com'];
+
+const CDN_HOSTS = [...LIBRARY_HOSTS, ...FONT_HOSTS];
 
 // Browsers ask for it on their own; not the page's fault.
 const FAVICON_URL = `${SANDBOX_ORIGIN}/favicon.ico`;
@@ -31,6 +34,15 @@ export function isCdnUrl(url: string): boolean {
   } catch {
     return false;
   }
+}
+
+/**
+ * A request to the page's own origin, e.g. a relative path like
+ * `./data.json`. A stored interactive page has no files next to it,
+ * so these fail for readers.
+ */
+export function isSameOriginUrl(url: string): boolean {
+  return url.startsWith(`${SANDBOX_ORIGIN}/`) && url !== FAVICON_URL;
 }
 
 export interface NetworkPolicyOptions {

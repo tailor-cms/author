@@ -14,7 +14,7 @@ export {
   type Screenshot,
   type Viewport,
 } from './inspect.ts';
-export { CDN_HOSTS } from './network.ts';
+export { isSameOriginUrl, LIBRARY_HOSTS } from './network.ts';
 export {
   type Interaction,
   INTERACTION_ACTIONS,

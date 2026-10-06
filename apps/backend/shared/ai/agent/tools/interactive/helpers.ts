@@ -4,7 +4,7 @@ import { oneLine } from 'common-tags';
 import {
   type InspectReport,
   BrowserUnavailableError,
-  CDN_HOSTS,
+  LIBRARY_HOSTS,
 } from '../../../sandbox/index.ts';
 import type { ToolContext } from '../types.ts';
 import { DRAFT_TTL_DAYS, draftStore, type InteractiveDraft } from './drafts.ts';
@@ -113,7 +113,8 @@ function collectHints({ metrics, blockedRequests }: InspectReport) {
   if (blockedRequests.length) {
     hints.push(oneLine`
       Blocked requests fail for readers too. Put data in the HTML and load
-      libraries only from: ${CDN_HOSTS.join(', ')}.
+      libraries only from: ${LIBRARY_HOSTS.join(', ')} (fonts: Google
+      Fonts).
     `);
   }
   return hints;

@@ -109,6 +109,10 @@ function sourceOf($el: Cheerio<Node>): string | null {
   const isScript = $el.is('script');
   // A script with a body of its own isn't a plain library include.
   if (isScript && $el.text().trim()) return null;
+  // An ES module can load additional files
+  if (isScript && $el.attr('type')?.trim().toLowerCase() === 'module') {
+    return null;
+  }
   const value = $el.attr(isScript ? 'src' : 'href')?.trim();
   if (!value) return null;
   const url = value.startsWith('//') ? `https:${value}` : value;

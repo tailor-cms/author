@@ -17,7 +17,11 @@ import {
   extractStorageKey,
   isStorageAsset,
 } from '#shared/storage/helpers.js';
-import { inspectPage, unbundlePage } from '../../../sandbox/index.ts';
+import {
+  inspectPage,
+  LIBRARY_HOSTS,
+  unbundlePage,
+} from '../../../sandbox/index.ts';
 import Storage from '#storage';
 
 const TOOL = 'draft_interactive';
@@ -62,10 +66,12 @@ const description = stripIndent`
   for screenshots and interaction checks.
   HTML rules:
   - One complete document with its data inside; no calls to APIs.
-    Libraries only from cdn.jsdelivr.net, cdnjs.cloudflare.com or
-    unpkg.com (fonts: Google Fonts), with pinned versions; prefer classic
-    <script src> builds (they are inlined on save). Plain JS, SVG or
-    Canvas is fine for simple pieces.
+    Libraries only from ${LIBRARY_HOSTS.join(', ')}; fonts only from
+    Google Fonts; always with pinned versions. Prefer classic
+    <script src> builds: saving copies them into the page, so it keeps
+    working if the CDN goes away. ES modules (import ... from, e.g.
+    esm.sh) keep loading from the CDN. Plain JS, SVG or Canvas is fine
+    for simple pieces.
   - It runs in a sandbox: no localStorage, cookies, alerts or pop-ups;
     keep state in memory.
   - Fluid width; on narrow screens stack instead of squeezing, and avoid
