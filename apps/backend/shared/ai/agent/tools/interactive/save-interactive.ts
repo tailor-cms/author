@@ -12,7 +12,7 @@ import {
   sandboxError,
 } from './helpers.ts';
 import type { ToolContext, ToolDef } from '../types.ts';
-import { isToolError, toolError } from '../helpers/index.ts';
+import { isToolError, toolError, type ToolError } from '../helpers/index.ts';
 import { pickElementFields } from '../content-elements/helpers.ts';
 import { createAiLogger } from '../../../logger.ts';
 import { draftStore, type InteractiveDraft } from './drafts.ts';
@@ -157,7 +157,7 @@ async function resolveTarget(
   input: Input,
   draft: InteractiveDraft,
   ctx: ToolContext,
-): Promise<Target | ReturnType<typeof toolError>> {
+): Promise<Target | ToolError> {
   // A reopened draft updates its element unless a new host is given.
   const elementId =
     input.elementId ?? (input.activityId ? null : draft.elementId);

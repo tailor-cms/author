@@ -3,6 +3,7 @@ import db from '#shared/database/index.js';
 import type { ToolContext, ToolDef } from '../types.ts';
 import {
   dbContext,
+  isToolError,
   recordOperation,
   toolError,
 } from '../helpers/index.ts';
@@ -103,7 +104,7 @@ function validateTypes(elements: ElementItem[], allowed: string[]) {
  */
 async function execute(input: Input, ctx: ToolContext) {
   const resolved = await resolveElementHost(TOOL, input.activityId, ctx);
-  if ('error' in resolved) return resolved;
+  if (isToolError(resolved)) return resolved;
   const { host: target, allowedTypes: allowed } = resolved;
 
   const typeError = validateTypes(input.elements, allowed);
