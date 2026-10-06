@@ -1,3 +1,4 @@
+import clamp from 'lodash/clamp.js';
 import { oneLine, stripIndent } from 'common-tags';
 
 import {
@@ -39,9 +40,12 @@ const description = stripIndent`
   behavior: click / hover / fill (inputs and sliders) / press (keys) /
   drag / wait / evaluate (a JS expression whose value is returned, e.g.
   reading state) / screenshot (at most ${MAX_SCREENSHOTS} per run,
-  including the final one). Interactions stop at the first failure; each
-  result counts the page errors it caused. Test at a phone width too
-  (viewport 390x700) when layout matters.
+  including the final one). Check what a reader can do with click /
+  press / drag; clicks made in evaluate also work on hidden or covered
+  controls, so use evaluate only to read state or to jump ahead.
+  Interactions stop at the first failure; each result counts the page
+  errors it caused. Test at a phone width too (viewport 390x700) when
+  layout matters.
 `;
 
 const interactionSchema = {
@@ -141,15 +145,12 @@ async function execute(input: Input, ctx: ToolContext) {
 }
 
 function resolveViewport(input?: Partial<Viewport> | null): Viewport {
-  const clamp = (value: number | undefined, key: keyof Viewport) =>
-    Math.min(
-      Math.max(value ?? DEFAULT_VIEWPORT[key], MIN_VIEWPORT[key]),
-      MAX_VIEWPORT[key],
-    );
-  return {
-    width: clamp(input?.width, 'width'),
-    height: clamp(input?.height, 'height'),
-  };
+  const size = (key: keyof Viewport) => clamp(
+    input?.[key] ?? DEFAULT_VIEWPORT[key],
+    MIN_VIEWPORT[key],
+    MAX_VIEWPORT[key],
+  );
+  return { width: size('width'), height: size('height') };
 }
 
 export const test_interactive: ToolDef = {

@@ -26,7 +26,7 @@ import Storage from '#storage';
 
 const TOOL = 'draft_interactive';
 
-// After the page is loaded and watched this long for errors.
+// How long a page is watched for errors after it loads.
 const STARTUP_ERROR_WINDOW_MS = 400;
 
 // A reopened page is returned to the model only up to this size, to keep
@@ -129,7 +129,7 @@ async function execute(input: Input, ctx: ToolContext) {
   return describeDraft(draft);
 }
 
-async function describeDraft(draft: InteractiveDraft, isLoaded = false) {
+async function describeDraft(draft: InteractiveDraft, isReopened = false) {
   return {
     ok: true,
     draftId: draft.id,
@@ -137,7 +137,7 @@ async function describeDraft(draft: InteractiveDraft, isLoaded = false) {
     elementId: draft.elementId,
     bytes: Buffer.byteLength(draft.html),
     lines: draft.html.split('\n').length,
-    ...(isLoaded && describeLoadedHtml(draft.html)),
+    ...(isReopened && describeReopenedHtml(draft.html)),
     startupCheck: await checkStartup(draft.html),
   };
 }
@@ -170,10 +170,11 @@ async function editDraft(id: string, input: Input, ctx: ToolContext) {
   return draft;
 }
 
-/**
- * Applies find/replace edits in order
- */
-function applyEdits(html: string, edits: TextEdit[]): { html: string } | ToolError {
+// Applies find/replace edits in order; each "find" must match once.
+function applyEdits(
+  html: string,
+  edits: TextEdit[],
+): { html: string } | ToolError {
   let result = html;
   for (const [index, { find, replace }] of edits.entries()) {
     const count = find ? result.split(find).length - 1 : 0;
@@ -278,7 +279,7 @@ async function readStoredPage(uri?: string | null): Promise<string | null> {
   return stripResizeReporter(unbundlePage(buffer.toString('utf8')));
 }
 
-function describeLoadedHtml(html: string) {
+function describeReopenedHtml(html: string) {
   if (Buffer.byteLength(html) <= MAX_RETURNED_HTML_BYTES) return { html };
   return {
     note: oneLine`

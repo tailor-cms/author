@@ -1,3 +1,4 @@
+import clamp from 'lodash/clamp.js';
 import { oneLine, stripIndent } from 'common-tags';
 
 import {
@@ -36,7 +37,7 @@ const MIN_HEIGHT = 120;
 const MAX_HEIGHT = 2000;
 
 const clampHeight = (height: number): number =>
-  Math.min(Math.max(Math.round(height), MIN_HEIGHT), MAX_HEIGHT);
+  clamp(Math.round(height), MIN_HEIGHT, MAX_HEIGHT);
 
 interface Input {
   draftId: string;
@@ -189,9 +190,7 @@ async function resolveTarget(
   });
 }
 
-/**
- * Inline libraries and prove the result runs without network.
- */
+// Inlines libraries and proves the result runs without network.
 async function preparePage(html: string, isInlining: boolean) {
   if (!isInlining) return { html, bundle: null };
   const bundle = await bundlePage(html);
@@ -243,8 +242,9 @@ async function storePage(
 }
 
 /**
- * Each save stores a new file, so re-saving in one session would pile up
- * library entries for the same element.
+ * Removes the file this session saved for the element before, unless
+ * something uses it. Each save stores a new file, so re-saving would
+ * otherwise pile up library entries for the same element.
  */
 async function dropSessionVersion(
   elementId: number,

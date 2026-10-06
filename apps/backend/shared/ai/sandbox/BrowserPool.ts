@@ -17,7 +17,8 @@ const LAUNCH_ARGS = ['--use-angle=swiftshader', '--enable-unsafe-swiftshader'];
 // Close an idle local browser to give its memory back.
 const IDLE_CLOSE_MS = 5 * 60 * 1000;
 
-// A remote browser is billed while connected, so it is let go at once.
+// Browserless bills for connected time, so a remote browser is closed as
+// soon as no runs are left (a local one waits IDLE_CLOSE_MS).
 const isRemote = !!aiConfig.browser.url;
 
 export class BrowserUnavailableError extends Error {}
