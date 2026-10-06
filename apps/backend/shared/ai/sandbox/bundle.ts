@@ -2,10 +2,10 @@
 // stylesheets are downloaded and inlined.
 // Fonts and images a stylesheet points to stay on the CDN; without them
 // the page still works, with fallback fonts.
-import * as cheerio from 'cheerio';
 import type { Cheerio, CheerioAPI } from 'cheerio';
-import { createHash } from 'node:crypto';
 
+import * as cheerio from 'cheerio';
+import { createHash } from 'node:crypto';
 import { isCdnUrl } from './network.ts';
 
 export interface BundleResult {
@@ -41,12 +41,6 @@ const FETCH_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
 const MAX_FILE_BYTES = 3 * 1024 * 1024;
 const MAX_TOTAL_BYTES = 10 * 1024 * 1024;
-
-// Google Fonts tailors its CSS to the browser; a current one gets woff2.
-const USER_AGENT = [
-  'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
-  '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
-].join(' ');
 
 const SOURCE_ATTR = 'data-inlined-from';
 
@@ -103,7 +97,9 @@ export function unbundlePage(html: string): string {
       $el.removeAttr(SOURCE_ATTR).attr('src', url!).text('');
       return;
     }
-    $el.replaceWith($('<link rel="stylesheet">').attr('href', url!).attr(attrs));
+    $el.replaceWith(
+      $('<link rel="stylesheet">').attr('href', url!).attr(attrs),
+    );
   });
   return $.html();
 }
@@ -164,10 +160,14 @@ function inlineStylesheet(
 function rebaseCss(css: string, base: string): string {
   const absolute = (path: string) => new URL(path, base).href;
   return css
-    .replace(CSS_RELATIVE_URL, (_, quote, path) =>
-      `url(${quote}${absolute(path)}${quote})`)
-    .replace(CSS_RELATIVE_IMPORT, (_, quote, path) =>
-      `@import ${quote}${absolute(path)}${quote}`);
+    .replace(
+      CSS_RELATIVE_URL,
+      (_, quote, path) => `url(${quote}${absolute(path)}${quote})`,
+    )
+    .replace(
+      CSS_RELATIVE_IMPORT,
+      (_, quote, path) => `@import ${quote}${absolute(path)}${quote}`,
+    );
 }
 
 /**
@@ -215,8 +215,10 @@ function matchesIntegrity(body: Buffer, integrity: string): boolean {
     .map((token) => token.match(SRI_HASH))
     .filter((match): match is RegExpMatchArray => match !== null);
   if (!hashes.length) return true;
-  return hashes.some(([, algorithm, expected]) =>
-    createHash(algorithm!).update(body).digest('base64') === expected);
+  return hashes.some(
+    ([, algorithm, expected]) =>
+      createHash(algorithm!).update(body).digest('base64') === expected,
+  );
 }
 
 async function download(url: string): Promise<Download> {
@@ -233,6 +235,11 @@ async function download(url: string): Promise<Download> {
 
 // Follows redirects only while they stay on an allowed CDN
 async function fetchFromCdn(url: string, redirects = 0): Promise<Response> {
+  // Google Fonts tailors its CSS to the browser; a current one gets woff2 (for smaller file size)
+  const USER_AGENT = [
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36',
+    '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
+  ].join(' ');
   const res = await fetch(url, {
     redirect: 'manual',
     headers: { 'user-agent': USER_AGENT },
