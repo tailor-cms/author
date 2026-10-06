@@ -12,6 +12,7 @@ import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine, stripIndent } from 'common-tags';
 
 import { describeContainerSchema } from './tools/helpers/index.ts';
+import { ai as aiConfig } from '#config';
 
 export interface AgentPromptInput {
   repository: {
@@ -38,7 +39,7 @@ export function buildSystemPrompt(input: AgentPromptInput): string {
     outlineContextSection(),
     metaInputsExplainerSection(),
     assetsSection(),
-    interactiveSection(),
+    aiConfig.browser.isSandboxAvailable ? interactiveSection() : '',
     analysisSection(),
     hasVectorStore ? vectorStoreSection() : '',
   ];

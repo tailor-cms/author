@@ -11,6 +11,8 @@ export const browser = {
   url: env.AI_SANDBOX_BROWSER_URL,
   protocol: env.AI_SANDBOX_BROWSER_PROTOCOL,
   maxPages: env.AI_SANDBOX_MAX_PAGES,
+  // Production can only run generated code in a remote browser
+  isSandboxAvailable: !!env.AI_SANDBOX_BROWSER_URL || !isProduction,
 };
 
 const envSuffix = isProduction ? '' : `-${env.NODE_ENV}`;

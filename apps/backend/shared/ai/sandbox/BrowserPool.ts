@@ -6,7 +6,7 @@ import {
   type BrowserContextOptions,
   chromium,
 } from 'playwright-core';
-import { ai as aiConfig, isProduction } from '#config';
+import { ai as aiConfig } from '#config';
 import { createAiLogger } from '../logger.ts';
 
 const logger = createAiLogger('sandbox.browser');
@@ -102,8 +102,8 @@ class BrowserPool {
  * generated code next to the app's secrets (see README).
  */
 async function openBrowser(): Promise<Browser> {
-  const { url, protocol } = aiConfig.browser;
-  if (!url && isProduction) {
+  const { url, protocol, isSandboxAvailable } = aiConfig.browser;
+  if (!isSandboxAvailable) {
     throw new Error('no remote browser configured (AI_SANDBOX_BROWSER_URL)');
   }
   if (!url) return chromium.launch({ args: LAUNCH_ARGS });
