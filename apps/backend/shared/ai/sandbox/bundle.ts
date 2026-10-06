@@ -55,7 +55,6 @@ const EXPECTED_TYPE: Record<Kind, RegExp> = {
   script: /javascript|ecmascript/i,
   stylesheet: /^text\/css/i,
 };
-const SRI_HASH = /^(sha256|sha384|sha512)-([A-Za-z0-9+/]+={0,2})/;
 const REDIRECT_STATUSES = [301, 302, 303, 307, 308];
 
 const CSS_RELATIVE_URL =
@@ -107,7 +106,7 @@ export function unbundlePage(html: string): string {
 const kindOf = ($el: Cheerio<Node>): Kind =>
   $el.is('script') ? 'script' : 'stylesheet';
 
-// The CDN file a tag loads, if it is one we inline.
+// Detects if the element has a CDN source which we can inline;
 function sourceOf($el: Cheerio<Node>): string | null {
   const isScript = $el.is('script');
   // A script with a body of its own isn't a plain library include.
@@ -209,6 +208,7 @@ async function accept(
  * matching any one is enough.
  */
 function matchesIntegrity(body: Buffer, integrity: string): boolean {
+  const SRI_HASH = /^(sha256|sha384|sha512)-([A-Za-z0-9+/]+={0,2})/;
   const hashes = integrity
     .trim()
     .split(/\s+/)
@@ -242,11 +242,14 @@ async function fetchFromCdn(url: string, redirects = 0): Promise<Response> {
     '(KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36',
   ].join(' ');
   const res = await fetch(url, {
+    // Don't follow redirects automatically: we first check that the new
+    // address is an allowed CDN (below).
     redirect: 'manual',
     headers: { 'user-agent': USER_AGENT },
     signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
   });
   const location = res.headers.get('location');
+  // Not a redirect: this is the file.
   if (!REDIRECT_STATUSES.includes(res.status) || !location) return res;
   await res.body?.cancel();
   const next = new URL(location, url).href;
@@ -260,20 +263,14 @@ async function fetchFromCdn(url: string, redirects = 0): Promise<Response> {
 async function readBody(res: Response, limit: number): Promise<Buffer> {
   const tooLarge = () => new Error('file too large to inline');
   if (Number(res.headers.get('content-length')) > limit) throw tooLarge();
-  const reader = res.body?.getReader();
-  if (!reader) return Buffer.alloc(0);
   const chunks: Uint8Array[] = [];
   let size = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) return Buffer.concat(chunks);
-    size += value.byteLength;
-    if (size > limit) {
-      await reader.cancel();
-      throw tooLarge();
-    }
-    chunks.push(value);
+  for await (const chunk of res.body ?? []) {
+    size += chunk.byteLength;
+    if (size > limit) throw tooLarge();
+    chunks.push(chunk);
   }
+  return Buffer.concat(chunks);
 }
 
 function describeError(err: unknown): string {
