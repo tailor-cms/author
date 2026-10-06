@@ -60,19 +60,21 @@ class BrowserPool {
 
   private getBrowser(): Promise<Browser> {
     if (this.browser) return this.browser;
-    this.browser = openBrowser()
+    const forget = () => {
+      if (this.browser === pending) this.browser = null;
+    };
+    const pending: Promise<Browser> = openBrowser()
       .then((browser) => {
-        browser.on('disconnected', () => {
-          this.browser = null;
-        });
+        browser.on('disconnected', forget);
         return browser;
       })
       .catch((err) => {
-        this.browser = null;
+        forget();
         logger.error({ err }, 'browser unavailable');
         throw new BrowserUnavailableError(err.message);
       });
-    return this.browser;
+    this.browser = pending;
+    return pending;
   }
 
   private async acquire(): Promise<void> {
