@@ -1,6 +1,6 @@
 // What the composer's editor supports: plain text, `@` mentions,
 // `#` references, `:` emoji and code highlighting
-import type { ReferenceType } from '@tailor-cms/utils';
+import type { ReferenceType } from '@tailor-cms/interfaces/comment';
 import type { SuggestionFetcher } from '../../types';
 
 import {

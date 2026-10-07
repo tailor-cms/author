@@ -57,7 +57,8 @@
 <script lang="ts" setup>
 import type { SuggestionItem } from '../types';
 
-import { ReferenceType, toEmojiShortcode } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
+import { toEmojiShortcode } from '@tailor-cms/utils';
 import {
   referenceNode,
   serialize,

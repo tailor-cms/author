@@ -1,9 +1,9 @@
 // Converts between the editor, where mentions and references are chips,
 // and the saved message, plain text with tokens like `<@12|User>`
 import type { Editor, JSONContent } from '@tiptap/vue-3';
+import type { ReferenceType } from '@tailor-cms/interfaces/comment';
 import {
   type MessageToken,
-  type ReferenceType,
   formatMention,
   formatReference,
   parseMessage,

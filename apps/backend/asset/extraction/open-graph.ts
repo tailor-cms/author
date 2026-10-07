@@ -20,7 +20,7 @@ import ogs from 'open-graph-scraper';
 
 import { assertPublicUrl } from '../utils/url-guard.ts';
 import { createLogger } from '#logger';
-import { detectLinkName } from '@tailor-cms/common/asset';
+import { fileNameFromUrl } from '../utils/url-file-name.ts';
 import { discovery as config } from '#config';
 
 const logger = createLogger('asset:og');
@@ -46,7 +46,7 @@ export interface OpenGraphData {
 // OG → Twitter Card → Dublin Core → domain name.
 export async function fetchOpenGraph(url: string): Promise<OpenGraphData> {
   const domain = new URL(url).hostname;
-  const name = detectLinkName(url);
+  const name = fileNameFromUrl(url);
   try {
     await assertPublicUrl(url);
     const { result } = await ogs({ url, timeout: config.ogs.timeout });

@@ -16,7 +16,6 @@
     "#utils/*": "./src/utils/*"
   },
   "devDependencies": {
-    "@tailor-cms/common": "workspace:*",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/pluralize": "^0.0.33"
   },

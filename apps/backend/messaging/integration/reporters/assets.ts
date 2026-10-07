@@ -1,7 +1,7 @@
 import type { AttachmentPreview, Reporter } from './lib/types.ts';
 import { assetRef, formatAnnouncement, sharedValue } from './lib/format.ts';
 import { EventType } from '#shared/events/bus.ts';
-import { ReferenceType } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 
 interface UploadedAsset {
   id: number;

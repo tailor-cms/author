@@ -6,9 +6,7 @@
  */
 import { createLogger } from '#logger';
 import { YoutubeTranscript } from 'youtube-transcript';
-import { video } from '@tailor-cms/common';
-
-export const { extractYtVideoId, isYouTubeUrl } = video;
+import { extractYtVideoId, isYouTubeUrl } from '@tailor-cms/utils';
 
 // Max caption text stored in meta (100KB - covers ~1hr of video)
 const logger = createLogger('asset:youtube-captions');

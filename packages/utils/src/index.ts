@@ -10,12 +10,17 @@ export * from './changeCase';
 export * from './html';
 export * as Events from './events';
 export * from './emoji';
+export * from './link';
+export * from './markup';
+export * from './message';
+export * from './url';
+
 export { default as InsertLocation } from './insertLocation';
 export { default as numberToLetter } from './numberToLetter';
 export { default as uuid } from './uuid';
 
-const TEXT_CONTAINERS = ['HTML', 'JODIT_HTML', 'TIPTAP_HTML'];
 const blankRegex = /(@blank)/g;
+const TEXT_CONTAINERS = ['HTML', 'JODIT_HTML', 'TIPTAP_HTML'];
 
 export const getMetaName = (type: string) => `meta-${kebabCase(type)}`;
 

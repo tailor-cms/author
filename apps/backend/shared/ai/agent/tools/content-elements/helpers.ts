@@ -5,7 +5,7 @@ import { createAiLogger } from '../../../logger.ts';
 import { dbContext } from '../helpers/index.ts';
 import { randomUUID } from 'node:crypto';
 import { storage as storageConfig } from '#config';
-import { toEmbedUrl } from '@tailor-cms/common/asset';
+import { toVideoEmbedUrl } from '@tailor-cms/utils';
 import type { ToolContext } from '../types.ts';
 import db from '#shared/database/index.js';
 import elementRegistry from '../../../../content-plugins/elementRegistry.js';
@@ -112,7 +112,7 @@ export function normalizeElementData(elementType: string, data: any): any {
   } else if (elementType === ContentElementType.Embed && normalized?.url) {
     normalized = {
       ...normalized,
-      url: toEmbedUrl(normalized.url) || normalized.url,
+      url: toVideoEmbedUrl(normalized.url) || normalized.url,
     };
   }
   if (elementRegistry.isQuestion(elementType)) {

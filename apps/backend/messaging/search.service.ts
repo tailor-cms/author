@@ -5,7 +5,8 @@ import type {
   ThreadAsset,
 } from './schemas/index.ts';
 import { col, fn, Op, where } from 'sequelize';
-import { extractReferences, ReferenceType } from '@tailor-cms/utils';
+import { extractReferences } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { createLogger } from '#logger';
 import * as commentService from './comment.service.ts';
 import db from '#shared/database/index.js';

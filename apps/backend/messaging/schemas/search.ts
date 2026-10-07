@@ -6,7 +6,7 @@ import {
   ShortText,
 } from '#shared/request/schemas.ts';
 import { Message, ThreadRef } from './entity.ts';
-import { ReferenceType } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 

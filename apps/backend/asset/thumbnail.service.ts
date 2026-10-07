@@ -2,7 +2,7 @@ import type { Asset } from './models/asset.model.js';
 
 import { AssetType } from '@tailor-cms/interfaces/asset';
 import { createLogger } from '#logger';
-import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
+import { getLinkThumbnailUrl } from '@tailor-cms/utils';
 import { buildThumbnailKey } from './utils/storage-key.ts';
 import { downloadFile } from './utils/download.ts';
 import { generateThumbnail } from './utils/image.ts';
@@ -15,13 +15,11 @@ const logger = createLogger('asset:thumbnail');
 type SourceLoader = () => Promise<Buffer | null>;
 
 /**
- * The remote preview image to build a link asset's thumbnail from. Shared with
- * the frontend tile (getLinkPreviewUrl) so the cached thumbnail matches the
- * client-side fallback. null when the link exposes no preview.
+ * The remote image to build a link asset's thumbnail from.
  */
-function linkPreviewUrl(asset: Asset): string | null {
+function linkThumbnailUrl(asset: Asset): string | null {
   if (asset.type !== AssetType.Link) return null;
-  return getLinkPreviewUrl(asset.meta);
+  return getLinkThumbnailUrl(asset.meta);
 }
 
 /**
@@ -34,8 +32,8 @@ function resolveSourceLoader(asset: Asset): SourceLoader | null {
     const key = asset.storageKey;
     return () => Storage.getFile(key);
   }
-  const previewUrl = linkPreviewUrl(asset);
-  if (previewUrl) return async () => (await downloadFile(previewUrl)).buffer;
+  const imageUrl = linkThumbnailUrl(asset);
+  if (imageUrl) return async () => (await downloadFile(imageUrl)).buffer;
   return null;
 }
 

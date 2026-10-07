@@ -1,5 +1,5 @@
 import { AssetType } from '@tailor-cms/interfaces/asset';
-import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
+import { getLinkThumbnailUrl } from '@tailor-cms/utils';
 import repositoryAsset from '@/api/repositoryAsset';
 
 // The minimal asset shape this composable needs.

@@ -22,6 +22,28 @@ export const LinkContentType = {
 export type LinkContentType =
   (typeof LinkContentType)[keyof typeof LinkContentType];
 
+// Services a link can belong to
+export const LinkProvider = {
+  YouTube: 'youtube',
+  Vimeo: 'vimeo',
+  Dailymotion: 'dailymotion',
+  Loom: 'loom',
+  Spotify: 'spotify',
+  SoundCloud: 'soundcloud',
+  GoogleDocs: 'google-docs',
+  GoogleSheets: 'google-sheets',
+  GoogleSlides: 'google-slides',
+  GoogleForms: 'google-forms',
+  GoogleDrive: 'google-drive',
+  MicrosoftWord: 'microsoft-word',
+  MicrosoftExcel: 'microsoft-excel',
+  MicrosoftPowerPoint: 'microsoft-powerpoint',
+  OneDrive: 'onedrive',
+  SharePoint: 'sharepoint',
+} as const;
+
+export type LinkProvider = (typeof LinkProvider)[keyof typeof LinkProvider];
+
 export const ProcessingStatus = {
   Pending: 'pending',
   Processing: 'processing',
@@ -73,8 +95,8 @@ export interface LinkAssetMeta extends AssetMetaBase {
   source?: AssetSource;
   // What kind of content the link points to (video, image, document, etc.)
   contentType?: LinkContentType;
-  // Known provider for provider-specific UI (youtube, vimeo, spotify, etc.)
-  provider?: string;
+  // The service behind the link, when it is one we recognise
+  provider?: LinkProvider;
 }
 
 export type AssetMeta = FileAssetMeta | MediaAssetMeta | LinkAssetMeta;
@@ -101,7 +123,10 @@ const ASSET_TYPE_EXTENSIONS: Record<string, Set<string>> = {
   [AssetType.Image]: new Set([
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'tiff', 'avif',
   ]),
-  [AssetType.Document]: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
+  [AssetType.Document]: new Set([
+    'pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'csv', 'rtf', 'txt',
+    'md', 'html',
+  ]),
   [AssetType.Video]: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
   [AssetType.Audio]: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
 };

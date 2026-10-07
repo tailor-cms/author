@@ -4,7 +4,7 @@
 import type { UrlDescription } from '../schemas/url-description.ts';
 import { fetchOpenGraph } from './open-graph.ts';
 import { createKvStore } from '#shared/kvStore.ts';
-import { detectLinkProvider } from '@tailor-cms/common/asset';
+import { detectLinkProvider } from '@tailor-cms/utils';
 
 const TTL = 6 * 60 * 60 * 1000;
 

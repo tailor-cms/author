@@ -8,6 +8,7 @@ import type {
 } from './types.ts';
 import type { CloudEvent } from '#shared/events/bus.ts';
 import { formatReference } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import omitBy from 'lodash/omitBy.js';
 
 /**
@@ -16,13 +17,13 @@ import omitBy from 'lodash/omitBy.js';
  */
 export const activityRef = (data: ActivityData) =>
   data.id
-    ? formatReference('activity', data.id, data.name ?? 'activity')
+    ? formatReference(ReferenceType.Activity, data.id, data.name ?? 'activity')
     : (data.name ?? 'an item');
 
 /** The same for a file: `<#asset:5|logo.png>`, its name, then `a file`. */
 export const assetRef = (asset?: { id?: number; name?: string }) =>
   asset?.id
-    ? formatReference('asset', asset.id, asset.name ?? 'file')
+    ? formatReference(ReferenceType.Asset, asset.id, asset.name ?? 'file')
     : (asset?.name ?? 'a file');
 
 /** "Added <link>" for one, "Added 12 items" for a burst. */
