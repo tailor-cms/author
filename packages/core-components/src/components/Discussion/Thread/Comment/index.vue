@@ -32,26 +32,14 @@
           }"
           @unresolve="handleResolvementUpdate"
         />
-        <template v-else>
-          <MessageComposer
-            v-model="contentInput"
-            class="comment-editor mt-3"
-            placeholder="Edit your comment..."
-            autofocus
-            is-editing
-            @submit="save"
-          />
-          <span class="d-flex justify-end mt-2 ga-2">
-            <VBtn size="small" text="Cancel" variant="text" @click="reset" />
-            <VBtn
-              color="primary"
-              size="small"
-              text="Save"
-              variant="flat"
-              @click="save(contentInput)"
-            />
-          </span>
-        </template>
+        <MessageEditor
+          v-else
+          :content="comment.content"
+          class="comment-editor mt-3"
+          placeholder="Edit your comment..."
+          @cancel="isEditing = false"
+          @save="save"
+        />
         <MessageReactions
           v-if="!isEditing"
           :current-user-id="user?.id"
@@ -68,11 +56,11 @@
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import type { User } from '@tailor-cms/interfaces/user';
 
-import { computed, ref, watch } from 'vue';
+import { computed } from 'vue';
 import { useEditingMessage } from '../../context';
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
-import MessageComposer from '../../MessageComposer/index.vue';
+import MessageEditor from '../../MessageEditor.vue';
 import MessageReactions from '../../MessageReactions.vue';
 import UserAvatar from '../../../UserAvatar.vue';
 
@@ -96,8 +84,6 @@ const emit = defineEmits([
   'react',
 ]);
 
-const contentInput = ref(props.comment.content);
-
 // Opening one comment for editing closes any other
 const isEditing = useEditingMessage(() => props.comment.uid);
 
@@ -106,7 +92,6 @@ const isDeleted = computed(() => !!props.comment.deletedAt);
 const isEdited = computed(() => !!props.comment.editedAt);
 
 const save = (content: string) => {
-  if (!content.trim()) return remove();
   isEditing.value = false;
   emit('update', props.comment, content);
 };
@@ -118,13 +103,6 @@ const remove = () => {
 const handleResolvementUpdate = () => {
   emit(isResolved.value ? 'unresolve' : 'resolve', props.comment);
 };
-
-const reset = () => {
-  contentInput.value = props.comment.content;
-  isEditing.value = false;
-};
-
-watch(() => props.comment.content, reset);
 </script>
 
 <style lang="scss" scoped>

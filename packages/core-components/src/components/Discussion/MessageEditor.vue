@@ -26,8 +26,7 @@ import { ref } from 'vue';
 
 import MessageComposer from './MessageComposer/index.vue';
 
-// Edits a posted message in place. Nothing to save, or nothing changed,
-// just closes the editor
+// Edits a posted message in place
 const props = withDefaults(
   defineProps<{ content?: string | null; placeholder?: string }>(),
   { content: '', placeholder: 'Edit your message...' },
@@ -38,9 +37,11 @@ const emit = defineEmits<{ save: [content: string]; cancel: [] }>();
 const composerEl = ref<InstanceType<typeof MessageComposer>>();
 const draft = ref(props.content ?? '');
 
-const save = (value: string) => {
-  const content = value.trim();
-  if (!content || content === props.content) return emit('cancel');
+const submit = () => {
+  if (!draft.value) return emit('cancel');
+  composerEl.value?.submit();
+};
+
 const save = (content: string) => {
   if (content === props.content) return emit('cancel');
   emit('save', content);

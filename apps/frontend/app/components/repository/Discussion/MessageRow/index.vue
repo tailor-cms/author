@@ -9,12 +9,11 @@
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
     <div class="message-row-gutter d-flex align-center">
-      <span
+      <MessageTime
         v-if="isGrouped"
+        :at="message.createdAt"
         class="message-row-time text-body-small text-medium-emphasis"
-      >
-        {{ shortTime }}
-      </span>
+      />
       <SenderAvatar v-else :message="message" :size="AVATAR_SIZE" />
     </div>
     <div class="message-row-content">
@@ -39,33 +38,19 @@
         @save="saveEdit"
       />
       <template v-else>
-        <MessageBody
-          v-if="hasBody || message.editedAt"
-          :content="hasBody ? message.content : ''"
-          :current-user-id="currentUserId"
-          class="text-body-large"
-        >
-          <template #reference="{ token, icon }">
-            <ReferenceChip :icon="icon" :token="token" />
-          </template>
-          <template #trailing>
-            <span
-              v-if="message.editedAt"
-              class="text-body-small text-medium-emphasis ms-1">
-              (edited)
-            </span>
-          </template>
-        </MessageBody>
-        <!-- An integration's cards, or previews of shared files and links -->
+        <MessagePreviews :content="hasCards ? '' : message.content">
+          <MessageBody
+            v-if="hasBody || message.editedAt"
+            :content="hasBody ? message.content : ''"
+            :current-user-id="currentUserId"
+            :is-edited="!!message.editedAt"
+            class="text-body-large"
+          />
+        </MessagePreviews>
         <MessageAttachments
           v-if="hasCards"
           :attachments="attachments"
           class="mt-2"
-        />
-        <MessagePreviews
-          v-if="hasPreviews"
-          v-model:is-image-only="isImageOnly"
-          :content="message.content"
         />
         <MessageReactions
           :current-user-id="currentUserId"
@@ -101,17 +86,16 @@ import type { Message } from '@tailor-cms/interfaces/comment';
 
 import {
   MessageBody,
+  MessageEditor,
   MessageReactions,
+  MessageTime,
   useEditingMessage,
 } from '@tailor-cms/core-components';
-import { useDateFormat } from '@vueuse/core';
 import BroadcastNote from './BroadcastNote.vue';
 import MessageActions from './MessageActions.vue';
 import MessageAttachments from './MessageAttachments/index.vue';
-import MessageEditor from './MessageEditor.vue';
 import MessageHeader from '../MessageHeader.vue';
 import MessagePreviews from '../MessagePreviews/index.vue';
-import ReferenceChip from './ReferenceChip.vue';
 import ReplyFooter from './ReplyFooter.vue';
 import SenderAvatar from '../SenderAvatar.vue';
 
@@ -159,14 +143,11 @@ const isOwnMessage = computed(
 );
 // A deleted message has no available actions
 const hasActions = computed(() => !isDeleted.value && !isEditing.value);
-// Integration posts have their own cards; instead of previews
+// An integration post brings its own cards, drawn instead of previews
 const attachments = computed(() => props.message.attachments ?? []);
 const hasCards = computed(() => !!attachments.value.length);
-const hasPreviews = computed(() => !isDeleted.value && !hasCards.value);
 
-const isImageOnly = ref(false);
-
-// Hide the message body if it only repeats the card's title
+// A reporter often sends the card's title as the text as well
 const repeatsCardTitle = (text: string) => {
   const title = attachments.value[0]?.title?.trim();
   return !!title && text.toLowerCase() === title.toLowerCase();
@@ -174,11 +155,8 @@ const repeatsCardTitle = (text: string) => {
 
 const hasBody = computed(() => {
   const content = props.message.content?.trim();
-  return !!content && !isImageOnly.value && !repeatsCardTitle(content);
+  return !!content && !repeatsCardTitle(content);
 });
-
-// Beside a grouped message, on hover
-const shortTime = useDateFormat(() => props.message.createdAt, 'HH:mm');
 </script>
 
 <style lang="scss" scoped>

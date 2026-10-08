@@ -121,13 +121,12 @@ const save = (data: Partial<Comment>) => {
   });
 };
 
-const setLastSeen = (timeout: number) => {
+const setLastSeen = () => {
   editorBus.emit('comment', {
     action: Events.Discussion.SetLastSeen,
     payload: {
       elementUid: props.uid,
       lastCommentAt: lastCommentAt.value,
-      timeout,
     },
   });
 };

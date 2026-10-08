@@ -70,11 +70,13 @@ const emit = defineEmits([
   'seen',
 ]);
 
+const showAll = defineModel<boolean>('showAll', { default: false });
+
 const unseenDividerEl = ref();
 const isVisible = ref(false);
 
 const visibleComments = computed(() => {
-  const comments = props.showAll
+  const comments = showAll.value
     ? props.items
     : takeRight(props.items, props.minDisplayed);
   const [unseen, seen] = partition(comments, 'unseen');
@@ -87,9 +89,9 @@ const onUpdate = (comment: Comment, content: string) => {
 
 const onIntersect = (val: boolean) => (isVisible.value = val);
 
-const revealUnseen = (count = null) => {
-  if ((count || props.unseenCount) < props.minDisplayed) return;
-  emit('showAll', true);
+const revealUnseen = () => {
+  if (props.unseenCount < props.minDisplayed) return;
+  showAll.value = true;
   nextTick(() => {
     const element = unseenDividerEl.value?.$el;
     if (!element) return;

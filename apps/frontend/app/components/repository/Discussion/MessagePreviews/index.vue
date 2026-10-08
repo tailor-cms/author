@@ -2,16 +2,16 @@
   <slot v-if="!isImageOnly" />
   <div v-if="images.length" class="d-flex flex-wrap ga-2 mt-2">
     <ImagePreview
-      v-for="{ token, asset, href } in images"
-      :key="token.entityId"
+      v-for="{ reference, asset, href } in images"
+      :key="reference.entityId"
       :asset="asset"
       :href="href"
       :is-tile="images.length > 1"
     />
   </div>
   <FilePreview
-    v-for="{ token, asset, href } in files"
-    :key="token.entityId"
+    v-for="{ reference, asset, href } in files"
+    :key="reference.entityId"
     :asset="asset"
     :href="href"
     class="mt-2"
@@ -20,35 +20,33 @@
 </template>
 
 <script lang="ts" setup>
+import type { Asset } from '@tailor-cms/interfaces/asset.ts';
 import type { MessageToken, ReferenceToken } from '@tailor-cms/utils';
 
-import {
-  extractReferences,
-  extractUrls,
-  parseMessage,
-  ReferenceType,
-} from '@tailor-cms/utils';
+import { extractReferences, extractUrls, parseMessage } from '@tailor-cms/utils';
+import { findAsset, getAsset } from '../sharedAssets';
 import { AssetType } from '@tailor-cms/interfaces/asset';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { referenceHref } from '@/utils/entityLinks';
 import { useCurrentRepository } from '@/stores/current-repository';
-import { findAsset } from '../composables/useReferencePreview';
 import FilePreview from './FilePreview.vue';
 import ImagePreview from './ImagePreview.vue';
 import LinkPreview from './LinkPreview.vue';
 
 interface SharedAsset {
-  token: ReferenceToken;
-  asset: any;
+  reference: ReferenceToken;
+  asset: Asset;
   href?: string;
 }
 
 const PREVIEW_LIMIT = 3;
-
 const isImage = ({ asset }: SharedAsset) => asset.type === AssetType.Image;
 
 const props = defineProps<{ content?: string | null }>();
 
 const repoStore = useCurrentRepository();
+
+const repositoryId = computed(() => repoStore.repositoryId as number);
 
 const shared = computed(() =>
   extractReferences(props.content ?? '')
@@ -56,41 +54,25 @@ const shared = computed(() =>
     .slice(0, PREVIEW_LIMIT),
 );
 
-// Once loaded; an asset that no longer exists is left out
-const assets = ref<SharedAsset[]>([]);
-
-watch(
-  shared,
-  async (tokens, _, onCleanup) => {
-    let isStale = false;
-    onCleanup(() => (isStale = true));
-    const repositoryId = repoStore.repositoryId as number;
-    const found = await Promise.all(
-      tokens.map((it) => findAsset(repositoryId, it.entityId)),
-    );
-    if (isStale) return;
-    assets.value = tokens
-      .map((token, index) => ({
-        token,
-        asset: found[index],
-        href: referenceHref(repoStore.repositoryId, token),
-      }))
-      .filter((it) => it.asset);
-  },
-  { immediate: true },
+// Read from the shared file cache
+const assets = computed(() =>
+  shared.value.flatMap((reference): SharedAsset[] => {
+    const asset = getAsset(repositoryId.value, reference.entityId);
+    if (!asset) return [];
+    const href = referenceHref(repositoryId.value, reference);
+    return [{ reference, asset, href }];
+  }),
 );
-
 const images = computed(() => assets.value.filter(isImage));
 const files = computed(() => assets.value.filter((it) => !isImage(it)));
-
 const links = computed(() => {
   const room = PREVIEW_LIMIT - shared.value.length;
   if (room <= 0) return [];
   return extractUrls(props.content ?? '').slice(0, room);
 });
 
-const hasImagePreview = (token: ReferenceToken) =>
-  images.value.some((it) => it.token.entityId === token.entityId);
+const hasImagePreview = (reference: ReferenceToken) =>
+  images.value.some((it) => it.reference.entityId === reference.entityId);
 
 const isImageOrBlank = (token: MessageToken) => {
   if (token.kind === 'reference') return hasImagePreview(token);
@@ -101,5 +83,13 @@ const isImageOnly = computed(
   () =>
     !!images.value.length &&
     parseMessage(props.content ?? '').every(isImageOrBlank),
+);
+
+// Loads each shared file once
+watch(
+  shared,
+  (references) =>
+    references.forEach((it) => findAsset(repositoryId.value, it.entityId)),
+  { immediate: true },
 );
 </script>

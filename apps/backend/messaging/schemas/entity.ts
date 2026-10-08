@@ -99,8 +99,8 @@ export const Comment = z
     `),
     contentElement: CommentElementRef.nullable(),
     content: z.string().min(1).max(MESSAGE_MAX_LENGTH).describe(oneLine`
-      The text. A deleted comment reads "This comment has been deleted";
-      \`deletedAt\` is what actually says so.
+      The text. Still there after the comment is deleted; \`deletedAt\`
+      marks the deletion, and a notice is shown in its place.
     `),
     resolvedAt: Timestamp('When it was resolved; null while open.').nullable(),
     editedAt: Timestamp('When it was last edited; null if never.').nullable(),

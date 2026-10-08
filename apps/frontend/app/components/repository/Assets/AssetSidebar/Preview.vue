@@ -43,20 +43,12 @@
         </template>
       </VImg>
     </VSheet>
-    <VSheet
-      v-else-if="videoEmbedUrl"
-      class="overflow-hidden"
-      color="surface-container-low"
-      rounded="lg"
-    >
-      <iframe
-        :src="videoEmbedUrl"
-        class="video-embed"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        frameborder="0"
-        allowfullscreen
-      />
-    </VSheet>
+    <EmbedFrame
+      v-else-if="embed"
+      :embed="embed"
+      :poster="linkThumbnail ?? undefined"
+      :title="asset.name"
+    />
     <VSheet
       v-else-if="isLink && linkThumbnail"
       class="overflow-hidden"
@@ -120,10 +112,14 @@
 </template>
 
 <script lang="ts" setup>
-import { AssetType, type Asset } from '@tailor-cms/interfaces/asset';
-
-import { toEmbedUrl } from '@tailor-cms/common/asset';
+import {
+  type Asset,
+  type LinkAssetMeta,
+  AssetType,
+} from '@tailor-cms/interfaces/asset';
+import { getLinkEmbed, getLinkThumbnailUrl } from '@tailor-cms/utils';
 import { getAssetColor, getAssetIcon } from '../utils';
+import EmbedFrame from '@/components/common/EmbedFrame.vue';
 import api from '@/api/repositoryAsset';
 
 const props = defineProps<{
@@ -140,17 +136,14 @@ const assetColor = computed(() => getAssetColor(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
 const isLink = computed(() => props.asset?.type === AssetType.Link);
 
-// Returns embed URL for supported video providers (YouTube, Vimeo, Dailymotion)
-// Detection handled by toEmbedUrl in @tailor-cms/common/asset
-const videoEmbedUrl = computed(() => {
-  if (!isLink.value) return null;
-  return toEmbedUrl((props.asset?.meta as any)?.url || '');
-});
+const linkMeta = computed(() =>
+  isLink.value ? (props.asset.meta as LinkAssetMeta) : null,
+);
 
-const linkThumbnail = computed(() =>
-  'thumbnail' in (props.asset?.meta || {})
-    ? (props.asset.meta as any).thumbnail
-    : null,
+const linkThumbnail = computed(() => getLinkThumbnailUrl(linkMeta.value));
+
+const embed = computed(() =>
+  linkMeta.value?.url ? getLinkEmbed(linkMeta.value.url) : null,
 );
 
 watch(

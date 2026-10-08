@@ -45,12 +45,15 @@ import {
   getAssetIcon,
   getAssetLabel,
 } from '@tailor-cms/core-components';
+import {
+  getLinkEmbed,
+  getLinkThumbnailUrl,
+  safeHref,
+} from '@tailor-cms/utils';
 import { AssetType } from '@tailor-cms/interfaces/asset';
-import { safeHref } from '@tailor-cms/utils';
-import { useCurrentRepository } from '@/stores/current-repository';
-import { findEmbed } from './embeds';
 import { describeUrl } from './urlDescription';
-import LinkEmbed from './LinkEmbed.vue';
+import { useCurrentRepository } from '@/stores/current-repository';
+import EmbedFrame from '@/components/common/EmbedFrame.vue';
 import PreviewCard from './PreviewCard.vue';
 
 const props = defineProps<{ url: string }>();
@@ -114,14 +117,13 @@ const favicon = computed(
 );
 
 // Known from the URL alone, before the description arrives
-const embed = computed(() => findEmbed(props.url));
+const embed = computed(() => getLinkEmbed(props.url));
 
-// The embed's own still first, then the image the page advertised
 const thumbnail = computed(() => {
   if (hasThumbnailFailed.value) return undefined;
-  const candidate =
-    embed.value?.poster || urlDescription.value?.thumbnail || '';
-  return safeHref(candidate) ?? undefined;
+  const { thumbnail } = urlDescription.value ?? {};
+  const candidate = getLinkThumbnailUrl({ url: props.url, thumbnail });
+  return safeHref(candidate ?? '') ?? undefined;
 });
 
 const hasHeroImage = computed(() => {

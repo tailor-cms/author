@@ -1,7 +1,18 @@
 <template>
   <div ref="containerEl" class="embedded-discussion">
     <div v-if="showResolveButton" class="d-flex justify-center">
-      <ResolveButton class="mb-2" @click.stop="resolveAll" />
+      <VBtn
+        v-tooltip:left="{
+          text: 'Mark all as resolved and hide discussion',
+          openDelay: 800,
+        }"
+        class="mb-2"
+        prepend-icon="mdi-checkbox-outline"
+        size="small"
+        text="Resolve All"
+        variant="tonal"
+        @click.stop="resolveAll"
+      />
     </div>
     <div :class="{ 'pb-7 mb-2': !showHeading && hasHiddenComments }">
       <VBtn
@@ -24,48 +35,37 @@
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mb-4"
-      icon="mdi-keyboard-outline"
-      text="Be the First to Comment!"
+      icon="mdi-comment-outline"
+      text="No comments yet - start the discussion below."
       variant="tonal"
     />
     <DiscussionThread
       v-if="thread.length"
+      v-model:show-all="showAll"
       :is-activity-thread="isActivityThread"
       :items="thread"
       :min-displayed="commentsShownLimit"
-      :show-all="showAll"
       :unseen-count="unseenComments.length"
       :user="user"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="remove"
       @resolve="emit('resolve', $event)"
       @seen="emit('seen')"
-      @show-all="showAll = $event"
       @unresolve="emit('unresolve', $event)"
       @update="emit('update', $event)"
     />
-    <div ref="inputContainerEl" class="text-right mt-4">
-      <VTextarea
+    <div ref="inputContainerEl" class="mt-4">
+      <MessageComposer
         ref="inputEl"
         v-model="contentInput"
-        :error-messages="errors.message"
+        class="comment-composer"
         :placeholder="
           commentsCount ? 'Add a comment...' : 'Start the discussion...'
         "
-        class="comment-input"
-        hide-details="auto"
-        rows="3"
-        variant="outlined"
-        auto-grow
-        clearable
+        @edit:last="editLast"
         @focus="emit('seen')"
-      />
-      <VBtn
-        :disabled="isTextEditorEmpty || error"
-        aria-label="Post comment"
-        class="mt-3"
-        icon="mdi-send"
-        variant="text"
-        @click="post"
+        @submit="post"
       />
     </div>
   </div>
@@ -121,7 +121,7 @@ const showConfirmationDialog = useConfirmationDialog();
 // Template refs
 const containerEl = ref<HTMLElement>();
 const inputContainerEl = ref<HTMLElement>();
-const inputEl = ref<HTMLElement>();
+const inputEl = ref<InstanceType<typeof MessageComposer>>();
 
 const showAll = ref(false);
 const error = ref(false);
@@ -146,8 +146,6 @@ const commentsCount = computed(() => thread.value.length);
 const hasHiddenComments = computed(
   () => props.commentsShownLimit < commentsCount.value,
 );
-
-const isTextEditorEmpty = computed(() => !contentInput.value?.trim());
 
 const hasUnresolvedComments = computed(() =>
   props.comments.some((it) => !it.resolvedAt && !it.deletedAt),

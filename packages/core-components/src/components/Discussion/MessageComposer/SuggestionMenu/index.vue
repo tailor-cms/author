@@ -13,7 +13,7 @@
         :key="item.value"
         :active="index === selectedIndex"
         :prepend-avatar="item.avatar"
-        :prepend-icon="item.avatar ? undefined : item.icon"
+        :prepend-icon="iconOf(item)"
         :subtitle="item.subtitle"
         :title="item.label"
         rounded="lg"
@@ -30,6 +30,7 @@
 import type { SuggestionItem } from '../../types';
 
 import { computed } from 'vue';
+import { referenceIcon } from '../../referenceIcon';
 
 const WIDTH = 360;
 const MIN_HEIGHT = 120;
@@ -56,6 +57,11 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{ select: [item: SuggestionItem] }>();
+
+const iconOf = ({ avatar, icon, entityType }: SuggestionItem) => {
+  if (avatar) return undefined;
+  return icon ?? (entityType ? referenceIcon(entityType) : undefined);
+};
 
 /**
  * Next to the caret: below it, or above when there is no room below.

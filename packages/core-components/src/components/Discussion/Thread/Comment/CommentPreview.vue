@@ -16,33 +16,20 @@
           @click.stop="emit('unresolve')"
         />
       </div>
-      <div class="body">
+      <component :is="previews" :content="content">
         <MessageBody
-          :content="isImageOnly ? '' : content"
+          :content="content"
           :current-user-id="currentUserId"
-        >
-          <template v-if="referenceViews" #reference="{ token, icon }">
-            <component :is="referenceViews.chip" :icon="icon" :token="token" />
-          </template>
-          <template #trailing>
-            <span v-if="isEdited" class="edited text-medium-emphasis">
-              (edited)
-            </span>
-          </template>
-        </MessageBody>
-      </div>
-      <component
-        :is="referenceViews.previews"
-        v-if="referenceViews"
-        v-model:is-image-only="isImageOnly"
-        :content="content"
-      />
+          :is-edited="isEdited"
+        />
+      </component>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import type { FunctionalComponent } from 'vue';
+
 import { useDiscussionContext } from '../../context';
 import MessageBody from '../../MessageBody.vue';
 
@@ -66,7 +53,10 @@ const emit = defineEmits(['unresolve']);
 
 const { referenceViews } = useDiscussionContext();
 
-const isImageOnly = ref(false);
+// Without the app's previews, just the text
+const TextOnly: FunctionalComponent = (_, { slots }) => slots.default?.();
+
+const previews = referenceViews?.previews ?? TextOnly;
 </script>
 
 <style lang="scss" scoped>

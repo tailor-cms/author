@@ -8,7 +8,7 @@ const { Asset } = db;
 export async function getAsset(req: any, _res: any, next: any, assetId: string) {
   const asset = await Asset.findByPk(assetId, { include: [UPLOADER_INCLUDE] });
   if (!asset || asset.repositoryId !== req.repository.id) {
-    throw createError(StatusCodes.NOT_FOUND, 'Asset not found');
+    return createError(StatusCodes.NOT_FOUND, 'Asset not found');
   }
   req.asset = asset;
   next();

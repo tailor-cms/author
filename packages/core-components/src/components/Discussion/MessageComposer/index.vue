@@ -36,12 +36,13 @@
       <ComposerHint
         :is-dragging="isDragging"
         :is-uploading="isUploading"
+        :overflow="overflow"
         :submit-label="isEditing ? 'save' : 'send'"
       />
       <VSpacer />
       <VBtn
         v-if="!isEditing"
-        :disabled="isEmpty || disabled"
+        :disabled="isEmpty || isTooLong || disabled"
         aria-label="Post message"
         color="primary"
         icon="mdi-send"
@@ -57,7 +58,10 @@
 <script lang="ts" setup>
 import type { SuggestionItem } from '../types';
 
-import { ReferenceType } from '@tailor-cms/interfaces/comment';
+import {
+  MESSAGE_MAX_LENGTH,
+  ReferenceType,
+} from '@tailor-cms/interfaces/comment';
 import { toEmojiShortcode } from '@tailor-cms/utils';
 import {
   referenceNode,
@@ -84,6 +88,7 @@ interface Props {
   autofocus?: boolean;
   // Editing a posted message
   isEditing?: boolean;
+  maxLength?: number;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -92,6 +97,7 @@ const props = withDefaults(defineProps<Props>(), {
   disabled: false,
   autofocus: false,
   isEditing: false,
+  maxLength: MESSAGE_MAX_LENGTH,
 });
 
 const emit = defineEmits<{
@@ -113,7 +119,11 @@ const isDragging = ref(false);
 const isUploading = ref(false);
 const isSearch = computed(() => props.variant === 'search');
 const isEmpty = computed(() => !content.value);
-
+// Characters past the limit
+const overflow = computed(() =>
+  Math.max(0, content.value.length - props.maxLength),
+);
+const isTooLong = computed(() => !isSearch.value && overflow.value > 0);
 // A search box takes no files
 const canAttach = computed(() => !isSearch.value && !!services);
 
@@ -217,7 +227,7 @@ const attachPasted = (event: ClipboardEvent) => {
 };
 
 const submit = () => {
-  if (!editor.value || props.disabled) return;
+  if (!editor.value || props.disabled || isTooLong.value) return;
   const text = serialize(editor.value);
   if (!text) return;
   emit('submit', text);
@@ -240,7 +250,7 @@ watch(
 
 const focus = () => editor.value?.commands.focus('end');
 
-defineExpose({ focus });
+defineExpose({ focus, submit });
 
 onBeforeUnmount(() => editor.value?.destroy());
 </script>

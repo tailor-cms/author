@@ -2837,7 +2837,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2000,
-            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+            "description": "The text. Still there after the comment is deleted; `deletedAt` marks the deletion, and a notice is shown in its place."
           },
           "resolvedAt": {
             "anyOf": [
@@ -3245,7 +3245,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2000,
-            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+            "description": "The text. Still there after the comment is deleted; `deletedAt` marks the deletion, and a notice is shown in its place."
           },
           "resolvedAt": {
             "anyOf": [
@@ -3641,7 +3641,7 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2000,
-            "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+            "description": "The text. Still there after the comment is deleted; `deletedAt` marks the deletion, and a notice is shown in its place."
           },
           "resolvedAt": {
             "anyOf": [
@@ -12361,7 +12361,7 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000,
-                    "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+                    "description": "The text. Still there after the comment is deleted; `deletedAt` marks the deletion, and a notice is shown in its place."
                   }
                 },
                 "required": [
@@ -12601,7 +12601,7 @@
                     "type": "string",
                     "minLength": 1,
                     "maxLength": 2000,
-                    "description": "The text. A deleted comment reads \"This comment has been deleted\"; `deletedAt` is what actually says so."
+                    "description": "The text. Still there after the comment is deleted; `deletedAt` marks the deletion, and a notice is shown in its place."
                   }
                 },
                 "required": [
