@@ -21,8 +21,7 @@ import {
   getAssetLabel,
 } from '@tailor-cms/core-components';
 import { AssetType } from '@tailor-cms/interfaces/asset';
-import { detectLinkProvider } from '@tailor-cms/common/asset';
-import { safeHref } from '@tailor-cms/utils';
+import { detectLinkProvider, safeHref } from '@tailor-cms/utils';
 import PreviewCard from './PreviewCard.vue';
 
 const props = defineProps<{
