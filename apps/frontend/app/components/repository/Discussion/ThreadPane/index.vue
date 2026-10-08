@@ -45,11 +45,11 @@ import type { ReaderThread } from '@tailor-cms/api-client';
 import type { Message } from '@tailor-cms/interfaces/comment';
 
 import {
+  lastOwnMessage,
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
 import { compact, uniqBy } from 'lodash-es';
-import { lastOwnMessage } from '../utils';
 import ThreadHeader from './ThreadHeader.vue';
 import ThreadIntro from './ThreadIntro.vue';
 import ThreadMenu from './ThreadMenu.vue';

@@ -41,24 +41,40 @@
 
 <script lang="ts" setup>
 import type { ReferenceTarget } from './composables/useReferencePreview';
-
+import { findAsset, getAsset } from './sharedAssets';
 import { getAssetColor, getAssetIcon } from '@tailor-cms/core-components';
+import { assetHref } from '@/utils/entityLinks';
 import { getAssetDisplayName } from '../Assets/utils';
-import { useResolvedReference } from './composables/useReferencePreview';
+import { useCurrentRepository } from '@/stores/current-repository';
 
 const props = defineProps<{ reference: ReferenceTarget }>();
 
-const { preview, isLoading, href } = useResolvedReference(
-  () => props.reference,
+const repoStore = useCurrentRepository();
+const repositoryId = computed(() => repoStore.repositoryId as number);
+const isLoading = ref(true);
+
+watch(
+  () => props.reference.entityId,
+  async (id) => {
+    isLoading.value = true;
+    await findAsset(repositoryId.value, id);
+    isLoading.value = false;
+  },
+  { immediate: true },
 );
 
-const asset = computed(() => preview.value?.asset ?? null);
+const asset = computed(() =>
+  getAsset(repositoryId.value, props.reference.entityId),
+);
+
+const href = computed(() =>
+  asset.value ? assetHref(asset.value.repositoryId, asset.value.id) : undefined,
+);
+
+const { src: thumbnailSrc, onError: onThumbnailError } =
+  useAssetThumbnail(asset);
 
 const isMissing = computed(() => !isLoading.value && !asset.value);
-
-const { src: thumbnailSrc, onError: onThumbnailError } = useAssetThumbnail(
-  asset,
-);
 
 const name = computed(() => {
   if (isMissing.value) return 'Unavailable';

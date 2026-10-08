@@ -27,11 +27,7 @@
         v-if="attachment.text"
         :content="attachment.text"
         class="attachment-text text-body-medium mt-1"
-      >
-        <template #reference="{ token, icon }">
-          <ReferenceChip :icon="icon" :token="token" />
-        </template>
-      </MessageBody>
+      />
       <AssetStrip
         v-if="attachment.tailor_previews?.length"
         :previews="attachment.tailor_previews"
@@ -66,7 +62,6 @@ import type { Attachment } from '@tailor-cms/interfaces/comment';
 import { MessageBody } from '@tailor-cms/core-components';
 import { useTheme } from 'vuetify';
 
-import ReferenceChip from '../ReferenceChip.vue';
 import AssetStrip from './AssetStrip.vue';
 
 defineProps<{ attachments: Attachment[] }>();

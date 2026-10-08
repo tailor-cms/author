@@ -9,16 +9,3 @@ export const senderName = ({ author, senderName, integration }: Sender) =>
 
 export const isChannelThread = (thread: { type: ThreadType }) =>
   thread.type === ThreadType.Repository;
-
-/**
- * The reader's own most recent message in a list, if they have one.
- */
-export const lastOwnMessage = (
-  messages: Message[],
-  currentUserId?: number | null,
-): Message | undefined => {
-  if (!currentUserId) return undefined;
-  return messages
-    .filter((it) => it.authorId === currentUserId && !it.deletedAt)
-    .at(-1);
-};

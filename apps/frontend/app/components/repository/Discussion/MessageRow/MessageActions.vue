@@ -6,18 +6,7 @@
     rounded="lg"
     border
   >
-    <EmojiPicker v-if="isReactable" @select="emit('react', $event)">
-      <template #activator="{ props: picker }">
-        <VBtn
-          v-tooltip:top="'Add reaction'"
-          v-bind="picker"
-          aria-label="Add reaction"
-          icon="mdi-emoticon-plus-outline"
-          size="small"
-          variant="text"
-        />
-      </template>
-    </EmojiPicker>
+    <AddReactionButton v-if="isReactable" @select="emit('react', $event)" />
     <VBtn
       v-if="isReplyable"
       v-tooltip:top="'Reply in thread'"
@@ -58,7 +47,7 @@
 </template>
 
 <script lang="ts" setup>
-import { EmojiPicker } from '@tailor-cms/core-components';
+import { AddReactionButton } from '@tailor-cms/core-components';
 
 defineProps<{
   isReactable?: boolean;

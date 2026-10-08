@@ -13,12 +13,11 @@
     @thumbnail:error="hasThumbnailFailed = true"
   >
     <template v-if="hasInlineMedia" #media>
-      <LinkEmbed
+      <EmbedFrame
         v-if="embed"
         :embed="embed"
         :poster="thumbnail"
         :title="title"
-        @poster:error="hasThumbnailFailed = true"
       />
       <a
         v-else

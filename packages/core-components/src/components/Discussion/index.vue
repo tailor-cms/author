@@ -72,16 +72,15 @@
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue';
-import { object, string } from 'yup';
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { orderBy } from 'lodash-es';
-import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
-
+import { computed, nextTick, ref, watch } from 'vue';
+import { lastOwnMessage } from './messages';
+import { orderBy } from 'lodash-es';
+import { provideEditingMessage } from './context';
 import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 import DiscussionThread from './Thread/index.vue';
-import ResolveButton from './ResolveButton.vue';
+import MessageComposer from './MessageComposer/index.vue';
 
 interface Props {
   user: User;
@@ -107,8 +106,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits([
-  'change',
   'save',
+  'react',
   'remove',
   'resolve',
   'seen',
@@ -203,8 +202,6 @@ const onConfirmationActive = () => {
   return { onOpen, onClose };
 };
 
-watch(commentsCount, () => emit('change', thread.value));
-
 watch(
   () => props.isVisible,
   async (val) => {
@@ -218,27 +215,3 @@ watch(
   { immediate: true },
 );
 </script>
-
-<style lang="scss" scoped>
-.embedded-discussion {
-  .resolve-btn-container {
-    display: flex;
-    justify-content: flex-end;
-    margin: 0.5rem 0 0 0;
-  }
-
-  .header {
-    margin: 0.75rem 0 1.25rem 0;
-    font-size: 1.125rem;
-    font-weight: 400;
-  }
-
-  .comment-input {
-    margin: 0 0.25rem 0 0.25rem;
-  }
-
-  .v-input :deep(textarea::placeholder) {
-    opacity: 0.85;
-  }
-}
-</style>

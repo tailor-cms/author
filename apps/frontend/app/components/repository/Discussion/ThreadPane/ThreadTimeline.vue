@@ -3,10 +3,14 @@
     <div class="timeline-entries">
       <slot name="intro" />
       <template v-for="entry in entries" :key="entry.key">
-        <TimelineDivider v-if="entry.type === 'day'" :text="entry.label" />
+        <TimelineDivider
+          v-if="entry.type === 'day'"
+          :text="entry.label"
+          class="my-6"
+        />
         <TimelineDivider
           v-else-if="entry.type === 'unread'"
-          class="unread-divider"
+          class="unread-divider my-6"
           color="secondary"
           icon="mdi-arrow-down"
           text="New"
@@ -29,8 +33,8 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
+import { TimelineDivider } from '@tailor-cms/core-components';
 import MessageRow from '../MessageRow/index.vue';
-import TimelineDivider from './TimelineDivider.vue';
 import { buildTimeline } from './timeline';
 
 interface Props {

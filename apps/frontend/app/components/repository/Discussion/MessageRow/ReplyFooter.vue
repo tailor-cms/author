@@ -65,14 +65,4 @@ const lastReplyAgo = useTimeAgo(() => props.message.lastReplyAt ?? '');
     margin-left: -0.375rem;
   }
 }
-
-.reply-footer-arrow {
-  opacity: 0;
-  transition: opacity 0.15s ease;
-
-  .reply-footer:hover &,
-  .reply-footer:focus-visible & {
-    opacity: 1;
-  }
-}
 </style>

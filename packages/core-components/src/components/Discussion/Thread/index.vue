@@ -52,13 +52,11 @@ interface Props {
   items: Comment[];
   unseenCount: number;
   user: User;
-  showAll?: boolean;
   minDisplayed?: number;
   isActivityThread?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showAll: false,
   minDisplayed: 5,
   isActivityThread: false,
 });
@@ -69,7 +67,6 @@ const emit = defineEmits([
   'resolve',
   'unresolve',
   'update',
-  'showAll',
   'seen',
 ]);
 
@@ -100,9 +97,9 @@ const revealUnseen = (count = null) => {
   });
 };
 
-const markSeen = async () => {
+const markSeen = () => {
   emit('seen');
-  emit('showAll', false);
+  showAll.value = false;
 };
 
 watch(isVisible, (val) => {
@@ -110,11 +107,7 @@ watch(isVisible, (val) => {
   revealUnseen();
 });
 
-watch(
-  () => props.unseenCount,
-  () => revealUnseen(),
-  { immediate: true },
-);
+watch(() => props.unseenCount, revealUnseen, { immediate: true });
 </script>
 
 <style lang="scss" scoped>

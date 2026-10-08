@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex flex-wrap ga-2">
-    <AssetTile
+    <SharedAssetTile
       v-for="preview in previews"
       :key="`${preview.entityType}:${preview.entityId}`"
       :reference="preview"
@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import type { AttachmentPreview } from '@tailor-cms/interfaces/comment';
 
-import AssetTile from '../../AssetTile.vue';
+import SharedAssetTile from '../../SharedAssetTile.vue';
 
 const props = defineProps<{
   previews: AttachmentPreview[];

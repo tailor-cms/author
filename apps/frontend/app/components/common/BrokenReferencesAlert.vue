@@ -47,6 +47,7 @@
 import { schema as schemaConfig } from '@tailor-cms/config';
 
 import { api } from '@/api';
+import { elementHref } from '@/utils/entityLinks';
 import { useCurrentRepository } from '@/stores/current-repository';
 
 interface ReferenceError {
@@ -81,8 +82,7 @@ const validateReferences = async () => {
   });
   elements.forEach((it: any) => {
     errors.value.push({
-      // eslint-disable-next-line max-len
-      link: `/repository/${repositoryId}/editor/${it.src.outlineActivity.id}?elementId=${it.src.uid}`,
+      link: elementHref(repositoryId, it.src.outlineActivity.id, it.src.uid),
       message: `
         "${$ceRegistry.get(it.src.type).name}" element relationship
         "${it.referenceName}" does not exist anymore. Relationship needs to be

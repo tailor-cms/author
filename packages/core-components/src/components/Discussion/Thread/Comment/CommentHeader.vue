@@ -9,9 +9,7 @@
         {{ comment.author.label }}
       </span>
       <div class="meta d-flex align-center text-label-medium text-medium-emphasis">
-        <span v-tooltip:right="fullDate" class="time">
-          {{ timeAgo }}
-        </span>
+        <MessageTime :at="comment.createdAt" is-relative />
         <EditorLink
           v-if="
             isActivityThread
@@ -26,22 +24,12 @@
         />
       </div>
     </div>
-    <EmojiPicker
+    <AddReactionButton
       v-if="!isDeleted && !isEditing"
+      density="comfortable"
+      size="x-small"
       @select="emit('react', $event)"
-    >
-      <template #activator="{ props: picker }">
-        <VBtn
-          v-tooltip:top="'Add reaction'"
-          v-bind="picker"
-          aria-label="Add reaction"
-          density="comfortable"
-          icon="mdi-emoticon-plus-outline"
-          size="x-small"
-          variant="text"
-        />
-      </template>
-    </EmojiPicker>
+    />
     <VMenu
       v-if="showOptions && !isEditing"
       :close-on-content-click="false"
@@ -76,12 +64,12 @@
 
 <script lang="ts" setup>
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { computed } from 'vue';
 import type { User } from '@tailor-cms/interfaces/user';
-import { useDateFormat, useTimeAgo } from '@vueuse/core';
 
+import { computed } from 'vue';
+import AddReactionButton from '../../AddReactionButton.vue';
 import EditorLink from '../../../EditorLink.vue';
-import EmojiPicker from '../../EmojiPicker/index.vue';
+import MessageTime from '../../MessageTime.vue';
 
 type Action = 'resolve' | 'enableEdit' | 'remove';
 
@@ -129,12 +117,6 @@ const OPTIONS = {
   },
 } satisfies Record<string, Option>;
 
-const timeAgo = useTimeAgo(() => props.comment.createdAt);
-const fullDate = useDateFormat(
-  () => props.comment.createdAt,
-  'DD MMM YYYY HH:mm',
-);
-
 const elementUid = computed(() => props.comment.contentElement?.uid);
 const isAuthor = computed(() => props.comment.author?.id === props.user?.id);
 const isDeleted = computed(() => !!props.comment.deletedAt);
@@ -151,10 +133,6 @@ const showOptions = computed(
 </script>
 
 <style lang="scss" scoped>
-.v-theme--dark .author {
-  color: #edf1f7;
-}
-
 .header {
   display: flex;
   align-items: flex-start;

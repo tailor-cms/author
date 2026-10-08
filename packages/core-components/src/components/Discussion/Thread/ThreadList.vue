@@ -2,13 +2,8 @@
   <ul class="thread-list d-flex flex-column ga-1">
     <li v-for="comment in comments" :key="comment.uid" class="thread-list-item">
       <ThreadComment
-        v-bind="{
-          comment,
-          isActivityThread,
-          user,
-          ...$attrs,
-        }"
-        :element-label="getElementLabel(comment)"
+        v-bind="{ comment, isActivityThread, user, ...$attrs }"
+        :element-label="elementLabel(comment)"
       />
     </li>
   </ul>
@@ -16,31 +11,30 @@
 
 <script lang="ts" setup>
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { inject } from 'vue';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import { inject } from 'vue';
 import ThreadComment from './Comment/index.vue';
+
+defineOptions({ inheritAttrs: false });
 
 interface Props {
   user: User;
   comments?: Comment[];
   isActivityThread?: boolean;
-  elementLabel?: string;
 }
 
 withDefaults(defineProps<Props>(), {
   comments: () => [],
   isActivityThread: false,
-  elementLabel: '',
 });
 
 const ceRegistry = inject<any>('$ceRegistry');
 
-const getElementLabel = (comment: Comment) => {
-  if (!comment.contentElement?.type) return;
-  return ceRegistry?.get
-    ? ceRegistry.get(comment.contentElement.type)?.name
-    : '';
+// The element type's name ("Image") for a comment left on an element
+const elementLabel = (comment: Comment): string | undefined => {
+  const type = comment.contentElement?.type;
+  return type ? ceRegistry?.get?.(type)?.name : undefined;
 };
 </script>
 

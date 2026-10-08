@@ -1,6 +1,7 @@
 import {
   CommentType,
   IntegrationType,
+  MESSAGE_MAX_LENGTH,
   ThreadType,
 } from '@tailor-cms/interfaces/comment.ts';
 import {
@@ -97,7 +98,7 @@ export const Comment = z
       \`USER\` for a person, \`INTEGRATION\` for a non-human post.
     `),
     contentElement: CommentElementRef.nullable(),
-    content: z.string().min(1).max(2000).describe(oneLine`
+    content: z.string().min(1).max(MESSAGE_MAX_LENGTH).describe(oneLine`
       The text. A deleted comment reads "This comment has been deleted";
       \`deletedAt\` is what actually says so.
     `),

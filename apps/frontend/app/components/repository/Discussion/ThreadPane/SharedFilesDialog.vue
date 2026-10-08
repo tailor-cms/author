@@ -44,7 +44,7 @@
         title="Nothing shared yet"
       />
       <div v-else class="d-flex flex-wrap ga-3 py-4">
-        <AssetTile
+        <SharedAssetTile
           v-for="item in items"
           :key="item.entityId"
           :reference="{ entityType: ReferenceType.Asset, entityId: item.entityId }"
@@ -52,7 +52,7 @@
           <template #subtitle>
             Shared {{ formatTimeAgo(new Date(item.lastSharedAt)) }}
           </template>
-        </AssetTile>
+        </SharedAssetTile>
       </div>
     </template>
   </TailorDialog>
@@ -61,10 +61,10 @@
 <script lang="ts" setup>
 import { TailorDialog } from '@tailor-cms/core-components';
 import { formatTimeAgo } from '@vueuse/core';
-import { ReferenceType } from '@tailor-cms/utils';
+import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { useMessagingStore } from '@/stores/messaging';
 
-import AssetTile from '../AssetTile.vue';
+import SharedAssetTile from '../SharedAssetTile.vue';
 
 interface SharedAsset {
   entityId: string;

@@ -61,7 +61,9 @@ const firstUnseenOf = (source: TimelineSource) => {
 };
 
 /**
- * The timeline as rendered: a divider per day/
+ * The timeline as rendered: a divider where a day starts, a marker
+ * where the unread messages start, and each message flagged when it
+ * continues the one before it.
  */
 export const buildTimeline = (source: TimelineSource): TimelineEntry[] => {
   const { messages } = source;

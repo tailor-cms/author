@@ -1,3 +1,4 @@
+import { MESSAGE_MAX_LENGTH } from '@tailor-cms/interfaces/comment.ts';
 import { ShortText } from '#shared/request/schemas.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
@@ -7,7 +8,12 @@ export const CreateThreadInput = z
     title: ShortText(1, 120).describe(oneLine`
       Subject of the thread. Required for a repository-level thread.
     `),
-    content: z.string().trim().min(1).max(2000).describe('Opening message.'),
+    content: z
+      .string()
+      .trim()
+      .min(1)
+      .max(MESSAGE_MAX_LENGTH)
+      .describe('Opening message.'),
   })
   .describe('Opens a new repository-level thread with its first message.');
 

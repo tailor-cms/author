@@ -186,12 +186,6 @@ watch(
   cursor: zoom-in;
 }
 
-.video-embed {
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  display: block;
-}
-
 .v-overlay {
   transition: all 0.3s ease;
 

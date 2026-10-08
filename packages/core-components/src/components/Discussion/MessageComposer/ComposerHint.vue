@@ -2,6 +2,9 @@
   <span class="composer-hint text-body-small text-medium-emphasis">
     <template v-if="isDragging">Drop a file</template>
     <template v-else-if="isUploading">Attaching...</template>
+    <span v-else-if="overflow > 0" class="text-error">
+      {{ pluralize('character', overflow, true) }} too long
+    </span>
     <template v-else>
       <span
         v-for="{ key, label } in SHORTCUTS"
@@ -16,6 +19,8 @@
 </template>
 
 <script lang="ts" setup>
+import pluralize from 'pluralize-esm';
+
 const SHORTCUTS = [
   { key: '@', label: 'mention' },
   { key: '#', label: 'reference' },
@@ -26,8 +31,9 @@ withDefaults(
     isDragging?: boolean;
     isUploading?: boolean;
     submitLabel?: string;
+    overflow?: number;
   }>(),
-  { isDragging: false, isUploading: false, submitLabel: 'send' },
+  { isDragging: false, isUploading: false, submitLabel: 'send', overflow: 0 },
 );
 </script>
 

@@ -12,41 +12,33 @@
       text="BOT"
       variant="tonal"
     />
-    <span v-tooltip:top="fullTime" class="text-body-small text-medium-emphasis">
-      {{ hasRelativeTime ? timeAgo : shortTime }}
-    </span>
+    <MessageTime
+      :at="message.createdAt"
+      :is-relative="hasRelativeTime"
+      class="text-body-small text-medium-emphasis"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { useDateFormat, useTimeAgo } from '@vueuse/core';
+import { MessageTime } from '@tailor-cms/core-components';
 import { senderName } from './utils';
 
-const props = defineProps<{
+defineProps<{
   message: Pick<
     Message,
     'author' | 'senderName' | 'integration' | 'createdAt'
   >;
   hasRelativeTime?: boolean;
 }>();
-
-const postedAt = () => props.message.createdAt;
-const shortTime = useDateFormat(postedAt, 'HH:mm');
-const dateTime = useDateFormat(postedAt, 'DD MMM YYYY HH:mm');
-const timeAgo = useTimeAgo(postedAt);
-const fullTime = computed(() => `${dateTime.value} · ${timeAgo.value}`);
 </script>
 
 <style lang="scss" scoped>
 .message-header-sender {
   color: rgb(var(--v-theme-on-surface));
   line-height: 1.25rem;
-
-  .v-theme--dark & {
-    color: #edf1f7;
-  }
 }
 
 .integration-badge {

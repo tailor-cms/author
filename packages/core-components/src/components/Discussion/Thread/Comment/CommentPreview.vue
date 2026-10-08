@@ -70,17 +70,6 @@ const isImageOnly = ref(false);
 </script>
 
 <style lang="scss" scoped>
-.edited {
-  margin-left: 0.25rem;
-  font-size: 0.75rem;
-}
-
-.content .body {
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
 .content.resolved {
   opacity: 0.7;
 
