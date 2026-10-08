@@ -71,8 +71,8 @@ import type { CustomEmoji } from '../types';
 import { EMOJI_GROUPS, type EmojiEntry, searchEmoji } from './emoji';
 import { computed, ref } from 'vue';
 import { toEmojiShortcode } from '@tailor-cms/utils';
-import { useCustomEmoji } from '../useCustomEmoji';
-import EmojiGlyph from '../EmojiGlyph.vue';
+import { useCustomEmoji } from './useCustomEmoji';
+import EmojiGlyph from './EmojiGlyph.vue';
 
 interface PickerItem {
   value: string;

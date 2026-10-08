@@ -24,7 +24,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-import MessageComposer from './MessageComposer/index.vue';
+import MessageComposer from '../MessageComposer/index.vue';
 
 // Edits a posted message in place
 const props = withDefaults(

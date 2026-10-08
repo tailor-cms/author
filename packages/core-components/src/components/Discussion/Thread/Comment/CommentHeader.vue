@@ -67,9 +67,9 @@ import type { Comment } from '@tailor-cms/interfaces/comment';
 import type { User } from '@tailor-cms/interfaces/user';
 
 import { computed } from 'vue';
-import AddReactionButton from '../../AddReactionButton.vue';
+import AddReactionButton from '../../Reactions/AddReactionButton.vue';
 import EditorLink from '../../../EditorLink.vue';
-import MessageTime from '../../MessageTime.vue';
+import MessageTime from '../../Message/MessageTime.vue';
 
 type Action = 'resolve' | 'enableEdit' | 'remove';
 

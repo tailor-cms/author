@@ -1,7 +1,7 @@
-import type { CustomEmoji } from './types';
+import type { CustomEmoji } from '../types';
 
 import { parseEmojiShortcode } from '@tailor-cms/utils';
-import { useDiscussionContext } from './context';
+import { useDiscussionContext } from '../context';
 
 /**
  * The workspace's custom emojis; provided by the host app.

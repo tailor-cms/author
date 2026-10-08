@@ -31,7 +31,7 @@
 import type { FunctionalComponent } from 'vue';
 
 import { useDiscussionContext } from '../../context';
-import MessageBody from '../../MessageBody.vue';
+import MessageBody from '../../Message/MessageBody.vue';
 
 interface Props {
   content?: string;

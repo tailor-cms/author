@@ -72,12 +72,12 @@ import {
 import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3';
 import { computed, onBeforeUnmount, ref, watch } from 'vue';
 import { createExtensions } from './tiptap/extensions';
-import { searchEmoji } from '../EmojiPicker/emoji';
-import { useCustomEmoji } from '../useCustomEmoji';
+import { searchEmoji } from '../Emoji/emoji';
+import { useCustomEmoji } from '../Emoji/useCustomEmoji';
 import { useDiscussionContext } from '../context';
 import AttachButton from './AttachButton.vue';
 import ComposerHint from './ComposerHint.vue';
-import EmojiPicker from '../EmojiPicker/index.vue';
+import EmojiPicker from '../Emoji/EmojiPicker.vue';
 
 interface Props {
   // `search` makes it a search box: the same autocomplete, but no action

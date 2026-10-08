@@ -46,8 +46,8 @@
 import type { Reaction } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
 
-import EmojiGlyph from './EmojiGlyph.vue';
-import EmojiPicker from './EmojiPicker/index.vue';
+import EmojiGlyph from '../Emoji/EmojiGlyph.vue';
+import EmojiPicker from '../Emoji/EmojiPicker.vue';
 
 const props = withDefaults(
   defineProps<{ reactions?: Reaction[]; currentUserId?: number | null }>(),

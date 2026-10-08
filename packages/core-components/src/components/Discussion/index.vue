@@ -75,7 +75,7 @@
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import type { User } from '@tailor-cms/interfaces/user';
 import { computed, nextTick, ref, watch } from 'vue';
-import { lastOwnMessage } from './messages';
+import { lastOwnMessage } from './lastOwnMessage';
 import { orderBy } from 'lodash-es';
 import { provideEditingMessage } from './context';
 import { useConfirmationDialog } from '../../composables/useConfirmationDialog';

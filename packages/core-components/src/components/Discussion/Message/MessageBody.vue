@@ -53,9 +53,9 @@ import {
   splitEmoji,
 } from '@tailor-cms/utils';
 import { type FunctionalComponent, computed, h } from 'vue';
-import { type ReferenceChipProps, useDiscussionContext } from './context';
-import { referenceIcon } from './referenceIcon';
-import EmojiGlyph from './EmojiGlyph.vue';
+import { type ReferenceChipProps, useDiscussionContext } from '../context';
+import { referenceIcon } from '../referenceIcon';
+import EmojiGlyph from '../Emoji/EmojiGlyph.vue';
 import MessageToken from './MessageToken.vue';
 
 // The text of a message: words, code, links, emoji, mentions and

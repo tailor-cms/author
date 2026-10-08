@@ -15,7 +15,7 @@
 </template>
 
 <script lang="ts" setup>
-import EmojiPicker from './EmojiPicker/index.vue';
+import EmojiPicker from '../Emoji/EmojiPicker.vue';
 
 // Opens the emoji picker to react to a message
 withDefaults(

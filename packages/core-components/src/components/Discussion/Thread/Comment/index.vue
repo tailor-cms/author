@@ -60,8 +60,8 @@ import { computed } from 'vue';
 import { useEditingMessage } from '../../context';
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
-import MessageEditor from '../../MessageEditor.vue';
-import MessageReactions from '../../MessageReactions.vue';
+import MessageEditor from '../../Message/MessageEditor.vue';
+import MessageReactions from '../../Reactions/MessageReactions.vue';
 import UserAvatar from '../../../UserAvatar.vue';
 
 interface Props {
