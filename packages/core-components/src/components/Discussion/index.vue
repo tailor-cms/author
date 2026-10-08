@@ -124,14 +124,8 @@ const inputContainerEl = ref<HTMLElement>();
 const inputEl = ref<InstanceType<typeof MessageComposer>>();
 
 const showAll = ref(false);
-const error = ref(false);
-
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    message: string().max(600, 'Max 600 characters'),
-  }),
-});
-const [contentInput] = defineField('message', { validateOnModelUpdate: true });
+const contentInput = ref('');
+const editingUid = provideEditingMessage();
 
 const thread = computed(() => {
   const processedThread = props.comments.map((comment) => {
@@ -155,25 +149,28 @@ const showResolveButton = computed(
   () => hasUnresolvedComments.value && !props.isActivityThread,
 );
 
-const post = handleSubmit(() => {
-  if (isTextEditorEmpty.value) return;
+const post = (content: string) => {
   const { scrollTarget, user: author } = props;
   const scrollTargetRef =
     scrollTarget === 'discussion' ? containerEl : inputContainerEl;
-  const payload = {
-    content: contentInput.value,
+  emit('save', {
+    content,
     author,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  };
-  emit('save', payload);
-  resetForm();
+  });
+  contentInput.value = '';
   const scrollOptions: ScrollIntoViewOptions = {
     block: 'center',
     behavior: 'smooth',
   };
   nextTick(() => scrollTargetRef.value?.scrollIntoView(scrollOptions));
-});
+};
+
+const editLast = () => {
+  const last = lastOwnMessage(props.comments, props.user?.id);
+  if (last) editingUid.value = last.uid;
+};
 
 const remove = (comment: Comment) => {
   showConfirmationDialog({
