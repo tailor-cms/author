@@ -146,8 +146,9 @@ import {
   canIndex,
   formatFileSize,
 } from '@/components/repository/Assets/utils';
+import { debounce, omit } from 'lodash-es';
 import { CATEGORY_ALL } from '@/composables/useAssetFiltering';
-import { debounce } from 'lodash-es';
+import { repositoryAsset } from '@/api';
 import { useLocalStorage } from '@vueuse/core';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -173,6 +174,8 @@ type SortDirection = 'ASC' | 'DESC';
 const ASC: SortDirection = 'ASC';
 const DESC: SortDirection = 'DESC';
 
+const route = useRoute();
+const router = useRouter();
 const configStore = useConfigStore();
 const currentRepositoryStore = useCurrentRepository();
 const uploadStore = useUploadStore();
@@ -387,6 +390,21 @@ function onFolderDelete(path: string) {
   });
 }
 
+async function openLinkedAsset() {
+  const id = route.query.assetId;
+  if (!id || !repositoryId.value) return;
+  router.replace({ query: omit(route.query, 'assetId') });
+  const asset = await repositoryAsset
+    .get(repositoryId.value, id)
+    .catch(() => null);
+  if (!asset) {
+    notify('That asset is no longer available', { color: 'warning' });
+    return;
+  }
+  browseTo(asset.meta?.folder ?? '');
+  activeAsset.value = asset;
+}
+
 async function downloadAsset(asset: Asset) {
   const result = await assetStore.getDownloadUrl(asset.id);
   if (result?.url) window.open(result.url, '_blank');
@@ -482,7 +500,10 @@ onMounted(async () => {
   await assetStore.fetch(fetchParams.value);
   hasFirstFetched.value = true;
   indexing.resumeIfActive(assetStore.assets);
+  openLinkedAsset();
 });
+
+watch(() => route.query.assetId, openLinkedAsset);
 
 onBeforeUnmount(() => debouncedSearch.cancel());
 </script>

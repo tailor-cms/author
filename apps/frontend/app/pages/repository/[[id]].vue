@@ -25,7 +25,10 @@
 </template>
 
 <script lang="ts" setup>
-import { CircularProgress } from '@tailor-cms/core-components';
+import {
+  CircularProgress,
+  provideDiscussionContext,
+} from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
 import type { Repository } from '@tailor-cms/interfaces/repository';
 
@@ -50,7 +53,7 @@ const { $eventBus } = useNuxtApp() as any;
 const route = useRoute();
 const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
-const commentStore = useCommentStore();
+const messagingStore = useMessagingStore();
 const repositorySSE = useRepositorySSE();
 
 // Expose $eventBus via Vue provide/inject to external components
@@ -107,7 +110,7 @@ const onRailAction = (name: 'clone' | 'publish' | 'export' | 'delete') => {
 const teardown = () => {
   repositorySSE.disconnect();
   currentRepositoryStore.$reset();
-  commentStore.$reset();
+  messagingStore.$reset();
 };
 
 // Initialize repository context: fetch data, connect SSE, reset stores.
