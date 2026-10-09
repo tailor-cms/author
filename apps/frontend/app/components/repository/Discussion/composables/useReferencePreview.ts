@@ -3,8 +3,8 @@ import { parseElementRef } from '@tailor-cms/utils';
 import { ReferenceType } from '@tailor-cms/interfaces/comment';
 
 import { api } from '@/api';
-import { findAsset } from '../sharedAssets';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useAssetStore } from '@/stores/assets';
 
 export interface ReferenceTarget {
   entityType: string;
@@ -27,6 +27,7 @@ type Loader = (
 export const useReferencePreview = () => {
   const { $ceRegistry, $schemaService } = useNuxtApp() as any;
   const repoStore = useCurrentRepository();
+  const assetStore = useAssetStore();
 
   const loadElement: Loader = async (entityId) => {
     const repositoryId = repoStore.repositoryId as number;
@@ -46,7 +47,7 @@ export const useReferencePreview = () => {
 
   const loadAsset: Loader = async (entityId) => {
     const repositoryId = repoStore.repositoryId as number;
-    const asset = await findAsset(repositoryId, entityId);
+    const asset = await assetStore.fetch(repositoryId, entityId);
     if (!asset) return null;
     return {
       kind: ReferenceType.Asset,

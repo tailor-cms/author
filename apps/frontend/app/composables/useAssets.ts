@@ -2,6 +2,7 @@ import type { Asset } from '@tailor-cms/interfaces/asset.ts';
 import pMinDelay from 'p-min-delay';
 
 import api from '@/api/repositoryAsset';
+import { useAssetStore } from '@/stores/assets';
 
 const MIN_LOADING_MS = 1000;
 // Composite sizes so full grid pages end in complete rows at 2/3/4/6 columns.
@@ -9,6 +10,7 @@ export const PAGE_SIZE_OPTIONS = [12, 24, 48, 96];
 export const DEFAULT_PAGE_SIZE = 24;
 
 export function useAssets(repositoryId: Ref<number | undefined>) {
+  const assetStore = useAssetStore();
   const assets = ref<Asset[]>([]);
   const total = ref(0);
   const page = ref(1);
@@ -34,6 +36,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
       if (token !== fetchToken) return; // superseded by a newer fetch
       assets.value = result.items;
       total.value = result.total;
+      result.items.forEach((it: Asset) => assetStore.add(it));
     } finally {
       if (token === fetchToken) isFetching.value = false;
     }
@@ -42,6 +45,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function remove(assetId: number) {
     if (!repositoryId.value) return;
     await api.remove(repositoryId.value, assetId);
+    assetStore.remove(assetId);
   }
 
   async function bulkRemove(ids: number[]) {
@@ -51,6 +55,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
       const { deletedIds } = await api.bulkRemove(
         repositoryId.value, ids,
       );
+      deletedIds.forEach((id: number) => assetStore.remove(id));
       return deletedIds;
     } finally {
       isBulkRemoving.value = false;
@@ -66,6 +71,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function move(assetIds: number[], folder: string): Promise<number[]> {
     if (!repositoryId.value) return [];
     const { movedIds } = await api.move(repositoryId.value, assetIds, folder);
+    movedIds.forEach((id: number) => assetStore.remove(id));
     return movedIds;
   }
 
@@ -73,6 +79,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   async function deleteFolder(folder: string): Promise<number[]> {
     if (!repositoryId.value) return [];
     const { deletedIds } = await api.deleteFolder(repositoryId.value, folder);
+    deletedIds.forEach((id: number) => assetStore.remove(id));
     return deletedIds;
   }
 
@@ -123,6 +130,7 @@ export function useAssets(repositoryId: Ref<number | undefined>) {
   }
 
   function localUpdate(updated: Partial<Asset> & { id: number }) {
+    assetStore.update(updated);
     const idx = assets.value.findIndex((a) => a.id === updated.id);
     if (idx !== -1) {
       assets.value[idx] = { ...assets.value[idx], ...updated } as Asset;

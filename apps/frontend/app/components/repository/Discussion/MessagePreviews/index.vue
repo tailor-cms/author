@@ -24,11 +24,11 @@ import type { Asset } from '@tailor-cms/interfaces/asset.ts';
 import type { MessageToken, ReferenceToken } from '@tailor-cms/utils';
 
 import { extractReferences, extractUrls, parseMessage } from '@tailor-cms/utils';
-import { findAsset, getAsset } from '../sharedAssets';
 import { AssetType } from '@tailor-cms/interfaces/asset';
 import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { referenceHref } from '@/utils/entityLinks';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useAssetStore } from '@/stores/assets';
 import FilePreview from './FilePreview.vue';
 import ImagePreview from './ImagePreview.vue';
 import LinkPreview from './LinkPreview.vue';
@@ -45,6 +45,7 @@ const isImage = ({ asset }: SharedAsset) => asset.type === AssetType.Image;
 const props = defineProps<{ content?: string | null }>();
 
 const repoStore = useCurrentRepository();
+const assetStore = useAssetStore();
 
 const repositoryId = computed(() => repoStore.repositoryId as number);
 
@@ -54,10 +55,10 @@ const shared = computed(() =>
     .slice(0, PREVIEW_LIMIT),
 );
 
-// Read from the shared file cache
+// Read from the asset store, filled by the watch below
 const assets = computed(() =>
   shared.value.flatMap((reference): SharedAsset[] => {
-    const asset = getAsset(repositoryId.value, reference.entityId);
+    const asset = assetStore.findById(reference.entityId);
     if (!asset) return [];
     const href = referenceHref(repositoryId.value, reference);
     return [{ reference, asset, href }];
@@ -89,7 +90,9 @@ const isImageOnly = computed(
 watch(
   shared,
   (references) =>
-    references.forEach((it) => findAsset(repositoryId.value, it.entityId)),
+    references.forEach((it) =>
+      assetStore.fetch(repositoryId.value, it.entityId),
+    ),
   { immediate: true },
 );
 </script>

@@ -41,15 +41,16 @@
 
 <script lang="ts" setup>
 import type { ReferenceTarget } from './composables/useReferencePreview';
-import { findAsset, getAsset } from './sharedAssets';
 import { getAssetColor, getAssetIcon } from '@tailor-cms/core-components';
 import { assetHref } from '@/utils/entityLinks';
 import { getAssetDisplayName } from '../Assets/utils';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useAssetStore } from '@/stores/assets';
 
 const props = defineProps<{ reference: ReferenceTarget }>();
 
 const repoStore = useCurrentRepository();
+const assetStore = useAssetStore();
 const repositoryId = computed(() => repoStore.repositoryId as number);
 const isLoading = ref(true);
 
@@ -57,14 +58,14 @@ watch(
   () => props.reference.entityId,
   async (id) => {
     isLoading.value = true;
-    await findAsset(repositoryId.value, id);
+    await assetStore.fetch(repositoryId.value, id);
     isLoading.value = false;
   },
   { immediate: true },
 );
 
 const asset = computed(() =>
-  getAsset(repositoryId.value, props.reference.entityId),
+  assetStore.findById(props.reference.entityId),
 );
 
 const href = computed(() =>
