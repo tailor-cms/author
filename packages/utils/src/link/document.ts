@@ -4,6 +4,7 @@
  */
 import type { LinkEmbed } from './types';
 import { isGoogleHost, isMicrosoftHost } from './detect';
+import { LinkContentType } from '@tailor-cms/interfaces/asset';
 import { parseUrl } from '../url';
 
 const DOCS = 'https://docs.google.com';
@@ -26,7 +27,7 @@ const GOOGLE_PUBLISHED_PAGES: Record<string, string> = {
 const OFFICE_FILE = /\.(?:docx?|xlsx?|pptx?)$/i;
 
 const createEmbed = (embedUrl: string, thumbnailUrl = ''): LinkEmbed => ({
-  kind: 'document',
+  kind: LinkContentType.Document,
   embedUrl,
   thumbnailUrl,
 });

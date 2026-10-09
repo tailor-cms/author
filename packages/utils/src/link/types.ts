@@ -1,5 +1,7 @@
+import type { LinkContentType } from '@tailor-cms/interfaces/asset';
+
 export interface LinkEmbed {
-  kind: 'video' | 'document';
+  kind: typeof LinkContentType.Video | typeof LinkContentType.Document;
   embedUrl: string;
   thumbnailUrl: string;
 }

@@ -1,6 +1,7 @@
-import getVideoId from 'get-video-id';
-import { LinkProvider } from '@tailor-cms/interfaces/asset';
 import type { LinkEmbed } from './types';
+
+import { LinkContentType, LinkProvider } from '@tailor-cms/interfaces/asset';
+import getVideoId from 'get-video-id';
 
 type BuildUrl = (id: string) => string;
 
@@ -40,7 +41,7 @@ export const getVideoEmbed = (url: string): LinkEmbed | null => {
   if (!video) return null;
   const { provider, id } = video;
   return {
-    kind: 'video',
+    kind: LinkContentType.Video,
     embedUrl: PLAYERS[provider]!(id),
     thumbnailUrl: THUMBNAILS[provider]?.(id) ?? '',
   };
