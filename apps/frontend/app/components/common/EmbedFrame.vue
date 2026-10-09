@@ -35,6 +35,7 @@
 <script lang="ts" setup>
 // A shared video or document
 import type { LinkEmbed } from '@tailor-cms/utils';
+import { LinkContentType } from '@tailor-cms/interfaces/asset';
 
 const props = defineProps<{
   embed: LinkEmbed;
@@ -56,7 +57,7 @@ const ALLOW = [
 const isOpen = ref(false);
 const hasPosterFailed = ref(false);
 
-const isVideo = computed(() => props.embed.kind === 'video');
+const isVideo = computed(() => props.embed.kind === LinkContentType.Video);
 const hasPoster = computed(() => !!props.poster && !hasPosterFailed.value);
 const aspectRatio = computed(() => (isVideo.value ? '16 / 9' : '4 / 3'));
 
