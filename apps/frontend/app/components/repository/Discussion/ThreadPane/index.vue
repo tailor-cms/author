@@ -3,6 +3,7 @@
     <ThreadHeader :participants="participants" :thread="thread">
       <template #actions>
         <ThreadMenu
+          :is-removable="isRemovable"
           :thread="thread"
           @open:files="emit('open:files')"
           @open:subscriptions="emit('open:subscriptions')"
@@ -62,6 +63,7 @@ interface Props {
   currentUserId?: number | null;
   lastReadAt?: string | null;
   typingUsers?: { id: number; label: string }[];
+  isRemovable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {

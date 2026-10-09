@@ -151,6 +151,7 @@ interface ThreadAnchor {
   repositoryId: number;
   activityId?: number | null;
   contentElementId?: number | null;
+  authorId?: number | null;
 }
 
 /**
@@ -167,15 +168,23 @@ export async function findOrCreateThread(anchor: ThreadAnchor) {
 }
 
 function anchorQuery(anchor: ThreadAnchor) {
-  const { repositoryId, activityId, contentElementId } = anchor;
+  const { repositoryId, activityId, contentElementId, authorId } = anchor;
+  const createdById = authorId ?? null;
   if (contentElementId) {
     return {
       where: { repositoryId, contentElementId },
-      defaults: { type: ThreadType.Element, activityId: activityId ?? null },
+      defaults: {
+        type: ThreadType.Element,
+        activityId: activityId ?? null,
+        createdById,
+      },
     };
   }
   if (activityId) {
-    return { where: { repositoryId, activityId, type: ThreadType.Activity } };
+    return {
+      where: { repositoryId, activityId, type: ThreadType.Activity },
+      defaults: { createdById },
+    };
   }
   return null;
 }
@@ -196,6 +205,7 @@ export async function createThread(
     repositoryId,
     type: ThreadType.Repository,
     title: payload.title,
+    createdById: user.id,
   });
   await broadcast(thread.id, Events.Create);
   await commentService.create(repository, user, {
@@ -493,13 +503,8 @@ export async function removeThread(thread: Thread, user: User) {
   const { Comment } = models();
   const { id: threadId, repositoryId } = thread;
   if (isAnchored(thread)) throw new ThreadNotDeletableError();
-  const opening = await Comment.findOne({
-    where: { threadId },
-    order: [['id', 'ASC']],
-    paranoid: false,
-  });
-  const isAuthor = opening?.authorId === user.id;
-  if (!isAuthor && !user.isAdmin()) throw new ThreadForbiddenError();
+  const isCreator = thread.createdById === user.id;
+  if (!isCreator && !user.isAdmin()) throw new ThreadForbiddenError();
   // Deleted one by one so each message's delete hook runs
   await Comment.destroy({
     where: { threadId },

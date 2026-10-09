@@ -31,8 +31,12 @@ export const Thread = ThreadRef.extend({
     The repository-level thread, or the comments left on an activity
     or a content element.
   `),
-  // Denormalized participant ids for covenience
+  // Denormalized participant ids for convenience
   participantIds: z.array(Int()),
+  createdById: Int().nullable().describe(oneLine`
+    Who opened the thread. Along with admins, the one who can delete a
+    repository-level thread.
+  `),
   messageCount: UInt(),
   lastMessageAt: Timestamp().nullable(),
   subscriptions: z.array(z.string()).describe(oneLine`

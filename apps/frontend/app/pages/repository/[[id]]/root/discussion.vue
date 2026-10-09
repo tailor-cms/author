@@ -47,6 +47,7 @@
           :key="messagingStore.selectedThread.id"
           v-model:draft="draft"
           :current-user-id="currentUserId"
+          :is-removable="isThreadRemovable"
           :last-read-at="messagingStore.openedWatermark"
           :messages="messagingStore.messages"
           :thread="messagingStore.selectedThread"
@@ -173,6 +174,12 @@ const repositoryId = computed(
 const hasIntegrationAccess = computed(
   () => currentRepositoryStore.access.canManageIntegrations,
 );
+
+const isThreadRemovable = computed(() => {
+  const thread = messagingStore.selectedThread;
+  if (!thread) return false;
+  return authStore.isAdmin || thread.createdById === currentUserId.value;
+});
 
 const { lgAndUp } = useDisplay();
 const { width, startResize } = useDrawerResize({

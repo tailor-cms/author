@@ -14,6 +14,8 @@ export interface ThreadAttrs {
   lastMessageAt: string | null;
   subscriptions: string[];
   participantIds: number[];
+  // Who opened it; null once that user is removed
+  createdById: number | null;
   reader?: UserThread | null;
   createdAt: string;
   updatedAt: string;

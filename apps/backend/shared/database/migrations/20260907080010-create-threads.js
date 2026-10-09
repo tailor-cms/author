@@ -48,6 +48,7 @@ exports.up = async (qi, Sequelize) => {
     // If thread is anchored
     activity_id: fk(Sequelize, 'activity', 'SET NULL'),
     content_element_id: fk(Sequelize, 'content_element', 'SET NULL'),
+    created_by_id: fk(Sequelize, 'user', 'SET NULL'),
     type: {
       type: Sequelize.ENUM('REPOSITORY', 'ACTIVITY', 'ELEMENT'),
       allowNull: false,
@@ -217,9 +218,10 @@ async function backfill(qi) {
     qi.sequelize.query(`
       INSERT INTO comment_thread
         (repository_id, type, activity_id, content_element_id,
-         message_count, unresolved_count,
+         created_by_id, message_count, unresolved_count,
          participant_ids, last_message_at, created_at, updated_at)
       SELECT c.repository_id, '${type}', ${activity}, ${element},
+             (ARRAY_AGG(c.author_id ORDER BY c.id))[1],
              COUNT(*),
              COUNT(*) FILTER (WHERE c.resolved_at IS NULL),
              COALESCE(ARRAY_AGG(DISTINCT c.author_id)

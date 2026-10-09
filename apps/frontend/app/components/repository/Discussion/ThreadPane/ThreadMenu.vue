@@ -38,7 +38,7 @@ interface ThreadAction {
   run: () => void;
 }
 
-const props = defineProps<{ thread: ReaderThread }>();
+const props = defineProps<{ thread: ReaderThread; isRemovable?: boolean }>();
 
 const emit = defineEmits<{
   'star': [isStarred: boolean];
@@ -108,7 +108,7 @@ const actions = computed<ThreadAction[]>(() => {
     starAction(isStarred),
     filesAction,
     subscribeAction(subscriptions.length),
-    removeAction,
+    ...(props.isRemovable ? [removeAction] : []),
   ];
 });
 </script>

@@ -44,9 +44,11 @@ class Thread extends Model {
     Comment,
     ContentElement,
     Repository,
+    User,
     UserThread,
   }) {
     this.hasMany(Comment, { as: 'comments', foreignKey: 'threadId' });
+    this.belongsTo(User, { as: 'createdBy', foreignKey: 'createdById' });
     this.hasOne(UserThread, { as: 'reader', foreignKey: 'threadId' });
     this.belongsTo(Repository, { foreignKey: 'repositoryId' });
     this.belongsTo(Activity, { foreignKey: 'activityId' });

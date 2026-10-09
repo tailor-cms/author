@@ -2533,6 +2533,19 @@
               "maximum": 9007199254740991
             }
           },
+          "createdById": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "exclusiveMinimum": 0,
+                "maximum": 9007199254740991
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who opened the thread. Along with admins, the one who can delete a repository-level thread."
+          },
           "messageCount": {
             "type": "integer",
             "minimum": 0,
@@ -2613,6 +2626,7 @@
           "contentElement",
           "repositoryId",
           "participantIds",
+          "createdById",
           "messageCount",
           "lastMessageAt",
           "subscriptions",

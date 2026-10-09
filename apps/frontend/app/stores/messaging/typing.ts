@@ -10,14 +10,12 @@ interface TypingEvent {
 
 // Who is typing in which thread, from other people's signals
 export const createTypingIndicator = () => {
-  const typing = reactive(new Map<number, { label: string; at: number }>());
+  const typing = reactive(new Map<number, { label: string }>());
+  const expiries = new Map<number, ReturnType<typeof setTimeout>>();
 
-  const typingUsers = computed(() => {
-    const cutoff = Date.now() - TYPING_TTL;
-    return Array.from(typing.entries())
-      .filter(([, it]) => it.at > cutoff)
-      .map(([id, it]) => ({ id, label: it.label }));
-  });
+  const typingUsers = computed(() =>
+    Array.from(typing.entries(), ([id, it]) => ({ id, label: it.label })),
+  );
 
   function reportTyping(repositoryId: number, threadId: number) {
     return api.messaging.reportTyping({
@@ -27,10 +25,22 @@ export const createTypingIndicator = () => {
   }
 
   function onTyping({ threadId, user }: TypingEvent) {
-    typing.set(threadId, { label: user?.label ?? 'Someone', at: Date.now() });
+    typing.set(threadId, { label: user?.label ?? 'Someone' });
+    clearTimeout(expiries.get(threadId));
+    expiries.set(
+      threadId,
+      setTimeout(() => {
+        typing.delete(threadId);
+        expiries.delete(threadId);
+      }, TYPING_TTL),
+    );
   }
 
-  const clear = () => typing.clear();
+  function clear() {
+    expiries.forEach((it) => clearTimeout(it));
+    expiries.clear();
+    typing.clear();
+  }
 
   return { typingUsers, reportTyping, onTyping, clear };
 };

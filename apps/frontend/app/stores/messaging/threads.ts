@@ -142,7 +142,6 @@ export const createThreads = (
       body: payload,
     });
     addThread(thread);
-    await selectThread(repositoryId, thread.id);
     return thread;
   }
 
