@@ -25,24 +25,29 @@
 </template>
 
 <script lang="ts" setup>
+import type { Repository } from '@tailor-cms/interfaces/repository';
+
 import {
   CircularProgress,
   provideDiscussionContext,
 } from '@tailor-cms/core-components';
 import { promiseTimeout } from '@vueuse/core';
-import type { Repository } from '@tailor-cms/interfaces/repository';
-
+import { useAuthStore } from '@/stores/auth';
+import { useMessagingStore } from '@/stores/messaging';
+import { useEmojiStore } from '@/stores/emoji';
+import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
+import { useCurrentRepository } from '@/stores/current-repository';
+import { usePublishActivity } from '@/composables/usePublishActivity';
+import { useRepositoryStore } from '@/stores/repository';
 import CloneModal from '@/components/repository/Settings/CloneModal.vue';
 import ExportDialog from '@/components/repository/Settings/ExportModal.vue';
 import NavigationRail from '@/components/repository/NavigationRail/index.vue';
 import AgentPanel from '@/components/common/AgentPanel/index.vue';
 import ProgressDialog from '@/components/common/ProgressDialog.vue';
-import { useAuthStore } from '@/stores/auth';
-import { useCommentStore } from '@/stores/comments';
-import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
-import { useCurrentRepository } from '@/stores/current-repository';
-import { usePublishActivity } from '@/composables/usePublishActivity';
-import { useRepositoryStore } from '@/stores/repository';
+import MessagePreviews
+  from '@/components/repository/Discussion/MessagePreviews/index.vue';
+import ReferenceChip
+  from '@/components/repository/Discussion/ReferenceChip.vue';
 
 definePageMeta({
   middleware: ['auth'],
@@ -58,6 +63,15 @@ const repositorySSE = useRepositorySSE();
 
 // Expose $eventBus via Vue provide/inject to external components
 provide('$eventBus', $eventBus);
+
+// Mentions, uploads, reference links and custom emoji for every
+// discussion in the repository
+provideDiscussionContext({
+  services: useDiscussionServices(() => repositoryId.value),
+  referenceViews: { chip: ReferenceChip, previews: MessagePreviews },
+  customEmoji: useEmojiStore(),
+});
+
 provide(
   '$repository',
   computed(() => {
@@ -139,6 +153,7 @@ const initialize = async (repositoryId: number) => {
   }
   isLoading.value = false;
   repositorySSE.connect(repositoryId);
+  currentRepositoryStore.getUsers().catch(() => undefined);
 };
 
 const repositoryId = computed(() => parseInt(route.params.id as string, 10));
