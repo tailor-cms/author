@@ -42,7 +42,7 @@
           <div class="d-flex flex-wrap justify-center ga-2 mt-4">
             <VBtn
               v-bind="browseProps"
-              color="primary"
+              color="secondary"
               prepend-icon="mdi-upload"
               size="default"
               text="Upload"
