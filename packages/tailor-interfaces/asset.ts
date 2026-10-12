@@ -101,7 +101,9 @@ const ASSET_TYPE_EXTENSIONS: Record<string, Set<string>> = {
   [AssetType.Image]: new Set([
     'jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp', 'ico', 'tiff', 'avif',
   ]),
-  [AssetType.Document]: new Set(['pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html']),
+  [AssetType.Document]: new Set([
+    'pdf', 'doc', 'docx', 'pptx', 'txt', 'md', 'html', 'htm',
+  ]),
   [AssetType.Video]: new Set(['mp4', 'avi', 'mov', 'wmv', 'mkv', 'webm', 'flv']),
   [AssetType.Audio]: new Set(['mp3', 'wav', 'ogg', 'flac', 'aac', 'm4a', 'wma']),
 };
