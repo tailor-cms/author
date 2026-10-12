@@ -184,7 +184,7 @@ const onAssetPick = () => {
   onClose();
 };
 
-const onUrlSubmit = (data: { url: string; title?: string }) => {
+const onUrlSubmit = (data: { url: string; name?: string }) => {
   emit('select', data);
   onClose();
 };

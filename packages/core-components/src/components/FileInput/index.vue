@@ -81,7 +81,6 @@
     :variant="variant"
     :readonly="readonly"
     @delete="onClear"
-    @download="downloadFile(resolvedFileKey, resolvedFileName)"
     @replace="openDialog()"
   />
   <PickerDialog
@@ -162,7 +161,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   allowedExtensions: () => [],
-  useFieldInput: false,
   allowUrlSource: false,
   publicUrl: null,
   showPreview: false,
@@ -188,7 +186,6 @@ const {
   uploading,
   progress,
   error: uploadError,
-  downloadFile,
 } = useUpload(emit as any);
 
 const dialogOpen = ref(false);

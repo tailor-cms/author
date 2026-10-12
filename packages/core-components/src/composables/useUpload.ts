@@ -9,12 +9,6 @@ type Emit = (event: 'upload' | 'delete', ...args: any[]) => void;
 // (small-file / localhost) uploads.
 const MIN_LOADING_MS = 800;
 
-const download = (url: string, fileName: string) => {
-  const anchor = document.createElement('a');
-  Object.assign(anchor, { href: url, download: fileName, target: '_blank' });
-  anchor.click();
-};
-
 export const useUpload = (emit: Emit) => {
   const uploading = ref(false);
   // Percent complete, or null when no progress has been reported yet (or the
@@ -66,14 +60,8 @@ export const useUpload = (emit: Emit) => {
     }
   };
 
-  const downloadFile = async (key: string, name: string) => {
-    const url = await storageService.getUrl(key);
-    return download(url, name);
-  };
-
   return {
     upload,
-    downloadFile,
     deleteFile,
     uploading,
     progress,
