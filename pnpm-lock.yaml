@@ -749,11 +749,11 @@ importers:
         specifier: ^3.0.0
         version: 3.0.0
       '@tailor-cms/ce-interactive-edit':
-        specifier: ^1.0.0
-        version: 1.0.0(vue@3.5.43(typescript@7.0.2))
+        specifier: ^1.0.1
+        version: 1.0.1(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-interactive-server':
-        specifier: ^1.0.0
-        version: 1.0.0
+        specifier: ^1.0.1
+        version: 1.0.1
       '@tailor-cms/ce-jodit-html-edit':
         specifier: ^3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
@@ -4621,14 +4621,14 @@ packages:
     resolution: {integrity: sha512-pkPuUcowVOCbEaMqCwbFBz97D7VzAclef1uXZ1Mj0Z97wX9ouAf9622nP1EuUI61Y0G7NIdTp9L/soU9+y9FJw==}
     engines: {node: '>=26'}
 
-  '@tailor-cms/ce-interactive-edit@1.0.0':
-    resolution: {integrity: sha512-79kiEkMUS+VtGwVQKX24fPAhNDdCC6AgtYlscYXviJlPHLmVY7JVHuUFGgXtczsQelU7f3leaxC41nBRQNLxAg==}
+  '@tailor-cms/ce-interactive-edit@1.0.1':
+    resolution: {integrity: sha512-qqSstgYPQzo49nm15OKb3I6RXeHto3DEzRW6bO5ZCZVjDjihULw9yaMrGXH4fte8mPM5keIDSfF/rcbthbH5lg==}
     engines: {node: '>=26'}
     peerDependencies:
       vue: ^3.5.43
 
-  '@tailor-cms/ce-interactive-server@1.0.0':
-    resolution: {integrity: sha512-siX7knT+M28Eg5cz75HUafDMAwt1SqeUtQCLah3BDCV5DjxdzY08EykxvsPMQ3QxgImSIPZgo4x55of4wWKB1g==}
+  '@tailor-cms/ce-interactive-server@1.0.1':
+    resolution: {integrity: sha512-R0qWATbs5cXYv4PR2hXOD7ZypwXUCB42YwN67XzO8cTcm4Rvq2StzrPfrsDzU0/fm9u+9h2sO/X/pfd0IEnRSw==}
     engines: {node: '>=26'}
 
   '@tailor-cms/ce-jodit-html-edit@3.0.0':
@@ -15947,12 +15947,12 @@ snapshots:
       '@tailor-cms/ce-image-manifest': 3.0.0
       '@tailor-cms/cek-common': 3.0.0
 
-  '@tailor-cms/ce-interactive-edit@1.0.0(vue@3.5.43(typescript@7.0.2))':
+  '@tailor-cms/ce-interactive-edit@1.0.1(vue@3.5.43(typescript@7.0.2))':
     dependencies:
       '@tailor-cms/cek-common': 3.0.0
       vue: 3.5.43(typescript@7.0.2)
 
-  '@tailor-cms/ce-interactive-server@1.0.0':
+  '@tailor-cms/ce-interactive-server@1.0.1':
     dependencies:
       '@tailor-cms/cek-common': 3.0.0
 
