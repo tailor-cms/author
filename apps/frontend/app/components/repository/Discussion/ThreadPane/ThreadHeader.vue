@@ -2,7 +2,7 @@
   <div class="d-flex align-center ga-3 px-5 py-3">
     <div class="thread-header-text">
       <div class="d-flex align-center ga-2">
-        <h3 class="text-title-medium font-weight-bold text-truncate">
+        <h3 class="thread-title text-title-medium font-weight-bold text-truncate">
           {{ title }}
         </h3>
         <VChip
