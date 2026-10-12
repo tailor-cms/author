@@ -87,7 +87,21 @@ const webServer = new studion.WebServer(
     environment: getEnvVariables(db),
     secrets: getSecrets(db),
   },
+  { transformations: [stickySessions] },
 );
+
+function stickySessions(
+  args: pulumi.ResourceTransformationArgs,
+): pulumi.ResourceTransformationResult | undefined {
+  if (args.type !== 'aws:lb/targetGroup:TargetGroup') return undefined;
+  return {
+    props: {
+      ...args.props,
+      stickiness: { type: 'lb_cookie', enabled: true, cookieDuration: 86400 },
+    },
+    opts: args.opts,
+  };
+}
 
 // Reporting: CloudWatch + Route 53 alarms -> SNS -> email/Slack.
 //   - email:  ALERT_EMAIL env var, or the `alerts:email` stack config.

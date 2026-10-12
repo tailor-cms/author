@@ -39,6 +39,8 @@
     "@tailor-cms/ce-html-server": "^3.0.0",
     "@tailor-cms/ce-image-edit": "^3.0.0",
     "@tailor-cms/ce-image-server": "^3.0.0",
+    "@tailor-cms/ce-interactive-edit": "^1.0.0",
+    "@tailor-cms/ce-interactive-server": "^1.0.0",
     "@tailor-cms/ce-jodit-html-edit": "^3.0.0",
     "@tailor-cms/ce-jodit-html-server": "^3.0.0",
     "@tailor-cms/ce-matching-question-edit": "^3.0.0",

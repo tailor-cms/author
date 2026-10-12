@@ -25,6 +25,7 @@ import pkg23 from '@tailor-cms/ce-html-raw-edit';
 import pkg24 from '@tailor-cms/ce-mux-video-edit';
 import pkg25 from '@tailor-cms/ce-sequence-edit';
 import pkg26 from '@tailor-cms/ce-flashcards-edit';
+import pkg27 from '@tailor-cms/ce-interactive-edit';
 
 // prettier-ignore
 export const elements = [
@@ -55,4 +56,5 @@ export const elements = [
   pkg24,
   pkg25,
   pkg26,
+  pkg27,
 ];

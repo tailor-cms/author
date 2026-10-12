@@ -4,8 +4,9 @@ import request from './request';
 const urls = {
   generate: (repositoryId) =>
     `/repositories/${repositoryId}/ai/generate`,
-  agentRun: (repositoryId) =>
-    `/repositories/${repositoryId}/agent/run`,
+  agentRuns: (repositoryId) =>
+    `/repositories/${repositoryId}/agent/runs`,
+  agentRun: (repositoryId, id) => `${urls.agentRuns(repositoryId)}/${id}`,
   agentSessions: (repositoryId) =>
     `/repositories/${repositoryId}/agent/sessions`,
   agentSession: (repositoryId, id) =>
@@ -16,8 +17,18 @@ function generate(repositoryId, payload) {
   return request.post(urls.generate(repositoryId), payload).then(extractData);
 }
 
-function runAgent(repositoryId, payload) {
-  return request.post(urls.agentRun(repositoryId), payload).then(extractData);
+function startAgentRun(repositoryId, payload) {
+  return request.post(urls.agentRuns(repositoryId), payload).then(extractData);
+}
+
+function getAgentRun(repositoryId, id, params) {
+  return request
+    .get(urls.agentRun(repositoryId, id), { params })
+    .then(extractData);
+}
+
+function cancelAgentRun(repositoryId, id) {
+  return request.post(`${urls.agentRun(repositoryId, id)}/cancel`);
 }
 
 function listAgentSessions(repositoryId) {
@@ -40,7 +51,9 @@ function deleteAgentSession(repositoryId, id) {
 
 export default {
   generate,
-  runAgent,
+  startAgentRun,
+  getAgentRun,
+  cancelAgentRun,
   listAgentSessions,
   createAgentSession,
   getAgentSession,

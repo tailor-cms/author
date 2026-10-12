@@ -20,6 +20,17 @@ const nestedIdWithType =
     (r) =>
       r[key]?.id ? `#${r[key].id} ${r[key].type || ''}`.trim() : '';
 
+// e.g. "2 errors", "no errors - 2 interactions"
+const testOutcome: SummaryFn = (r) => {
+  if (!r.errors) return '';
+  const errors = r.errors.length
+    ? `${r.errors.length} error${r.errors.length > 1 ? 's' : ''}`
+    : 'no errors';
+  const count = r.interactions?.length;
+  if (!count) return errors;
+  return `${errors} - ${count} interaction${count > 1 ? 's' : ''}`;
+};
+
 const SUMMARIES: Record<string, SummaryFn> = {
   get_repository: (r) => r.name || '',
   get_schema_info: (r) => r.name || r.schemaId || '',
@@ -33,7 +44,7 @@ const SUMMARIES: Record<string, SummaryFn> = {
     if (elements) return `${elements} elements`;
     return '';
   },
-  create_activity: idWithName,
+  create_activity: (r) => (r.id ? `#${r.id}` : ''),
   create_container_with_elements: (r) => {
     const sub = r.subcontainer?.id ? `#${r.subcontainer.id}` : '';
     const el = r.elements?.length ? `${r.elements.length} elements` : '';
@@ -44,12 +55,13 @@ const SUMMARIES: Record<string, SummaryFn> = {
   get_element: idWithType,
   refine_element: nestedIdWithType('element'),
   update_element: nestedIdWithType('element'),
-  add_elements_to_activity: countOf('elements', 'added'),
   generate_elements_for_target: countOf('elements', 'generated'),
-  delete_element: (r) => (r.id ? `#${r.id} deleted` : ''),
   list_assets: (r) => (r.total != null ? `${r.total} assets` : ''),
   index_assets: countOf('queuedAssetIds', 'queued'),
   generate_image_asset: idWithName,
+  draft_interactive: (r) => (r.draftId ? `draft ${r.draftId}` : ''),
+  test_interactive: testOutcome,
+  save_interactive: nestedIdWithType('element'),
   attach_asset_to_activity: (r) =>
     r.metaKey ? `${r.metaKey} <- ${r.asset?.name || ''}` : '',
 };

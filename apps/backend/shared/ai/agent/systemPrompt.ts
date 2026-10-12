@@ -12,6 +12,7 @@ import { schema as schemaAPI } from '@tailor-cms/config';
 import { oneLine, stripIndent } from 'common-tags';
 
 import { describeContainerSchema } from './tools/helpers/index.ts';
+import { ai as aiConfig } from '#config';
 
 export interface AgentPromptInput {
   repository: {
@@ -38,6 +39,7 @@ export function buildSystemPrompt(input: AgentPromptInput): string {
     outlineContextSection(),
     metaInputsExplainerSection(),
     assetsSection(),
+    aiConfig.browser.isSandboxAvailable ? interactiveSection() : '',
     analysisSection(),
     hasVectorStore ? vectorStoreSection() : '',
   ];
@@ -396,6 +398,24 @@ function assetsSection(): string {
         }
     Example - storageKey "repository/5/assets/abc__photo.png" becomes
     "storage://repository/5/assets/abc__photo.png".
+  `;
+}
+
+// The write-run-fix loop and what makes a page publishable
+function interactiveSection(): string {
+  return stripIndent`
+    INTERACTIVE ELEMENTS (HTML)
+    For a visualization, simulation or explorable ("show how X changes
+    when...", "let learners play with...") create an INTERACTIVE element:
+    one self-contained HTML file you write, run and check yourself. Only
+    where a container allows it (get_schema_info); otherwise say so
+    instead of substituting another type.
+    Loop: draft_interactive -> test_interactive -> fix -> test again ->
+    save_interactive. A focused element marked (empty) has no HTML yet:
+    pass fromElementId, title and html in the first call. Save only after
+    a clean run and after looking at the screenshot; interact with the
+    page like a reader would instead of assuming it works. Stop after ~5
+    fix rounds and report what still fails.
   `;
 }
 

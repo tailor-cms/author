@@ -1,5 +1,6 @@
 import * as schemas from '../schemas/index.ts';
 import { defineAction } from '#shared/request/action.ts';
+import { runRegistry } from '../run/index.ts';
 import { sessionStore } from '../session/index.ts';
 
 export default defineAction({
@@ -16,6 +17,7 @@ export default defineAction({
   },
   async handler({ req }) {
     const session = req.agentSession!;
+    runRegistry.findActive(session.id)?.cancel();
     await sessionStore.delete(session.id);
   },
 });

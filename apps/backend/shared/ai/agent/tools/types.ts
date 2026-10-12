@@ -69,22 +69,30 @@ export interface ToolContext {
    * the session can show a change summary.
    */
   transactionLog: OperationEntry[];
+  /**
+   * Agent session the call belongs to. Scopes session-level scratch
+   * state such as interactive page drafts.
+   */
+  sessionId?: string;
+}
+
+// Image a tool shows the model (e.g. a screenshot), returned via `_images`.
+export interface ToolImage {
+  label: string;
+  dataUrl: string;
 }
 
 /**
  * A single recorded operation in the transaction log.
- * Captures what tool was called, what it did, and how
- * to reverse it. Used by the dock's "Undo run" feature.
+ * Captures which tool ran, when, and the call that would
+ * reverse it, for undo and audit. What it did lives in the
+ * session history.
  */
 export interface OperationEntry {
-  // 1-based sequence number within the run
+  // 1-based sequence number within the session
   seq: number;
   // Tool name that was called (e.g. 'create_activity')
   tool: string;
-  // The input the LLM passed to the tool
-  input: any;
-  // The result the tool returned
-  result: any;
   /**
    * The tool call that would reverse this operation.
    * E.g. create_activity's inverse is delete_activity.
@@ -147,6 +155,10 @@ export interface ToolDef {
    * of store keys the frontend should refetch after the mutation.
    * The runner strips this field before forwarding to the LLM.
    * Common keys: 'outline', 'assets', 'activity:{id}', 'element:{id}'.
+   *
+   * Tools may also return `_images` (ToolImage[]); the runner passes them
+   * to the model as images next to the result and keeps them out of the
+   * events sent to the client.
    */
   execute: (
     input: any,
