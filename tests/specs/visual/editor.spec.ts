@@ -79,7 +79,7 @@ test('snapshot of the editor page comments section', async ({ page }) => {
   const editor = new Editor(page);
   await editor.toSecondaryPage();
   await page.getByRole('tab', { name: 'Comments' }).click();
-  await expect(page.getByText('Be the First to Comment!')).toBeVisible();
+  await expect(page.getByText('No comments yet')).toBeVisible();
   await percySnapshot(page, 'Editor page - Comments section');
 });
 
