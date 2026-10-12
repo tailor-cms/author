@@ -45,7 +45,7 @@ export interface ReferenceToken {
 export type MessageToken = TextToken | MentionToken | ReferenceToken;
 
 // `<@id|label>` and `<#type:id|label>`; the label is optional
-const TOKEN_PATTERN = /<([@#])([^>|]+)(?:\|([^>]*))?>/g;
+const TOKEN_PATTERN = /<([@#])([^<>|]+)(?:\|([^<>]*))?>/g;
 
 const parseMention = (
   payload: string,
@@ -108,8 +108,9 @@ export const extractText = (content: string): string =>
     .join(' ')
     .trim();
 
-// `|` and `>` would end the token early
-const sanitizeLabel = (label: string) => label.replace(/[|>]/g, ' ').trim();
+// `|` and `>` would end the token early, `<` would break it
+const sanitizeLabel = (label: string) =>
+  label.replace(/[<|>]/g, ' ').trim();
 
 export const formatMention = (userId: number, label: string): string =>
   `<@${userId}|${sanitizeLabel(label)}>`;
