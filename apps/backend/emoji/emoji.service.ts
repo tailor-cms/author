@@ -82,6 +82,9 @@ const toEmoji = (row: EmojiRow): Emoji => {
   };
 };
 
+// Forgets the cached list, so the next read comes from the database
+export const clearCache = () => cache.delete(MANIFEST_KEY);
+
 /**
  * Every emoji, in one list. Deliberately unpaginated: it is the
  * dictionary a client needs before it can render a single message.
