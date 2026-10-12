@@ -134,6 +134,8 @@ export class Editor {
     await this.page
       .locator('.content-containers-wrapper')
       .click({ position: { x: 4, y: 4 } });
-    await expect(this.topToolbar).toBeVisible();
+    await expect(
+      this.page.locator(`${ContentElement.selector}.focused`),
+    ).toHaveCount(0);
   }
 }

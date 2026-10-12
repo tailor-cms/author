@@ -33,7 +33,7 @@ test('snapshot of the editor page upon editing the Content Element', async ({
   const elements = await containers[0].getElements();
   await elements[0].el.click();
   // Make sure the sidebar is visible
-  await expect(page.getByText('Additional settings')).toBeVisible();
+  await expect(editor.sidebar.elementPanel).toBeVisible();
   await percySnapshot(page, 'Editor page - Content Element editing');
 });
 

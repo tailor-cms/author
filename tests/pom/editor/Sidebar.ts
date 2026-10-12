@@ -17,6 +17,7 @@ export class EditorSidebar {
   readonly searchInput: Locator;
   readonly toggleAllBtn: Locator;
   readonly treeView: Locator;
+  readonly elementPanel: Locator;
   readonly navigation: Navigation;
   readonly comments: Comments;
 
@@ -25,6 +26,7 @@ export class EditorSidebar {
     const el = page.locator('.editor-sidebar-main');
     this.el = el;
     this.tabs = el.getByRole('tablist');
+    this.elementPanel = el.locator('.element-sidebar');
     this.navigation = new Navigation(page, el);
     this.comments = new Comments(page, el);
   }
