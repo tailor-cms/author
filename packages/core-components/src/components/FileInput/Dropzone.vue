@@ -35,7 +35,6 @@
           </div>
           <div class="text-body-medium text-medium-emphasis">
             Drag & drop anywhere in this block
-            <template v-if="formats"> · {{ formats }}</template>
           </div>
         </template>
         <template #browse="{ props: browseProps }">
@@ -70,7 +69,6 @@
 
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
-import { uniq } from 'lodash-es';
 
 import UploadProgress from './PickerDialog/UploadProgress.vue';
 
@@ -107,13 +105,6 @@ const fileName = ref('');
 
 // Native picker filter
 const accept = computed(() => props.extensions.join(','));
-
-// Accepted formats as the user reads them: "JPG, PNG, or GIF"
-const listFormat = new Intl.ListFormat('en', { type: 'disjunction' });
-const formats = computed(() => {
-  const names = props.extensions.map((it) => it.replace(/^\./, '').toUpperCase());
-  return listFormat.format(uniq(names));
-});
 
 const onSelect = (files: File | File[] | null) => {
   if (!files) return;

@@ -138,6 +138,9 @@ interface Props {
   placeholder?: string;
   // Override the auto-inferred icon (derived from extensions)
   icon?: string;
+  // Dropzone mode: override the heading inferred from the asset type
+  // (e.g. "Add a PDF" instead of "Add a document")
+  title?: string;
   // 'field': a form control; the empty state is a click-to-add text field.
   // 'dropzone': an inline drag & drop area for the empty state, while the
   // filled state renders the media from the default slot with a file name +
@@ -230,7 +233,9 @@ const resolvedIcon = computed(
   () => props.icon || getAssetIcon(category.value),
 );
 
-const dropzoneTitle = computed(() => getAssetDropzoneTitle(category.value));
+const dropzoneTitle = computed(
+  () => props.title || getAssetDropzoneTitle(category.value),
+);
 
 const isPreviewEnabled = computed(
   () => props.showPreview || category.value === AssetType.Image,
