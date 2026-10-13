@@ -21,6 +21,7 @@ import {
   type OpenApiSpec,
 } from '#shared/openapi/index.ts';
 import type { Activity } from '../../activity/models/activity.model.js';
+import type { AgentRun } from '../ai/agent/run/index.ts';
 import type { AgentSession } from '../ai/agent/session/index.ts';
 import type { Asset } from '../../asset/models/asset.model.js';
 import type { Comment } from '../../messaging/models/comment.model.js';
@@ -123,6 +124,7 @@ export interface ActionContext<
     asset?: Asset;
     userGroup?: UserGroup;
     agentSession?: AgentSession;
+    agentRun?: AgentRun;
     authData?: unknown;
     opts?: ListQueryOptions;
     options?: PaginationOptions;

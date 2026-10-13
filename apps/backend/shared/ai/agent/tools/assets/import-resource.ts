@@ -141,7 +141,7 @@ async function execute(input: Input, ctx: ToolContext) {
       meta: asset.meta || {},
       _invalidates: ['assets'],
     };
-    recordOperation(TOOL, input, result, ctx);
+    recordOperation(TOOL, ctx);
     return result;
   } catch (error: any) {
     return toolError({

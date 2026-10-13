@@ -60,17 +60,12 @@ const authStore = useAuthStore();
 const currentRepositoryStore = useCurrentRepository();
 const messagingStore = useMessagingStore();
 const repositorySSE = useRepositorySSE();
+const storageService = useStorageService();
 
 // Expose $eventBus via Vue provide/inject to external components
 provide('$eventBus', $eventBus);
 
-// Mentions, uploads, reference links and custom emoji for every
-// discussion in the repository
-provideDiscussionContext({
-  services: useDiscussionServices(() => repositoryId.value),
-  referenceViews: { chip: ReferenceChip, previews: MessagePreviews },
-  customEmoji: useEmojiStore(),
-});
+provide('$storageService', storageService);
 
 provide(
   '$repository',
@@ -79,6 +74,12 @@ provide(
     return { ...repository, activities };
   }),
 );
+
+provideDiscussionContext({
+  services: useDiscussionServices(() => repositoryId.value),
+  referenceViews: { chip: ReferenceChip, previews: MessagePreviews },
+  customEmoji: useEmojiStore(),
+});
 
 const isLoading = ref(true);
 

@@ -78,33 +78,73 @@ export interface ToolError {
   [extra: string]: unknown;
 }
 
-// One entry in RunResult.toolCalls. Discriminated on `ok` so consumers
-// narrow `result` without manual casts:
-//   if (tc.ok) tc.result.someSuccessField   // tool-specific success shape
-//   else       tc.result.error              // ToolError
-// `input` is intentionally `unknown`: usually parsed JSON args, but on
-// invalid_json it's the raw arguments string the model emitted.
+// Completed tool call
 export type ToolCallRecord =
   | { name: string; input: unknown; result: unknown; ok: true; durationMs: number }
   | { name: string; input: unknown; result: ToolError; ok: false; durationMs: number };
 
-// Shape of an /agent/run response. Backend may include richer
-// audit data in `transactionLog`;
-export interface RunResult {
+export const RunStatus = {
+  Running: 'RUNNING',
+  Completed: 'COMPLETED',
+  Failed: 'FAILED',
+  Cancelled: 'CANCELLED',
+} as const;
+
+export type RunStatus = typeof RunStatus[keyof typeof RunStatus];
+
+// Progress reported while a run works, numbered by `seq` so clients can
+// ask for only what they haven't seen yet.
+// - input: the run picked up a user message
+// - message: the model's latest text
+// - tool:start / tool:end: a tool call began / finished; `invalidates`
+//   lists data the client should refetch
+export type RunEvent =
+  | { seq: number; type: 'input'; message: string }
+  | { seq: number; type: 'message'; text: string }
+  | {
+    seq: number;
+    type: 'tool:start';
+    callId: string;
+    name: string;
+    input: unknown;
+  }
+  | {
+    seq: number;
+    type: 'tool:end';
+    callId: string;
+    call: ToolCallRecord;
+    invalidates: string[];
+  };
+
+// Reply to POST /agent/runs. `isQueued` means a run was already working
+// on this session, so the message joined it instead of starting a new one.
+export interface RunStarted {
+  runId: string;
   sessionId: string;
-  // Assistant's reply text after the loop ended (the model's last
-  // text-only message). Empty string when the run produced no text.
+  isQueued: boolean;
+}
+
+// Summary of a finished run.
+export interface RunResult {
+  // The model's last reply. Empty when it produced no text.
   replyText: string;
-  toolCalls: ToolCallRecord[];
-  // Number of (model call -> tool dispatch) iterations the loop ran.
+  // Number of model calls the run made.
   turns: number;
-  // True when the run was cut off (today only by maxTurns).
+  toolCount: number;
+  // True when the run hit its turn limit.
   truncated: boolean;
-  // Cache keys the frontend should refetch after this run.
-  invalidates: string[];
-  // Cumulative operations across the whole session;
-  transactionLog: unknown[];
-  // The most recent ask_user_question call (if any); the dock renders
-  // it as a clickable picker above the input.
+  // Set when the run ended on ask_user_question; the dock renders it as
+  // a clickable picker above the input.
   pendingQuestion?: AgentPendingQuestion | null;
+}
+
+// A run as seen by a polling client.
+export interface RunSnapshot {
+  id: string;
+  sessionId: string;
+  status: RunStatus;
+  // Events after the marker the client sent.
+  events: RunEvent[];
+  result: RunResult | null;
+  error: string | null;
 }

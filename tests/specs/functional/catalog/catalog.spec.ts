@@ -222,6 +222,52 @@ test('should be able to tag a repository', async ({ page }) => {
   await expect(repositoryCard.el.getByText('tag1')).toBeVisible();
 });
 
+test('tag validation errors clear once the input becomes valid', async ({
+  page,
+}) => {
+  await SeedClient.seedCatalog();
+  await page.reload();
+  const catalog = new Catalog(page);
+  const repositoryCard = new RepositoryCard(
+    page,
+    catalog.getFirstRepositoryCard(),
+  );
+  await repositoryCard.addTagBtn.click();
+
+  await test.step('too short input', async () => {
+    await repositoryCard.tagInput.fill('a');
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag must be at least 2 characters',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  });
+
+  await test.step('invalid characters', async () => {
+    await repositoryCard.tagInput.fill('!@#');
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag can contain only letters, numbers, and spaces',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  });
+
+  await test.step('too long input', async () => {
+    await repositoryCard.tagInput.fill('a'.repeat(21));
+    await repositoryCard.tagInput.press('Enter');
+    await expect(repositoryCard.tagErrorMessage).toBeVisible();
+    await expect(repositoryCard.tagErrorMessage).toHaveText(
+      'Tag must be at most 20 characters',
+    );
+    await repositoryCard.tagInput.fill('feature');
+    await expect(repositoryCard.tagErrorMessage).toHaveCount(0);
+  });
+});
+
 test('should be able to filter by tag', async ({ page }) => {
   await SeedClient.seedCatalog();
   await page.reload();

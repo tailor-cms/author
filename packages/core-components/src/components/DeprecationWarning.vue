@@ -27,7 +27,7 @@
           Here is how this element will look after you migrate it to
           {{ updatedComponentMeta?.name }}.
         </div>
-        <VSheet class="preview-container pa-4" rounded="lg" border>
+        <VSheet class="preview-container pa-4" rounded="lg" theme="light" border>
           <component
             :is="updatedComponentMeta.componentName"
             v-if="updatedComponentMeta?.componentName"

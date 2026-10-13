@@ -172,7 +172,6 @@ const editorStore = useEditorStore();
 const activityStore = useActivityStore();
 const contentElementStore = useContentElementStore();
 const messagingStore = useMessagingStore();
-const storageService = useStorageService();
 const userTrackingStore = useUserTracking();
 useContentLinking(editorChannel);
 
@@ -206,7 +205,6 @@ const createActivity = async (payload: any) =>
 
 provide('$editorBus', editorChannel);
 provide('$eventBus', $eventBus);
-provide('$storageService', storageService);
 provide('$rpc', repositoryStore.rpc);
 provide('$createActivity', createActivity);
 if (config.props.aiUiEnabled) {
@@ -490,5 +488,11 @@ onBeforeUnmount(() => {
   max-width: 68.75rem;
   margin: auto;
   padding: 2rem;
+
+  // VCard's overflow: hidden would trap sticky element toolbars; clip keeps
+  // the rounded corners without becoming a scroll container.
+  :deep(.v-card) {
+    overflow: clip;
+  }
 }
 </style>

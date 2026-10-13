@@ -78,12 +78,12 @@ export class Editor {
     return elements;
   }
 
-  async expectAllElementsLinked(linked = true) {
+  async expectAllElementsReadonly(readonly = true) {
     await expect(this.page.locator(ContentElement.selector).first()).toBeVisible();
     const elements = await this.getElements();
     expect(elements.length).toBeGreaterThanOrEqual(1);
     for (const element of elements) {
-      await (linked ? element.expectLinked() : element.expectNotLinked());
+      await (readonly ? element.expectReadonly() : element.expectEditable());
     }
   }
 
@@ -124,5 +124,18 @@ export class Editor {
     await this.containers.last().click({ position: { x: 4, y: 4 } });
     await this.toast.isSaved();
     await this.page.waitForLoadState('networkidle');
+  }
+
+  /**
+   * Clears the selected content element by clicking neutral editor space
+   * outside any element (the container wrapper)
+   */
+  async deselectElement() {
+    await this.page
+      .locator('.content-containers-wrapper')
+      .click({ position: { x: 4, y: 4 } });
+    await expect(
+      this.page.locator(`${ContentElement.selector}.focused`),
+    ).toHaveCount(0);
   }
 }

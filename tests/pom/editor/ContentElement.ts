@@ -8,6 +8,7 @@ export class ContentElement {
   readonly page: Page;
   readonly el: Locator;
   readonly deleteBtn: Locator;
+  readonly dragHandle: Locator;
   readonly diffChip: Locator;
   readonly commentPopoverToggle: Locator;
   readonly commentsMenu: Locator;
@@ -21,6 +22,7 @@ export class ContentElement {
     this.page = page;
     this.el = el;
     this.deleteBtn = el.getByRole('button', { name: 'Delete element' });
+    this.dragHandle = el.locator('.drag-handle');
     this.diffChip = el.locator('.diff-chip');
     this.commentPopoverToggle = el.getByRole('button', {
       name: 'View comments',
@@ -70,6 +72,15 @@ export class ContentElement {
 
   async expectNotLinked() {
     await expect(this.el).not.toHaveClass(/linked/);
+  }
+
+  // Readonly cards render neither the drag handle nor the actions row.
+  async expectReadonly() {
+    await expect(this.dragHandle).toHaveCount(0);
+  }
+
+  async expectEditable() {
+    await expect(this.dragHandle).toBeVisible();
   }
 
   async openLinkedMenu() {

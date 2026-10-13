@@ -38,7 +38,7 @@
         type="email"
         variant="outlined"
       />
-      <VTextField
+      <CommonPasswordField
         v-model="passwordInput"
         :error-messages="errors.password"
         autocomplete="current-password"
@@ -47,8 +47,6 @@
         name="password"
         placeholder="Password"
         prepend-inner-icon="mdi-lock-outline"
-        type="password"
-        variant="outlined"
       />
       <VBtn
         color="primary"

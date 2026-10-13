@@ -35,15 +35,9 @@
 
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
-import type { Repository } from '@tailor-cms/interfaces/repository';
 import { api } from '@/api';
 
 import ActionsMenu from './ActionsMenu.vue';
-
-interface SourceInfo {
-  id: number;
-  repository: Pick<Repository, 'id' | 'name' | 'schema'>;
-}
 
 const { $schemaService } = useNuxtApp() as any;
 const store = useActivityStore();
@@ -52,7 +46,7 @@ const notify = useNotification();
 const props = defineProps<{ activity: Activity }>();
 
 const isEntryPoint = computed(() => store.isLinkEntryPoint(props.activity.id));
-const source = ref<SourceInfo | null>(null);
+const { source, viewSource } = useActivitySource(() => props.activity);
 const sourceLabel = computed(() => {
   const repo = source.value?.repository;
   if (!repo?.name) return '';
@@ -75,35 +69,13 @@ const linkedParentName = computed(
   () => linkedParent.value?.data?.name || 'parent',
 );
 
-const fetchSource = async () => {
-  if (!props.activity.sourceId) return;
-  const { repositoryId, id } = props.activity;
-  try {
-    const data = await api.activity.getSource({
-      params: { repositoryId, activityId: id },
-    });
-    source.value = data as SourceInfo;
-  } catch {
-    source.value = null;
-  }
-};
-
-const goToActivity = (repositoryId: number, activityId: number) => {
-  navigateTo({
-    name: 'repository',
-    params: { id: repositoryId },
-    query: { activityId },
-  });
-};
-
-const viewSource = () => {
-  if (!source.value?.repository) return;
-  goToActivity(source.value.repository.id, source.value.id);
-};
-
 const goToLinkedParent = () => {
   if (!linkedParent.value) return;
-  goToActivity(props.activity.repositoryId, linkedParent.value.id);
+  navigateTo({
+    name: 'repository',
+    params: { id: props.activity.repositoryId },
+    query: { activityId: linkedParent.value.id },
+  });
 };
 
 const handleUnlink = async () => {
@@ -118,8 +90,6 @@ const handleUnlink = async () => {
     notify('Failed to unlink activity', { color: 'error' });
   }
 };
-
-watch(() => props.activity.id, fetchSource, { immediate: true });
 </script>
 
 <style scoped>

@@ -1,5 +1,10 @@
 <template>
-  <VDialog :width="width" v-bind="$attrs" @update:model-value="onModelUpdate">
+  <VDialog
+    :theme="resolvedTheme"
+    :width="width"
+    v-bind="$attrs"
+    @update:model-value="onModelUpdate"
+  >
     <template v-if="$slots.activator" #activator="activatorProps">
       <slot v-bind="activatorProps" name="activator"></slot>
     </template>
@@ -52,6 +57,7 @@
 <script lang="ts" setup>
 import { computed, getCurrentInstance } from 'vue';
 import { createReusableTemplate } from '@vueuse/core';
+import { useTheme } from 'vuetify';
 
 const [DefineCard, ReuseCard] = createReusableTemplate();
 
@@ -62,16 +68,23 @@ export interface Props {
   dataTestid?: string;
   color?: string;
   closeable?: boolean;
+  // A dialog is app chrome: it follows the app theme even when opened from
+  // a region with its own theme (e.g. the always-light page card).
+  theme?: string;
 }
 
-withDefaults(defineProps<Props>(), {
+const props = withDefaults(defineProps<Props>(), {
   title: '',
   headerIcon: 'mdi-alert',
   color: 'primary',
   width: 500,
   dataTestid: 'tailorDialog',
   closeable: false,
+  theme: undefined,
 });
+
+const globalTheme = useTheme();
+const resolvedTheme = computed(() => props.theme ?? globalTheme.global.name.value);
 
 const emit = defineEmits(['open', 'close', 'submit']);
 

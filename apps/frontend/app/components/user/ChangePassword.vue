@@ -16,32 +16,29 @@
       />
     </template>
     <template #body>
-      <VTextField
+      <CommonPasswordField
         v-model="currentPasswordInput"
         :error-messages="errors.currentPassword"
+        autocomplete="current-password"
         class="required mb-4"
         label="Current password"
         placeholder="Enter current password..."
-        type="password"
-        variant="outlined"
       />
-      <VTextField
+      <CommonPasswordField
         v-model="newPasswordInput"
         :error-messages="errors.newPassword"
+        autocomplete="new-password"
         class="required mb-4"
         label="New password"
         placeholder="Enter new password..."
-        type="password"
-        variant="outlined"
       />
-      <VTextField
+      <CommonPasswordField
         v-model="passwordConfirmationInput"
         :error-messages="errors.passwordConfirmation"
+        autocomplete="new-password"
         class="required mb-4"
         label="Confirm new password"
         placeholder="Confirm new password..."
-        type="password"
-        variant="outlined"
       />
     </template>
     <template #actions>

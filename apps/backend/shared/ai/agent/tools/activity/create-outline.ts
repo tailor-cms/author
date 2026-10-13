@@ -232,7 +232,7 @@ async function execute(input: Input, ctx: ToolContext) {
       create_outline again with ONLY the failed nodes.
     `;
   }
-  recordOperation(TOOL, input, output, ctx);
+  recordOperation(TOOL, ctx);
   return output;
 }
 

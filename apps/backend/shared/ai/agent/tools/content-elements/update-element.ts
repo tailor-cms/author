@@ -114,7 +114,7 @@ async function execute(input: Input, ctx: ToolContext) {
       `activity:${element.activityId}`,
     ],
   };
-  recordOperation(TOOL, input, result, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: TOOL,
     input: {
       id: element.id,

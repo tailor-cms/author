@@ -1,10 +1,12 @@
 <template>
   <div class="element-actions">
     <VExpandXTransition>
-      <div v-if="isRegistered && element.isLinkedCopy" class="pinned">
+      <div
+        v-if="isRegistered && element.isLinkedCopy && isEntryPoint"
+        class="pinned"
+      >
         <ElementLinkedIndicator
           v-model:open="linkedMenu"
-          :is-entry-point="isEntryPoint"
           :is-loading="isLoadingSourceInfo"
           :source-info="linkedSourceInfo"
           @source:fetch="emit('source:fetch')"
@@ -173,7 +175,7 @@ const showReset = computed(
     --v-btn-height: 1rem;
   }
 
-  :deep(.v-btn--size-x-small .v-icon) {
+  :deep(.v-btn--icon.v-btn--size-x-small .v-icon) {
     font-size: 1.125rem;
   }
 }

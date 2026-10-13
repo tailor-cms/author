@@ -1,8 +1,5 @@
 <template>
   <div class="element-sidebar px-5 py-2">
-    <div class="mb-4 text-body-medium font-weight-bold">
-      Additional settings
-    </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
     <ElementMeta :element="element" v-bind="metadata" />
   </div>
@@ -20,7 +17,6 @@ import { useCurrentRepository } from '@/stores/current-repository';
 const eventBus = inject('$eventBus') as any;
 const authStore = useAuthStore();
 const repositoryStore = useCurrentRepository();
-const storageService = useStorageService();
 
 interface Props {
   element: ContentElement;
@@ -35,7 +31,6 @@ const elementBus = eventBus.channel(`element:${getElementId(props.element)}`);
 const editorChannel = eventBus.channel('editor');
 provide('$elementBus', elementBus);
 provide('$editorBus', editorChannel);
-provide('$storageService', storageService);
 provide('$rpc', (procedure: string, payload?: any) =>
   repositoryStore.rpc(props.element.type, procedure, payload),
 );

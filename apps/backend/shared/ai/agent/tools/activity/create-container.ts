@@ -173,7 +173,7 @@ async function createFlatContainer(
     elements: created,
     failed,
   });
-  recordOperation(TOOL, input, result, ctx);
+  recordOperation(TOOL, ctx);
   return result;
 }
 
@@ -235,7 +235,7 @@ async function createNestedContainer(
   // Inverse: delete the subcontainer (cascades elements)
   // TODO: consider force-delete / suspend revision generation
   // during AI runs so cleanup doesn't create N revision entries
-  recordOperation(TOOL, input, result, ctx, {
+  recordOperation(TOOL, ctx, {
     tool: 'delete_activity',
     input: { id: subcontainer.id },
   });

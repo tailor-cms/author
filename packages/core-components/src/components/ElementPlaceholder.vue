@@ -6,7 +6,7 @@
     <VAvatar :color="color" size="x-large" variant="tonal">
       <VIcon :icon="icon" :size="isFocused ? 34 : 28" />
     </VAvatar>
-    <div class="mt-4 mb-2 text-title-large">{{ name }}</div>
+    <div class="mt-4 mb-2 font-weight-medium text-title-large">{{ name }}</div>
     <div v-if="!isReadonly" class="text-body-medium">
       <template v-if="!isFocused">{{ placeholder }}</template>
       <template v-else>
@@ -32,7 +32,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   color: undefined,
   placeholder: 'Select to edit',
-  activePlaceholder: 'Use toolbar to edit',
+  activePlaceholder: 'Use the toolbar above to edit',
   activeIcon: null,
   isFocused: false,
   isReadonly: false,

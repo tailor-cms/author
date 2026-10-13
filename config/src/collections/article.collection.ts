@@ -125,7 +125,7 @@ class Category {
 
 const Articles = new TailorEntity(Article, {
   type: 'ARTICLE',
-  label: 'Articles',
+  label: 'Article',
   icon: 'mdi-newspaper-variant-outline',
   color: OUTLINE_COLOR.ACCENT_2,
   embedElementConfig,
@@ -133,21 +133,21 @@ const Articles = new TailorEntity(Article, {
 
 const Authors = new TailorEntity(Author, {
   type: 'AUTHOR',
-  label: 'Authors',
+  label: 'Author',
   icon: 'mdi-account-edit-outline',
   color: OUTLINE_COLOR.ACCENT_5,
 });
 
 const Tags = new TailorEntity(Tag, {
   type: 'TAG',
-  label: 'Tags',
+  label: 'Tag',
   icon: 'mdi-tag-outline',
   color: OUTLINE_COLOR.ACCENT_3,
 });
 
 const Categories = new TailorEntity(Category, {
   type: 'CATEGORY',
-  label: 'Categories',
+  label: 'Category',
   icon: 'mdi-shape-outline',
   color: OUTLINE_COLOR.ACCENT_1,
 });

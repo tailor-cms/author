@@ -226,17 +226,17 @@ test('unlinking from editor toolbar enables editing', async ({ page }) => {
   // Verify disabled state
   await toolbar.expectLinkedState();
   await expect(editor.addElementDialog.addBtn).not.toBeVisible();
-  await editor.expectAllElementsLinked();
+  await editor.expectAllElementsReadonly();
   // Unlink
   await toolbar.unlink();
   // Toolbar reverts, elements unlocked, add button visible
   await toolbar.expectDefaultState();
-  await editor.expectAllElementsLinked(false);
+  await editor.expectAllElementsReadonly(false);
   await expect(editor.addElementDialog.addBtn).toBeVisible();
   // Verify persistence
   await page.reload({ waitUntil: 'networkidle' });
   await toolbar.expectDefaultState();
-  await editor.expectAllElementsLinked(false);
+  await editor.expectAllElementsReadonly(false);
   // Linked indicator should be gone on structure page
   await toStructurePage(page, linkedActivity);
   const outline = new ActivityOutline(page);

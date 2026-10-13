@@ -116,7 +116,7 @@ class SessionStore {
 
   /**
    * Reuse the active session if present; otherwise create a fresh one.
-   * The natural fit for `POST /agent/run` with no sessionId in the body -
+   * The natural fit for `POST /agent/runs` with no sessionId in the body -
    * the user's "current conversation for this repo" is resolved in one call.
    */
   async getOrCreate(

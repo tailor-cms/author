@@ -4,6 +4,7 @@ import { detectLinkProvider } from '@tailor-cms/utils';
 import {
   ASSET_TYPE_COLOR,
   ASSET_TYPE_ICON,
+  ASSET_TYPE_DROPZONE_TITLE,
   ASSET_TYPE_LABEL,
   LINK_CONTENT_TYPE_ICON,
   LINK_CONTENT_TYPE_LABEL,
@@ -57,6 +58,12 @@ export function getAssetColor(
     ASSET_TYPE_COLOR[input.type!] ??
     DEFAULT_COLOR
   );
+}
+
+export function getAssetDropzoneTitle(type?: string | null): string {
+  const fallback = ASSET_TYPE_DROPZONE_TITLE[AssetType.Other]!;
+  if (!type) return fallback;
+  return ASSET_TYPE_DROPZONE_TITLE[type] ?? fallback;
 }
 
 export function getAssetLabel(

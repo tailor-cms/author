@@ -13,7 +13,7 @@
         selected: activeUsers.length,
         focused: isFocused,
         diff: showDiff,
-        linked: element.isLinkedCopy && !showDiff,
+        linked: element.isLinkedCopy && isElementEntryPoint,
       },
     ]"
     class="content-element"
@@ -34,7 +34,6 @@
         :class="{ expanded: isExpanded }"
         class="card-header d-flex align-center"
         color="surface-container-low"
-        @click="toggleExpanded"
       >
         <span v-if="!isReadonly && isDraggable" class="drag-handle" @click.stop>
           <span class="mdi mdi-drag-vertical"></span>
@@ -75,7 +74,11 @@
           class="active-users"
         />
         <DiffChip :change-type="element.diffChange" />
-        <div v-if="!props.isReadonly" @click.stop>
+        <ElementLinkedChip
+          v-if="isReadonly && element.isLinkedCopy && isElementEntryPoint"
+          class="mr-1"
+        />
+        <div v-else-if="!isReadonly" @click.stop>
           <ElementActions
             v-bind="actionBindings"
             @delete="emit('delete')"
@@ -99,6 +102,18 @@
         />
       </VSheet>
     </div>
+    <!-- Sticks to the top of the scroller so the tools stay reachable
+      inside a long element. v-show on expand: toolbars bind to the live
+      editor once per focus, so a collapse must not remount them. -->
+    <VSheet
+      v-if="showToolbar"
+      v-show="isExpanded"
+      border="b"
+      color="surface-raised"
+      class="card-toolbar d-flex align-center justify-center pa-2"
+    >
+      <component :is="toolbarName" :element="element" @save="onSave" />
+    </VSheet>
     <DeprecationWarning
       v-if="!isReadonly && isDeprecated(element.type)"
       :element="element"
@@ -176,6 +191,7 @@ import { useElementHover, useFocusWithin } from '@vueuse/core';
 import {
   getElementId,
   getQuestionPromptPreview,
+  getToolbarName,
   htmlToText,
   titleCase,
 } from '@tailor-cms/utils';
@@ -184,6 +200,7 @@ import ActiveUsersGroup from '../ActiveUsersGroup.vue';
 import DiffChip from './DiffChip.vue';
 import DeprecationWarning from '../DeprecationWarning.vue';
 import ElementActions from './ElementActions/index.vue';
+import ElementLinkedChip from './ElementActions/ElementLinkedChip.vue';
 import ElementPlaceholder from '../ElementPlaceholder.vue';
 import { isDeprecated } from '../../utils/deprecated-elements';
 import QuestionElement from '../QuestionElement/index.vue';
@@ -297,7 +314,12 @@ const preview = computed(() => {
 
 const questionPreview = computed(() => {
   const { embeds, question } = props.element.data as any;
-  if (!Array.isArray(question) || !embeds) return '';
+  if (!Array.isArray(question)) return '';
+  // Legacy questions store the prompt elements inline instead of as ids.
+  if (ceRegistry.isLegacyQuestion(props.element.type)) {
+    return getQuestionPromptPreview(question);
+  }
+  if (!embeds) return '';
   const prompt = question.map((id: string) => embeds[id]).filter(Boolean);
   return getQuestionPromptPreview(prompt);
 });
@@ -305,6 +327,12 @@ const questionPreview = computed(() => {
 const isElementEmpty = computed(
   () => !!manifest.value?.isEmpty?.(props.element.data),
 );
+
+const toolbarName = computed(() => getToolbarName(props.element.type));
+const showToolbar = computed(() => {
+  if (props.isReadonly || showDiff.value || !isFocused.value) return false;
+  return !!manifest.value?.hasTopToolbar;
+});
 
 const editBindings = computed(() => ({
   ...attrs,
@@ -547,14 +575,11 @@ $accent-selected: #ff4081;
     }
   }
 
-  &.linked::before {
-    content: '';
-    display: block;
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: rgba(var(--v-theme-secondary-container), 0.2);
-    pointer-events: none;
+  &.linked .card-header {
+    background-image: linear-gradient(
+      rgba(var(--v-theme-secondary-container), 0.45),
+      rgba(var(--v-theme-secondary-container), 0.45)
+    );
   }
 }
 
@@ -589,13 +614,15 @@ $accent-selected: #ff4081;
 .card-header {
   min-height: 2.75rem;
   padding: 0.375rem 0.5rem 0.375rem 0.25rem;
-  cursor: pointer;
   border-radius: 7px 7px 0 0;
 
   &.expanded {
     border-bottom: 1px solid rgba(var(--v-theme-outline), 0.12);
   }
 
+  &:not(.expanded) {
+    border-radius: 7px;
+  }
   .drag-handle {
     flex-shrink: 0;
     width: 1.5rem;
@@ -619,7 +646,23 @@ $accent-selected: #ff4081;
 }
 
 .card-body {
-  padding: 0.625rem 1.25rem 1rem;
+  padding: 1rem 1.25rem;
+}
+
+.card-toolbar {
+  z-index: 2;
+  text-align: left;
+  position: sticky;
+  top: 0;
+
+  :deep(.v-btn-group--density-compact.v-btn-group) {
+    height: unset;
+  }
+}
+
+// The field frame supplies the padding; bleed the strip to its edge
+.field > .card-toolbar {
+  margin: -1rem -1rem 1rem;
 }
 
 .active-users {

@@ -29,27 +29,25 @@
     </div>
     <!-- eslint-disable-next-line vuejs-accessibility/no-static-element-interactions -->
     <form v-else novalidate @keydown.enter="submit" @submit.prevent="submit">
-      <VTextField
+      <CommonPasswordField
         v-model="passwordInput"
         :error-messages="errors.password"
+        autocomplete="new-password"
         class="required mb-3"
         label="Password"
         name="password"
         placeholder="Password"
         prepend-inner-icon="mdi-lock"
-        type="password"
-        variant="outlined"
       />
-      <VTextField
+      <CommonPasswordField
         v-model="passwordConfirmationInput"
         :error-messages="errors.passwordConfirmation"
+        autocomplete="new-password"
         class="required mb-4"
         label="Re-enter password"
         name="passwordConfirmation"
         placeholder="Password confirmation"
         prepend-inner-icon="mdi-lock-outline"
-        type="password"
-        variant="outlined"
       />
       <VBtn
         color="primary"

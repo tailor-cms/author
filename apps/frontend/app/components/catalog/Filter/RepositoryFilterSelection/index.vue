@@ -1,7 +1,7 @@
 <template>
   <VRow
     v-if="repositoryFilter.length"
-    class="selected-tags align-center mt-0 mb-6 ml-0 ga-2"
+    class="selected-tags align-center mt-0 mb-4 ml-0 ga-2"
   >
     <SelectedFilter
       v-for="filter in orderedFilters"

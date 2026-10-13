@@ -1,16 +1,16 @@
 <template>
   <VAppBar
-    :class="{ 'diff-mode': isHistoryMode || showPublishDiff }"
+    :class="{
+      'diff-mode': isHistoryMode || showPublishDiff,
+      'linked-mode': isLinked,
+    }"
     color="surface-canvas"
     border="b"
     class="toolbar-wrapper"
     order="1"
   >
-    <HistoryToolbar v-if="isHistoryMode && !element" />
-    <div
-      v-else-if="activity && !element"
-      class="activity-toolbar w-100 px-3"
-    >
+    <HistoryToolbar v-if="isHistoryMode" />
+    <div v-else-if="activity" class="activity-toolbar w-100 px-3">
       <ActivityActions />
       <h1
         v-if="mdAndUp"
@@ -26,12 +26,7 @@
           icon="mdi-link-box"
           size="small"
         />
-        <span
-          :class="[
-            'activity-name font-weight-medium',
-            activity?.isLinkedCopy ? 'text-secondary' : '',
-          ]"
-        >
+        <span class="activity-name font-weight-medium">
           {{ getActivityName(activity) }}
         </span>
         <template v-if="showPublishDiff">
@@ -48,21 +43,21 @@
         </template>
       </h1>
       <div class="toolbar-trailing d-flex align-center ga-2">
-        <template v-if="activity?.isLinkedCopy">
+        <template v-if="isLinked">
           <VBtn
             :disabled="!source"
             prepend-icon="mdi-open-in-new"
             size="small"
             text="View source"
             variant="tonal"
-            @click="source && viewSource(source)"
+            @click="viewSource"
           />
           <VBtn
             prepend-icon="mdi-link-variant-off"
             size="small"
             text="Unlink"
             variant="tonal"
-            @click="activity && unlinkActivity(activity.id)"
+            @click="unlinkActivity"
           />
         </template>
         <ActiveUsersGroup
@@ -73,86 +68,48 @@
         <ActivityPagination />
       </div>
     </div>
-    <ElementToolbarContainer
-      v-if="element"
-      :element="element"
-      class="element-container w-100"
-    />
   </VAppBar>
 </template>
 
 <script lang="ts" setup>
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
-import { api } from '@/api';
 import ActivityActions from './ActivityActions.vue';
 import ActivityPagination from './ActivityPagination.vue';
-import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import HistoryToolbar from './HistoryToolbar.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 import { useDisplay } from 'vuetify';
-
-interface Props {
-  element?: ContentElement | null;
-}
-
-interface SourceInfo {
-  id: number;
-  repository: { id: number; name: string };
-}
-
-withDefaults(defineProps<Props>(), {
-  element: null,
-});
 
 const { $schemaService } = useNuxtApp() as any;
 
 const showPublishDiff = computed(() => editorStore.showDiff);
 const isHistoryMode = computed(() => editorStore.isHistoryMode);
 
-const notify = useNotification();
 const { getActivityName } = useActivityName();
+const notify = useNotification();
 const editorStore = useEditorStore();
 const userTrackingStore = useUserTracking();
 const { mdAndUp } = useDisplay();
 
 const activity = computed(() => editorStore.selectedActivity);
+const isLinked = computed(() => !!activity.value?.isLinkedCopy);
 const config = computed(
   () => activity.value && $schemaService.getLevel(activity.value?.type),
 );
 
-// Source info for linked activities
-const source = ref<SourceInfo | null>(null);
+const { source, viewSource } = useActivitySource(activity);
 
-const viewSource = (sourceInfo: SourceInfo) => {
-  navigateTo({
-    name: 'repository',
-    params: { id: sourceInfo.repository.id },
-    query: { activityId: sourceInfo.id },
-  });
-};
-
-const unlinkActivity = async (activityId: number) => {
+const unlinkActivity = async () => {
+  if (!activity.value) return;
   try {
-    await editorStore.unlinkActivity(activityId);
+    await editorStore.unlinkActivity(activity.value.id);
     notify('Activity unlinked');
   } catch {
     notify('Failed to unlink activity', { color: 'error' });
   }
 };
-
-watch(activity, async (val) => {
-  source.value = null;
-  if (!val?.isLinkedCopy) return;
-  source.value = await api.activity
-    .getSource({
-      params: { repositoryId: val.repositoryId, activityId: val.id },
-    })
-    .catch(() => null);
-}, { immediate: true });
 
 const usersWithActivity = computed(() => {
   return userTrackingStore.getActiveUsers(
@@ -164,15 +121,27 @@ const usersWithActivity = computed(() => {
 
 <style lang="scss" scoped>
 .toolbar-wrapper {
+  // Ocean marks a linked page; a neutral wash marks an inspection
+  // (diff/history) state. Preview wins when a linked page is inspected.
+  &.linked-mode {
+    --mode-tint: rgba(var(--v-theme-secondary-container), 0.5);
+    --mode-border: rgb(var(--v-theme-secondary-container));
+  }
+
   &.diff-mode {
-    border-bottom-color: rgb(var(--v-theme-secondary-container));
+    --mode-tint: rgb(var(--v-theme-surface-container-highest));
+    --mode-border: rgb(var(--v-theme-outline-variant));
+  }
+
+  &.linked-mode,
+  &.diff-mode {
+    border-bottom-color: var(--mode-border);
 
     &::before {
       content: '';
       position: absolute;
       inset: 0;
-      background-color: rgb(var(--v-theme-secondary-container));
-      opacity: 0.5;
+      background-color: var(--mode-tint);
       pointer-events: none;
     }
   }
@@ -182,23 +151,6 @@ const usersWithActivity = computed(() => {
     min-height: 4rem;
     padding: 0;
     overflow: visible;
-  }
-
-  :deep(.v-input) {
-    position: relative;
-
-    .v-input__details {
-      position: absolute;
-      padding: 0;
-
-      .v-messages__message {
-        margin-top: 0.5rem;
-        border-radius: 4px;
-        padding: 0.5rem 0.75rem;
-        background-color: rgb(var(--v-theme-inverse-surface));
-        color: rgb(var(--v-theme-inverse-on-surface));
-      }
-    }
   }
 }
 
