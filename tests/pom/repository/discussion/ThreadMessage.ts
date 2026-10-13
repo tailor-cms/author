@@ -2,7 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { getMenuItem, pickEmoji } from '../../common/utils';
-import { MessageEditor } from './MessageEditor';
+import { MessageEditor } from './MessageComposer';
 import { ThreadReplies } from './ThreadReplies';
 
 const CUSTOM_EMOJI = '.emoji-glyph--custom';
@@ -108,7 +108,6 @@ export class MessageToolbar {
 export class ThreadMessage {
   readonly page: Page;
   readonly el: Locator;
-  readonly panel: Locator;
   readonly header: Locator;
   readonly toolbar: MessageToolbar;
   readonly body: MessageBody;
@@ -119,6 +118,8 @@ export class ThreadMessage {
   // Cards an integration posts along with the text
   readonly attachments: Locator;
   readonly assetTiles: Locator;
+  // The editor for modifying the message's content
+  readonly editor: MessageEditor;
 
   constructor(page: Page, el: Locator, panel: Locator) {
     this.header = el.locator('.message-header');
@@ -130,9 +131,9 @@ export class ThreadMessage {
     this.reactions = new MessageReactions(page, el);
     this.replyFooter = el.locator('.reply-footer');
     this.toolbar = new MessageToolbar(page, el);
+    this.editor = new MessageEditor(page, panel);
     this.page = page;
     this.el = el;
-    this.panel = panel;
   }
 
   getLinkLocator(name: string | RegExp) {
@@ -156,7 +157,7 @@ export class ThreadMessage {
 
   async edit(text: string) {
     await this.toolbar.runAction('Edit message');
-    await new MessageEditor(this.page, this.panel).save(text);
+    await this.editor.save(text);
   }
 
   async remove() {

@@ -1,6 +1,6 @@
 import type { Locator, Page } from '@playwright/test';
 
-import { MessageComposer } from './MessageComposer';
+import { MessageComposer, type SuggestionOptions } from './MessageComposer';
 
 export class MessageSearch {
   readonly page: Page;
@@ -27,9 +27,8 @@ export class MessageSearch {
     return this.composer.write(text);
   }
 
-  // Types input and picks a suggestion from the results.
-  pick(trigger: string, query = '', label?: string) {
-    return this.composer.pick(trigger, query, label);
+  selectSuggestion(trigger: string, options: SuggestionOptions = {}) {
+    return this.composer.selectSuggestion(trigger, options);
   }
 
   hit(text: string) {

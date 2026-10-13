@@ -2,8 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { getMenuItem } from '../../common/utils';
-import { MessageComposer } from './MessageComposer';
-import { MessageEditor } from './MessageEditor';
+import { MessageComposer, MessageEditor } from './MessageComposer';
 import { SharedFilesDialog } from './SharedFilesDialog';
 import { SubscriptionsDialog } from './SubscriptionsDialog';
 import { ThreadMessage } from './ThreadMessage';
