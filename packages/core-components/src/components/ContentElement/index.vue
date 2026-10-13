@@ -103,9 +103,11 @@
       </VSheet>
     </div>
     <!-- Sticks to the top of the scroller so the tools stay reachable
-      inside a long element -->
+      inside a long element. v-show on expand: toolbars bind to the live
+      editor once per focus, so a collapse must not remount them. -->
     <VSheet
       v-if="showToolbar"
+      v-show="isExpanded"
       border="b"
       color="surface-raised"
       class="card-toolbar d-flex align-center justify-center pa-2"
@@ -329,7 +331,7 @@ const isElementEmpty = computed(
 const toolbarName = computed(() => getToolbarName(props.element.type));
 const showToolbar = computed(() => {
   if (props.isReadonly || showDiff.value || !isFocused.value) return false;
-  return isExpanded.value && !!manifest.value?.hasTopToolbar;
+  return !!manifest.value?.hasTopToolbar;
 });
 
 const editBindings = computed(() => ({
