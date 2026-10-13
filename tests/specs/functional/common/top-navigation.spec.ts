@@ -4,7 +4,7 @@ import { ActivityOutline } from '../../../pom/repository/Outline.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import { NavigationRail } from '../../../pom/repository/NavigationRail.ts';
 import SeedClient from '../../../api/SeedClient.ts';
-import { toSeededRepository } from '../../../helpers/seed.ts';
+import { outlineSeed, toSeededRepository } from '../../../helpers/seed.ts';
 
 test.beforeEach(async ({ page }) => {
   await SeedClient.resetDatabase();
@@ -30,13 +30,14 @@ test('should be able to navigate to the catalog page', async ({ page }) => {
 test('should be able to navigate to the current repository', async ({
   page,
 }) => {
+  const { title, elementText } = outlineSeed.primaryPage;
   await toSeededRepository(page);
   const outline = new ActivityOutline(page);
   await outline.toggleExpand();
-  const outlineItem = await outline.getOutlineItemByName('History of Pizza');
+  const outlineItem = await outline.getOutlineItemByName(title);
   await outlineItem.select();
   await outlineItem.openBtn.click();
-  await expect(page.getByText('The Origins of Pizza')).toBeVisible();
+  await expect(page.getByText(elementText)).toBeVisible();
   await new NavigationRail(page).goToStructure();
   await expect(outlineItem.el).toBeVisible();
 });

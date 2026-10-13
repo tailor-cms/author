@@ -149,6 +149,8 @@ export const outlineSeed = {
   primaryPage: {
     title: 'History of Pizza',
     textContent: 'The story of pizza begins in antiquity',
+    // The element seeded comments are placed on
+    elementText: 'The Origins of Pizza',
   },
   secondaryPage: {
     title: 'Different Pizza Styles Around the World',

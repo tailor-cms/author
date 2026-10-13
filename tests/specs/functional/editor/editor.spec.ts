@@ -87,7 +87,7 @@ test('can copy specific content element', async ({ page }) => {
   const editor = new Editor(page);
   await editor.sidebar.toggleOutlineItems();
   await editor.toSecondaryPage();
-  const elContent = 'The Origins of Pizza';
+  const elContent = outlineSeed.primaryPage.elementText;
   await editor.copyContentElements(outlineSeed.primaryPage.title, elContent);
   // Make sure changes are persisted
   await page.waitForTimeout(1000);
@@ -111,7 +111,7 @@ test('can link specific content element', async ({ page }) => {
   const pageTitle = outlineSeed.primaryPage.title;
   await editor.focusElement('The Art and Science of Pizza Making');
   const relationship = new Relationship(page, 'Related content');
-  await relationship.add(pageTitle, 'The Origins of Pizza');
+  await relationship.add(pageTitle, outlineSeed.primaryPage.elementText);
   // Make sure changes are persisted
   await page.reload();
   await expect(relationship.overview).toContainText(`${pageTitle} (1)`);
@@ -131,7 +131,7 @@ test('can link all content element from page', async ({ page }) => {
 test('can remove content element links', async ({ page }) => {
   const editor = new Editor(page);
   const pageTitle = outlineSeed.primaryPage.title;
-  await editor.focusElement('The Origins of Pizza');
+  await editor.focusElement(outlineSeed.primaryPage.elementText);
   const relationship = new Relationship(page, 'Related content');
   await expect(relationship.overview).toContainText(`${pageTitle} (1)`);
   await relationship.clear();
