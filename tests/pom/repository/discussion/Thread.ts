@@ -8,6 +8,21 @@ import { SharedFilesDialog } from './SharedFilesDialog';
 import { SubscriptionsDialog } from './SubscriptionsDialog';
 import { ThreadMessage } from './ThreadMessage';
 
+export class NewThread {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly titleInput: Locator;
+  readonly composer: MessageComposer;
+
+  constructor(page: Page) {
+    const el = page.locator('.start-discussion');
+    this.titleInput = el.getByPlaceholder('Subject');
+    this.composer = new MessageComposer(page, el);
+    this.page = page;
+    this.el = el;
+  }
+}
+
 export class Thread {
   readonly page: Page;
   readonly el: Locator;

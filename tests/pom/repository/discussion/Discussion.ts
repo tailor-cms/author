@@ -2,8 +2,7 @@ import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
 import { MessageSearch } from './MessageSearch';
-import { StartDiscussion } from './StartDiscussion';
-import { Thread } from './Thread';
+import { NewThread, Thread } from './Thread';
 import { ThreadRail } from './ThreadRail';
 
 export class Discussion {
@@ -16,15 +15,15 @@ export class Discussion {
   readonly el: Locator;
   readonly rail: ThreadRail;
   readonly thread: Thread;
+  readonly newThread: NewThread;
   readonly search: MessageSearch;
-  readonly startPanel: StartDiscussion;
 
   constructor(page: Page) {
     this.el = page.locator('.discussion-channel');
     this.rail = new ThreadRail(page);
     this.thread = new Thread(page);
+    this.newThread = new NewThread(page);
     this.search = new MessageSearch(page);
-    this.startPanel = new StartDiscussion(page);
     this.page = page;
   }
 
@@ -72,13 +71,13 @@ export class Discussion {
    * Opens a new thread and names it, ready for its first message.
    */
   async openNewThread(title: string) {
-    const { titleInput } = this.startPanel;
+    const { titleInput } = this.newThread;
     await expect(async () => {
       await this.rail.newBtn.click();
       await titleInput.fill(title);
       await expect(titleInput).toHaveValue(title);
     }).toPass({ timeout: 15000 });
-    return this.startPanel.composer;
+    return this.newThread.composer;
   }
 
   async startThread(title: string, content: string) {
