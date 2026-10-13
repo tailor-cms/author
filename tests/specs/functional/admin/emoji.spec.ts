@@ -39,10 +39,10 @@ test.describe('custom emoji', () => {
     const { thread } = discussion;
     await thread.composer.post('Shipping this today :teamwork: nice one');
     const message = thread.getMessage('Shipping this today');
-    await expect(message.customEmoji).toBeVisible();
+    await expect(message.body.customEmoji).toBeVisible();
     await thread.composer.post('Also :nosuchemoji: here');
     await thread.expectMessage(':nosuchemoji:');
     await message.react('teamwork');
-    await expect(message.customEmojiReactions).toBeVisible();
+    await expect(message.reactions.customEmoji).toBeVisible();
   });
 });

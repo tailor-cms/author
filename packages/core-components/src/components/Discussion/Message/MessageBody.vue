@@ -34,7 +34,10 @@
       <span v-else>{{ segment.text }}</span>
     </template>
     <!-- Inside the body, so it wraps with the last word -->
-    <span v-if="isEdited" class="ms-1 text-body-small text-medium-emphasis">
+    <span
+      v-if="isEdited"
+      class="message-edited ms-1 text-body-small text-medium-emphasis"
+    >
       (edited)
     </span>
   </div>
