@@ -1,7 +1,8 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { getMenuItem, pickEmoji } from '../../common/utils';
+import { getMenuItem } from '../../common/utils';
+import { EmojiPicker } from './EmojiPicker';
 import { MessageEditor } from './MessageComposer';
 import { ThreadReplies } from './ThreadReplies';
 
@@ -64,7 +65,7 @@ export class MessageReactions {
 
   async add(query: string) {
     await this.addBtn.click();
-    await pickEmoji(this.page, query);
+    await new EmojiPicker(this.page).pick(query);
   }
 }
 
@@ -143,7 +144,7 @@ export class ThreadMessage {
   async react(query: string) {
     await this.toolbar.reveal();
     await this.toolbar.reactBtn.click();
-    await pickEmoji(this.page, query);
+    await new EmojiPicker(this.page).pick(query);
     return this.reactions.pills;
   }
 

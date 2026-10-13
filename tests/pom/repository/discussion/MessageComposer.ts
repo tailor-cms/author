@@ -104,6 +104,7 @@ export class MessageComposer {
     const options = await this.openSuggestions(trigger, query);
     const option = label ? options.filter({ hasText: label }) : options;
     await option.first().click();
+    await expect(this.suggestionMenu).not.toBeVisible();
   }
 
   // Enter picks the highlighted entry, rather than sending the message.
