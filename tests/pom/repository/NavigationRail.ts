@@ -15,11 +15,13 @@ export class NavigationRail {
   readonly page: Page;
   readonly el: Locator;
   readonly actionsMenuBtn: Locator;
+  readonly threadsBadge: Locator;
 
   constructor(page: Page) {
     this.page = page;
     this.el = page.locator('.navigation-rail');
     this.actionsMenuBtn = this.el.locator('.rail-menu-btn');
+    this.threadsBadge = this.getTab('Threads').locator('.v-badge__badge');
   }
 
   getTab(
@@ -28,12 +30,13 @@ export class NavigationRail {
       | 'Items'
       | 'Editor'
       | 'Progress'
+      | 'Threads'
       | 'History'
       | 'Assets'
       | 'Access'
       | 'Settings',
   ) {
-    return this.el.getByRole('tab', { name, exact: true });
+    return this.el.getByRole('tab', { name: new RegExp(`(^| )${name}$`) });
   }
 
   goToStructure() {
@@ -46,6 +49,10 @@ export class NavigationRail {
 
   goToProgress() {
     return this.getTab('Progress').click();
+  }
+
+  goToThreads() {
+    return this.getTab('Threads').click();
   }
 
   goToHistory() {
