@@ -9,6 +9,7 @@ import {
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
 import { Discussion } from '../../pom/repository/discussion/Discussion.ts';
 import { NavigationRail } from '../../pom/repository/NavigationRail.ts';
+import { Workflow } from '../../pom/workflow/Workflow.ts';
 import SeedClient from '../../api/SeedClient';
 import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
@@ -55,7 +56,7 @@ test('a11y check of the progress page', async ({
   const outline = new ActivityOutline(page);
   await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await new NavigationRail(page).goToProgress();
-  await expect(page.getByText('Module 1')).toBeVisible();
+  await expect(new Workflow(page).board.item('Module 1')).toBeVisible();
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
