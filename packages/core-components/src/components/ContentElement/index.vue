@@ -302,7 +302,12 @@ const preview = computed(() => {
 
 const questionPreview = computed(() => {
   const { embeds, question } = props.element.data as any;
-  if (!Array.isArray(question) || !embeds) return '';
+  if (!Array.isArray(question)) return '';
+  // Legacy questions store the prompt elements inline instead of as ids.
+  if (ceRegistry.isLegacyQuestion(props.element.type)) {
+    return getQuestionPromptPreview(question);
+  }
+  if (!embeds) return '';
   const prompt = question.map((id: string) => embeds[id]).filter(Boolean);
   return getQuestionPromptPreview(prompt);
 });
