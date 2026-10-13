@@ -20,6 +20,17 @@ const nestedIdWithType =
     (r) =>
       r[key]?.id ? `#${r[key].id} ${r[key].type || ''}`.trim() : '';
 
+// e.g. "2 errors", "no errors - 2 interactions"
+const testOutcome: SummaryFn = (r) => {
+  if (!r.errors) return '';
+  const errors = r.errors.length
+    ? `${r.errors.length} error${r.errors.length > 1 ? 's' : ''}`
+    : 'no errors';
+  const count = r.interactions?.length;
+  if (!count) return errors;
+  return `${errors} - ${count} interaction${count > 1 ? 's' : ''}`;
+};
+
 const SUMMARIES: Record<string, SummaryFn> = {
   get_repository: (r) => r.name || '',
   get_schema_info: (r) => r.name || r.schemaId || '',
@@ -48,6 +59,9 @@ const SUMMARIES: Record<string, SummaryFn> = {
   list_assets: (r) => (r.total != null ? `${r.total} assets` : ''),
   index_assets: countOf('queuedAssetIds', 'queued'),
   generate_image_asset: idWithName,
+  draft_interactive: (r) => (r.draftId ? `draft ${r.draftId}` : ''),
+  test_interactive: testOutcome,
+  save_interactive: nestedIdWithType('element'),
   attach_asset_to_activity: (r) =>
     r.metaKey ? `${r.metaKey} <- ${r.asset?.name || ''}` : '',
 };

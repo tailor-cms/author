@@ -24,6 +24,12 @@ export function toolError(opts: ToolErrorOptions) {
   };
 }
 
+export type ToolError = ReturnType<typeof toolError>;
+
+export function isToolError(value: unknown): value is ToolError {
+  return !!value && typeof value === 'object' && 'error' in value;
+}
+
 const MAX_LOG_ENTRIES = 100;
 
 // Record an operation in the transaction log for undo and audit

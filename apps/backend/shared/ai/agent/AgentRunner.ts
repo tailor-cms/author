@@ -13,7 +13,7 @@ import {
 import { AgentRun, runRegistry } from './run/index.ts';
 import type { RunInput, RunResult, ToolCallRecord } from './types.ts';
 import type { ReasoningEffortLiteral } from '@tailor-cms/interfaces/ai.ts';
-import type { ToolDef } from './tools/types.ts';
+import type { ToolDef, ToolImage } from './tools/types.ts';
 
 import { isCompactModel, supportsReasoning } from '../lib/AiPrompt.ts';
 import { buildOpenAITools, findTool, type ToolContext } from './tools/index.ts';
@@ -24,8 +24,14 @@ import { buildSystemPrompt } from './systemPrompt.ts';
 import { createAiLogger } from '../logger.ts';
 import { oneLine } from 'common-tags';
 import OpenAI from 'openai';
+import cloneDeepWith from 'lodash/cloneDeepWith.js';
+import truncate from 'lodash/truncate.js';
 
-const logger = createAiLogger('agent.runner');
+// Tool inputs can hold a whole page of HTML; `input` is logged shortened.
+const logger = createAiLogger('agent.runner').child(
+  {},
+  { serializers: { input: shortenForLog } },
+);
 
 // Stays `null` in AI-disabled environments so the route module still loads
 // cleanly; `assertReady()` surfaces the misconfiguration on actual use.
@@ -36,6 +42,9 @@ const openaiClient = aiConfig.isEnabled
 // Cap on model calls per run, against runaway tool loops.
 const MAX_TURNS = 100;
 
+// Longest text from a tool input written to the log as is.
+const MAX_LOGGED_TEXT = 300;
+
 // Approximate char budgets for the session history we send back to the
 // model on each turn. Picked conservatively below known model context
 // windows so the system prompt (~15-20KB) + tool manifest (~30KB) +
@@ -44,6 +53,15 @@ const MAX_TURNS = 100;
 // so function_call / function_call_output pairs stay paired.
 const HISTORY_CHAR_CAP_DEFAULT = 600_000;
 const HISTORY_CHAR_CAP_COMPACT = 200_000;
+
+// Screenshots are large; only the most recent ones stay in the history.
+const MAX_HISTORY_IMAGES = 3;
+const PRUNED_IMAGE_NOTE = '[Older screenshot removed from history]';
+// Screenshots count by what the model is billed;
+// A 960x540 image is ~765 tokens in OpenAI's pricing (4
+// tiles x 170 + 85), ~3k chars at ~4 chars per token. Rough, like the
+// caps above.
+const IMAGE_CHARS = 3_000;
 
 // Message roles in the OpenAI Responses API "input" array.
 const ROLE = { Developer: 'developer', User: 'user' } as const;
@@ -61,6 +79,8 @@ const OUTPUT_ITEM = {
 // `content[]`.
 const CONTENT_BLOCK = {
   OutputText: 'output_text',
+  InputText: 'input_text',
+  InputImage: 'input_image',
 } as const;
 
 // Tool that pauses the loop so the dock renders a picker without the
@@ -216,6 +236,7 @@ export class AgentRunner {
   ): Promise<boolean> {
     state.turns++;
     state.pendingQuestion = null;
+    pruneImages(session.history);
     compactSession(session);
     const output = await this.callModel(session, ctx.repository, tools, {
       signal: run.signal,
@@ -262,13 +283,14 @@ export class AgentRunner {
       input: 'input' in args ? args.input : call.arguments,
     });
     const record = await this.dispatchTool(call, args, ctx, session);
-    const { result, invalidates } = extractInvalidates(record.result);
+    const { result: data, invalidates } = extractInvalidates(record.result);
+    const { result, images } = extractImages(data);
     const finished = { ...record, result } as ToolCallRecord;
     state.toolCount++;
     if (finished.ok && finished.name === PAUSING_TOOL) {
       state.pendingQuestion = toPendingQuestion(finished.input);
     }
-    session.history.push(formatToolResult(callId, result));
+    session.history.push(formatToolResult(callId, result, images));
     run.push({ type: 'tool:end', callId, call: finished, invalidates });
   }
 
@@ -394,6 +416,7 @@ function buildToolContext(input: RunInput, session: AgentSession): ToolContext {
     userId: input.userId,
     repository: input.repository,
     transactionLog: session.transactionLog,
+    sessionId: session.id,
   };
 }
 
@@ -428,11 +451,20 @@ function logInputSize(systemPrompt: string, history: ApiItem[], tools: any[]) {
 }
 
 // Rough character-count for any JSON-serialisable payload. Used only
-// for diagnostic logging of the agent's per-turn input size, so we
+// for diagnostic logging of the agent's per-turn input size; we
 // accept the cost of stringify and the lossiness of "approximate".
 function approxChars(value: unknown): number {
+  // An image costs the model a fixed amount by its size, not the length
+  // of its data URL; counting the URL would push real context out.
+  let images = 0;
+  const skipImageData = (key: string, val: unknown) => {
+    if (key !== 'image_url') return val;
+    images++;
+    return '';
+  };
   try {
-    return JSON.stringify(value).length;
+    const text = JSON.stringify(value, skipImageData);
+    return text.length + images * IMAGE_CHARS;
   } catch {
     return 0;
   }
@@ -502,6 +534,17 @@ function assertReady(input: RunInput): void {
     );
   }
   if (!input.repository) throw new Error('Repository is required');
+}
+
+// Long text in a tool input (e.g. a page's full HTML) is logged as its
+// start and length.
+function shortenForLog(input: unknown): unknown {
+  return cloneDeepWith(input, (value) => {
+    // Anything else is copied as is.
+    if (typeof value !== 'string') return undefined;
+    const omission = `… (${value.length} chars)`;
+    return truncate(value, { length: MAX_LOGGED_TEXT, omission });
+  });
 }
 
 async function safeExecute(
@@ -602,12 +645,37 @@ function extractAssistantText(output: ApiItem[]): string {
     .join('\n');
 }
 
-function formatToolResult(callId: string, result: unknown): ApiItem {
-  return {
-    type: OUTPUT_ITEM.FunctionCallOutput,
-    call_id: callId,
-    output: typeof result === 'string' ? result : JSON.stringify(result),
-  };
+/**
+ * Tool result as a history item. With images, the output becomes a list:
+ * the result text first, then each image, so the model can look at them.
+ */
+function formatToolResult(
+  callId: string,
+  result: unknown,
+  images: ToolImage[] = [],
+): ApiItem {
+  const text = typeof result === 'string' ? result : JSON.stringify(result);
+  const imageParts = images.map(({ dataUrl }) => ({
+    type: CONTENT_BLOCK.InputImage,
+    image_url: dataUrl,
+    detail: 'auto',
+  }));
+  const output = imageParts.length
+    ? [{ type: CONTENT_BLOCK.InputText, text }, ...imageParts]
+    : text;
+  return { type: OUTPUT_ITEM.FunctionCallOutput, call_id: callId, output };
+}
+
+// Keeps the newest MAX_HISTORY_IMAGES images; older ones become a note.
+function pruneImages(history: ApiItem[]): void {
+  const isImage = (part: ApiItem) => part.type === CONTENT_BLOCK.InputImage;
+  const PRUNED_IMAGE = { type: CONTENT_BLOCK.InputText, text: PRUNED_IMAGE_NOTE };
+  const toolOutputs = history.filter((item) => Array.isArray(item.output));
+  const images = toolOutputs.flatMap((item) => item.output).filter(isImage);
+  const stale = new Set(images.slice(0, -MAX_HISTORY_IMAGES));
+  if (!stale.size) return;
+  const replaceStale = (part: ApiItem) => (stale.has(part) ? PRUNED_IMAGE : part);
+  toolOutputs.forEach((item) => (item.output = item.output.map(replaceStale)));
 }
 
 /**
@@ -634,6 +702,16 @@ function extractInvalidates(result: any): { result: any; invalidates: string[] }
   const { _invalidates, ...rest } = result;
   const invalidates = Array.isArray(_invalidates) ? _invalidates : [];
   return { result: rest, invalidates };
+}
+
+// Images for the model; kept out of the client events.
+function extractImages(result: any): { result: any; images: ToolImage[] } {
+  if (!result || typeof result !== 'object' || !('_images' in result)) {
+    return { result, images: [] };
+  }
+  const { _images, ...rest } = result;
+  const images = Array.isArray(_images) ? _images : [];
+  return { result: rest, images };
 }
 
 function toPendingQuestion(input: any): AgentPendingQuestion {

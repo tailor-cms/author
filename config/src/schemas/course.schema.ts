@@ -107,6 +107,7 @@ const SectionConfig: ContentContainerConfig = {
         ContentElementType.Carousel,
         ContentElementType.Sequence,
         ContentElementType.Flashcards,
+        ContentElementType.Interactive,
       ],
     },
     {

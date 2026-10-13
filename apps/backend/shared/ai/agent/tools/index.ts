@@ -1,5 +1,6 @@
 // Tool registry
 import type { ToolDef } from './types.ts';
+import { ai as aiConfig } from '#config';
 
 import {
   create_activity,
@@ -39,6 +40,12 @@ import {
 import {
   ask_user_question,
 } from './interaction/index.ts';
+
+import {
+  draft_interactive,
+  save_interactive,
+  test_interactive,
+} from './interactive/index.ts';
 
 import {
   get_outline_context,
@@ -82,6 +89,10 @@ export const TOOL_DEFS: ToolDef[] = [
   import_resource,
   generate_image_asset,
   index_assets,
+  // only available when the sandbox browser is available
+  ...(aiConfig.browser.isSandboxAvailable
+    ? [draft_interactive, test_interactive, save_interactive]
+    : []),
   // interaction
   ask_user_question,
 ];
