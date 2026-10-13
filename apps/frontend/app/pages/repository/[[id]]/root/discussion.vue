@@ -26,7 +26,7 @@
       />
     </div>
     <VDivider vertical />
-    <div class="pane flex-grow-1 d-flex flex-column">
+    <div class="panel flex-grow-1 d-flex flex-column">
       <SearchBar
         :is-searching="messagingStore.isSearching"
         :query="messagingStore.searchQuery"
@@ -35,17 +35,17 @@
         @search="searchMessages"
       />
       <VDivider />
-      <div class="pane-split d-flex flex-grow-1">
+      <div class="panel-split d-flex flex-grow-1">
         <SearchResults
           v-if="isSearchActive"
           :current-user-id="currentUserId"
           :hits="messagingStore.searchHits"
           :is-searching="messagingStore.isSearching"
           :query="messagingStore.searchQuery"
-          class="pane-body"
+          class="panel-body"
           @select="openSearchResult"
         />
-        <ThreadPane
+        <ThreadPanel
           v-else-if="messagingStore.selectedThread"
           :key="messagingStore.selectedThread.id"
           v-model:draft="draft"
@@ -55,7 +55,7 @@
           :messages="messagingStore.messages"
           :thread="messagingStore.selectedThread"
           :typing-users="threadTypingUsers"
-          class="pane-body"
+          class="panel-body"
           @resolve="setResolved"
           @star="setStarred(messagingStore.selectedThread!.id, $event)"
           @remove:thread="removeThread"
@@ -70,7 +70,7 @@
         />
         <StartDiscussion
           v-else
-          class="pane-body"
+          class="panel-body"
           @create="createThread"
         />
         <template v-if="messagingStore.replyParent">
@@ -79,7 +79,7 @@
             :style="{ width: `${replyWidth}px` }"
             class="reply-column flex-shrink-0"
           >
-            <ReplyPane
+            <ReplyPanel
               :current-user-id="currentUserId"
               :parent="messagingStore.replyParent"
               :replies="messagingStore.replies"
@@ -127,18 +127,18 @@ import { debounce } from 'lodash-es';
 import { useDisplay } from 'vuetify';
 
 import { useMessagingStore, type ThreadScope } from '@/stores/messaging';
-import ReplyPane from '@/components/repository/Discussion/ReplyPane.vue';
+import ReplyPanel from '@/components/repository/Discussion/ReplyPanel.vue';
 import SearchBar from '@/components/repository/Discussion/Search/SearchBar.vue';
 import SearchResults
   from '@/components/repository/Discussion/Search/SearchResults.vue';
 import SharedFilesDialog
-  from '@/components/repository/Discussion/ThreadPane/SharedFilesDialog.vue';
+  from '@/components/repository/Discussion/ThreadPanel/SharedFilesDialog.vue';
 import StartDiscussion
   from '@/components/repository/Discussion/StartDiscussion.vue';
 import SubscriptionsDialog
-  from '@/components/repository/Discussion/ThreadPane/SubscriptionsDialog.vue';
-import ThreadPane
-  from '@/components/repository/Discussion/ThreadPane/index.vue';
+  from '@/components/repository/Discussion/ThreadPanel/SubscriptionsDialog.vue';
+import ThreadPanel
+  from '@/components/repository/Discussion/ThreadPanel/index.vue';
 import ThreadList
   from '@/components/repository/Discussion/ThreadList/index.vue';
 import { useThreadDraft }
@@ -364,18 +364,18 @@ onMounted(async () => {
   left: 0;
 }
 
-.pane {
+.panel {
   position: relative;
   min-width: 0;
   min-height: 0;
 }
 
-.pane-split {
+.panel-split {
   min-width: 0;
   min-height: 0;
 }
 
-.pane-body {
+.panel-body {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;

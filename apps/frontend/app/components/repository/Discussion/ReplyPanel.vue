@@ -1,5 +1,5 @@
 <template>
-  <div class="reply-pane d-flex flex-column">
+  <div class="reply-panel d-flex flex-column">
     <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-3">
       <h3 class="text-title-medium font-weight-bold">Thread</h3>
       <VSpacer />
@@ -115,7 +115,7 @@ watch(() => props.replies.length, scrollToBottom, { immediate: true });
 </script>
 
 <style lang="scss" scoped>
-.reply-pane {
+.reply-panel {
   min-width: 0;
   min-height: 0;
   background: rgb(var(--v-theme-surface));

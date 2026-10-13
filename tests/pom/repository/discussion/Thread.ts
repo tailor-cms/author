@@ -42,7 +42,7 @@ export class Thread {
   readonly editor: MessageEditor;
 
   constructor(page: Page) {
-    const el = page.locator('.thread-pane');
+    const el = page.locator('.thread-panel');
     this.title = el.locator('.thread-title');
     this.anchorChip = el.locator('.anchor-chip');
     this.menuBtn = el.getByRole('button', { name: 'Thread actions' });

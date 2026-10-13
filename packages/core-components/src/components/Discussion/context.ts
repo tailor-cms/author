@@ -51,7 +51,7 @@ export const useDiscussionContext = (): DiscussionContext =>
   inject<DiscussionContext>(DISCUSSION_CONTEXT, {});
 
 /**
- * Which message in a pane is being edited, as a uid shared with every
+ * Which message in a panel is being edited, as a uid shared with every
  * row below.
  */
 export const provideEditingMessage = () => {

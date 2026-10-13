@@ -1,5 +1,5 @@
 <template>
-  <div class="thread-pane d-flex flex-column">
+  <div class="thread-panel d-flex flex-column">
     <ThreadHeader :participants="participants" :thread="thread">
       <template #actions>
         <ThreadMenu
@@ -103,7 +103,7 @@ const participants = computed(() =>
 </script>
 
 <style lang="scss" scoped>
-.thread-pane {
+.thread-panel {
   min-width: 0;
   min-height: 0;
 }

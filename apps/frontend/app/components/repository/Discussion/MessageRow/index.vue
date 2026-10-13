@@ -104,7 +104,7 @@ interface Props {
   currentUserId?: number | null;
   // Follows a message by the same sender, so the header is hidden
   isGrouped?: boolean;
-  // Shown in the reply pane, which has no replies of its own
+  // Shown in the reply panel, which has no replies of its own
   isReplyTarget?: boolean;
 }
 

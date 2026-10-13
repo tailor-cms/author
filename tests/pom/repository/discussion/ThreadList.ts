@@ -50,7 +50,7 @@ export class ThreadList {
   }
 
   getItemLocator(title: string) {
-    return this.withText(this.items, title);
+    return this.items.filter({ hasText: title });
   }
 
   getItem(title: string) {

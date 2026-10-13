@@ -108,7 +108,7 @@ export class MessageToolbar {
 export class ThreadMessage {
   readonly page: Page;
   readonly el: Locator;
-  readonly pane: Locator;
+  readonly panel: Locator;
   readonly header: Locator;
   readonly toolbar: MessageToolbar;
   readonly body: MessageBody;
@@ -120,7 +120,7 @@ export class ThreadMessage {
   readonly attachments: Locator;
   readonly assetTiles: Locator;
 
-  constructor(page: Page, el: Locator, pane: Locator) {
+  constructor(page: Page, el: Locator, panel: Locator) {
     this.header = el.locator('.message-header');
     this.integrationBadge = this.header.locator('.integration-badge');
     this.body = new MessageBody(el);
@@ -132,7 +132,7 @@ export class ThreadMessage {
     this.toolbar = new MessageToolbar(page, el);
     this.page = page;
     this.el = el;
-    this.pane = pane;
+    this.panel = panel;
   }
 
   getLinkLocator(name: string | RegExp) {
@@ -156,7 +156,7 @@ export class ThreadMessage {
 
   async edit(text: string) {
     await this.toolbar.runAction('Edit message');
-    await new MessageEditor(this.page, this.pane).save(text);
+    await new MessageEditor(this.page, this.panel).save(text);
   }
 
   async remove() {
