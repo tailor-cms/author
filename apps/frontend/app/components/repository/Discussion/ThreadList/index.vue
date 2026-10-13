@@ -1,7 +1,7 @@
 <template>
-  <div class="thread-rail d-flex flex-column h-100">
+  <div class="thread-list d-flex flex-column h-100">
     <div class="px-4 pt-4 pb-2">
-      <RailHeader
+      <ThreadListHeader
         :has-integration-access="hasIntegrationAccess"
         :unread="unread"
         @manage:integrations="emit('manage:integrations')"
@@ -25,7 +25,7 @@
           <VListSubheader v-if="group.label" class="group-label">
             {{ group.label }}
           </VListSubheader>
-          <ThreadRow
+          <ThreadListItem
             v-for="thread in group.threads"
             :key="thread.id"
             :is-selected="thread.id === selectedId"
@@ -47,9 +47,9 @@ import type { ThreadScope } from '@/stores/messaging';
 import { partition } from 'lodash-es';
 import { useTimeoutFn } from '@vueuse/core';
 
-import RailHeader from './RailHeader.vue';
+import ThreadListHeader from './ThreadListHeader.vue';
 import ThreadFilters from './ThreadFilters.vue';
-import ThreadRow from './ThreadRow.vue';
+import ThreadListItem from './ThreadListItem.vue';
 import ThreadsEmptyState from './ThreadsEmptyState.vue';
 
 interface Props {
@@ -109,7 +109,7 @@ const groups = computed(() => {
 </script>
 
 <style lang="scss" scoped>
-.thread-rail {
+.thread-list {
   min-width: 0;
   background: rgb(var(--v-theme-surface-sidebar));
 }

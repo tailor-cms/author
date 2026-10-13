@@ -58,7 +58,7 @@ const starAction = (isStarred?: boolean): ThreadAction =>
     : {
         title: 'Star',
         icon: 'mdi-star-outline',
-        subtitle: 'Keeps it at the top of your rail',
+        subtitle: 'Keeps it at the top of your thread list',
         run: () => emit('star', true),
       };
 

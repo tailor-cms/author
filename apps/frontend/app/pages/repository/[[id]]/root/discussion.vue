@@ -1,7 +1,10 @@
 <template>
   <div class="discussion-channel d-flex h-100">
-    <div :style="{ width: `${width}px` }" class="rail flex-shrink-0">
-      <ThreadRail
+    <div
+      :style="{ width: `${width}px` }"
+      class="thread-list-column flex-shrink-0"
+    >
+      <ThreadList
         v-model:scope="scope"
         v-model:name="nameFilter"
         :has-integration-access="hasIntegrationAccess"
@@ -136,8 +139,8 @@ import SubscriptionsDialog
   from '@/components/repository/Discussion/ThreadPane/SubscriptionsDialog.vue';
 import ThreadPane
   from '@/components/repository/Discussion/ThreadPane/index.vue';
-import ThreadRail
-  from '@/components/repository/Discussion/ThreadRail/index.vue';
+import ThreadList
+  from '@/components/repository/Discussion/ThreadList/index.vue';
 import { useThreadDraft }
   from '@/components/repository/Discussion/composables/useThreadDraft';
 import { useThreadRoute }
@@ -226,7 +229,7 @@ const openSearchResult = (threadId: number) => {
 const createThread = async (payload: { content: string; title: string }) => {
   const thread = await messagingStore.startThread(repositoryId.value, payload);
   openThread(thread.id);
-  // Reload rail, since the new thread has no last message yet
+  // Reload the list, since the new thread has no last message yet
   await load();
   notify('Thread started');
 };
@@ -334,7 +337,7 @@ onMounted(async () => {
   text-align: left;
 }
 
-.rail {
+.thread-list-column {
   position: relative;
   min-width: 0;
   max-width: 50vw;

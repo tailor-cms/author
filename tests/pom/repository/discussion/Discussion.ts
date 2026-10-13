@@ -3,7 +3,7 @@ import { expect } from '@playwright/test';
 
 import { MessageSearch } from './MessageSearch';
 import { NewThread, Thread } from './Thread';
-import { ThreadRail } from './ThreadRail';
+import { ThreadList } from './ThreadList';
 
 export class Discussion {
   static getRoute = (repositoryId: number, threadId?: number) => {
@@ -13,14 +13,14 @@ export class Discussion {
 
   readonly page: Page;
   readonly el: Locator;
-  readonly rail: ThreadRail;
+  readonly threadList: ThreadList;
   readonly thread: Thread;
   readonly newThread: NewThread;
   readonly search: MessageSearch;
 
   constructor(page: Page) {
     this.el = page.locator('.discussion-channel');
-    this.rail = new ThreadRail(page);
+    this.threadList = new ThreadList(page);
     this.thread = new Thread(page);
     this.newThread = new NewThread(page);
     this.search = new MessageSearch(page);
@@ -51,7 +51,7 @@ export class Discussion {
   }
 
   /**
-   * Selects a thread in the rail. Selecting marks it read once its
+   * Selects a thread in the list. Selecting marks it read once its
    * messages load; pass `waitForSeen` when the test depends on that being
    * saved.
    */
@@ -61,7 +61,7 @@ export class Discussion {
           /\/threads\/\d+\/seen$/.test(res.url()),
         )
       : null;
-    await this.rail.thread(title).first().click();
+    await this.threadList.getItemLocator(title).first().click();
     await expect(this.thread.el).toBeVisible();
     await seen;
     return this.thread;
@@ -73,7 +73,7 @@ export class Discussion {
   async openNewThread(title: string) {
     const { titleInput } = this.newThread;
     await expect(async () => {
-      await this.rail.newBtn.click();
+      await this.threadList.newBtn.click();
       await titleInput.fill(title);
       await expect(titleInput).toHaveValue(title);
     }).toPass({ timeout: 15000 });

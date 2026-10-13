@@ -25,6 +25,7 @@
       :prepend-icon="option.icon"
       :text="option.label"
       :value="option.value"
+      class="scope-filter"
       density="comfortable"
       rounded="pill"
       size="small"

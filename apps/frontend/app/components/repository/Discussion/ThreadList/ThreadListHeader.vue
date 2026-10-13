@@ -4,7 +4,7 @@
     <VChip
       v-if="unread.mentions"
       :text="`${unread.mentions}`"
-      class="ml-2"
+      class="mentions-chip ml-2"
       color="secondary"
       prepend-icon="mdi-at"
       rounded="pill"
