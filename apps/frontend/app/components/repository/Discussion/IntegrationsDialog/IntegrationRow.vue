@@ -1,5 +1,9 @@
 <template>
-  <VListItem :title="integration.name" class="px-2" rounded="lg">
+  <VListItem
+    :title="integration.name"
+    class="integration-row px-2"
+    rounded="lg"
+  >
     <template #prepend>
       <IntegrationAvatar :integration="integration" :size="36" class="mr-3" />
     </template>

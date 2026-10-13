@@ -1,10 +1,8 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { getMenuItem } from '../../common/utils';
+import { getDialog, getMenuItem } from '../../common/utils';
 import { MessageComposer, MessageEditor } from './MessageComposer';
-import { SharedFilesDialog } from './SharedFilesDialog';
-import { SubscriptionsDialog } from './SubscriptionsDialog';
 import { ThreadMessage } from './ThreadMessage';
 
 export class NewThread {
@@ -19,6 +17,51 @@ export class NewThread {
     this.composer = new MessageComposer(page, el);
     this.page = page;
     this.el = el;
+  }
+}
+
+// Files attached to the thread's messages
+export class SharedFilesDialog {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly files: Locator;
+
+  constructor(page: Page) {
+    const el = getDialog(page, 'Shared files');
+    this.files = el.locator('.asset-tile');
+    this.page = page;
+    this.el = el;
+  }
+
+  getFileLocator(name: string) {
+    return this.files.filter({ hasText: name });
+  }
+}
+
+// Repository events and integrations reported into the thread
+export class SubscriptionsDialog {
+  readonly page: Page;
+  readonly el: Locator;
+  readonly options: Locator;
+  readonly saveBtn: Locator;
+
+  constructor(page: Page) {
+    const el = getDialog(page, 'Subscribe to updates');
+    this.options = el.getByRole('checkbox');
+    this.saveBtn = el.getByRole('button', { name: 'Save', exact: true });
+    this.page = page;
+    this.el = el;
+  }
+
+  getOptionLocator(label: string) {
+    return this.el.getByRole('checkbox', { name: label });
+  }
+
+  async subscribe(labels: string[]) {
+    await expect(this.options.first()).toBeVisible();
+    for (const label of labels) await this.getOptionLocator(label).check();
+    await this.saveBtn.click();
+    await expect(this.el).not.toBeVisible();
   }
 }
 

@@ -1,7 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { dragBy, getMenuItem } from '../../common/utils';
+import { dragBy, getMenuItem, withExactText } from '../../common/utils';
 import { IntegrationsDialog } from './IntegrationsDialog';
 
 export class ThreadListItem {
@@ -58,12 +58,12 @@ export class ThreadList {
   }
 
   getFilterLocator(name: string) {
-    return this.withText(this.el.locator('.scope-filter'), name);
+    return withExactText(this.el.locator('.scope-filter'), name);
   }
 
   // Group label; e.g. starred section
   getGroupLabelLocator(text: string) {
-    return this.withText(this.el.locator('.group-label'), text);
+    return withExactText(this.el.locator('.group-label'), text);
   }
 
   async openMenu() {
@@ -80,7 +80,7 @@ export class ThreadList {
     await this.openMenu();
     await this.integrationsItem.click();
     const dialog = new IntegrationsDialog(this.page);
-    await expect(dialog.registerBtn).toBeVisible();
+    await expect(dialog.el).toBeVisible();
     return dialog;
   }
 
@@ -90,10 +90,5 @@ export class ThreadList {
 
   async width() {
     return (await this.el.boundingBox())!.width;
-  }
-
-  // Exact match only
-  private withText(items: Locator, text: string) {
-    return items.filter({ has: this.page.getByText(text, { exact: true }) });
   }
 }
