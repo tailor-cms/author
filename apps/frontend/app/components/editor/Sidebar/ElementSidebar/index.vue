@@ -1,8 +1,5 @@
 <template>
   <div class="element-sidebar px-5 py-2">
-    <div class="mb-4 text-body-medium font-weight-bold">
-      Additional settings
-    </div>
     <component :is="sidebarName" :element="element" @save="onSave" />
     <ElementMeta :element="element" v-bind="metadata" />
   </div>

@@ -9,11 +9,8 @@
     class="toolbar-wrapper"
     order="1"
   >
-    <HistoryToolbar v-if="isHistoryMode && !element" />
-    <div
-      v-else-if="activity && !element"
-      class="activity-toolbar w-100 px-3"
-    >
+    <HistoryToolbar v-if="isHistoryMode" />
+    <div v-else-if="activity" class="activity-toolbar w-100 px-3">
       <ActivityActions />
       <h1
         v-if="mdAndUp"
@@ -71,34 +68,19 @@
         <ActivityPagination />
       </div>
     </div>
-    <ElementToolbarContainer
-      v-if="element"
-      :element="element"
-      class="element-container w-100"
-    />
   </VAppBar>
 </template>
 
 <script lang="ts" setup>
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
-import type { ContentElement } from '@tailor-cms/interfaces/content-element';
 import { formatDate } from 'date-fns/format';
 
 import ActivityActions from './ActivityActions.vue';
 import ActivityPagination from './ActivityPagination.vue';
-import ElementToolbarContainer from './ElementToolbarContainer.vue';
 import HistoryToolbar from './HistoryToolbar.vue';
 import { useEditorStore } from '@/stores/editor';
 import { useUserTracking } from '@/stores/user-tracking';
 import { useDisplay } from 'vuetify';
-
-interface Props {
-  element?: ContentElement | null;
-}
-
-withDefaults(defineProps<Props>(), {
-  element: null,
-});
 
 const { $schemaService } = useNuxtApp() as any;
 
@@ -169,23 +151,6 @@ const usersWithActivity = computed(() => {
     min-height: 4rem;
     padding: 0;
     overflow: visible;
-  }
-
-  :deep(.v-input) {
-    position: relative;
-
-    .v-input__details {
-      position: absolute;
-      padding: 0;
-
-      .v-messages__message {
-        margin-top: 0.5rem;
-        border-radius: 4px;
-        padding: 0.5rem 0.75rem;
-        background-color: rgb(var(--v-theme-inverse-surface));
-        color: rgb(var(--v-theme-inverse-on-surface));
-      }
-    }
   }
 }
 

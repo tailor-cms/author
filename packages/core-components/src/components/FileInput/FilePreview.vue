@@ -100,7 +100,6 @@ withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  download: [];
   delete: [];
   replace: [];
 }>();

@@ -4,7 +4,6 @@
     :file-name="fileName"
     :allowed-extensions="resolvedExtensions"
     :allow-url-source="allowUrlSource"
-    :use-field-input="useFieldInput"
     :show-preview="showPreview"
     :label="resolvedLabel"
     :placeholder="placeholder"
@@ -41,7 +40,6 @@ interface Props {
   fileKey?: string;
   fileName?: string;
   allowedExtensions?: string[];
-  useFieldInput?: boolean;
   showPreview?: boolean;
   label?: string;
   placeholder?: string;
@@ -64,7 +62,6 @@ interface Props {
 
 const props = withDefaults(defineProps<Props>(), {
   allowedExtensions: () => [],
-  useFieldInput: false,
   showPreview: false,
   variant: 'outlined',
   density: 'default',

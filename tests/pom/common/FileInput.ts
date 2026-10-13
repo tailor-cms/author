@@ -25,14 +25,4 @@ export class FileInput {
   async expectFileSet(fileName: string) {
     await expect(this.getPreview(fileName)).toBeVisible();
   }
-
-  async download(fileName: string) {
-    const downloadBtn = this.getPreview(fileName)
-      .getByRole('button', { name: 'Download file' });
-    const [download] = await Promise.all([
-      this.page.waitForEvent('download'),
-      downloadBtn.click(),
-    ]);
-    return download;
-  }
 }

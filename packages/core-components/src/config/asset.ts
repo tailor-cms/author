@@ -18,6 +18,17 @@ export const ASSET_TYPE_LABEL: Record<string, string> = {
   [AssetType.Other]: 'File',
 };
 
+// Whole sentences per type; grammar (articles, mass nouns) lives here, not
+// in code, so it stays translatable.
+export const ASSET_TYPE_DROPZONE_TITLE: Record<string, string> = {
+  [AssetType.Image]: 'Add an image',
+  [AssetType.Video]: 'Add a video',
+  [AssetType.Audio]: 'Add audio',
+  [AssetType.Document]: 'Add a document',
+  [AssetType.Link]: 'Add a link',
+  [AssetType.Other]: 'Add a file',
+};
+
 export const ASSET_TYPE_COLOR: Record<string, string> = {
   [AssetType.Image]: 'asset-image',
   [AssetType.Video]: 'asset-video',

@@ -1,2 +1,7 @@
-export { getAssetColor, getAssetIcon, getAssetLabel } from './asset';
+export {
+  getAssetColor,
+  getAssetDropzoneTitle,
+  getAssetIcon,
+  getAssetLabel,
+} from './asset';
 export { formatFileSize } from './format';
