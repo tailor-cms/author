@@ -2,6 +2,7 @@ import type { Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 import { faker } from '@faker-js/faker';
 
+import { AssetLibrary } from '../pom/repository/AssetLibrary';
 import ApiClient from '../api/ApiClient';
 import SeedClient from '../api/SeedClient';
 
@@ -113,7 +114,7 @@ export const toSeededRepositoryWorkflow = async (page: Page, name?: string) => {
 export const toRepositoryAssets = async (page: Page, name?: string) => {
   const { data } = await SeedClient.seedTestRepository({ name });
   const { repository } = data;
-  await page.goto(`/repository/${repository.id}/root/assets`);
+  await page.goto(AssetLibrary.getRoute(repository.id));
   await page.waitForLoadState('networkidle');
   return repository;
 };

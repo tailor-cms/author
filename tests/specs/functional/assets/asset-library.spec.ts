@@ -1,9 +1,18 @@
 import { expect, test } from '@playwright/test';
 
 import { AUDIO, DOCUMENT, IMAGE, VIDEO } from '../../../fixtures/assets';
+import {
+  createRepository,
+  toAssetLibrary,
+  toSeededAssetLibrary,
+} from './helpers';
+import { AssetLibrary } from '../../../pom/repository/AssetLibrary';
+import { expectAlert } from '../../../pom/common/utils';
 import AssetClient from '../../../api/AssetClient';
 import SeedClient from '../../../api/SeedClient';
-import { toAssetLibrary, toSeededAssetLibrary } from './helpers';
+
+const YOUTUBE_ID = 'dQw4w9WgXcQ';
+const YOUTUBE_LINK = `https://www.youtube.com/watch?v=${YOUTUBE_ID}`;
 
 test.describe('Asset library', () => {
   test('displays empty state when no assets exist', async ({ page }) => {
@@ -60,18 +69,61 @@ test.describe('Asset library', () => {
 
   test('can add a YouTube link (classified as video)', async ({ page }) => {
     const { lib } = await toAssetLibrary(page);
-    await lib.addFirstLink('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+    await lib.addFirstLink(YOUTUBE_LINK);
     await lib.waitForLoad();
     const rows = await lib.getRows();
     expect(rows.length).toBeGreaterThanOrEqual(1);
     await expect(rows[0].typeChip).toContainText('YouTube');
   });
 
+  test('starts a video link playing on demand', async ({ page }) => {
+    // Answer YouTube requests with an empty page, so nothing loads from it
+    const youtube = /^https:\/\/[^/]*youtube\.com\//;
+    await page.route(youtube, (route) => route.fulfill({ body: '' }));
+    const { lib } = await toSeededAssetLibrary(page, (id) =>
+      AssetClient.addLink(id, YOUTUBE_LINK),
+    );
+    const [row] = await lib.getRows();
+    await row.openDetail();
+    await lib.sidebar.waitForOpen();
+    const { embedPoster, embedFrame } = lib.sidebar;
+    await expect(embedPoster).toBeVisible();
+    await expect(embedFrame).toHaveCount(0);
+    await embedPoster.click();
+    // Checks the iframe our code adds, not what YouTube plays inside it
+    await expect(embedFrame).toHaveAttribute(
+      'src',
+      `https://www.youtube.com/embed/${YOUTUBE_ID}?autoplay=1`,
+    );
+    await expect(embedFrame).toHaveAttribute('allow', /\bautoplay\b/);
+  });
+
+  test('opens a linked asset nested inside a folder', async ({ page }) => {
+    const repositoryId = await createRepository();
+    const { data } = await AssetClient.uploadFile(repositoryId, IMAGE.path, {
+      folder: 'photos',
+    });
+    const lib = await AssetLibrary.visit(page, repositoryId, {
+      assetId: data[0].id,
+    });
+    await lib.sidebar.waitForOpen();
+    await page.waitForLoadState('networkidle');
+    await expect(lib.sidebar.nameInput).toHaveValue(/test-image/);
+    await expect(lib.folders.breadcrumbs).toContainText('photos');
+    await expect(page).not.toHaveURL(/assetId/);
+  });
+
+  test('shows an alert when a linked asset is gone', async ({ page }) => {
+    const repositoryId = await createRepository();
+    await AssetLibrary.visit(page, repositoryId, { assetId: 999999 });
+    await expectAlert(page, 'That asset is no longer available');
+  });
+
   test('can filter assets by category', async ({ page }) => {
     const { lib } = await toSeededAssetLibrary(page, async (id) => {
       await AssetClient.uploadFile(id, IMAGE.path);
       await AssetClient.addLink(id, 'https://docs.tailor-cms.com');
-      await AssetClient.addLink(id, 'https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+      await AssetClient.addLink(id, YOUTUBE_LINK);
     });
     await lib.expectRowCount(3);
 

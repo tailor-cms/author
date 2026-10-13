@@ -11,6 +11,11 @@ import { FolderPanel } from './assets/FolderPanel';
 import { MoveToFolderDialog } from './assets/MoveToFolderDialog';
 
 export class AssetLibrary {
+  static getRoute = (repositoryId: number, assetId?: number) => {
+    const route = `/repository/${repositoryId}/root/assets`;
+    return assetId ? `${route}?assetId=${assetId}` : route;
+  };
+
   readonly page: Page;
   readonly toolbar: AssetToolbar;
   readonly categoryFilter: CategoryFilter;
@@ -43,11 +48,16 @@ export class AssetLibrary {
     this.emptyAddLinkCard = page.getByTestId('assets__emptyLink');
   }
 
-  async goto(repositoryId: number) {
-    await this.page.goto(`/repository/${repositoryId}/root/assets`, {
-      waitUntil: 'networkidle',
-    });
-    await this.waitForLoad();
+  static async visit(
+    page: Page,
+    repositoryId: number,
+    { assetId }: { assetId?: number } = {},
+  ) {
+    const route = AssetLibrary.getRoute(repositoryId, assetId);
+    await page.goto(route, { waitUntil: 'networkidle' });
+    const lib = new AssetLibrary(page);
+    await lib.waitForLoad();
+    return lib;
   }
 
   async waitForLoad() {

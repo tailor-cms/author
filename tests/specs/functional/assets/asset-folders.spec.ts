@@ -230,25 +230,25 @@ test.describe('Asset folders', () => {
   test('files paginate while folder rows stay above every page', async ({
     page,
   }) => {
-    // 11 loose files at the root, plus a file tucked in a folder.
+    // 13 files at the top level, and one more inside a "photos" folder
     const { lib } = await toSeededAssetLibrary(page, async (id) => {
-      for (let i = 1; i <= 11; i++) {
+      for (let i = 1; i <= 13; i++) {
         await AssetClient.uploadFile(id, DOCUMENT.path, { name: `doc-${i}.pdf` });
       }
       await AssetClient.uploadFile(id, IMAGE.path, { folder: 'photos' });
     });
-    // Root: the "photos" folder + 11 files. Folders aren't counted, and 11
-    // files fit the default 25/page, so there's no paginator yet.
+    // 13 files fit on one page (24 by default), so no page controls yet.
+    // The folder doesn't count toward the page size.
     await expect(lib.folders.row('photos')).toBeVisible();
-    await expect(lib.assetRows).toHaveCount(11);
+    await expect(lib.assetRows).toHaveCount(13);
     await expect(lib.pagination).toBeHidden();
-    // Drop the page size to 10 -> two pages of files.
-    await lib.setPerPage(10);
-    await expect(lib.assetRows).toHaveCount(10);
+    // At 12 per page, the files split over two pages
+    await lib.setPerPage(12);
+    await expect(lib.assetRows).toHaveCount(12);
     await expect(lib.pagination).toBeVisible();
-    // Folders are a separate, unpaginated section - still shown.
+    // Folders aren't paged, so the folder is still shown
     await expect(lib.folders.row('photos')).toBeVisible();
-    // Page 2 holds the 11th file, with the folder still above it.
+    // Page 2 has the last file, with the folder still above it
     await lib.goToPage(2);
     await expect(lib.assetRows).toHaveCount(1);
     await expect(lib.folders.row('photos')).toBeVisible();

@@ -11,10 +11,14 @@ export class AssetSidebar {
   readonly header: Locator;
   readonly closeBtn: Locator;
   readonly actionsBtn: Locator;
+  readonly nameInput: Locator;
   readonly descriptionInput: Locator;
   readonly tagsInput: Locator;
   readonly usages: Locator;
   readonly usageRows: Locator;
+  // A video or document link
+  readonly embedPoster: Locator;
+  readonly embedFrame: Locator;
 
   constructor(page: Page) {
     this.page = page;
@@ -22,10 +26,13 @@ export class AssetSidebar {
     this.header = this.el.locator('.header');
     this.closeBtn = this.header.getByRole('button', { name: 'Close' });
     this.actionsBtn = this.header.getByRole('button', { name: 'Actions' });
+    this.nameInput = this.el.getByLabel('Name');
     this.descriptionInput = this.el.getByLabel('Description');
     this.tagsInput = this.el.getByLabel('Tags');
     this.usages = this.el.getByTestId('assetUsages');
     this.usageRows = this.usages.getByTestId('assetUsage');
+    this.embedPoster = this.el.locator('.embed-frame .poster');
+    this.embedFrame = this.el.locator('.embed-frame iframe');
   }
 
   get deleteMenuItem(): Locator {

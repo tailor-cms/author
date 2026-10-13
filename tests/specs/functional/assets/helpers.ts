@@ -16,9 +16,8 @@ export async function createRepository() {
 export async function toAssetLibrary(page: Page, name?: string) {
   await SeedClient.resetDatabase();
   const repository = await createCleanRepository(name);
-  await page.goto(`/repository/${repository.id}/root/assets`);
-  await page.waitForLoadState('networkidle');
-  return { repositoryId: repository.id as number, lib: new AssetLibrary(page) };
+  const lib = await AssetLibrary.visit(page, repository.id);
+  return { repositoryId: repository.id as number, lib };
 }
 
 // Seed assets via API, navigate to asset library, and reload to pick them up.
