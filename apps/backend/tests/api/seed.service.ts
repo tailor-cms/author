@@ -18,6 +18,7 @@ import type {
   UserInput,
 } from './schemas/index.ts';
 import { store as activityCache } from '../../repository/feed/store.ts';
+import { clearCache as clearEmojiCache } from '../../emoji/emoji.service.ts';
 import db from '#shared/database/index.js';
 import linkService from '#shared/content-library/link.service.js';
 import TransferService from '#shared/transfer/transfer.service.js';
@@ -57,6 +58,7 @@ class SeedService {
       );
     }
     await activityCache.clear();
+    await clearEmojiCache();
     return true;
   }
 

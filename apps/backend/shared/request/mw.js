@@ -1,9 +1,10 @@
-import Keyv from 'keyv';
-import rateLimit from 'express-rate-limit';
 import {
   general as generalConfig,
   kvStore as kvStoreConfig,
 } from '#config';
+import { audit } from '#shared/audit.ts';
+import Keyv from 'keyv';
+import rateLimit from 'express-rate-limit';
 
 const DEFAULT_WINDOW_MS = 1 * 60 * 1000; // every minute
 
@@ -40,16 +41,31 @@ class Store {
 
 const defaultStore = new Store();
 
+/**
+ * Rate limiter with an audit trail.
+ */
 function requestLimiter(opts = {}) {
   const {
     limit = 30,
     windowMs = DEFAULT_WINDOW_MS,
     validate = false,
     store = defaultStore,
+    event = 'request:throttled',
+    details,
     ...rest
   } = opts;
   const max = limit > 0 ? limit : 0;
-  const options = { limit: max, validate, windowMs, store, ...rest };
+  const options = {
+    limit: max,
+    validate,
+    windowMs,
+    store,
+    handler: (req, res, _next, opts) => {
+      audit(event, 'failure', { ip: req.ip, ...(details?.(req) ?? {}) });
+      res.status(opts.statusCode).send(opts.message);
+    },
+    ...rest,
+  };
   if (!generalConfig.enableRateLimiting) options.skip = () => true;
   return rateLimit(options);
 }

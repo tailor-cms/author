@@ -37,13 +37,13 @@
 //     `data.url = ""` (the read pipeline expands `storage://` to
 //     a signed public URL).
 //   - External assets (links): `data.url = <publicUrl>` directly.
-//   - EMBED specifically: `toEmbedUrl(...)` rewrites video-page
+//   - EMBED specifically: `toVideoEmbedUrl(...)` rewrites video-page
 //     URLs (YouTube watch page, Vimeo page) into embeddable form.
 import type { AssetReference } from '@tailor-cms/interfaces/ai.ts';
 import { AssetType, LinkContentType } from '@tailor-cms/interfaces/asset.ts';
 import { ContentElementType } from '@tailor-cms/content-element-collection/types.js';
 import { oneLine } from 'common-tags';
-import { toEmbedUrl } from '@tailor-cms/common/asset';
+import { toVideoEmbedUrl } from '@tailor-cms/utils';
 
 import { createAiLogger } from '../../logger.ts';
 
@@ -175,7 +175,7 @@ export const processMediaElement = (el: any, assets: AssetReference[]) => {
     const url = asset.meta?.url || asset.publicUrl || '';
     return {
       type: ContentElementType.Embed,
-      data: { url: toEmbedUrl(url) || url, height: 400 },
+      data: { url: toVideoEmbedUrl(url) || url, height: 400 },
     };
   }
   return el;

@@ -49,6 +49,13 @@ const activityUrl = ({ repositoryId, activityId }) =>
     `${repositoryId}/root/structure?activityId=${activityId}`,
   );
 
+const discussionUrl = ({ repositoryId, threadId }) =>
+  urlJoin(
+    origin,
+    '/repository',
+    `${repositoryId}/root/discussion?threadId=${threadId}`,
+  );
+
 const elementUrl = ({ repositoryId, activityId, elementUid }) => {
   const query = `${activityId}?elementId=${elementUid}`;
   return urlJoin(origin, '/repository', `${repositoryId}/editor`, query);
@@ -119,10 +126,15 @@ async function resetPassword(user, token) {
   }
 }
 
+function resolveCommentHref(comment) {
+  if (!comment.activityId) return discussionUrl(comment);
+  return comment.elementUid ? elementUrl(comment) : activityUrl(comment);
+}
+
 async function sendCommentNotification(users, comment) {
   try {
-    const { elementUid, author, repositoryName, topic, action } = comment;
-    const href = elementUid ? elementUrl(comment) : activityUrl(comment);
+    const { author, repositoryName, topic, action } = comment;
+    const href = resolveCommentHref(comment);
     const recipients = users.concat(',');
     const data = {
       href,

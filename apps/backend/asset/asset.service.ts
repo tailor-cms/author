@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { ContentType } from '@tailor-cms/interfaces/discovery';
 import { createLogger } from '#logger';
-import { detectLinkProvider } from '@tailor-cms/common/asset';
+import { detectLinkProvider, VIDEO_HOSTS } from '@tailor-cms/utils';
 import { Op } from 'sequelize';
 import { randomUUID } from 'node:crypto';
 import { storage as storageConfig } from '#config';
@@ -48,11 +48,13 @@ const DOWNLOADABLE_TYPES: Set<ContentType> = new Set([
 // JSONB path to the virtual folder
 const FOLDER_COLUMN = 'meta.folder';
 
-// Sequelize WHERE fragments for video-provider link classification.
-// Link assets with YouTube/Vimeo/Dailymotion URLs are shown under
-// the video filter and hidden from the link filter.
+const VIDEO_HOST_NAMES = Object.values(VIDEO_HOSTS)
+  .flat()
+  .map((it) => it.replaceAll('.', '\\.'))
+  .join('|');
+
 const VIDEO_PROVIDERS =
-  '(youtube\\.com|youtu\\.be|vimeo\\.com|dailymotion\\.com)';
+  `^https?://([^/?#]*\\.)?(${VIDEO_HOST_NAMES})([:/?#]|$)`;
 
 const IS_VIDEO_LINK = {
   'type': AssetType.Link,

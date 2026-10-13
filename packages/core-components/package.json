@@ -16,7 +16,6 @@
     "#utils/*": "./src/utils/*"
   },
   "devDependencies": {
-    "@tailor-cms/common": "workspace:*",
     "@tailor-cms/interfaces": "workspace:*",
     "@types/pluralize": "^0.0.33"
   },
@@ -34,12 +33,15 @@
     "yup": "^1.4.0"
   },
   "dependencies": {
-    "@tiptap/extension-subscript": "^3.28.0",
-    "@tiptap/extension-superscript": "^3.28.0",
-    "@tiptap/extensions": "^3.28.0",
-    "@tiptap/pm": "^3.28.0",
-    "@tiptap/starter-kit": "^3.28.0",
-    "@tiptap/vue-3": "^3.28.0",
+    "@tiptap/extension-emoji": "^3.31.4",
+    "@tiptap/extension-mention": "^3.31.4",
+    "@tiptap/extension-subscript": "^3.31.4",
+    "@tiptap/extension-superscript": "^3.31.4",
+    "@tiptap/extensions": "^3.31.4",
+    "@tiptap/pm": "^3.31.4",
+    "@tiptap/starter-kit": "^3.31.4",
+    "@tiptap/suggestion": "^3.31.4",
+    "@tiptap/vue-3": "^3.31.4",
     "@vueuse/core": "^14.3.0",
     "chart.js": "^4.5.1",
     "chartjs-plugin-datalabels": "^2.2.0",

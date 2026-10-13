@@ -19,12 +19,23 @@
         v-for="tab in repositoryTabs"
         :key="tab.key"
         :active="tab.matches?.(String(route.name ?? ''))"
-        :prepend-icon="`mdi-${tab.icon}`"
         :ripple="false"
         :text="tab.label"
         :to="tab.to"
         class="rail-tab mb-1"
-      />
+      >
+        <template #prepend>
+          <VBadge
+            :color="tab.badgeColor ?? 'secondary'"
+            :content="tab.badge"
+            :model-value="!!tab.badge"
+            offset-x="-2"
+            offset-y="-2"
+          >
+            <VIcon :icon="`mdi-${tab.icon}`" />
+          </VBadge>
+        </template>
+      </VTab>
     </VTabs>
     <template #append>
       <ActiveUsersGroup
@@ -73,6 +84,7 @@ import type { RouteLocationRaw } from 'vue-router';
 
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import { useCurrentRepository } from '@/stores/current-repository';
+import { useMessagingStore } from '@/stores/messaging';
 import { useUserTracking } from '@/stores/user-tracking';
 
 interface RailTab {
@@ -81,6 +93,8 @@ interface RailTab {
   icon: string;
   to: RouteLocationRaw;
   matches?: (routeName: string) => boolean;
+  badge?: string;
+  badgeColor?: string;
 }
 
 const emit = defineEmits<{ action: [name: RepositoryAction['name']] }>();
@@ -90,6 +104,15 @@ const repoStore = useCurrentRepository();
 const userTrackingStore = useUserTracking();
 const { $pluginRegistry } = useNuxtApp() as any;
 const globalPlugins = computed(() => $pluginRegistry.getGlobalComponents());
+
+const messagingStore = useMessagingStore();
+
+const discussionBadge = computed(() => {
+  const { mentions, threads } = messagingStore.unread;
+  if (mentions) return { badge: String(mentions), badgeColor: 'secondary' };
+  if (threads) return { badge: String(threads), badgeColor: 'primary' };
+  return {};
+});
 
 const activeUsers = computed(() =>
   userTrackingStore.getActiveUsers(
@@ -163,6 +186,15 @@ const repositoryTabs = computed<RailTab[]>(() => {
     });
   }
 
+  items.push({
+    key: 'discussion',
+    label: 'Threads',
+    icon: 'forum-outline',
+    to: { name: 'discussion', params: { id } },
+    matches: (name) => name === 'discussion',
+    ...discussionBadge.value,
+  });
+
   items.push(
     {
       key: 'history',
@@ -211,6 +243,12 @@ const repositoryTabs = computed<RailTab[]>(() => {
 });
 
 const repositoryActions = useRepositoryActions(() => repoStore.accessPolicy);
+
+watch(
+  () => repoStore.repositoryId,
+  (id) => id && messagingStore.fetchUnread(id),
+  { immediate: true },
+);
 </script>
 
 <style lang="scss" scoped>

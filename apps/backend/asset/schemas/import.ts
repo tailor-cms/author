@@ -21,7 +21,7 @@ const publicUrlRefine = (value: string) => {
   }
 };
 
-const safeUrl = () =>
+export const safeUrl = () =>
   z.url().refine(publicUrlRefine, 'URL must be a public https URL.');
 
 // Caller-supplied attribution; merged with OG-collected values by the

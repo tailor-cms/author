@@ -25,7 +25,7 @@ import type { Repository } from '@tailor-cms/interfaces/repository';
 import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
 
-import { useCommentStore } from '@/stores/comments';
+import { useMessagingStore } from '@/stores/messaging';
 import { useConfigStore } from '@/stores/config';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useEditorStore } from '@/stores/editor';
@@ -38,7 +38,7 @@ const { $ceRegistry, $pluginRegistry } = useNuxtApp() as any;
 
 const repositoryStore = useCurrentRepository();
 const editorStore = useEditorStore();
-const commentStore = useCommentStore();
+const messagingStore = useMessagingStore();
 const configStore = useConfigStore();
 const reviewStore = useReviewStore();
 const route = useRoute();
@@ -100,15 +100,16 @@ const parseActivityId = () => {
   return activityId.value;
 };
 
-const initializeCommentStore = (activityId: number) => {
-  return commentStore.fetch(editorStore.repositoryId as number, { activityId });
-};
+const fetchComments = (activityId: number) =>
+  messagingStore.fetchComments(editorStore.repositoryId as number, {
+    activityId,
+  });
 
 watch(
   () => route.params?.activityId,
   () => {
     const activityId = parseActivityId();
-    initializeCommentStore(activityId);
+    fetchComments(activityId);
     initializeFeedback(activityId);
   },
 );
@@ -116,13 +117,12 @@ watch(
 onBeforeMount(() => {
   const activityId = parseActivityId();
   editorStore.initialize(activityId);
-  initializeCommentStore(activityId);
+  fetchComments(activityId);
   initializeFeedback(activityId);
 });
 
 onUnmounted(() => {
   editorStore.$reset();
-  commentStore.$reset();
   reviewStore.$reset();
 });
 </script>

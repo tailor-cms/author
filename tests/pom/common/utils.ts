@@ -1,5 +1,6 @@
-import type { Page } from '@playwright/test';
+import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
+import { escapeRegExp } from 'lodash-es';
 
 import { Toast } from './Toast';
 
@@ -19,6 +20,18 @@ export const selectMenuOption = async (page: Page, name: string) => {
   await menu.locator('.v-list-item-title').filter({ hasText: name }).click();
 };
 
+// An entry of the topmost overlay menu
+export const getMenuItem = (page: Page, name: string) =>
+  page
+    .locator('.v-overlay.v-menu')
+    .last()
+    .locator('.v-list-item')
+    .filter({ hasText: name });
+
+// Vuetify disables a list item with a class, not aria-disabled, so
+// toBeDisabled() cannot see it
+export const DISABLED_LIST_ITEM = /v-list-item--disabled/;
+
 // Read all entries of the topmost overlay menu, then dismiss it
 export const getMenuOptions = async (page: Page): Promise<string[]> => {
   const menu = page.locator('.v-overlay.v-menu').last();
@@ -34,3 +47,26 @@ export const expectAlert = async (page: Page, message: string) => {
   await toast.hasText(message);
   await toast.waitForDismiss();
 };
+
+// Drags a resize handle sideways; positive moves it right
+export const dragBy = async (page: Page, handle: Locator, deltaX: number) => {
+  const box = (await handle.boundingBox())!;
+  const x = box.x + 2;
+  const y = box.y + box.height / 2;
+  await page.mouse.move(x, y);
+  await page.mouse.down();
+  await page.mouse.move(x + deltaX, y, { steps: 10 });
+  await page.mouse.up();
+};
+
+// A dialog by its exact title
+export const getDialog = (page: Page, title: string) =>
+  page.locator('div[role="dialog"]', {
+    has: page.locator('.dialog-title', {
+      hasText: new RegExp(`^${escapeRegExp(title)}$`),
+    }),
+  });
+
+// The items holding exactly `text`, not just containing it
+export const withExactText = (items: Locator, text: string) =>
+  items.filter({ has: items.page().getByText(text, { exact: true }) });

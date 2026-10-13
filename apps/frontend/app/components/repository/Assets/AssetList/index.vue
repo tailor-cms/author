@@ -170,7 +170,7 @@ const emptyState = computed(() => {
       text,
       actionText: 'Go back',
       prependActionIcon: 'mdi-arrow-left',
-      event: () => emit('folder:up'),
+      handler: () => emit('folder:up'),
     };
   }
   return {

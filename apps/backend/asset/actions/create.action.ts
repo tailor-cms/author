@@ -1,9 +1,8 @@
 import { oneLine } from 'common-tags';
 import { StatusCodes } from 'http-status-codes';
-
 import { createError } from '#shared/error/helpers.js';
 import { defineAction } from '#shared/request/action.ts';
-
+import * as eventBus from '#shared/events/bus.ts';
 import * as schemas from '../schemas/index.ts';
 import * as service from '../asset.service.ts';
 
@@ -50,6 +49,15 @@ export default defineAction({
       folder,
     );
     if (storageFile) return service.getDownloadUrl(assets[0].storageKey!);
+    for (const asset of assets as any[]) {
+      eventBus.publish({
+        type: eventBus.EventType.AssetUploaded,
+        repositoryId: req.repository!.id,
+        actorId: req.user!.id,
+        subject: eventBus.subjectOf.asset(asset.id),
+        data: { id: asset.id, name: asset.name, folder: folder ?? null },
+      });
+    }
     return { data: assets };
   },
 });

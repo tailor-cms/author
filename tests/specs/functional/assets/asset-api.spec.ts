@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
-import { AssetType } from '@tailor-cms/interfaces/asset';
+import {
+  AssetType,
+  LinkContentType,
+  LinkProvider,
+} from '@tailor-cms/interfaces/asset';
 
 import AssetClient from '../../../api/AssetClient';
 import SeedClient from '../../../api/SeedClient';
@@ -112,6 +116,34 @@ test.describe('Asset API', () => {
     expect(add.data.type).toBe('LINK');
     expect(add.data.meta.provider).toBe('youtube');
     expect(add.data.meta.url).toContain('youtube.com');
+  });
+
+  test('describes a link by the service it points at', async () => {
+    const repositoryId = await createRepository();
+    const res = await AssetClient.describeUrl(
+      repositoryId, 'https://docs.google.com/spreadsheets/d/1abc/edit',
+    );
+    expect(res.status).toBe(200);
+    expect(res.data.provider).toBe(LinkProvider.GoogleSheets);
+    expect(res.data.contentType).toBe(LinkContentType.Document);
+    expect(res.data.domain).toBe('docs.google.com');
+  });
+
+  test('names a direct file link by its file name', async () => {
+    const repositoryId = await createRepository();
+    const res = await AssetClient.describeUrl(
+      repositoryId, 'https://example.com/reports/q3%20summary.pdf',
+    );
+    expect(res.status).toBe(200);
+    expect(res.data.title).toBe('q3 summary.pdf');
+  });
+
+  test('will not describe a private address', async () => {
+    const repositoryId = await createRepository();
+    const res = await AssetClient.describeUrl(
+      repositoryId, 'http://localhost:3000/',
+    );
+    expect(res.status).toBe(400);
   });
 
   test('folder filtering, listing, and moving', async () => {

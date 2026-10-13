@@ -7,7 +7,9 @@ import {
   toSeededRepository,
 } from '../../helpers/seed';
 import { ActivityOutline } from '../../pom/repository/Outline.ts';
+import { Discussion } from '../../pom/repository/discussion/Discussion.ts';
 import { NavigationRail } from '../../pom/repository/NavigationRail.ts';
+import { Workflow } from '../../pom/workflow/Workflow.ts';
 import SeedClient from '../../api/SeedClient';
 import { analyzePageWithAxe } from './helpers/analyzePageWithAxe';
 import { test } from './helpers/axe-config';
@@ -54,7 +56,7 @@ test('a11y check of the progress page', async ({
   const outline = new ActivityOutline(page);
   await outline.addFirstItem(outlineLevel.GROUP, 'Module 1');
   await new NavigationRail(page).goToProgress();
-  await expect(page.getByText('Module 1')).toBeVisible();
+  await expect(new Workflow(page).board.item('Module 1')).toBeVisible();
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,
@@ -74,6 +76,31 @@ test('a11y check of the settings page', async ({
     page,
     makeAxeBuilder,
     'a11y-settings-page-report',
+    testInfo,
+  );
+});
+
+test('a11y check of the discussion page', async ({
+  page,
+  makeAxeBuilder,
+}, testInfo) => {
+  const { data } = await SeedClient.seedTestRepository({
+    name: REPOSITORY_NAME,
+  });
+  const { id: activityId, repositoryId, data: activityData } = data.activity;
+  await SeedClient.seedComment({
+    repositoryId,
+    activityId,
+    contentElementId: data.contentElement.id,
+    content: 'Needs a clearer example here',
+  });
+  const discussion = await Discussion.visit(page, repositoryId);
+  const thread = await discussion.selectThread(activityData.name);
+  await thread.expectMessage('Needs a clearer example here');
+  await analyzePageWithAxe(
+    page,
+    makeAxeBuilder,
+    'a11y-discussion-page-report',
     testInfo,
   );
 });

@@ -11,6 +11,13 @@ export const Comment = {
   Delete: 'comment:delete',
 };
 
+export const Thread = {
+  Create: 'thread:create',
+  Update: 'thread:update',
+  Delete: 'thread:delete',
+  Typing: 'thread:typing',
+};
+
 export const ContentElement = {
   Create: 'content_element:create',
   Update: 'content_element:update',

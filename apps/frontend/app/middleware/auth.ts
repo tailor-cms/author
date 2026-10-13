@@ -2,6 +2,7 @@ import { StatsigClient } from '@statsig/js-client';
 
 import { useAuthStore } from '@/stores/auth';
 import { useConfigStore } from '@/stores/config';
+import { useEmojiStore } from '@/stores/emoji';
 
 export default async function () {
   const isAuthenticated = useCookie('is-authenticated');
@@ -9,8 +10,10 @@ export default async function () {
   if (authStore.user) return;
   await authStore.fetchUserInfo();
   isAuthenticated.value = authStore.user ? 'true' : null;
-  if (isAuthenticated.value) await statsigInit();
-  else return navigateTo({ name: 'sign-in' });
+  if (!isAuthenticated.value) return navigateTo({ name: 'sign-in' });
+  // Not awaited
+  useEmojiStore().fetch().catch(() => undefined);
+  await statsigInit();
 }
 
 const statsigInit = async () => {

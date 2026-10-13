@@ -38,7 +38,9 @@ const profile = createActionMounter(router, '/users', {
 
 // limiter + token-auth instance shared between the two
 // reset-password routes so they pull from the same per-key counter
-const resetLimiter = requestLimiter();
+const resetLimiter = requestLimiter({
+  event: 'auth:password-reset:throttled',
+});
 const resetTokenAuth = authService.authenticate('token');
 
 // Public routes - registered first so they run before the
@@ -82,7 +84,14 @@ crud
     after: [processPagination(User, false)],
   })
   .get('/export', actions.exportUsers, {
-    before: [authorize(), requestLimiter({ limit: 10 })],
+    before: [
+      authorize(),
+      requestLimiter({
+        limit: 10,
+        event: 'user:export:throttled',
+        details: (req: any) => ({ userId: req.user?.id }),
+      }),
+    ],
   })
   .post('/', actions.upsert, { before: [authorize()] })
   .delete('/:id', actions.remove, { before: [authorize()] })

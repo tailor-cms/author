@@ -9,9 +9,7 @@
         {{ comment.author.label }}
       </span>
       <div class="meta d-flex align-center text-label-medium text-medium-emphasis">
-        <span v-tooltip:right="fullDate" class="time">
-          {{ timeAgo }}
-        </span>
+        <MessageTime :at="comment.createdAt" is-relative />
         <EditorLink
           v-if="
             isActivityThread
@@ -26,6 +24,12 @@
         />
       </div>
     </div>
+    <AddReactionButton
+      v-if="!isDeleted && !isEditing"
+      density="comfortable"
+      size="x-small"
+      @select="emit('react', $event)"
+    />
     <VMenu
       v-if="showOptions && !isEditing"
       :close-on-content-click="false"
@@ -60,11 +64,12 @@
 
 <script lang="ts" setup>
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { computed } from 'vue';
 import type { User } from '@tailor-cms/interfaces/user';
-import { useDateFormat, useTimeAgo } from '@vueuse/core';
 
+import { computed } from 'vue';
+import AddReactionButton from '../../Reactions/AddReactionButton.vue';
 import EditorLink from '../../../EditorLink.vue';
+import MessageTime from '../../Message/MessageTime.vue';
 
 type Action = 'resolve' | 'enableEdit' | 'remove';
 
@@ -91,7 +96,7 @@ const props = withDefaults(defineProps<Props>(), {
   elementLabel: '',
 });
 
-const emit = defineEmits(['remove', 'resolve', 'enableEdit']);
+const emit = defineEmits(['remove', 'resolve', 'enableEdit', 'react']);
 
 const OPTIONS = {
   resolve: {
@@ -111,12 +116,6 @@ const OPTIONS = {
     color: 'error',
   },
 } satisfies Record<string, Option>;
-
-const timeAgo = useTimeAgo(() => props.comment.createdAt);
-const fullDate = useDateFormat(
-  () => props.comment.createdAt,
-  'DD MMM YYYY HH:mm',
-);
 
 const elementUid = computed(() => props.comment.contentElement?.uid);
 const isAuthor = computed(() => props.comment.author?.id === props.user?.id);
@@ -150,6 +149,7 @@ const showOptions = computed(
     .author {
       flex: 0 1 auto;
       min-width: 0;
+      color: rgb(var(--v-theme-on-surface));
     }
 
     .meta {
