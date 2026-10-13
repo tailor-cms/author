@@ -1481,6 +1481,9 @@ importers:
       '@faker-js/faker':
         specifier: ^10.5.0
         version: 10.5.0
+      '@tailor-cms/api-client':
+        specifier: workspace:*
+        version: link:../packages/api-client
       '@tailor-cms/garment':
         specifier: 0.18.1-beta.2
         version: 0.18.1-beta.2
