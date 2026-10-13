@@ -19,7 +19,10 @@ export class MessageSearch {
     this.hits = this.el.locator('.result-hit');
     this.groups = this.el.locator('.result-group');
     this.summary = this.bar.locator('.search-summary');
-    this.clearBtn = this.bar.getByRole('button', { name: 'Clear search' });
+    this.clearBtn = this.bar.getByRole('button', {
+      name: 'Clear search',
+      exact: true,
+    });
     this.page = page;
   }
 
@@ -31,11 +34,11 @@ export class MessageSearch {
     return this.composer.selectSuggestion(trigger, options);
   }
 
-  hit(text: string) {
+  getHitLocator(text: string) {
     return this.hits.filter({ hasText: text });
   }
 
-  group(text: string) {
+  getGroupLocator(text: string) {
     return this.groups.filter({ hasText: text });
   }
 }

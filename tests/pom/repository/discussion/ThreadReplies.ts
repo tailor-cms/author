@@ -1,8 +1,8 @@
 import type { Locator, Page } from '@playwright/test';
 
+import { dragBy } from '../../common/utils';
 import { MessageComposer } from './MessageComposer';
 import { ThreadMessage } from './ThreadMessage';
-import { dragBy } from '../../common/utils';
 
 // Message replies panel within a discussion thread.
 export class ThreadReplies {
@@ -23,7 +23,10 @@ export class ThreadReplies {
     this.messages = el.locator('.message-row');
     this.parent = new ThreadMessage(page, this.messages.first(), el);
     this.composer = new MessageComposer(page, el);
-    this.closeBtn = el.getByRole('button', { name: 'Close thread' });
+    this.closeBtn = el.getByRole('button', {
+      name: 'Close thread',
+      exact: true,
+    });
     this.alsoSendToThreadCheckbox = el
       .locator('.broadcast-checkbox')
       .getByRole('checkbox');

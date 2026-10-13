@@ -37,9 +37,7 @@ export class Discussion {
     return new Discussion(page);
   }
 
-  /**
-   * Visits the discussion and waits while it listens for live updates.
-   */
+  // Waits until the page is listening for live updates
   static async visitLive(page: Page, repositoryId: number) {
     const feed = `/api/repositories/${repositoryId}/feed`;
     const isListening = page.waitForRequest(
@@ -67,9 +65,7 @@ export class Discussion {
     return this.thread;
   }
 
-  /**
-   * Opens a new thread and names it, ready for its first message.
-   */
+  // Opens a new thread and names it, ready for its first message
   async openNewThread(title: string) {
     const { titleInput } = this.newThread;
     await expect(async () => {

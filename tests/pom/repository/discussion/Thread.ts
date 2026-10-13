@@ -87,7 +87,10 @@ export class Thread {
     const el = page.locator('.thread-panel');
     this.title = el.locator('.thread-title');
     this.anchorChip = el.locator('.anchor-chip');
-    this.menuBtn = el.getByRole('button', { name: 'Thread actions' });
+    this.menuBtn = el.getByRole('button', {
+      name: 'Thread actions',
+      exact: true,
+    });
     this.messages = el.locator('.message-row');
     this.dividers = el.locator('.timeline-divider-chip');
     this.unreadDivider = el.locator('.unread-divider').first();

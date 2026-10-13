@@ -41,7 +41,10 @@ export class ThreadList {
     this.mentionsChip = el.locator('.mentions-chip');
     this.nameFilter = el.getByPlaceholder('Find a conversation');
     this.newBtn = el.getByRole('button', { name: 'New', exact: true });
-    this.menuBtn = el.getByRole('button', { name: 'Thread list actions' });
+    this.menuBtn = el.getByRole('button', {
+      name: 'Thread list actions',
+      exact: true,
+    });
     this.markAllReadItem = getMenuItem(page, 'Mark everything read');
     this.integrationsItem = getMenuItem(page, 'Integrations');
     this.resizeHandle = page.locator('.thread-list-column > .resize-handle');
