@@ -1,40 +1,73 @@
-import type { MessagingCreateReq } from '@tailor-cms/api-client';
-import { type Credentials, signInAs } from './common';
+import type {
+  MessagingPostIntegrationMessageReq as MessagingWebhookReq,
+} from '@tailor-cms/api-client';
+import { type Credentials, getApiAs, type TypedApi } from './common';
 
-// The messaging API as a given user, so a spec can play another person
-// posting, editing or typing while the page under test watches
+// A person in one repository's threads, acting through the API. Plays a
+// teammate posting, editing or typing while the page under test watches, etc.
 export default class MessagingClient {
-  private readonly user: Credentials;
+  private readonly api: TypedApi;
 
-  constructor(user: Credentials) {
-    this.user = user;
+  // Route params: everything happens within the one repository
+  private readonly params: { repositoryId: number };
+
+  constructor(user: Credentials, repositoryId: number) {
+    this.api = getApiAs(user);
+    this.params = { repositoryId };
   }
 
-  async startThread(repositoryId: number, title: string, content: string) {
-    const { messaging } = await signInAs(this.user);
+  startThread(title: string, content: string) {
     const body = { title, content };
-    return messaging.createThread({ params: { repositoryId }, body });
+    return this.api.messaging.createThread({ params: this.params, body });
   }
 
-  async post(repositoryId: number, body: MessagingCreateReq['body']) {
-    const { messaging } = await signInAs(this.user);
-    return messaging.create({ params: { repositoryId }, body });
+  post(threadId: number, content: string) {
+    const body = { threadId, content };
+    return this.api.messaging.create({ params: this.params, body });
   }
 
-  async edit(repositoryId: number, messageId: number, content: string) {
-    const { messaging } = await signInAs(this.user);
-    const params = { repositoryId, messageId };
-    return messaging.update({ params, body: { content } });
+  edit(messageId: number, content: string) {
+    const params = { ...this.params, messageId };
+    return this.api.messaging.update({ params, body: { content } });
   }
 
-  async remove(repositoryId: number, messageId: number) {
-    const { messaging } = await signInAs(this.user);
-    return messaging.delete({ params: { repositoryId, messageId } });
+  remove(messageId: number) {
+    const params = { ...this.params, messageId };
+    return this.api.messaging.delete({ params });
   }
 
-  async typing(repositoryId: number, threadId: number) {
-    const { messaging } = await signInAs(this.user);
+  typing(threadId: number) {
     const body = { threadId };
-    return messaging.reportTyping({ params: { repositoryId }, body });
+    return this.api.messaging.reportTyping({ params: this.params, body });
+  }
+
+  getThread(threadId: number) {
+    const params = { ...this.params, threadId };
+    return this.api.messaging.getThread({ params });
+  }
+
+  deleteThread(threadId: number) {
+    const params = { ...this.params, threadId };
+    return this.api.messaging.deleteThread({ params });
+  }
+
+  subscribe(threadId: number, topics: string[]) {
+    const params = { ...this.params, threadId };
+    return this.api.messaging.setSubscriptions({ params, body: { topics } });
+  }
+
+  registerIntegration(key: string, name: string) {
+    const body = { key, name };
+    return this.api.messaging.createIntegration({ params: this.params, body });
+  }
+
+  revokeIntegration(integrationId: number) {
+    const params = { ...this.params, integrationId };
+    return this.api.messaging.removeIntegration({ params });
+  }
+
+  postViaWebhook(token: string, body: MessagingWebhookReq['body']) {
+    const params = { token };
+    return this.api.messaging.postIntegrationMessage({ params, body });
   }
 }

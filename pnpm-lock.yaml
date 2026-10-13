@@ -1490,6 +1490,9 @@ importers:
       '@tailor-cms/interfaces':
         specifier: workspace:*
         version: link:../packages/tailor-interfaces
+      '@tailor-cms/utils':
+        specifier: workspace:*
+        version: link:../packages/utils
       '@types/jsdom':
         specifier: ^28.0.3
         version: 28.0.3

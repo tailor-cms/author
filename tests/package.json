@@ -21,6 +21,7 @@
     "@tailor-cms/api-client": "workspace:*",
     "@tailor-cms/garment": "0.18.1-beta.2",
     "@tailor-cms/interfaces": "workspace:*",
+    "@tailor-cms/utils": "workspace:*",
     "@types/jsdom": "^28.0.3",
     "date-fns": "^4.4.0",
     "dotenv": "^17.4.2",

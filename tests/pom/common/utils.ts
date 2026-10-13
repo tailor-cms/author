@@ -28,6 +28,10 @@ export const getMenuItem = (page: Page, name: string) =>
     .locator('.v-list-item')
     .filter({ hasText: name });
 
+// Vuetify disables a list item with a class, not aria-disabled, so
+// toBeDisabled() cannot see it
+export const DISABLED_LIST_ITEM = /v-list-item--disabled/;
+
 // Read all entries of the topmost overlay menu, then dismiss it
 export const getMenuOptions = async (page: Page): Promise<string[]> => {
   const menu = page.locator('.v-overlay.v-menu').last();

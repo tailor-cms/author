@@ -48,6 +48,10 @@ export class Discussion {
     return discussion;
   }
 
+  getThreadId() {
+    return Number(new URL(this.page.url()).searchParams.get('threadId'));
+  }
+
   /**
    * Selects a thread in the list. Selecting marks it read once its
    * messages load; pass `waitForSeen` when the test depends on that being
