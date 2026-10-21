@@ -28,7 +28,15 @@ export class ResetPassword {
   async resetPassword(password: string) {
     await this.fillPassword(password);
     await this.fillPasswordConfirmation(password);
+    // Settle the reset request before returning
+    const responded = this.page.waitForResponse(
+      (res) =>
+        res.url().includes('/users/reset-password') &&
+        !res.url().includes('/token-status') &&
+        res.request().method() === 'POST',
+    );
     await this.submitBtn.click();
+    await responded;
   }
 
   async fetchInviteLink(email: string) {
