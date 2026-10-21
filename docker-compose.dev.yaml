@@ -20,7 +20,7 @@ services:
       - '6379:6379'
   author-dev-minio:
     container_name: author-dev-minio
-    image: minio/minio
+    image: pgsty/silo:RELEASE.2026-10-18T00-00-00Z
     command: server /data
     expose:
       - '9000'
@@ -30,13 +30,10 @@ services:
       - MINIO_ROOT_USER=test
       - MINIO_ROOT_PASSWORD=test1234
   author-dev-createbucket:
-    image: minio/mc
+    image: pgsty/mc:RELEASE.2026-10-18T00-00-00Z
     depends_on:
       - author-dev-minio
-    entrypoint: >
-      /bin/sh -c "
-      sleep 3;
-      mc alias set minio http://author-dev-minio:9000 test test1234;
-      mc mb minio/test --ignore-existing;
-      exit 0;
-      "
+    restart: on-failure
+    environment:
+      - MC_HOST_minio=http://test:test1234@author-dev-minio:9000
+    command: mb --ignore-existing minio/test
