@@ -6,6 +6,7 @@ import { getAnchorFromLastRecievedEmail } from '../../utils/email';
 export class ForgotPassword {
   static route = '/auth/forgot-password';
   readonly page: Page;
+  readonly el: Locator;
   readonly emailInput: Locator;
   readonly submitBtn: Locator;
   readonly successAlert: Locator;
@@ -15,8 +16,9 @@ export class ForgotPassword {
 
   constructor(page: Page) {
     this.page = page;
-    this.emailInput = page.getByLabel('Email');
     this.submitBtn = page.getByRole('button', { name: 'Send reset email' });
+    this.el = page.locator('form', { has: this.submitBtn });
+    this.emailInput = this.el.getByLabel('Email');
     this.successAlert = page
       .getByRole('alert')
       .filter({ hasText: 'Check your inbox' });
