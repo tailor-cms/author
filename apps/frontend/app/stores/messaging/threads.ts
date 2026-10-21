@@ -7,6 +7,7 @@ import type { Unread } from './unread';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
+type ThreadParams = { scope?: ThreadScope; type?: string; name?: string };
 type ReaderState = Pick<ReaderThread, 'isUnread' | 'isStarred' | 'lastReadAt'>;
 
 export type Thread = Omit<ReaderThread, keyof ReaderState>;
@@ -91,20 +92,29 @@ export const createThreads = (
     });
   }
 
+  async function fetchAll(repositoryId: number, params: ThreadParams) {
+    const all: ReaderThread[] = [];
+    let page;
+    do {
+      page = await api.messaging.getThreads({
+        params: { repositoryId },
+        query: { ...params, limit: 100, offset: all.length } as any,
+      });
+      all.push(...page.items);
+    } while (page.items.length && all.length < page.total);
+    return all;
+  }
+
   async function fetchThreads(
     repositoryId: number,
-    params: { scope?: ThreadScope; type?: string; name?: string } = {},
+    params: ThreadParams = {},
   ) {
     isLoading.value = true;
     try {
-      const { items: fetched, total: fetchedTotal } =
-        await api.messaging.getThreads({
-          params: { repositoryId },
-          query: params as any,
-        });
+      const fetched = await fetchAll(repositoryId, params);
       threads.clear();
       fetched.forEach(addThread);
-      total.value = fetchedTotal;
+      total.value = fetched.length;
       return items.value;
     } finally {
       isLoading.value = false;
