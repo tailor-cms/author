@@ -1,6 +1,6 @@
 <template>
-  <div ref="scrollEl" class="thread-timeline flex-grow-1 overflow-y-auto py-3">
-    <div class="timeline-entries">
+  <div ref="viewportEl" class="thread-timeline flex-grow-1 overflow-y-auto py-3">
+    <div ref="messagesEl" class="timeline-entries">
       <slot name="intro" />
       <template v-for="entry in entries" :key="entry.key">
         <TimelineDivider
@@ -34,8 +34,9 @@
 import type { Message } from '@tailor-cms/interfaces/comment';
 
 import { TimelineDivider } from '@tailor-cms/core-components';
-import MessageRow from '../MessageRow/index.vue';
 import { buildTimeline } from './timeline';
+import { useStickToBottom } from '../composables/useStickToBottom';
+import MessageRow from '../MessageRow/index.vue';
 
 interface Props {
   messages: Message[];
@@ -58,15 +59,10 @@ const emit = defineEmits<{
 
 const entries = computed(() => buildTimeline(props));
 
-const scrollEl = ref<HTMLElement>();
+const viewportEl = ref<HTMLElement>();
+const messagesEl = ref<HTMLElement>();
 
-const scrollToBottom = async () => {
-  await nextTick();
-  const el = scrollEl.value;
-  if (el) el.scrollTop = el.scrollHeight;
-};
-
-watch(() => props.messages.length, scrollToBottom, { immediate: true });
+useStickToBottom(viewportEl, messagesEl, () => props.messages);
 </script>
 
 <style lang="scss" scoped>

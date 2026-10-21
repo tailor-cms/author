@@ -14,30 +14,32 @@
       />
     </div>
     <VDivider />
-    <div ref="scrollEl" class="flex-grow-1 overflow-y-auto py-3">
-      <MessageRow
-        v-if="parent"
-        :current-user-id="currentUserId"
-        :message="parent"
-        is-reply-target
-        @react="(id, emoji) => emit('react', id, emoji)"
-        @remove="emit('remove', $event)"
-        @update="(id, content) => emit('update', id, content)"
-      />
-      <div class="px-4 py-2 text-body-small text-medium-emphasis font-weight-bold">
-        {{ pluralize('reply', replies.length, true) }}
+    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto py-3">
+      <div ref="messagesEl">
+        <MessageRow
+          v-if="parent"
+          :current-user-id="currentUserId"
+          :message="parent"
+          is-reply-target
+          @react="(id, emoji) => emit('react', id, emoji)"
+          @remove="emit('remove', $event)"
+          @update="(id, content) => emit('update', id, content)"
+        />
+        <div class="px-4 py-2 text-body-small text-medium-emphasis font-weight-bold">
+          {{ pluralize('reply', replies.length, true) }}
+        </div>
+        <VDivider class="mb-2" />
+        <MessageRow
+          v-for="reply in replies"
+          :key="reply.uid"
+          :current-user-id="currentUserId"
+          :message="reply"
+          is-reply-target
+          @react="(id, emoji) => emit('react', id, emoji)"
+          @remove="emit('remove', $event)"
+          @update="(id, content) => emit('update', id, content)"
+        />
       </div>
-      <VDivider class="mb-2" />
-      <MessageRow
-        v-for="reply in replies"
-        :key="reply.uid"
-        :current-user-id="currentUserId"
-        :message="reply"
-        is-reply-target
-        @react="(id, emoji) => emit('react', id, emoji)"
-        @remove="emit('remove', $event)"
-        @update="(id, content) => emit('update', id, content)"
-      />
     </div>
     <div class="flex-shrink-0 pt-1 px-4 pb-4">
       <MessageComposer
@@ -64,6 +66,7 @@ import {
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
+import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
 
@@ -87,8 +90,6 @@ const emit = defineEmits<{
   update: [id: number, content: string];
 }>();
 
-const scrollEl = ref<HTMLElement>();
-
 // If a message is being edited
 const editingUid = provideEditingMessage();
 
@@ -105,13 +106,10 @@ const submit = (content: string) => {
   isBroadcast.value = false;
 };
 
-const scrollToBottom = async () => {
-  await nextTick();
-  const el = scrollEl.value;
-  if (el) el.scrollTop = el.scrollHeight;
-};
+const viewportEl = ref<HTMLElement>();
+const messagesEl = ref<HTMLElement>();
 
-watch(() => props.replies.length, scrollToBottom, { immediate: true });
+useStickToBottom(viewportEl, messagesEl, () => props.replies);
 </script>
 
 <style lang="scss" scoped>
