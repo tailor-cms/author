@@ -36,6 +36,7 @@ export default {
   getChannel,
   addConnection,
   removeConnection,
+  broadcast,
 };
 
 function getChannel(channelId) {
@@ -56,4 +57,9 @@ function addConnection(channelId, connection) {
 
 function removeConnection(channelId, connection) {
   return getChannel(channelId).remove(connection);
+}
+
+// Sends to every open channel
+function broadcast(event, data) {
+  channels.forEach((channel) => channel.send(event, data));
 }

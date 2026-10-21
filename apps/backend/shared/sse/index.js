@@ -108,6 +108,10 @@ class SSEConnection extends EventEmitter {
     return channels.getChannel(channelId);
   }
 
+  static broadcast(event, data) {
+    return channels.broadcast(event, data);
+  }
+
   join(channelId) {
     return channels.addConnection(channelId, this);
   }

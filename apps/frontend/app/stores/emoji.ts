@@ -1,5 +1,8 @@
 import type { Emoji } from '@tailor-cms/api-client';
+
+import { Emoji as EmojiEvents } from '@tailor-cms/common/src/sse.js';
 import { api } from '@/api';
+import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 const byNameAsc = (a: Emoji, b: Emoji) => a.name.localeCompare(b.name);
 
@@ -44,5 +47,10 @@ export const useEmojiStore = defineStore('emoji', () => {
     items.value = items.value.filter((it) => it.id !== id);
   }
 
-  return { items, isLoaded, get, search, fetch, add, remove };
+  const $subscribeToSSE = () =>
+    sseRepositoryFeed.subscribe(EmojiEvents.Update, (manifest: Emoji[]) => {
+      items.value = manifest;
+    });
+
+  return { items, isLoaded, get, search, fetch, add, remove, $subscribeToSSE };
 });

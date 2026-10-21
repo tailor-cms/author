@@ -4,6 +4,7 @@ import { isEqual } from 'lodash-es';
 
 import feed from '@/lib/RepositoryFeed';
 import { useActivityStore } from '@/stores/activity';
+import { useEmojiStore } from '@/stores/emoji';
 import { useMessagingStore } from '@/stores/messaging';
 import { useContentElementStore } from '@/stores/content-elements';
 
@@ -32,6 +33,7 @@ export const useRepositorySSE = () => {
   const route = useRoute();
   const activityStore = useActivityStore();
   const messagingStore = useMessagingStore();
+  const emojiStore = useEmojiStore();
   const contentElementStore = useContentElementStore();
   const userTrackingStore = useUserTracking();
 
@@ -40,6 +42,7 @@ export const useRepositorySSE = () => {
       sseId.value = conn.id;
       activityStore.$subscribeToSSE();
       messagingStore.$subscribeToSSE();
+      emojiStore.$subscribeToSSE();
       contentElementStore.$subscribeToSSE();
       userTrackingStore.$subscribeToSSE();
 
