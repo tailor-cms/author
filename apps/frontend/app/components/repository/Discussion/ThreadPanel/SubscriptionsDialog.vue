@@ -26,7 +26,7 @@
           hide-details
         >
           <template #label>
-            <div>
+            <div class="ml-3">
               <div class="text-body-medium">{{ option.label }}</div>
               <div class="text-body-small text-medium-emphasis">
                 {{ option.description }}
