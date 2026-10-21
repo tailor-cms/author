@@ -29,6 +29,7 @@
         @update:model-value="error = ''"
       />
       <MessageComposer
+        v-model="draft"
         placeholder="What would you like to discuss?"
         @submit="submit"
       />
@@ -46,12 +47,17 @@ const emit = defineEmits<{
 const title = ref('');
 const titleEl = ref<any>(null);
 const error = ref('');
+const draft = ref('');
 
 const submit = (content: string) => {
   const subject = title.value.trim();
   if (!subject) {
     error.value = 'Give the thread a subject';
     titleEl.value?.focus();
+    // The composer clears itself on send; put the message back
+    nextTick(() => {
+      draft.value = content;
+    });
     return;
   }
   emit('create', { content, title: subject });
