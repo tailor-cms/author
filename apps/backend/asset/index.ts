@@ -57,6 +57,7 @@ mount
       ]),
     ],
   })
+  .get('/url-description', actions.describeUrl)
   .post('/import/link', actions.importFromLink)
   .post('/bulk/remove', actions.bulkRemove)
   .post('/bulk/move', actions.move);
@@ -71,6 +72,7 @@ mount
   .post('/:assetId/file', actions.attachFile, {
     before: [attachmentUpload.single('file')],
   })
+  .get('/:assetId', actions.get)
   .patch('/:assetId', actions.update)
   .delete('/:assetId', actions.remove);
 

@@ -71,8 +71,7 @@ test.describe('FileInput - upload tab', () => {
     const fileInput = await sidebar.openFileMeta(INPUT_PLACEHOLDER);
     await fileInput.picker.uploadFile(IMAGE.path);
     await fileInput.expectFileSet(IMAGE.name);
-    const lib = new AssetLibrary(page);
-    await lib.goto(repositoryId);
+    const lib = await AssetLibrary.visit(page, repositoryId);
     await expect(lib.getRow(IMAGE.name).el).toBeVisible();
   });
 });

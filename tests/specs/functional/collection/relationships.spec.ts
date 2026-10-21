@@ -43,6 +43,7 @@ test.describe('Collection - relationships (cross-entity links)', () => {
     await editor.save();
     // Reopen the item and confirm the links persisted.
     await collection.goto();
+    await collection.entityFilter.select(ENTITY.ARTICLE.label);
     const item = await collection.getItemByName('Pride and Prejudice');
     const reopened = await item.open();
     await reopened.relationship('Author').expectSelected('Jane Austen');
@@ -58,7 +59,7 @@ test.describe('Collection - relationships (cross-entity links)', () => {
   });
 
   test('blocks saving when a required relationship is empty', async () => {
-    const editor = await collection.createItem(
+    const editor = await collection.createFirstItem(
       ENTITY.ARTICLE,
       'Orphan Article',
     );

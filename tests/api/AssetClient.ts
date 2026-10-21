@@ -64,6 +64,18 @@ class AssetClient extends BaseClient {
     return formatResponse(res);
   };
 
+  // What a pasted link points at
+  describeUrl = async (
+    repositoryId: number,
+    url: string,
+  ): Promise<EndpointResponse> => {
+    const req = await this.getClient();
+    const res = await req.get(this.assetUrl(repositoryId, 'url-description'), {
+      params: { url },
+    });
+    return formatResponse(res);
+  };
+
   list = async (
     repositoryId: number,
     params: Record<string, any> = {},

@@ -7,6 +7,10 @@ export const IMAGE = {
   path: path.join(__dirname, 'test-image.jpg'),
   name: 'test-image.jpg',
 };
+export const ANIMATED_IMAGE = {
+  path: path.join(__dirname, 'test-animated.gif'),
+  name: 'test-animated.gif',
+};
 export const DOCUMENT = {
   path: path.join(__dirname, 'test-document.pdf'),
   name: 'test-document.pdf',

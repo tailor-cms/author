@@ -1,7 +1,18 @@
 <template>
   <div ref="containerEl" class="embedded-discussion">
     <div v-if="showResolveButton" class="d-flex justify-center">
-      <ResolveButton class="mb-2" @click.stop="resolveAll" />
+      <VBtn
+        v-tooltip:left="{
+          text: 'Mark all as resolved and hide discussion',
+          openDelay: 800,
+        }"
+        class="mb-2"
+        prepend-icon="mdi-checkbox-outline"
+        size="small"
+        text="Resolve All"
+        variant="tonal"
+        @click.stop="resolveAll"
+      />
     </div>
     <div :class="{ 'pb-7 mb-2': !showHeading && hasHiddenComments }">
       <VBtn
@@ -24,64 +35,52 @@
     <VAlert
       v-if="!commentsCount && showNotifications"
       class="alert mb-4"
-      icon="mdi-keyboard-outline"
-      text="Be the First to Comment!"
+      icon="mdi-comment-outline"
+      text="No comments yet - start the discussion below."
       variant="tonal"
     />
     <DiscussionThread
       v-if="thread.length"
+      v-model:show-all="showAll"
       :is-activity-thread="isActivityThread"
       :items="thread"
       :min-displayed="commentsShownLimit"
-      :show-all="showAll"
       :unseen-count="unseenComments.length"
       :user="user"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="remove"
       @resolve="emit('resolve', $event)"
       @seen="emit('seen')"
-      @show-all="showAll = $event"
       @unresolve="emit('unresolve', $event)"
       @update="emit('update', $event)"
     />
-    <div ref="inputContainerEl" class="text-right mt-4">
-      <VTextarea
+    <div ref="inputContainerEl" class="mt-4">
+      <MessageComposer
         ref="inputEl"
         v-model="contentInput"
-        :error-messages="errors.message"
+        class="comment-composer"
         :placeholder="
           commentsCount ? 'Add a comment...' : 'Start the discussion...'
         "
-        class="comment-input"
-        hide-details="auto"
-        rows="3"
-        variant="outlined"
-        auto-grow
-        clearable
+        @edit:last="editLast"
         @focus="emit('seen')"
-      />
-      <VBtn
-        :disabled="isTextEditorEmpty || error"
-        aria-label="Post comment"
-        class="mt-3"
-        icon="mdi-send"
-        variant="text"
-        @click="post"
+        @submit="post"
       />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, nextTick, ref, watch } from 'vue';
-import { object, string } from 'yup';
 import type { Comment } from '@tailor-cms/interfaces/comment';
-import { orderBy } from 'lodash-es';
-import { useForm } from 'vee-validate';
 import type { User } from '@tailor-cms/interfaces/user';
-
+import { computed, nextTick, ref, watch } from 'vue';
+import { lastOwnMessage } from './lastOwnMessage';
+import { orderBy } from 'lodash-es';
+import { provideEditingMessage } from './context';
 import { useConfirmationDialog } from '../../composables/useConfirmationDialog';
 import DiscussionThread from './Thread/index.vue';
-import ResolveButton from './ResolveButton.vue';
+import MessageComposer from './MessageComposer/index.vue';
 
 interface Props {
   user: User;
@@ -107,8 +106,8 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits([
-  'change',
   'save',
+  'react',
   'remove',
   'resolve',
   'seen',
@@ -122,17 +121,11 @@ const showConfirmationDialog = useConfirmationDialog();
 // Template refs
 const containerEl = ref<HTMLElement>();
 const inputContainerEl = ref<HTMLElement>();
-const inputEl = ref<HTMLElement>();
+const inputEl = ref<InstanceType<typeof MessageComposer>>();
 
 const showAll = ref(false);
-const error = ref(false);
-
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    message: string().max(600, 'Max 600 characters'),
-  }),
-});
-const [contentInput] = defineField('message', { validateOnModelUpdate: true });
+const contentInput = ref('');
+const editingUid = provideEditingMessage();
 
 const thread = computed(() => {
   const processedThread = props.comments.map((comment) => {
@@ -148,8 +141,6 @@ const hasHiddenComments = computed(
   () => props.commentsShownLimit < commentsCount.value,
 );
 
-const isTextEditorEmpty = computed(() => !contentInput.value?.trim());
-
 const hasUnresolvedComments = computed(() =>
   props.comments.some((it) => !it.resolvedAt && !it.deletedAt),
 );
@@ -158,25 +149,28 @@ const showResolveButton = computed(
   () => hasUnresolvedComments.value && !props.isActivityThread,
 );
 
-const post = handleSubmit(() => {
-  if (isTextEditorEmpty.value) return;
+const post = (content: string) => {
   const { scrollTarget, user: author } = props;
   const scrollTargetRef =
     scrollTarget === 'discussion' ? containerEl : inputContainerEl;
-  const payload = {
-    content: contentInput.value,
+  emit('save', {
+    content,
     author,
     createdAt: Date.now(),
     updatedAt: Date.now(),
-  };
-  emit('save', payload);
-  resetForm();
+  });
+  contentInput.value = '';
   const scrollOptions: ScrollIntoViewOptions = {
     block: 'center',
     behavior: 'smooth',
   };
   nextTick(() => scrollTargetRef.value?.scrollIntoView(scrollOptions));
-});
+};
+
+const editLast = () => {
+  const last = lastOwnMessage(props.comments, props.user?.id);
+  if (last) editingUid.value = last.uid;
+};
 
 const remove = (comment: Comment) => {
   showConfirmationDialog({
@@ -203,8 +197,6 @@ const onConfirmationActive = () => {
   return { onOpen, onClose };
 };
 
-watch(commentsCount, () => emit('change', thread.value));
-
 watch(
   () => props.isVisible,
   async (val) => {
@@ -218,27 +210,3 @@ watch(
   { immediate: true },
 );
 </script>
-
-<style lang="scss" scoped>
-.embedded-discussion {
-  .resolve-btn-container {
-    display: flex;
-    justify-content: flex-end;
-    margin: 0.5rem 0 0 0;
-  }
-
-  .header {
-    margin: 0.75rem 0 1.25rem 0;
-    font-size: 1.125rem;
-    font-weight: 400;
-  }
-
-  .comment-input {
-    margin: 0 0.25rem 0 0.25rem;
-  }
-
-  .v-input :deep(textarea::placeholder) {
-    opacity: 0.85;
-  }
-}
-</style>

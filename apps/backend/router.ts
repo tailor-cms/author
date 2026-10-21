@@ -1,6 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
+import emoji from './emoji/index.ts';
 import health from './health/index.ts';
+import integrationHooks from './messaging/integration/hooks.router.ts';
 import repository from './repository/index.ts';
 import seedRouter from './tests/api/index.ts';
 import tag from './tag/index.ts';
@@ -24,6 +26,9 @@ router.use(openApiDocsRouter);
 
 router.use(user.path, user.router);
 
+// Token-authenticated integration ingress
+router.use(integrationHooks.path, integrationHooks.router);
+
 // SSO routes:
 if (authConfig.oidc.enabled) {
   const { default: oidc } = await import('./oidc/index.ts');
@@ -33,6 +38,7 @@ if (authConfig.oidc.enabled) {
 // Protected routes:
 router.use(authenticate('jwt'));
 router.use(repository.path, repository.router);
+router.use(emoji.path, emoji.router);
 router.use(tag.path, tag.router);
 router.use(userGroup.path, userGroup.router);
 if (testConfig.isSeedApiEnabled) router.use(seedRouter.path, seedRouter.router);

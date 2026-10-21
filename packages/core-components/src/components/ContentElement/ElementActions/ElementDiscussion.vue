@@ -29,6 +29,7 @@
           isVisible,
         }"
         v-model:confirmation-active="isConfirmationActive"
+        @react="reactToComment"
         @remove="removeComment"
         @resolve="updateResolvement"
         @save="save"
@@ -120,13 +121,12 @@ const save = (data: Partial<Comment>) => {
   });
 };
 
-const setLastSeen = (timeout: number) => {
+const setLastSeen = () => {
   editorBus.emit('comment', {
     action: Events.Discussion.SetLastSeen,
     payload: {
       elementUid: props.uid,
       lastCommentAt: lastCommentAt.value,
-      timeout,
     },
   });
 };
@@ -143,6 +143,13 @@ const updateResolvement = ({
       contentElementId: props.id,
       resolvedAt,
     },
+  });
+};
+
+const reactToComment = (comment: Comment, emoji: string) => {
+  editorBus.emit('comment', {
+    action: Events.Discussion.React,
+    payload: { id: comment.id, emoji },
   });
 };
 

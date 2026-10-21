@@ -1,9 +1,9 @@
 import { AssetType } from '@tailor-cms/interfaces/asset';
-import { getLinkPreviewUrl } from '@tailor-cms/common/asset';
+import { getLinkThumbnailUrl } from '@tailor-cms/utils';
 import repositoryAsset from '@/api/repositoryAsset';
 
 // The minimal asset shape this composable needs.
-interface AssetThumbnailSource {
+export interface AssetThumbnailSource {
   id: number;
   repositoryId: number;
   type: AssetType;
@@ -23,9 +23,9 @@ interface AssetThumbnailSource {
  *   2. Cold thumbnail - the `/thumbnail` route. The first hit makes the backend
  *      generate + cache the WebP, set meta.hasThumbnail, and 302-redirect to
  *      it; later listings then ship (1) and skip this route.
- *   3. Original - the uploaded file (`publicUrl`) or a link's external preview
- *      (OpenGraph image / YouTube still).
- *   4. `null` - no image representation (audio, docs, preview-less links).
+ *   3. Original - the uploaded file (`publicUrl`) or a link's external image
+ *      (the service's own thumbnail, else the page's OpenGraph image).
+ *   4. `null` - no image representation (audio, docs, links without one).
  *
  * Example - freshly uploaded image (cold): the list omits `thumbnailUrl`, so
  * `src` is the /thumbnail route; the <img> hits it, the backend shrinks and
@@ -62,16 +62,16 @@ function thumbnailCandidates(asset: AssetThumbnailSource): string[] {
 }
 
 // The image to show without a generated thumbnail: an uploaded image's own
-// file, or a link's external preview. null when the asset has neither.
+// file, or a link's external image. null when the asset has neither.
 function fallbackImage(asset: AssetThumbnailSource): string | null {
   if (asset.type === AssetType.Image) return asset.publicUrl ?? null;
-  return linkPreview(asset);
+  return linkThumbnail(asset);
 }
 
-// External preview for a link asset.
-function linkPreview(asset: AssetThumbnailSource): string | null {
+// External image for a link asset.
+function linkThumbnail(asset: AssetThumbnailSource): string | null {
   if (asset.type !== AssetType.Link) return null;
-  return getLinkPreviewUrl(asset.meta);
+  return getLinkThumbnailUrl(asset.meta);
 }
 
 // A URL for an <img> src, not an $api fetch: the browser loads it directly and

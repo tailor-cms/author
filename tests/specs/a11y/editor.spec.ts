@@ -76,7 +76,7 @@ test('a11y check of the editor page comments section', async ({
   const editor = new Editor(page);
   await editor.toSecondaryPage();
   await page.getByRole('tab', { name: 'Comments' }).click();
-  await expect(page.getByText('Be the First to Comment!')).toBeVisible();
+  await expect(page.getByText('No comments yet')).toBeVisible();
   await analyzePageWithAxe(
     page,
     makeAxeBuilder,

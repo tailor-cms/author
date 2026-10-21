@@ -1,7 +1,7 @@
 export { default as CircularProgress } from './components/CircularProgress.vue';
 export { default as ContainedContent } from './components/ContainedContent.vue';
 export { default as ContentElement } from './components/ContentElement/index.vue';
-export { default as Discussion } from './components/Discussion/index.vue';
+export * from './components/Discussion';
 export { default as ElementList } from './components/ElementList.vue';
 export { default as AddElement } from './components/AddElement/index.vue';
 export { default as InlineActivator } from './components/AddElement/InlineActivator.vue';
@@ -24,7 +24,14 @@ export { default as TailorEmptyState } from './components/TailorEmptyState.vue';
 export { default as AiPrompt } from './components/AiPrompt.vue';
 export { useLoader } from './composables/useLoader';
 export { useConfirmationDialog } from './composables/useConfirmationDialog';
-export { useValidation, useValidationProvider } from './composables/useValidation';
-export { ASSET_TYPE_COLOR, ASSET_TYPE_ICON, ASSET_TYPE_LABEL } from './config/asset';
+export {
+  useValidation,
+  useValidationProvider,
+} from './composables/useValidation';
+export {
+  ASSET_TYPE_COLOR,
+  ASSET_TYPE_ICON,
+  ASSET_TYPE_LABEL,
+} from './config/asset';
 export { getAssetColor, getAssetIcon, getAssetLabel } from './utils/asset';
 export { formatFileSize } from './utils/format';

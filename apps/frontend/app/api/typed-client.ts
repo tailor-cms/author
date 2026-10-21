@@ -7,7 +7,7 @@
 import { createApiClient, createClient } from '@tailor-cms/api-client';
 import { applyAuthInterceptor } from './request';
 
-const client = createClient({
+export const client = createClient({
   baseURL: '/api',
   withCredentials: true,
   headers: { 'Content-Type': 'application/json' },

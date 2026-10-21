@@ -48,6 +48,9 @@ export async function list(
 ) {
   opts.where = { ...opts.where, repositoryId: repository.id };
   if (!filters.detached) opts.where = { ...opts.where, detached: false };
+  if (filters.uids?.length) {
+    opts.where = { ...opts.where, uid: filters.uids };
+  }
   if (filters.activityIds) {
     const where = { id: filters.activityIds };
     opts.include = { model: Activity.unscoped(), attributes: [], where };

@@ -3,10 +3,8 @@ env:
   PLAYWRIGHT_VERSION: 1.61.1
   APP_URL: http://localhost:3000
   MINIO_URL: http://localhost:4566
-  # Pinned MinIO image, pulled once by the `minio-image` job and cached; each
-  # e2e shard then loads it instead of pulling, so a run hits Docker Hub at most
-  # once.
-  MINIO_IMAGE: minio/minio:RELEASE.2025-09-07T16-13-09Z
+  # Pinned MinIO image (the Silo community fork)
+  MINIO_IMAGE: pgsty/silo:RELEASE.2026-10-18T00-00-00Z
   # Force JS actions to run on Node 24 (most still bundle Node 20 which is
   # deprecated). Remove once action maintainers release Node 24 versions.
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
@@ -330,5 +328,5 @@ jobs:
             exit 1
           fi
       - name: Merge and cache shard durations
-        if: always()
+        if: always() && needs.e2e.result != 'skipped'
         uses: ./.github/actions/merge-shard-durations

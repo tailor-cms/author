@@ -10,6 +10,8 @@
         user,
         comments: visibleComments.seen,
       }"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="emit('remove', $event)"
       @resolve="emit('resolve', $event)"
       @unresolve="emit('unresolve', $event)"
@@ -27,6 +29,8 @@
         user,
         comments: visibleComments.unseen,
       }"
+      @react="(comment: Comment, emoji: string) =>
+        emit('react', comment, emoji)"
       @remove="emit('remove', $event)"
       @resolve="emit('resolve', $event)"
       @unresolve="emit('unresolve', $event)"
@@ -48,31 +52,31 @@ interface Props {
   items: Comment[];
   unseenCount: number;
   user: User;
-  showAll?: boolean;
   minDisplayed?: number;
   isActivityThread?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  showAll: false,
   minDisplayed: 5,
   isActivityThread: false,
 });
 
 const emit = defineEmits([
+  'react',
   'remove',
   'resolve',
   'unresolve',
   'update',
-  'showAll',
   'seen',
 ]);
+
+const showAll = defineModel<boolean>('showAll', { default: false });
 
 const unseenDividerEl = ref();
 const isVisible = ref(false);
 
 const visibleComments = computed(() => {
-  const comments = props.showAll
+  const comments = showAll.value
     ? props.items
     : takeRight(props.items, props.minDisplayed);
   const [unseen, seen] = partition(comments, 'unseen');
@@ -85,9 +89,9 @@ const onUpdate = (comment: Comment, content: string) => {
 
 const onIntersect = (val: boolean) => (isVisible.value = val);
 
-const revealUnseen = (count = null) => {
-  if ((count || props.unseenCount) < props.minDisplayed) return;
-  emit('showAll', true);
+const revealUnseen = () => {
+  if (props.unseenCount < props.minDisplayed) return;
+  showAll.value = true;
   nextTick(() => {
     const element = unseenDividerEl.value?.$el;
     if (!element) return;
@@ -95,9 +99,9 @@ const revealUnseen = (count = null) => {
   });
 };
 
-const markSeen = async () => {
+const markSeen = () => {
   emit('seen');
-  emit('showAll', false);
+  showAll.value = false;
 };
 
 watch(isVisible, (val) => {
@@ -105,11 +109,7 @@ watch(isVisible, (val) => {
   revealUnseen();
 });
 
-watch(
-  () => props.unseenCount,
-  () => revealUnseen(),
-  { immediate: true },
-);
+watch(() => props.unseenCount, revealUnseen, { immediate: true });
 </script>
 
 <style lang="scss" scoped>

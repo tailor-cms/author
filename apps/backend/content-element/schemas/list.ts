@@ -7,6 +7,7 @@ import {
   Pagination,
   QueryBoolean,
   Sort,
+  UidArrayFromQuery,
 } from '#shared/request/schemas.ts';
 
 export const ListFilter = z
@@ -15,6 +16,10 @@ export const ListFilter = z
       Restrict to elements whose \`activityId\` is in the provided set
       (the FE's bulk "load every element under these containers" call).
       Accepts a real array, a single value, or a comma-separated string.
+    `),
+    uids: UidArrayFromQuery().describe(oneLine`
+      Restrict to elements with these UIDs. Elements are referenced by
+      uid across the app (editor deep links, discussion references).
     `),
     detached: QueryBoolean.optional().describe(oneLine`
       Include detached elements (rows unreachable in the outline because

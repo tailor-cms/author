@@ -16,17 +16,26 @@
           @click.stop="emit('unresolve')"
         />
       </div>
-      <div class="body">
-        {{ content.trimEnd() }}
-        <span v-if="isEdited" class="edited text-medium-emphasis">(edited)</span>
-      </div>
+      <component :is="previews" :content="content">
+        <MessageBody
+          :content="content"
+          :current-user-id="currentUserId"
+          :is-edited="isEdited"
+        />
+      </component>
     </template>
   </div>
 </template>
 
 <script lang="ts" setup>
+import type { FunctionalComponent } from 'vue';
+
+import { useDiscussionContext } from '../../context';
+import MessageBody from '../../Message/MessageBody.vue';
+
 interface Props {
   content?: string;
+  currentUserId?: number | null;
   isResolved?: boolean;
   isDeleted?: boolean;
   isEdited?: boolean;
@@ -34,26 +43,23 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   content: '',
+  currentUserId: null,
   isResolved: false,
   isDeleted: false,
   isEdited: false,
 });
 
 const emit = defineEmits(['unresolve']);
+
+const { referenceViews } = useDiscussionContext();
+
+// Without the app's previews, just the text
+const TextOnly: FunctionalComponent = (_, { slots }) => slots.default?.();
+
+const previews = referenceViews?.previews ?? TextOnly;
 </script>
 
 <style lang="scss" scoped>
-.edited {
-  margin-left: 0.25rem;
-  font-size: 0.75rem;
-}
-
-.content .body {
-  white-space: pre-wrap;
-  word-break: break-word;
-  overflow-wrap: break-word;
-}
-
 .content.resolved {
   opacity: 0.7;
 

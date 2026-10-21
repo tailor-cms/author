@@ -57,6 +57,10 @@ function getDownloadUrl(repositoryId, id) {
 
 // Browser <img> src for the thumbnail redirect route (not a fetch): the route
 // generates/caches on first hit, then 302-redirects.
+function get(repositoryId, id) {
+  return request.get(urls.resource(repositoryId, id)).then(extractData);
+}
+
 function getThumbnailUrl(repositoryId, id) {
   return `/api${urls.resource(repositoryId, id)}/thumbnail`;
 }
@@ -98,6 +102,12 @@ function deleteFolder(repositoryId, folder) {
 function importFromLink(repositoryId, url, meta) {
   return request
     .post(`${urls.root(repositoryId)}/import/link`, { url, meta })
+    .then(extractData);
+}
+
+function describeUrl(repositoryId, url) {
+  return request
+    .get(`${urls.root(repositoryId)}/url-description`, { params: { url } })
     .then(extractData);
 }
 
@@ -145,6 +155,7 @@ function discover(repositoryId, query, contentFilter = 'all', count = 20) {
 export default {
   list,
   upload,
+  get,
   getDownloadUrl,
   getThumbnailUrl,
   getUsages,
@@ -155,6 +166,7 @@ export default {
   deleteFolder,
   updateAsset,
   importFromLink,
+  describeUrl,
   attachFile,
   indexAssets,
   getIndexingStatus,

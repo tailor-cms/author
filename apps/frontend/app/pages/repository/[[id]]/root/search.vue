@@ -68,7 +68,6 @@ import { useLocalStorage } from '@vueuse/core';
 
 import {
   DEFAULT_PAGE_SIZE,
-  parseSearchTerms,
   useContentElementSearch,
   useSearchHistory,
   type SearchElement,
@@ -234,10 +233,3 @@ onMounted(async () => {
 
 onBeforeUnmount(() => applySearch.cancel());
 </script>
-
-<style>
-::highlight(search-term) {
-  background-color: rgb(var(--v-theme-primary-container));
-  color: rgb(var(--v-theme-on-primary-container));
-}
-</style>

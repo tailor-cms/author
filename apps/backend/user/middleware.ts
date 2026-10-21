@@ -25,6 +25,8 @@ export const loginRequestLimiter = requestLimiter({
   // `setLoginLimitKey` runs first in the /login `before` chain, so
   // `userKey` is always populated by the time this fires.
   keyGenerator: (req: LoginRequest) => req.userKey!,
+  event: 'auth:login:throttled',
+  details: (req: Request) => ({ email: req.body?.email }),
 });
 
 // Computes a stable per-(ip, email) key for the login limiter and

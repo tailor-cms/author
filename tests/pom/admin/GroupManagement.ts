@@ -204,7 +204,7 @@ export class GroupManagement {
     if (options.visit) {
       // The whole card navigates to the group detail page
       await entry.el.click();
-      await expect(page.getByRole('heading', { name })).toBeVisible();
+      await GroupManagement.expectGroupPage(page, name);
     }
   }
 
@@ -213,7 +213,11 @@ export class GroupManagement {
     const entry = await groupManagement.getEntryByName(name);
     await entry.el.click();
     await page.waitForLoadState('networkidle');
-    await expect(page.getByRole('heading', { name })).toBeVisible();
+    await GroupManagement.expectGroupPage(page, name);
+  }
+
+  static expectGroupPage(page: Page, name: string) {
+    return expect(page.getByRole('heading', { name })).toBeVisible();
   }
 
   async getEntries() {

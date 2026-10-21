@@ -22,8 +22,10 @@ export class Toast {
     return expect(this.withText(/saved/i)).toBeVisible();
   }
 
+  // Toasts show for a short time and stack when several actions fire in a row
+  // so we wait for them to dismiss before proceeding.
   waitForDismiss() {
-    return expect(this.el).toHaveCount(0);
+    return expect(this.el).toHaveCount(0, { timeout: 15000 });
   }
 
   // Named confirmation toasts

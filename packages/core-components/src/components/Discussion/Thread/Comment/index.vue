@@ -18,54 +18,51 @@
         @remove="remove"
         @resolve="handleResolvementUpdate"
         @enable-edit="isEditing = true"
+        @react="emit('react', comment, $event)"
       />
       <div class="comment-body">
         <CommentPreview
           v-if="!isEditing"
-          v-bind="{ content: comment.content, isResolved, isDeleted, isEdited }"
+          v-bind="{
+            content: comment.content,
+            currentUserId: user?.id,
+            isResolved,
+            isDeleted,
+            isEdited,
+          }"
           @unresolve="handleResolvementUpdate"
         />
-        <template v-else>
-          <!-- eslint-disable vuejs-accessibility/no-autofocus -->
-          <VTextarea
-            v-model.trim="contentInput"
-            :error-messages="errors.message"
-            density="comfortable"
-            class="comment-editor"
-            rows="3"
-            variant="outlined"
-            hide-details="auto"
-            auto-grow
-            autofocus
-            clearable
-          />
-          <!-- eslint-enable vuejs-accessibility/no-autofocus -->
-          <span class="d-flex justify-end mt-3 ga-2">
-            <VBtn size="small" text="Cancel" variant="text" @click="reset" />
-            <VBtn
-              color="primary"
-              size="small"
-              text="Save"
-              variant="flat"
-              @click="save"
-            />
-          </span>
-        </template>
+        <MessageEditor
+          v-else
+          :content="comment.content"
+          class="comment-editor mt-3"
+          placeholder="Edit your comment..."
+          @cancel="isEditing = false"
+          @save="save"
+        />
+        <MessageReactions
+          v-if="!isEditing"
+          :current-user-id="user?.id"
+          :reactions="comment.reactions"
+          class="mt-1"
+          @toggle="emit('react', comment, $event)"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
-import { computed, ref, watch } from 'vue';
 import type { Comment } from '@tailor-cms/interfaces/comment';
 import type { User } from '@tailor-cms/interfaces/user';
 
+import { computed } from 'vue';
+import { useEditingMessage } from '../../context';
 import CommentHeader from './CommentHeader.vue';
 import CommentPreview from './CommentPreview.vue';
+import MessageEditor from '../../Message/MessageEditor.vue';
+import MessageReactions from '../../Reactions/MessageReactions.vue';
 import UserAvatar from '../../../UserAvatar.vue';
-import { object, string } from 'yup';
-import { useForm } from 'vee-validate';
 
 interface Props {
   user: User;
@@ -79,28 +76,25 @@ const props = withDefaults(defineProps<Props>(), {
   elementLabel: '',
 });
 
-const emit = defineEmits(['remove', 'resolve', 'unresolve', 'update']);
+const emit = defineEmits([
+  'remove',
+  'resolve',
+  'unresolve',
+  'update',
+  'react',
+]);
 
-const isEditing = ref(false);
+// Opening one comment for editing closes any other
+const isEditing = useEditingMessage(() => props.comment.uid);
+
 const isResolved = computed(() => !!props.comment.resolvedAt);
 const isDeleted = computed(() => !!props.comment.deletedAt);
 const isEdited = computed(() => !!props.comment.editedAt);
 
-const { defineField, errors, handleSubmit, resetForm } = useForm({
-  validationSchema: object({
-    message: string().max(600, 'Max 600 characters'),
-  }),
-  initialValues: {
-    message: props.comment.content,
-  },
-});
-const [contentInput] = defineField('message', { validateOnModelUpdate: true });
-
-const save = handleSubmit(() => {
-  if (!contentInput.value) return remove();
+const save = (content: string) => {
   isEditing.value = false;
-  emit('update', props.comment, contentInput.value);
-});
+  emit('update', props.comment, content);
+};
 
 const remove = () => {
   emit('remove', props.comment);
@@ -109,13 +103,6 @@ const remove = () => {
 const handleResolvementUpdate = () => {
   emit(isResolved.value ? 'unresolve' : 'resolve', props.comment);
 };
-
-const reset = () => {
-  resetForm({ values: { message: props.comment.content } });
-  isEditing.value = false;
-};
-
-watch(() => props.comment, reset, { deep: true });
 </script>
 
 <style lang="scss" scoped>
@@ -131,14 +118,8 @@ watch(() => props.comment, reset, { deep: true });
     min-width: 0;
   }
 
-  &-editor.v-textarea {
-    margin: 0.75rem 0 0 0;
-
-    // Match the rendered body (text-body-medium, 0.875rem) so toggling edit/view
-    // doesn't resize text. Vuetify's .v-field hardcodes 16px.
-    :deep(.v-field) {
-      font-size: 0.875rem;
-    }
+  &-editor :deep(.composer-input) {
+    font-size: 0.875rem;
   }
 }
 </style>

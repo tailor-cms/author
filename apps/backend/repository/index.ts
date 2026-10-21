@@ -12,7 +12,7 @@ import activity from '../activity/index.ts';
 import agent from '../shared/ai/agent/index.ts';
 import ai from '../shared/ai/index.ts';
 import asset from '../asset/index.ts';
-import comment from '../comment/index.ts';
+import comment from '../messaging/index.ts';
 import contentElement from '../content-element/index.ts';
 import review from '../shared/ai/review/index.ts';
 import revision from '../revision/index.ts';

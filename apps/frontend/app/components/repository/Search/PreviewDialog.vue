@@ -48,15 +48,12 @@
 
 <script lang="ts" setup>
 import type { RouteLocationRaw } from 'vue-router';
+
 import {
   ContentElement as ContentElementWrapper,
   TailorDialog,
 } from '@tailor-cms/core-components';
-import {
-  useElementLocation,
-  useSearchHighlight,
-  type SearchElement,
-} from './composables';
+import { type SearchElement, useElementLocation } from './composables';
 
 const props = defineProps<{
   element: SearchElement;

@@ -79,7 +79,6 @@
     <ActivityDiscussion
       :key="activity.id"
       :activity="activity"
-      panel
       show-heading
     />
   </div>
@@ -90,7 +89,7 @@ import { activity as activityUtils } from '@tailor-cms/utils';
 
 import { LinkedIndicator, SourceUsages } from '@/components/repository/Library';
 import { useCurrentRepository } from '@/stores/current-repository';
-import ActivityDiscussion from '../Discussion/index.vue';
+import ActivityDiscussion from '../Discussion/ActivityDiscussion/index.vue';
 import ActivityRelationship from './ActivityRelationship.vue';
 import ActivityStatus from './ActivityStatus.vue';
 import LabelChip from '@/components/common/LabelChip.vue';

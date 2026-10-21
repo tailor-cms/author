@@ -1,0 +1,5 @@
+// Platform wide search highlight
+::highlight(search-term) {
+  background-color: rgb(var(--v-theme-primary-container));
+  color: rgb(var(--v-theme-on-primary-container));
+}
