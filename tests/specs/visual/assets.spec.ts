@@ -39,8 +39,7 @@ test('Asset library - detail sidebar', async ({ page }) => {
 });
 
 test('Asset library - add link dialog', async ({ page }) => {
-  await toRepositoryAssets(page, REPOSITORY_NAME);
-  const lib = new AssetLibrary(page);
+  const { lib } = await toAssetLibrary(page, REPOSITORY_NAME);
   await lib.waitForLoad();
   await lib.emptyAddLinkCard.click();
   await percySnapshot(page, 'Asset library - add link dialog');
