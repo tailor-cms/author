@@ -43,6 +43,7 @@ lifecycle.post('/resolve', actions.resolve);
 
 search.get('/search', actions.search);
 search.get('/assets', actions.assets);
+search.get('/users', actions.users);
 
 crud
   .get('/', actions.list, {

@@ -9,3 +9,4 @@ export { default as reactions } from './reactions.action.ts';
 // Reads that span every thread in the repository.
 export { default as search } from './search.action.ts';
 export { default as assets } from './assets.action.ts';
+export { default as users } from './users.action.ts';

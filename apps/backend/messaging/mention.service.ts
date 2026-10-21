@@ -1,11 +1,18 @@
 // A mention is a `<@id|label>` token in the message body
 import type { Transaction } from 'sequelize';
 import type { Comment } from './models/comment.model.js';
+
+import {
+  type UserSummary,
+  USER_SUMMARY_ATTRS,
+} from '#app/user/schemas/entity.ts';
 import { createLogger } from '#logger';
 import { extractMentions } from '@tailor-cms/utils';
 import { Op } from 'sequelize';
+import { UserRole } from '@tailor-cms/interfaces/role';
 import { subQuery } from '#shared/database/helpers.js';
 import db from '#shared/database/index.js';
+import pick from 'lodash/pick.js';
 
 // Models are resolved lazily
 const models = () => db as any;
@@ -88,28 +95,28 @@ async function insertMentions(
 }
 
 // Who the message body names; narrowed to people who can reach the repository.
-async function mentionedMemberIds(
-  message: Comment,
-  transaction?: Transaction,
-) {
+async function mentionedMemberIds(message: Comment, transaction?: Transaction) {
   const mentioned = extractMentions(message.getDataValue('content') ?? '');
   if (!mentioned.length) return [];
-  const members = await repositoryMemberIds(message.repositoryId, transaction);
+  const withAccess = await userIdsWithAccess(message.repositoryId, transaction);
   return [
-    ...new Set(mentioned.map((it) => it.userId).filter((id) => members.has(id))),
+    ...new Set(
+      mentioned.map((it) => it.userId).filter((id) => withAccess.has(id)),
+    ),
   ];
 }
 
 /**
- * Ids of everyone who can reach the repository, directly or through a
- * user group. A mention can never notify; or reveal anybody else.
+ * Ids of everyone with access to the repository: members, their user groups
+ * and system admins.
  */
-async function repositoryMemberIds(
+async function userIdsWithAccess(
   repositoryId: number,
   transaction?: Transaction,
 ) {
-  const { RepositoryUser, RepositoryUserGroup, UserGroupMember } = models();
-  const [users, groups] = await Promise.all([
+  const { RepositoryUser, RepositoryUserGroup, User, UserGroupMember } =
+    models();
+  const [users, groups, admins] = await Promise.all([
     RepositoryUser.findAll({
       where: { repositoryId, hasAccess: true },
       attributes: ['userId'],
@@ -119,6 +126,12 @@ async function repositoryMemberIds(
     RepositoryUserGroup.findAll({
       where: { repositoryId },
       attributes: ['groupId'],
+      raw: true,
+      transaction,
+    }),
+    User.findAll({
+      where: { role: UserRole.ADMIN },
+      attributes: [['id', 'userId']],
       raw: true,
       transaction,
     }),
@@ -132,6 +145,19 @@ async function repositoryMemberIds(
       })
     : [];
   return new Set<number>(
-    [...users, ...groupMembers].map((it: any) => Number(it.userId)),
+    [...users, ...groupMembers, ...admins].map((it: any) => Number(it.userId)),
   );
+}
+
+// Everyone with access to the repository
+export async function listUsersWithAccess(
+  repositoryId: number,
+): Promise<UserSummary[]> {
+  const { User } = models();
+  const ids = await userIdsWithAccess(repositoryId);
+  const users = await User.findAll({
+    where: { id: [...ids] },
+    order: [['email', 'ASC']],
+  });
+  return users.map((it: any) => pick(it.profile, USER_SUMMARY_ATTRS));
 }
