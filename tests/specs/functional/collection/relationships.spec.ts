@@ -59,7 +59,7 @@ test.describe('Collection - relationships (cross-entity links)', () => {
   });
 
   test('blocks saving when a required relationship is empty', async () => {
-    const editor = await collection.createItem(
+    const editor = await collection.createFirstItem(
       ENTITY.ARTICLE,
       'Orphan Article',
     );
