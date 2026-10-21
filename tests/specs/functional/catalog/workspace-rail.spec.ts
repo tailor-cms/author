@@ -1,12 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
-import { Catalog } from '../../../pom/catalog/Catalog';
 import {
   createCleanRepository,
   createUserGroup,
   deleteUserGroup,
 } from '../../../helpers/seed';
+import { AddRepositoryDialog } from '../../../pom/catalog/AddRepository';
+import { Catalog } from '../../../pom/catalog/Catalog';
+import { GroupManagement } from '../../../pom/admin/GroupManagement';
 import { WorkspaceRail } from '../../../pom/catalog/WorkspaceRail';
 import SeedClient from '../../../api/SeedClient';
 
@@ -47,7 +48,7 @@ test('creates a workspace from the rail', async ({ page }) => {
   await rail.create('Marketing');
 
   // Creating a workspace opens its management page.
-  await expect(page.getByText('Marketing user group')).toBeVisible();
+  await GroupManagement.expectGroupPage(page, 'Marketing');
 });
 
 test('renames a workspace from its actions menu', async ({ page }) => {
@@ -68,7 +69,7 @@ test('opens workspace management from its actions menu', async ({ page }) => {
   const rail = new WorkspaceRail(page);
   await rail.manage('Managed');
 
-  await expect(page.getByText('Managed user group')).toBeVisible();
+  await GroupManagement.expectGroupPage(page, 'Managed');
 });
 
 test('deletes a workspace from its actions menu', async ({ page }) => {
