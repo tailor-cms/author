@@ -25,6 +25,20 @@ export class UnanchoredMessageError extends Error {
   }
 }
 
+export class AnchorNotFoundError extends Error {
+  constructor(message = 'Activity or element not found in this repository') {
+    super(message);
+    this.name = 'AnchorNotFoundError';
+  }
+}
+
+export class ThreadNotFoundError extends Error {
+  constructor(message = 'Thread not found') {
+    super(message);
+    this.name = 'ThreadNotFoundError';
+  }
+}
+
 export class ThreadForbiddenError extends Error {
   constructor(message = 'Only the author can delete this thread') {
     super(message);
@@ -87,6 +101,8 @@ const STATUS = [
   [ParentNotFoundError, StatusCodes.NOT_FOUND],
   [InvalidResolveSelectorError, StatusCodes.BAD_REQUEST],
   [UnanchoredMessageError, StatusCodes.BAD_REQUEST],
+  [AnchorNotFoundError, StatusCodes.NOT_FOUND],
+  [ThreadNotFoundError, StatusCodes.NOT_FOUND],
   [ThreadForbiddenError, StatusCodes.FORBIDDEN],
   [ThreadNotDeletableError, StatusCodes.FORBIDDEN],
   [ThreadNotResolvableError, StatusCodes.BAD_REQUEST],

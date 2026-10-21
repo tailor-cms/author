@@ -6,9 +6,15 @@ import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { Repository } from '../repository/models/repository.model.js';
 import type { Transaction } from 'sequelize';
 import type { User } from '../user/models/user.model.js';
+
+import {
+  AnchorNotFoundError,
+  InvalidResolveSelectorError,
+  ParentNotFoundError,
+  ThreadNotFoundError,
+} from './errors.ts';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
 import { CommentType } from '@tailor-cms/interfaces/comment.ts';
-import { InvalidResolveSelectorError, ParentNotFoundError } from './errors.ts';
 import { INTEGRATION_SUMMARY_ATTRS } from './schemas/entity.ts';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import { createLogger } from '#logger';
@@ -108,12 +114,21 @@ export async function create(
   const parent = payload.parentId
     ? await rootOf(repository.id, payload.parentId)
     : null;
+  if (!(await hasAnchorAccess(repository.id, payload))) {
+    throw new AnchorNotFoundError();
+  }
+  // A reply lands in its parent's thread;
+  // Other messages rely on the caller to specify a valid thread.
+  const threadId = parent ? parent.threadId : payload.threadId;
+  if (!parent && !(await isRepositoryThread(repository.id, threadId))) {
+    throw new ThreadNotFoundError();
+  }
   const attrs = {
     repositoryId: repository.id,
     activityId: payload.activityId,
     contentElementId: payload.contentElementId,
     authorId: user.id,
-    threadId: parent?.threadId ?? payload.threadId,
+    threadId,
     parentId: parent?.id ?? null,
     // Only a reply can be broadcast
     isBroadcast: !!parent && !!payload.isBroadcast,
@@ -132,6 +147,37 @@ export async function create(
     Comment.create(attrs, { transaction }),
   );
   return comment.reload({ include: commentIncludes() });
+}
+
+/**
+ * Whether the activity and element a comment is anchored to are the
+ * repository's own.
+ */
+async function hasAnchorAccess(repositoryId: number, payload: CreateInput) {
+  const { Activity, ContentElement } = models();
+  const { activityId, contentElementId } = payload;
+  const [hasActivity, hasElement] = await Promise.all([
+    isInRepository(Activity, activityId, repositoryId),
+    isInRepository(ContentElement, contentElementId, repositoryId),
+  ]);
+  return hasActivity && hasElement;
+}
+
+// Whether the thread belongs to the repository
+const isRepositoryThread = (repositoryId: number, threadId?: number | null) =>
+  isInRepository(models().Thread, threadId, repositoryId);
+
+async function isInRepository(
+  Model: any,
+  id: number | null | undefined,
+  repositoryId: number,
+) {
+  if (!id) return true;
+  const count = await Model.unscoped().count({
+    where: { id, repositoryId },
+    paranoid: false,
+  });
+  return count > 0;
 }
 
 /**

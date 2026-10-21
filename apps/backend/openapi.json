@@ -12661,7 +12661,7 @@
             "description": "No activity, element or thread to post on."
           },
           "404": {
-            "description": "The message being replied to is gone."
+            "description": "The message being replied to is gone, or the thread, activity or element is not in this repository."
           }
         },
         "requestBody": {

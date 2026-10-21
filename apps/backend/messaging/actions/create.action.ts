@@ -26,7 +26,12 @@ export default defineAction({
         schema: dataEnvelope(schemas.Comment),
       },
       400: { description: 'No activity, element or thread to post on.' },
-      404: { description: 'The message being replied to is gone.' },
+      404: {
+        description: oneLine`
+          The message being replied to is gone, or the thread, activity
+          or element is not in this repository.
+        `,
+      },
     },
   },
   async handler({ body, user, req }) {
