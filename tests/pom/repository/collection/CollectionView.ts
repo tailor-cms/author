@@ -40,7 +40,7 @@ export class CollectionView {
     this.emptyAlert = this.el.getByText('No items yet');
     this.emptyCreateCard = this.el.getByTestId('repository__emptyCreate');
     this.emptyCopyCard = this.el.getByTestId('repository__emptyCopy');
-    this.noMatchesAlert = this.el.getByText('No matches found');
+    this.noMatchesAlert = this.el.getByText('No items match your search.');
   }
 
   async goto() {
