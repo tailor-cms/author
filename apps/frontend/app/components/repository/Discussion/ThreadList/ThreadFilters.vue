@@ -14,7 +14,7 @@
   <VChipGroup
     v-model="scope"
     class="scope-filters"
-    color="primary"
+    color="secondary"
     selected-class="font-weight-semibold"
     column
     mandatory
@@ -26,7 +26,6 @@
       :text="option.label"
       :value="option.value"
       class="scope-filter"
-      density="comfortable"
       rounded="pill"
       size="small"
       variant="tonal"
@@ -48,10 +47,3 @@ const SCOPES: { value: ThreadScope; label: string; icon: string }[] = [
   { value: 'mine', label: 'Mine', icon: 'mdi-account-outline' },
 ];
 </script>
-
-<style lang="scss" scoped>
-.scope-filters :deep(.v-slide-group__content) {
-  gap: 0.25rem;
-  padding: 0;
-}
-</style>
