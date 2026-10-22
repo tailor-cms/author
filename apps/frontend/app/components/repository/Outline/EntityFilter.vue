@@ -19,12 +19,11 @@
   </VChipGroup>
 </template>
 
-<script lang="ts" setup>
-import type { EntityFilterOption } from '@/composables/useCollectionEntities';
+<script lang="ts" setup generic="T extends string">
 import type { VChip } from 'vuetify/components';
 
 interface Props {
-  entities: EntityFilterOption[];
+  entities: { label: string; value: T }[];
   rounded?: VChip['rounded'];
 }
 
@@ -32,5 +31,5 @@ withDefaults(defineProps<Props>(), {
   rounded: 'pill',
 });
 
-const modelValue = defineModel<string>({ required: true });
+const modelValue = defineModel<T>({ required: true });
 </script>

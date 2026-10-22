@@ -2,48 +2,38 @@
   <VTextField
     v-model="name"
     class="mb-2"
+    bg-color="surface-container"
     density="compact"
     placeholder="Find a conversation"
-    prepend-inner-icon="mdi-filter-variant"
+    prepend-inner-icon="mdi-magnify"
     rounded="lg"
-    variant="solo-filled"
+    variant="solo"
     clearable
     flat
     hide-details
   />
-  <VChipGroup
+  <EntityFilter
     v-model="scope"
+    :entities="SCOPES"
     class="scope-filters"
-    color="secondary"
-    selected-class="font-weight-semibold"
+    rounded="lg"
     column
-    mandatory
-  >
-    <VChip
-      v-for="option in SCOPES"
-      :key="option.value"
-      :prepend-icon="option.icon"
-      :text="option.label"
-      :value="option.value"
-      class="scope-filter"
-      rounded="pill"
-      size="small"
-      variant="tonal"
-    />
-  </VChipGroup>
+  />
 </template>
 
 <script lang="ts" setup>
 import type { ThreadScope } from '@/stores/messaging';
 
+import EntityFilter from '@/components/repository/Outline/EntityFilter.vue';
+
 const scope = defineModel<ThreadScope>('scope', { default: 'all' });
 const name = defineModel<string>('name', { default: '' });
 
-const SCOPES: { value: ThreadScope; label: string; icon: string }[] = [
-  { value: 'all', label: 'All', icon: 'mdi-forum-outline' },
-  { value: 'unread', label: 'Unread', icon: 'mdi-email-outline' },
-  { value: 'mentions', label: 'Mentions', icon: 'mdi-at' },
-  { value: 'unresolved', label: 'Open', icon: 'mdi-progress-check' },
-  { value: 'mine', label: 'Mine', icon: 'mdi-account-outline' },
+const SCOPES: { value: ThreadScope; label: string }[] = [
+  { value: 'all', label: 'All' },
+  { value: 'unread', label: 'Unread' },
+  { value: 'mentions', label: 'Mentions' },
+  { value: 'unresolved', label: 'Open' },
+  { value: 'mine', label: 'Mine' },
 ];
 </script>
