@@ -167,11 +167,26 @@ const hasBody = computed(() => {
   grid-template-columns: 3rem 1fr;
   align-items: start;
   padding: 0.375rem 1.25rem;
-  border-radius: 0.5rem;
+
+  // Hover state layer, tinting whatever surface the row sits on
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
 
   &:hover,
   &:focus-within {
-    background: rgb(var(--v-theme-surface-container-low));
+    &::after {
+      opacity: calc(
+        var(--v-hover-opacity) * var(--v-theme-overlay-multiplier)
+      );
+    }
 
     .message-row-actions,
     .message-row-time {
@@ -222,6 +237,7 @@ const hasBody = computed(() => {
 // Floats over the top edge
 .message-row-actions {
   position: absolute;
+  z-index: 1;
   top: -1rem;
   right: 0.75rem;
 }
