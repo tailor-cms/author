@@ -2882,11 +2882,24 @@
             "exclusiveMinimum": 0,
             "maximum": 9007199254740991,
             "description": "Who reacted."
+          },
+          "user": {
+            "anyOf": [
+              {
+                "description": "Slim user projection attached to records that include the user.",
+                "$ref": "#/components/schemas/UserSummary"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Who reacted, by name."
           }
         },
         "required": [
           "emoji",
-          "userId"
+          "userId",
+          "user"
         ],
         "additionalProperties": false
       },

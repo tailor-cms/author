@@ -68,6 +68,7 @@ export const Reaction = z
   .object({
     emoji: z.string().describe('The emoji character.'),
     userId: Int().describe('Who reacted.'),
+    user: UserSummary.nullable().describe('Who reacted, by name.'),
   })
   .meta({ id: 'CommentReaction' })
   .describe('One reader reaction to a comment.');

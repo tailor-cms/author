@@ -59,6 +59,7 @@ const includeReactions = () => {
     model: CommentReaction,
     as: 'reactions',
     attributes: ['emoji', 'userId'],
+    include: [{ ...includeAuthor(), as: 'user' }],
   };
 };
 
