@@ -14,7 +14,7 @@
           v-model:name="nameFilter"
           :has-integration-access="hasIntegrationAccess"
           :is-loading="messagingStore.isLoading"
-          :selected-id="messagingStore.selectedThreadId"
+          :selected-id="routeThreadId ?? messagingStore.selectedThreadId"
           :threads="messagingStore.items"
           :unread="messagingStore.unread"
           @manage:integrations="isIntegrationsOpen = true"
@@ -70,9 +70,13 @@
             :thread="messagingStore.selectedThread"
             class="flex-grow-1"
           />
-          <h2 v-else class="text-title-medium font-weight-bold flex-grow-1 px-4">
+          <h2
+            v-else-if="!routeThreadId"
+            class="text-title-medium font-weight-medium flex-grow-1 px-4"
+          >
             New thread
           </h2>
+          <VSpacer v-else />
           <VBtn
             v-tooltip:bottom="'Search messages (/)'"
             aria-label="Search messages"
@@ -140,6 +144,7 @@
         class="conversation-column d-flex flex-column h-100 py-8"
       >
         <VCard
+          :class="{ 'opacity-70': isThreadSlow }"
           class="conversation d-flex flex-column"
           color="surface-raised"
           elevation="1"
@@ -162,6 +167,9 @@
             @update="editMessage"
           />
         </VCard>
+      </div>
+      <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
+        <VProgressCircular v-if="isThreadSlow" indeterminate />
       </div>
       <StartDiscussion v-else class="h-100" @create="createThread" />
       <SharedFilesDialog
@@ -297,7 +305,17 @@ const load = () =>
 const searchMessages = (query: string) =>
   messagingStore.search(repositoryId.value, query);
 
-const { openThread, closeThread } = useThreadRoute(repositoryId);
+const { routeThreadId, openThread, closeThread } =
+  useThreadRoute(repositoryId);
+
+// The picked thread shows once its messages are in; a slow load dims the
+// current one, or shows a loader when there is none
+const isThreadPending = computed(
+  () =>
+    !!routeThreadId.value &&
+    routeThreadId.value !== messagingStore.selectedThreadId,
+);
+const isThreadSlow = useSkeletonDelay(isThreadPending);
 
 const closeSearch = () => {
   isSearchOpen.value = false;

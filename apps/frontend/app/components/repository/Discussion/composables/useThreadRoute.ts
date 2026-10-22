@@ -47,5 +47,9 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
     replaceThread(messagingStore.selectedThreadId);
   }
 
-  return { openThread, closeThread: () => replaceThread(null) };
+  return {
+    routeThreadId,
+    openThread,
+    closeThread: () => replaceThread(null),
+  };
 };

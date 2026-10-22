@@ -40,6 +40,8 @@ export const createThreads = (
   const listParams = ref<ThreadParams>({});
   const messageIds = reactive(new Map<number, number[]>());
   const selectedThreadId = ref<number | null>(null);
+  // The thread last asked for, which may still be loading
+  let requestedThreadId: number | null = null;
   // Whether the selected thread is on screen, not just kept for return
   const isInView = ref(false);
   // The caller's read watermark at the moment a thread was opened
@@ -152,8 +154,16 @@ export const createThreads = (
     }
   }
 
-  async function selectThread(repositoryId: number, threadId: number) {
+  // Puts a thread on screen, with where its "New" marker starts
+  function showThread(threadId: number, watermark: string | null) {
     selectedThreadId.value = threadId;
+    openedWatermark.value = watermark;
+  }
+
+  // Shows the thread with its messages, never empty in between: one seen
+  // before switches at once and refreshes, a new one once they arrive
+  async function selectThread(repositoryId: number, threadId: number) {
+    requestedThreadId = threadId;
     isInView.value = true;
     if (!threads.has(threadId)) {
       const thread = await api.messaging.getThread({
@@ -163,17 +173,22 @@ export const createThreads = (
     }
     // Only unread threads get a "New" marker; live arrivals never do
     const thread = threads.get(threadId);
-    openedWatermark.value = thread?.isUnread ? thread.lastReadAt : null;
+    const watermark = thread?.isUnread ? thread.lastReadAt : null;
+    if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
     const items = await api.messaging.getMessages({
       params: { repositoryId, threadId },
     });
+    // Another thread was picked meanwhile
+    if (requestedThreadId !== threadId) return items;
     messageIds.set(threadId, []);
     (items as unknown as Message[]).forEach((it) => addToThread(it));
+    if (selectedThreadId.value !== threadId) showThread(threadId, watermark);
     await markRead(repositoryId, threadId);
     return items;
   }
 
   function deselectThread() {
+    requestedThreadId = null;
     selectedThreadId.value = null;
   }
 
@@ -318,6 +333,7 @@ export const createThreads = (
     listParams.value = {};
     messageIds.clear();
     selectedThreadId.value = null;
+    requestedThreadId = null;
     isInView.value = false;
     openedWatermark.value = null;
     total.value = 0;
