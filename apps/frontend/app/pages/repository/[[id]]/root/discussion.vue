@@ -14,9 +14,9 @@
         :unread="messagingStore.unread"
         @manage:integrations="isIntegrationsOpen = true"
         @clear:unread="markAllRead"
-        @select="openThread"
+        @select="selectThread"
         @star="setStarred"
-        @start:thread="openThread(null)"
+        @start:thread="selectThread(null)"
       />
       <div
         aria-orientation="vertical"
@@ -27,18 +27,14 @@
     </div>
     <VDivider vertical />
     <div class="panel flex-grow-1 d-flex flex-column">
-      <VSlideYTransition leave-absolute>
-        <div v-if="isSearchVisible" class="search-row">
-          <SearchBar
-            :is-searching="messagingStore.isSearching"
-            :query="messagingStore.searchQuery"
-            :total="messagingStore.searchTotal"
-            @close="closeSearch"
-            @search="searchMessages"
-          />
-          <VDivider />
-        </div>
-      </VSlideYTransition>
+      <SearchBar
+        :is-searching="messagingStore.isSearching"
+        :query="messagingStore.searchQuery"
+        :total="messagingStore.searchTotal"
+        @clear="messagingStore.clearSearch()"
+        @search="searchMessages"
+      />
+      <VDivider />
       <div class="panel-split d-flex flex-grow-1">
         <SearchResults
           v-if="isSearchActive"
@@ -47,14 +43,13 @@
           :is-searching="messagingStore.isSearching"
           :query="messagingStore.searchQuery"
           class="panel-body"
-          @select="openSearchResult"
+          @select="selectThread"
         />
         <ThreadPanel
           v-else-if="messagingStore.selectedThread"
           :key="messagingStore.selectedThread.id"
           v-model:draft="draft"
           :current-user-id="currentUserId"
-          :has-header="!isSearchVisible"
           :is-removable="isThreadRemovable"
           :last-read-at="messagingStore.openedWatermark"
           :messages="messagingStore.messages"
@@ -66,7 +61,6 @@
           @remove:thread="removeThread"
           @open:subscriptions="isSubscribingOpen = true"
           @open:files="isSharedFilesOpen = true"
-          @open:search="isSearchOpen = true"
           @react="reactToMessage"
           @remove="removeMessage"
           @reply="openReplies"
@@ -74,20 +68,11 @@
           @typing="reportTyping"
           @update="editMessage"
         />
-        <template v-else>
-          <StartDiscussion class="panel-body" @create="createThread" />
-          <VBtn
-            v-if="!isSearchVisible"
-            v-tooltip:bottom="'Search messages'"
-            aria-label="Search messages"
-            class="start-search-btn"
-            density="comfortable"
-            icon="mdi-magnify"
-            size="small"
-            variant="text"
-            @click="isSearchOpen = true"
-          />
-        </template>
+        <StartDiscussion
+          v-else
+          class="panel-body"
+          @create="createThread"
+        />
         <template v-if="messagingStore.replyParent">
           <VDivider vertical />
           <div
@@ -139,7 +124,6 @@
 
 <script lang="ts" setup>
 import { debounce } from 'lodash-es';
-import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
 
 import { useMessagingStore, type ThreadScope } from '@/stores/messaging';
@@ -184,11 +168,6 @@ const nameFilter = ref('');
 
 const draft = useThreadDraft(() => messagingStore.selectedThreadId);
 const isSearchActive = computed(() => !!messagingStore.searchQuery.trim());
-// The search bar replaces the thread header until closed
-const isSearchOpen = ref(false);
-const isSearchVisible = computed(
-  () => isSearchOpen.value || isSearchActive.value,
-);
 
 const currentUserId = computed(() => authStore.user?.id ?? null);
 const repositoryId = computed(
@@ -242,25 +221,11 @@ const searchMessages = (query: string) =>
 
 const { openThread, closeThread } = useThreadRoute(repositoryId);
 
-const closeSearch = () => {
-  isSearchOpen.value = false;
+// From the list or a search result, so the results give way to the thread
+const selectThread = (threadId: number | null) => {
   messagingStore.clearSearch();
-};
-
-const openSearchResult = (threadId: number) => {
-  closeSearch();
   openThread(threadId);
 };
-
-const isTyping = (el: Element | null) =>
-  el instanceof HTMLElement &&
-  (el.isContentEditable || ['INPUT', 'TEXTAREA'].includes(el.tagName));
-
-onKeyStroke('/', (event) => {
-  if (isSearchVisible.value || isTyping(document.activeElement)) return;
-  event.preventDefault();
-  isSearchOpen.value = true;
-});
 
 const createThread = async (payload: { content: string; title: string }) => {
   const thread = await messagingStore.startThread(repositoryId.value, payload);
@@ -407,7 +372,6 @@ onMounted(async () => {
 }
 
 .panel-split {
-  position: relative;
   min-width: 0;
   min-height: 0;
 }
@@ -416,17 +380,6 @@ onMounted(async () => {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-}
-
-// Leaves pinned over the returning thread header
-.search-row {
-  z-index: 1;
-}
-
-.start-search-btn {
-  position: absolute;
-  top: 0.75rem;
-  right: 1.25rem;
 }
 
 .reply-column {

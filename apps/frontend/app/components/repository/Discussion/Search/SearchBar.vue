@@ -3,9 +3,8 @@
     <MessageSearch
       :model-value="query"
       class="flex-grow-1"
-      autofocus
       placeholder="Search messages - @ for people, # for items"
-      @escape="close"
+      @escape="clear"
       @update:model-value="search"
     />
     <span
@@ -15,13 +14,14 @@
       {{ pluralize('result', total, true) }}
     </span>
     <VBtn
-      v-tooltip:bottom="'Close search'"
-      aria-label="Close search"
+      v-if="hasQuery"
+      v-tooltip:bottom="'Clear search'"
+      aria-label="Clear search"
       density="comfortable"
       icon="mdi-close"
       size="small"
       variant="text"
-      @click="close"
+      @click="clear"
     />
     <VProgressLinear
       :active="isSearching"
@@ -46,7 +46,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { isSearching: false });
-const emit = defineEmits<{ search: [query: string]; close: [] }>();
+const emit = defineEmits<{ search: [query: string]; clear: [] }>();
 
 const hasQuery = computed(() => !!props.query.trim());
 const hasSummary = computed(() => hasQuery.value && !props.isSearching);
@@ -58,16 +58,10 @@ const search = debounce(
   SEARCH_DELAY_MS,
 );
 
-const close = () => {
+const clear = () => {
   search.cancel();
-  emit('close');
+  emit('clear');
 };
 
 onBeforeUnmount(() => search.cancel());
 </script>
-
-<style lang="scss" scoped>
-.search-bar {
-  background: rgb(var(--v-theme-surface-container-high));
-}
-</style>
