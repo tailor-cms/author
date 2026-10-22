@@ -7,17 +7,25 @@
       autofocus
       is-editing
       @submit="save"
-    />
-    <div class="d-flex ga-2 mt-2">
-      <VBtn size="small" text="Cancel" variant="text" @click="emit('cancel')" />
-      <VBtn
-        color="primary"
-        size="small"
-        text="Save"
-        variant="flat"
-        @click="submit"
-      />
-    </div>
+    >
+      <template #actions>
+        <div class="d-flex ga-2">
+          <VBtn
+            size="small"
+            text="Cancel"
+            variant="text"
+            @click="emit('cancel')"
+          />
+          <VBtn
+            color="primary"
+            size="small"
+            text="Save"
+            variant="flat"
+            @click="submit"
+          />
+        </div>
+      </template>
+    </MessageComposer>
   </div>
 </template>
 

@@ -27,7 +27,7 @@
       height="2"
       indeterminate
     />
-    <div class="d-flex align-center px-2 pb-2">
+    <div class="d-flex align-center pa-2">
       <AttachButton
         v-if="canAttach"
         :disabled="disabled || isUploading"
@@ -41,17 +41,20 @@
         :submit-label="isEditing ? 'save' : 'send'"
       />
       <VSpacer />
-      <VBtn
-        v-if="!isEditing"
-        :disabled="!canSubmit"
-        aria-label="Post message"
-        density="comfortable"
-        icon="mdi-send"
-        rounded="lg"
-        size="small"
-        variant="tonal"
-        @click="submit"
-      />
+      <!-- Where the send button sits; editing puts Cancel / Save here -->
+      <slot name="actions">
+        <VBtn
+          v-if="!isEditing"
+          :disabled="!canSubmit"
+          aria-label="Post message"
+          density="comfortable"
+          icon="mdi-send"
+          rounded="lg"
+          size="small"
+          variant="tonal"
+          @click="submit"
+        />
+      </slot>
     </div>
   </div>
 </template>
