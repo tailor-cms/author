@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-center ga-3 px-4 py-3">
+  <div class="d-flex align-center ga-3 pa-4">
     <div class="thread-header-text d-flex align-center ga-2">
       <VIcon
         v-if="!isChannelThread(thread)"
