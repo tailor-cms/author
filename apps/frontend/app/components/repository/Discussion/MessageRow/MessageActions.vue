@@ -1,7 +1,7 @@
 <template>
   <VSheet
-    class="message-actions d-flex align-center pa-1 ga-1"
-    color="surface-container-high"
+    class="message-actions d-flex align-center"
+    color="surface-overlay"
     elevation="2"
     rounded="lg"
     border
@@ -70,3 +70,10 @@ const emit = defineEmits<{
   react: [emoji: string];
 }>();
 </script>
+
+<style lang="scss" scoped>
+.message-actions {
+  padding: 0.125rem;
+  gap: 0.125rem;
+}
+</style>
