@@ -83,6 +83,7 @@ export const useMessagingStore = defineStore('messaging', () => {
     threads.clear();
     unread.clear();
     typing.clear();
+    search.clearSearch();
   }
 
   return {
