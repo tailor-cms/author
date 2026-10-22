@@ -190,9 +190,10 @@ defineExpose({ focus, submit });
   min-width: 0;
   // Lets the hint fit itself to the composer's width
   container-type: inline-size;
-  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 0.75rem;
-  background: rgb(var(--v-theme-surface));
+  // Outlined like a Vuetify field (rounded="lg") at rest
+  border: thin solid rgba(var(--v-theme-on-surface), 0.38);
+  border-radius: 0.5rem;
+  background: rgb(var(--v-theme-surface-canvas));
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   @media (hover: hover) {
