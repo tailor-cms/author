@@ -1,45 +1,73 @@
 <template>
-  <figure :class="{ 'image-preview--tile': isTile }" class="image-preview">
+  <figure
+    :class="{ 'image-preview--tile': isTile }"
+    :style="shape && { width: `min(100%, ${shape.maxWidth}rem)` }"
+    class="image-preview"
+  >
     <figcaption
       v-if="!isTile"
       class="text-body-small text-medium-emphasis text-truncate mb-1"
     >
       {{ asset.name }}<template v-if="size"> · {{ size }}</template>
     </figcaption>
-    <div :style="frameStyle" class="image-frame">
-      <a :href="href" :title="asset.name" class="d-block h-100">
+    <div :style="shape && { aspectRatio: shape.ratio }" class="image-frame">
+      <button
+        :aria-label="`View ${asset.name}`"
+        class="image-button d-block h-100 w-100"
+        type="button"
+        @click="openDialog"
+      >
         <VImg
-          v-if="src"
+          v-if="thumbnailSrc"
           :alt="asset.name"
-          :src="src"
+          :src="thumbnailSrc"
           height="100%"
           cover
-          @error="onError"
+          @error="onThumbnailError"
         />
         <div v-else class="d-flex align-center justify-center h-100">
           <VIcon icon="mdi-image-outline" size="32" />
         </div>
-      </a>
-      <VBtn
-        v-tooltip:top="'Download'"
-        aria-label="Download image"
-        class="image-download"
-        icon="mdi-download"
-        rounded="lg"
-        size="x-small"
-        variant="flat"
-        @click="download"
-      />
+      </button>
+      <div class="image-actions d-flex ga-1">
+        <VBtn
+          v-if="href"
+          v-tooltip:top="'Open in library'"
+          :to="href"
+          aria-label="Open in library"
+          icon="mdi-folder-image"
+          rounded="lg"
+          size="x-small"
+          variant="flat"
+        />
+        <VBtn
+          v-tooltip:top="'Download'"
+          aria-label="Download image"
+          icon="mdi-download"
+          rounded="lg"
+          size="x-small"
+          variant="flat"
+          @click="download"
+        />
+      </div>
     </div>
+    <ImageDialog
+      v-model="isDialogVisible"
+      :alt="asset.name"
+      :height="asset.meta?.height"
+      :src="dialogSrc"
+      :width="asset.meta?.width"
+    />
   </figure>
 </template>
 
 <script lang="ts" setup>
 import { formatFileSize } from '@tailor-cms/core-components';
 import { repositoryAsset } from '@/api';
+import ImageDialog from '@/components/common/ImageDialog.vue';
 
 const MAX_WIDTH_REM = 22;
-const MAX_HEIGHT_REM = 16;
+const MAX_HEIGHT_REM = 20;
 const DEFAULT_RATIO = 4 / 3;
 
 const props = withDefaults(
@@ -52,25 +80,48 @@ const props = withDefaults(
   { href: undefined, isTile: false },
 );
 
-const { src, onError } = useAssetThumbnail(() => props.asset);
+const { src: thumbnailSrc, onError: onThumbnailError } = useAssetThumbnail(
+  () => props.asset,
+);
+
+const isDialogVisible = ref(false);
+const fileUrl = ref<string | null>(null);
 
 const size = computed(() => {
   const { fileSize } = props.asset.meta ?? {};
   return fileSize ? formatFileSize(fileSize) : null;
 });
 
-const frameStyle = computed(() => {
-  if (props.isTile) return undefined;
+// The dialog shows the file itself; the thumbnail is used
+// as a placeholder until the actual file URL is available
+const dialogSrc = computed(() => fileUrl.value ?? thumbnailSrc.value ?? '');
+
+// Natural proportions, capped so one picture never crowds the thread.
+const shape = computed(() => {
+  if (props.isTile) return null;
   const { width, height } = props.asset.meta ?? {};
   const ratio = width && height ? width / height : DEFAULT_RATIO;
   const maxWidth = Math.min(MAX_WIDTH_REM, MAX_HEIGHT_REM * ratio);
-  return { aspectRatio: ratio, width: `min(100%, ${maxWidth}rem)` };
+  return { ratio, maxWidth };
 });
 
-const download = async () => {
+const fetchFileUrl = async () => {
+  if (fileUrl.value) return;
   const { repositoryId, id } = props.asset;
-  const result = await repositoryAsset.getDownloadUrl(repositoryId, id);
-  if (result?.url) window.open(result.url, '_blank');
+  const result = await repositoryAsset
+    .getDownloadUrl(repositoryId, id)
+    .catch(() => null);
+  fileUrl.value = result?.url ?? null;
+};
+
+const openDialog = async () => {
+  isDialogVisible.value = true;
+  await fetchFileUrl();
+};
+
+const download = async () => {
+  await fetchFileUrl();
+  if (fileUrl.value) window.open(fileUrl.value, '_blank');
 };
 </script>
 
@@ -82,6 +133,7 @@ const download = async () => {
 
 .image-frame {
   position: relative;
+  width: 100%;
   overflow: hidden;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 0.5rem;
@@ -93,7 +145,14 @@ const download = async () => {
   aspect-ratio: 1;
 }
 
-.image-download {
+.image-button {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: zoom-in;
+}
+
+.image-actions {
   position: absolute;
   top: 0.375rem;
   right: 0.375rem;
@@ -101,8 +160,8 @@ const download = async () => {
   transition: opacity 0.15s ease;
 }
 
-.image-frame:hover .image-download,
-.image-download:focus-visible {
+.image-frame:hover .image-actions,
+.image-actions:focus-within {
   opacity: 1;
 }
 </style>
