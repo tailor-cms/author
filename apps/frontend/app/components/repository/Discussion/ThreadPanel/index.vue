@@ -1,19 +1,30 @@
 <template>
   <div class="thread-panel d-flex flex-column">
-    <ThreadHeader :thread="thread">
-      <template #actions>
-        <ThreadMenu
-          :is-removable="isRemovable"
-          :thread="thread"
-          @open:files="emit('open:files')"
-          @open:subscriptions="emit('open:subscriptions')"
-          @remove:thread="emit('remove:thread')"
-          @resolve="emit('resolve', $event)"
-          @star="emit('star', $event)"
-        />
-      </template>
-    </ThreadHeader>
-    <VDivider />
+    <template v-if="hasHeader">
+      <ThreadHeader :thread="thread">
+        <template #actions>
+          <VBtn
+            v-tooltip:bottom="'Search messages'"
+            aria-label="Search messages"
+            density="comfortable"
+            icon="mdi-magnify"
+            size="small"
+            variant="text"
+            @click="emit('open:search')"
+          />
+          <ThreadMenu
+            :is-removable="isRemovable"
+            :thread="thread"
+            @open:files="emit('open:files')"
+            @open:subscriptions="emit('open:subscriptions')"
+            @remove:thread="emit('remove:thread')"
+            @resolve="emit('resolve', $event)"
+            @star="emit('star', $event)"
+          />
+        </template>
+      </ThreadHeader>
+      <VDivider />
+    </template>
     <ThreadTimeline
       :current-user-id="currentUserId"
       :last-read-at="lastReadAt"
@@ -28,7 +39,7 @@
       </template>
     </ThreadTimeline>
     <TypingIndicator :users="typingUsers" class="px-5" />
-    <div class="pt-1 px-4 pb-4">
+    <div class="pt-1 px-5 pb-5">
       <MessageComposer
         v-model="draft"
         :placeholder="messages.length ? 'Reply...' : 'Start the discussion...'"
@@ -63,9 +74,12 @@ interface Props {
   lastReadAt?: string | null;
   typingUsers?: { id: number; label: string }[];
   isRemovable?: boolean;
+  // Off while the search bar takes the header's place
+  hasHeader?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
+  hasHeader: true,
   currentUserId: null,
   lastReadAt: null,
   typingUsers: () => [],
@@ -83,6 +97,7 @@ const emit = defineEmits<{
   'remove:thread': [];
   'open:files': [];
   'open:subscriptions': [];
+  'open:search': [];
 }>();
 
 // Per thread, kept when switching away & back
@@ -104,6 +119,6 @@ const editLast = () => {
 }
 
 .thread-composer {
-  --composer-min-height: 3.5rem;
+  --composer-min-height: 1.75rem;
 }
 </style>

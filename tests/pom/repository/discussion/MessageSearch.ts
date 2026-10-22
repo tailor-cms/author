@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { ComposerInput, type SuggestionOptions } from './MessageComposer';
 
@@ -10,7 +11,8 @@ export class MessageSearch {
   readonly hits: Locator;
   readonly groups: Locator;
   readonly summary: Locator;
-  readonly clearBtn: Locator;
+  readonly openBtn: Locator;
+  readonly closeBtn: Locator;
 
   constructor(page: Page) {
     this.bar = page.locator('.search-bar');
@@ -23,14 +25,25 @@ export class MessageSearch {
     this.hits = this.el.locator('.result-hit');
     this.groups = this.el.locator('.result-group');
     this.summary = this.bar.locator('.search-summary');
-    this.clearBtn = this.bar.getByRole('button', {
-      name: 'Clear search',
+    this.openBtn = page.locator('.discussion-channel').getByRole('button', {
+      name: 'Search messages',
+      exact: true,
+    });
+    this.closeBtn = this.bar.getByRole('button', {
+      name: 'Close search',
       exact: true,
     });
     this.page = page;
   }
 
-  query(text: string) {
+  // Swaps the thread header for the search bar
+  async open() {
+    await this.openBtn.click();
+    await expect(this.bar).toBeVisible();
+  }
+
+  async query(text: string) {
+    if (!(await this.bar.isVisible())) await this.open();
     return this.input.write(text);
   }
 

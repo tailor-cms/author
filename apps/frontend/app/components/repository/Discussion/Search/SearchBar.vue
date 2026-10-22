@@ -1,9 +1,11 @@
 <template>
-  <div class="search-bar position-relative d-flex align-center ga-3 pa-2">
+  <div class="search-bar position-relative d-flex align-center ga-3 py-3 px-4">
     <MessageSearch
       :model-value="query"
       class="flex-grow-1"
+      autofocus
       placeholder="Search messages - @ for people, # for items"
+      @escape="close"
       @update:model-value="search"
     />
     <span
@@ -13,14 +15,13 @@
       {{ pluralize('result', total, true) }}
     </span>
     <VBtn
-      v-if="hasQuery"
-      v-tooltip:bottom="'Clear search'"
-      aria-label="Clear search"
+      v-tooltip:bottom="'Close search'"
+      aria-label="Close search"
       density="comfortable"
       icon="mdi-close"
       size="small"
       variant="text"
-      @click="clear"
+      @click="close"
     />
     <VProgressLinear
       :active="isSearching"
@@ -45,7 +46,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), { isSearching: false });
-const emit = defineEmits<{ search: [query: string]; clear: [] }>();
+const emit = defineEmits<{ search: [query: string]; close: [] }>();
 
 const hasQuery = computed(() => !!props.query.trim());
 const hasSummary = computed(() => hasQuery.value && !props.isSearching);
@@ -57,10 +58,16 @@ const search = debounce(
   SEARCH_DELAY_MS,
 );
 
-const clear = () => {
+const close = () => {
   search.cancel();
-  emit('clear');
+  emit('close');
 };
 
 onBeforeUnmount(() => search.cancel());
 </script>
+
+<style lang="scss" scoped>
+.search-bar {
+  background: rgb(var(--v-theme-surface-container-high));
+}
+</style>

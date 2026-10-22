@@ -41,6 +41,8 @@ const shortcode = computed(() => emojiShortcode(props.value) ?? props.value);
   line-height: 1.35;
   text-align: center;
   white-space: normal;
+  // Long shortcodes have no spaces to wrap at
+  overflow-wrap: anywhere;
 }
 
 .emoji-card-glyph {

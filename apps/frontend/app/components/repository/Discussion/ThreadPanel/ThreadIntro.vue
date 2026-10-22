@@ -34,7 +34,7 @@ const text = computed(() => {
 
 <style lang="scss" scoped>
 .thread-intro {
-  padding: 0 1rem 1rem 4rem;
+  padding: 0.5rem 1.5rem;
 }
 
 .thread-intro-text {

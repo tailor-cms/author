@@ -3,9 +3,11 @@
     <VIcon class="text-medium-emphasis" icon="mdi-magnify" size="18" />
     <ComposerInput
       v-model="query"
+      :autofocus="autofocus"
       :placeholder="placeholder"
       aria-label="Search messages"
       class="search-input flex-grow-1"
+      @escape="emit('escape')"
     />
   </div>
 </template>
@@ -15,22 +17,17 @@ import ComposerInput from './ComposerInput.vue';
 
 // Search box with the composer's autocomplete, so `@` and `#` filter by
 // person and item
-withDefaults(defineProps<{ placeholder?: string }>(), {
+interface Props {
+  placeholder?: string;
+  autofocus?: boolean;
+}
+
+withDefaults(defineProps<Props>(), {
   placeholder: 'Search messages...',
+  autofocus: false,
 });
+
+const emit = defineEmits<{ escape: [] }>();
 
 const query = defineModel<string>({ default: '' });
 </script>
-
-<style lang="scss" scoped>
-.message-search {
-  min-width: 0;
-  padding-left: 0.75rem;
-}
-
-.search-input {
-  min-width: 0;
-  max-height: 5rem;
-  padding: 0.5rem 0.75rem 0.5rem 0;
-}
-</style>

@@ -52,7 +52,6 @@
         v-model="isBroadcast"
         :label="`Also send to ${threadLabel}`"
         class="broadcast-checkbox mt-1"
-        density="compact"
         hide-details
       />
     </div>

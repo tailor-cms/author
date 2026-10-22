@@ -37,6 +37,8 @@ const emit = defineEmits<{
   'blur': [];
   // Up arrow while empty
   'edit:last': [];
+  // Escape, unless closing an autocomplete menu
+  'escape': [];
 }>();
 
 const { services } = useDiscussionContext();
@@ -72,6 +74,10 @@ const editor = useEditor({
       if (openMenus.size) return false;
       if (event.key === 'ArrowUp' && !content.value) {
         emit('edit:last');
+        return true;
+      }
+      if (event.key === 'Escape') {
+        emit('escape');
         return true;
       }
       if (event.key !== 'Enter' || event.shiftKey) return false;

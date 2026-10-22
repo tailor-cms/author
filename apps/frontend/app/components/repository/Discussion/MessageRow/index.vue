@@ -4,6 +4,7 @@
       'message-row--grouped': isGrouped,
       'message-row--card': hasCards,
       'message-row--broadcast': message.isBroadcast,
+      'message-row--reply': isReplyTarget,
     }"
     class="message-row"
   >
@@ -165,7 +166,7 @@ const hasBody = computed(() => {
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.5rem 1rem;
+  padding: 0.375rem 1.25rem;
   border-radius: 0.5rem;
 
   &:hover,
@@ -178,8 +179,9 @@ const hasBody = computed(() => {
     }
   }
 
-  &--grouped {
-    padding-block: 0.25rem;
+  // The narrower replies column
+  &--reply {
+    padding-inline: 1rem;
   }
 
   &--card {
