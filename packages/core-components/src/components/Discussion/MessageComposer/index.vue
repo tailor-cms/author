@@ -198,6 +198,6 @@ defineExpose({ focus, submit });
 .composer-input {
   min-height: var(--composer-min-height, auto);
   max-height: 12rem;
-  padding: 0.75rem 1rem 0.25rem;
+  padding: 0.75rem 1rem;
 }
 </style>

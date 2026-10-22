@@ -1,5 +1,5 @@
 <template>
-  <div class="search-bar position-relative d-flex align-center ga-3 px-4 py-2">
+  <div class="search-bar position-relative d-flex align-center ga-3 pa-2">
     <MessageSearch
       :model-value="query"
       class="flex-grow-1"

@@ -1,6 +1,6 @@
 <template>
   <div class="message-header d-flex align-baseline ga-2">
-    <span class="message-header-sender text-body-large font-weight-medium">
+    <span class="message-header-sender text-body-large font-weight-semibold">
       {{ senderName(message) }}
     </span>
     <VChip

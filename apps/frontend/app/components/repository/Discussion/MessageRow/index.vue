@@ -179,7 +179,7 @@ const hasBody = computed(() => {
   }
 
   &--grouped {
-    padding-block: 0.1875rem;
+    padding-block: 0.25rem;
   }
 
   &--card {
