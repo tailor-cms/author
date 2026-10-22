@@ -1,14 +1,17 @@
 <template>
   <div class="start-discussion d-flex flex-column justify-center pa-8">
     <div class="panel mx-auto w-100">
-      <div class="text-center mb-6">
-        <VAvatar color="primary" size="56" variant="tonal">
-          <VIcon icon="mdi-forum-outline" size="28" />
+      <div class="text-center mb-8">
+        <VAvatar color="secondary" size="64" variant="tonal">
+          <VIcon icon="mdi-forum-outline" size="x-large" />
         </VAvatar>
-        <h2 class="text-title-medium font-weight-bold mt-4">
+        <h2 class="text-title-large font-weight-semibold mt-4">
           Start a thread
         </h2>
-        <p class="text-body-medium text-medium-emphasis mt-2">
+        <p
+          class="text-body-medium text-medium-emphasis mt-2"
+          :style="{ maxWidth: '32rem', margin: '0.5rem auto' }"
+        >
           Ask a question, share context, or flag something for the team.
           Mention people with <strong>@</strong> and link activities,
           elements or assets with <strong>#</strong>.
@@ -23,7 +26,6 @@
         placeholder="Subject"
         prepend-inner-icon="mdi-format-title"
         rounded="lg"
-        variant="solo-filled"
         autofocus
         flat
       />
