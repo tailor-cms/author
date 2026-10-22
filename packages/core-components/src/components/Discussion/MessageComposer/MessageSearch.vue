@@ -6,8 +6,7 @@
       :autofocus="autofocus"
       :placeholder="placeholder"
       aria-label="Search messages"
-      class="search-input flex-grow-1"
-      @escape="emit('escape')"
+      class="search-input flex-grow-1 py-1"
     />
   </div>
 </template>
@@ -26,8 +25,6 @@ withDefaults(defineProps<Props>(), {
   placeholder: 'Search messages...',
   autofocus: false,
 });
-
-const emit = defineEmits<{ escape: [] }>();
 
 const query = defineModel<string>({ default: '' });
 </script>
