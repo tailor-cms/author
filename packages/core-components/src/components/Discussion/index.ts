@@ -15,6 +15,7 @@ export { lastOwnMessage } from './lastOwnMessage';
 export { referenceIcon } from './referenceIcon';
 export { default as TimelineDivider } from './TimelineDivider.vue';
 export { default as MessageComposer } from './MessageComposer/index.vue';
+export { default as MessageSearch } from './MessageComposer/MessageSearch.vue';
 export { default as MessageBody } from './Message/MessageBody.vue';
 export { default as MessageEditor } from './Message/MessageEditor.vue';
 export { default as MessageTime } from './Message/MessageTime.vue';

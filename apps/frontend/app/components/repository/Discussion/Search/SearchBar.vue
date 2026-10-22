@@ -1,10 +1,9 @@
 <template>
   <div class="search-bar position-relative d-flex align-center ga-3 px-4 py-2">
-    <MessageComposer
+    <MessageSearch
       :model-value="query"
       class="flex-grow-1"
       placeholder="Search messages - @ for people, # for items"
-      variant="search"
       @update:model-value="search"
     />
     <span
@@ -36,7 +35,7 @@
 
 <script lang="ts" setup>
 import { debounce } from 'lodash-es';
-import { MessageComposer } from '@tailor-cms/core-components';
+import { MessageSearch } from '@tailor-cms/core-components';
 import pluralize from 'pluralize-esm';
 
 interface Props {

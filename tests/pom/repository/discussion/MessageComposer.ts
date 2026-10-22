@@ -8,16 +8,12 @@ export interface SuggestionOptions {
   label?: string;
 }
 
-// The message authoring component, used for composing new messages and
-// editing existing ones.
-export class MessageComposer {
+// Rich-text box shared by the composer and the message search, with
+// `@` mention, `#` reference and `:` emoji autocomplete.
+export class ComposerInput {
   readonly page: Page;
   readonly el: Locator;
   readonly input: Locator;
-  readonly postBtn: Locator;
-  readonly attachBtn: Locator;
-  // Note under the input box
-  readonly hint: Locator;
   // Autocomplete suggestion menu, triggered by typing a special character
   readonly suggestionMenu: Locator;
   readonly suggestions: Locator;
@@ -28,15 +24,8 @@ export class MessageComposer {
   readonly inlineCode: Locator;
   readonly codeBlocks: Locator;
 
-  constructor(page: Page, parent: Locator) {
-    const el = parent.locator('.message-composer');
-    this.input = el.getByRole('textbox', { name: 'Message' });
-    this.postBtn = el.getByRole('button', { name: 'Post message' });
-    this.attachBtn = el.getByRole('button', {
-      name: 'Attach a file',
-      exact: true,
-    });
-    this.hint = el.locator('.composer-hint');
+  constructor(page: Page, el: Locator, name: string) {
+    this.input = el.getByRole('textbox', { name });
     this.suggestionMenu = page.locator('.suggestion-menu');
     this.suggestions = this.suggestionMenu.locator('.v-list-item');
     this.suggestionIcons = this.suggestions.locator(
@@ -48,16 +37,6 @@ export class MessageComposer {
     this.codeBlocks = el.locator('.composer-code--block');
     this.page = page;
     this.el = el;
-  }
-
-  // Attaches a file through the composer.
-  async attach(filePath: string) {
-    const [fileChooser] = await Promise.all([
-      this.page.waitForEvent('filechooser'),
-      this.attachBtn.click(),
-    ]);
-    await fileChooser.setFiles(filePath);
-    await expect(this.referenceChips).toBeVisible();
   }
 
   async write(text: string) {
@@ -78,15 +57,6 @@ export class MessageComposer {
       if (i) await this.page.keyboard.press('Shift+Enter');
       await this.page.keyboard.type(line);
     }
-  }
-
-  send() {
-    return this.postBtn.click();
-  }
-
-  async post(text: string) {
-    await this.write(text);
-    await this.send();
   }
 
   // Triggers the suggestion menu with the given character and optional query.
@@ -115,6 +85,45 @@ export class MessageComposer {
     await this.openSuggestions(trigger, query);
     await this.page.keyboard.press('Enter');
     await expect(this.suggestionMenu).not.toBeVisible();
+  }
+}
+
+// The message authoring component, used for composing new messages and
+// editing existing ones.
+export class MessageComposer extends ComposerInput {
+  readonly postBtn: Locator;
+  readonly attachBtn: Locator;
+  // Note under the input box
+  readonly hint: Locator;
+
+  constructor(page: Page, parent: Locator) {
+    const el = parent.locator('.message-composer');
+    super(page, el, 'Message');
+    this.postBtn = el.getByRole('button', { name: 'Post message' });
+    this.attachBtn = el.getByRole('button', {
+      name: 'Attach a file',
+      exact: true,
+    });
+    this.hint = el.locator('.composer-hint');
+  }
+
+  // Attaches a file through the composer.
+  async attach(filePath: string) {
+    const [fileChooser] = await Promise.all([
+      this.page.waitForEvent('filechooser'),
+      this.attachBtn.click(),
+    ]);
+    await fileChooser.setFiles(filePath);
+    await expect(this.referenceChips).toBeVisible();
+  }
+
+  send() {
+    return this.postBtn.click();
+  }
+
+  async post(text: string) {
+    await this.write(text);
+    await this.send();
   }
 }
 

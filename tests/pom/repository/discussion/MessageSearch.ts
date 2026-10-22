@@ -1,12 +1,12 @@
 import type { Locator, Page } from '@playwright/test';
 
-import { MessageComposer, type SuggestionOptions } from './MessageComposer';
+import { ComposerInput, type SuggestionOptions } from './MessageComposer';
 
 export class MessageSearch {
   readonly page: Page;
   readonly bar: Locator;
   readonly el: Locator;
-  readonly composer: MessageComposer;
+  readonly input: ComposerInput;
   readonly hits: Locator;
   readonly groups: Locator;
   readonly summary: Locator;
@@ -15,7 +15,11 @@ export class MessageSearch {
   constructor(page: Page) {
     this.bar = page.locator('.search-bar');
     this.el = page.locator('.search-results');
-    this.composer = new MessageComposer(page, this.bar);
+    this.input = new ComposerInput(
+      page,
+      this.bar.locator('.message-search'),
+      'Search messages',
+    );
     this.hits = this.el.locator('.result-hit');
     this.groups = this.el.locator('.result-group');
     this.summary = this.bar.locator('.search-summary');
@@ -27,11 +31,11 @@ export class MessageSearch {
   }
 
   query(text: string) {
-    return this.composer.write(text);
+    return this.input.write(text);
   }
 
   selectSuggestion(trigger: string, options: SuggestionOptions = {}) {
-    return this.composer.selectSuggestion(trigger, options);
+    return this.input.selectSuggestion(trigger, options);
   }
 
   getHitLocator(text: string) {
