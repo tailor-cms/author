@@ -13,11 +13,12 @@
     />
     <VSpacer />
     <VBtn
-      color="primary"
-      prepend-icon="mdi-plus"
+      v-tooltip:bottom="'New thread'"
+      aria-label="New thread"
+      density="comfortable"
+      icon="mdi-square-edit-outline"
       size="small"
-      text="New"
-      variant="tonal"
+      variant="text"
       @click="emit('start:thread')"
     />
     <VMenu location="bottom end">

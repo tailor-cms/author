@@ -44,7 +44,7 @@ const text = computed(() =>
   padding: 0 0.25rem;
   border-radius: 0.25rem;
   background: rgba(var(--v-theme-on-surface), 0.06);
-  font-weight: 600;
+  font-weight: 500;
   line-height: 1.4;
   white-space: nowrap;
   text-decoration: none;
@@ -66,8 +66,8 @@ const text = computed(() =>
   color: rgb(var(--v-theme-secondary));
 
   &.is-self {
-    background: rgba(var(--v-theme-primary), 0.18);
-    color: rgb(var(--v-theme-primary));
+    background: rgba(var(--v-theme-tertiary), 0.18);
+    color: rgb(var(--v-theme-tertiary));
   }
 }
 
@@ -83,7 +83,7 @@ const text = computed(() =>
   }
 
   &.is-self:hover {
-    background: rgba(var(--v-theme-primary), 0.28);
+    background: rgba(var(--v-theme-tertiary), 0.28);
   }
 }
 </style>

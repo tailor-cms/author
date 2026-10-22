@@ -33,7 +33,7 @@ const dayLabel = (date: Date) => {
 const senderOf = ({ integration, senderName, authorId }: Message) =>
   integration ? `${integration.id}:${senderName ?? ''}` : `${authorId}`;
 
-const isContinuation = (previous: Message, message: Message) =>
+export const isContinuation = (previous: Message, message: Message) =>
   senderOf(previous) === senderOf(message) &&
   Date.parse(message.createdAt) - Date.parse(previous.createdAt) <
     GROUP_WINDOW_MS;

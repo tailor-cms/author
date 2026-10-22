@@ -14,9 +14,9 @@
         :unread="messagingStore.unread"
         @manage:integrations="isIntegrationsOpen = true"
         @clear:unread="markAllRead"
-        @select="openThread"
+        @select="selectThread"
         @star="setStarred"
-        @start:thread="openThread(null)"
+        @start:thread="selectThread(null)"
       />
       <div
         aria-orientation="vertical"
@@ -43,7 +43,7 @@
           :is-searching="messagingStore.isSearching"
           :query="messagingStore.searchQuery"
           class="panel-body"
-          @select="openSearchResult"
+          @select="selectThread"
         />
         <ThreadPanel
           v-else-if="messagingStore.selectedThread"
@@ -221,7 +221,8 @@ const searchMessages = (query: string) =>
 
 const { openThread, closeThread } = useThreadRoute(repositoryId);
 
-const openSearchResult = (threadId: number) => {
+// From the list or a search result, so the results give way to the thread
+const selectThread = (threadId: number | null) => {
   messagingStore.clearSearch();
   openThread(threadId);
 };

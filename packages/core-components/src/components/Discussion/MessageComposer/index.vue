@@ -7,17 +7,18 @@
     @dragover.prevent
     @drop.prevent="attachDropped"
   >
-    <VIcon
-      v-if="isSearch"
-      class="composer-search-icon"
-      icon="mdi-magnify"
-      size="18"
-    />
-    <EditorContent
-      :class="{ 'composer-input--search': isSearch }"
-      :editor="editor"
-      class="composer-input"
+    <ComposerInput
+      ref="inputEl"
+      v-model="content"
+      :autofocus="autofocus"
+      :disabled="disabled"
+      :placeholder="placeholder"
+      @blur="isFocused = false"
+      @edit:last="emit('edit:last')"
+      @focus="onFocus"
       @paste="attachPasted"
+      @submit="submit"
+      @update:model-value="onInput"
     />
     <VProgressLinear
       v-if="isUploading"
@@ -26,7 +27,7 @@
       height="2"
       indeterminate
     />
-    <div v-if="!isSearch" class="d-flex align-center px-2 pb-2">
+    <div class="d-flex align-center px-2 pb-2">
       <AttachButton
         v-if="canAttach"
         :disabled="disabled || isUploading"
@@ -42,13 +43,13 @@
       <VSpacer />
       <VBtn
         v-if="!isEditing"
-        :disabled="isEmpty || isTooLong || disabled"
+        :disabled="!canSubmit"
         aria-label="Post message"
-        color="primary"
+        density="comfortable"
         icon="mdi-send"
         rounded="lg"
         size="small"
-        variant="flat"
+        variant="tonal"
         @click="submit"
       />
     </div>
@@ -56,48 +57,36 @@
 </template>
 
 <script lang="ts" setup>
-import type { SuggestionItem } from '../types';
-
 import {
   MESSAGE_MAX_LENGTH,
   ReferenceType,
 } from '@tailor-cms/interfaces/comment';
-import { toEmojiShortcode } from '@tailor-cms/utils';
-import {
-  referenceNode,
-  serialize,
-  toDocument,
-  withSpace,
-} from './tiptap/document';
-import { EditorContent, type JSONContent, useEditor } from '@tiptap/vue-3';
-import { computed, onBeforeUnmount, ref, watch } from 'vue';
-import { createExtensions } from './tiptap/extensions';
-import { searchEmoji } from '../Emoji/emoji';
-import { useCustomEmoji } from '../Emoji/useCustomEmoji';
+import { computed, ref } from 'vue';
+import { referenceNode, withSpace } from './tiptap/document';
 import { useDiscussionContext } from '../context';
 import AttachButton from './AttachButton.vue';
 import ComposerHint from './ComposerHint.vue';
+import ComposerInput from './ComposerInput.vue';
 import EmojiPicker from '../Emoji/EmojiPicker.vue';
 
 interface Props {
-  // `search` makes it a search box: the same autocomplete, but no action
-  // row, no typing signal
-  variant?: 'message' | 'search';
   placeholder?: string;
   disabled?: boolean;
   autofocus?: boolean;
   // Editing a posted message
   isEditing?: boolean;
   maxLength?: number;
+  // Blocks sending while keeping the message editable
+  isSubmitDisabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  variant: 'message',
   placeholder: 'Write a message...',
   disabled: false,
   autofocus: false,
   isEditing: false,
   maxLength: MESSAGE_MAX_LENGTH,
+  isSubmitDisabled: false,
 });
 
 const emit = defineEmits<{
@@ -109,86 +98,39 @@ const emit = defineEmits<{
 }>();
 
 const { services } = useDiscussionContext();
-const customEmoji = useCustomEmoji();
 
 // Message text, with mentions and references as tokens
 const content = defineModel<string>({ default: '' });
 
+const inputEl = ref<InstanceType<typeof ComposerInput>>();
 const isFocused = ref(false);
 const isDragging = ref(false);
 const isUploading = ref(false);
-const isSearch = computed(() => props.variant === 'search');
 const isEmpty = computed(() => !content.value);
 // Characters past the limit
 const overflow = computed(() =>
   Math.max(0, content.value.length - props.maxLength),
 );
-const isTooLong = computed(() => !isSearch.value && overflow.value > 0);
-// A search box takes no files
-const canAttach = computed(() => !isSearch.value && !!services);
+const isTooLong = computed(() => overflow.value > 0);
+const canSubmit = computed(
+  () =>
+    !props.disabled &&
+    !props.isSubmitDisabled &&
+    !isEmpty.value &&
+    !isTooLong.value,
+);
+const canAttach = computed(() => !!services);
 
-const openMenus = new Set<string>();
-const CUSTOM_EMOJI_LIMIT = 10;
+const onFocus = () => {
+  isFocused.value = true;
+  emit('focus');
+};
 
-const suggestEmoji = (query: string): SuggestionItem[] => [
-  ...customEmoji.search(query, CUSTOM_EMOJI_LIMIT).map((it) => ({
-    value: toEmojiShortcode(it.name),
-    label: toEmojiShortcode(it.name),
-    emoji: toEmojiShortcode(it.name),
-  })),
-  ...searchEmoji(query).map((it) => ({
-    value: it.char,
-    label: toEmojiShortcode(it.shortcode),
-    emoji: it.char,
-  })),
-];
+const onInput = (value: string) => {
+  if (value) emit('typing');
+};
 
-const editor = useEditor({
-  editable: !props.disabled,
-  autofocus: props.autofocus,
-  // A saved draft or the message being edited
-  content: toDocument(content.value),
-  editorProps: {
-    attributes: { 'role': 'textbox', 'aria-label': 'Message' },
-    handleKeyDown: (_view, event) => {
-      if (openMenus.size) return false;
-      if (event.key === 'ArrowUp' && isEmpty.value) {
-        emit('edit:last');
-        return true;
-      }
-      if (event.key !== 'Enter' || event.shiftKey) return false;
-      submit();
-      return true;
-    },
-  },
-  extensions: createExtensions({
-    placeholder: () => props.placeholder,
-    suggestUsers: (query) => services?.suggestUsers(query) ?? [],
-    suggestReferences: (query) => services?.suggestReferences(query) ?? [],
-    suggestEmoji,
-    hooks: {
-      onOpen: (char) => openMenus.add(char),
-      onClose: (char) => openMenus.delete(char),
-    },
-  }),
-  onFocus: () => {
-    isFocused.value = true;
-    emit('focus');
-  },
-  onBlur: () => {
-    isFocused.value = false;
-  },
-  onUpdate: ({ editor }) => {
-    content.value = serialize(editor);
-    if (content.value && !isSearch.value) emit('typing');
-  },
-});
-
-// Adds an emoji or attachment chips at the cursor
-const insert = (value: string | JSONContent[]) =>
-  editor.value?.chain().focus().insertContent(value).run();
-
-const insertEmoji = (value: string) => insert(`${value} `);
+const insertEmoji = (value: string) => inputEl.value?.insert(`${value} `);
 
 // Files go to the asset library and are added as chips
 const attachFiles = async (files: File[]) => {
@@ -196,7 +138,7 @@ const attachFiles = async (files: File[]) => {
   isUploading.value = true;
   try {
     const attachments = (await services?.uploadFiles(files)) ?? [];
-    insert(
+    inputEl.value?.insert(
       attachments.flatMap(({ id, label }) =>
         withSpace(referenceNode(ReferenceType.Asset, id, label)),
       ),
@@ -228,32 +170,15 @@ const attachPasted = (event: ClipboardEvent) => {
 };
 
 const submit = () => {
-  if (!editor.value || props.disabled || isTooLong.value) return;
-  const text = serialize(editor.value);
-  if (!text) return;
-  emit('submit', text);
-  // A search query stays, so it can be refined. A sent message is
-  // cleared for the next one; `true` also clears `v-model` and the draft
-  if (isSearch.value) return;
-  editor.value.commands.clearContent(true);
+  if (!canSubmit.value) return;
+  emit('submit', content.value);
+  // Cleared for the next message, along with the draft
+  inputEl.value?.clear();
 };
 
-// Changed from outside, e.g. a draft restored or cleared by the parent
-watch(content, (value) => {
-  if (!editor.value || value === serialize(editor.value)) return;
-  editor.value.commands.setContent(toDocument(value), { emitUpdate: false });
-});
-
-watch(
-  () => props.disabled,
-  (value) => editor.value?.setEditable(!value),
-);
-
-const focus = () => editor.value?.commands.focus('end');
+const focus = () => inputEl.value?.focus();
 
 defineExpose({ focus, submit });
-
-onBeforeUnmount(() => editor.value?.destroy());
 </script>
 
 <style lang="scss" scoped>
@@ -267,9 +192,18 @@ onBeforeUnmount(() => editor.value?.destroy());
   background: rgb(var(--v-theme-surface));
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
+  @media (hover: hover) {
+    &:hover {
+      border-color: rgba(
+        var(--v-theme-on-surface),
+        var(--v-high-emphasis-opacity)
+      );
+    }
+  }
+
   &.is-focused {
-    border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 1px rgb(var(--v-theme-primary));
+    border-color: rgb(var(--v-theme-on-surface));
+    box-shadow: 0 0 0 1px rgb(var(--v-theme-on-surface));
   }
 
   &.is-dragging {
@@ -279,73 +213,9 @@ onBeforeUnmount(() => editor.value?.destroy());
   }
 }
 
-.composer-search-icon {
-  position: absolute;
-  top: 50%;
-  left: 0.6875rem;
-  z-index: 1;
-  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-  transform: translateY(-50%);
-  pointer-events: none;
-}
-
 .composer-input {
   min-height: var(--composer-min-height, auto);
   max-height: 12rem;
-  padding: 0.75rem 0.875rem 0.25rem;
-  overflow-y: auto;
-  font-size: 0.875rem;
-
-  &--search {
-    min-height: auto;
-    max-height: 5rem;
-    padding: 0.5rem 0.75rem 0.5rem 2.25rem;
-  }
-
-  // The editor's content comes from Tiptap, outside this component's scope
-  :deep(.ProseMirror) {
-    outline: none;
-
-    p {
-      margin: 0;
-    }
-
-    p.is-editor-empty:first-child::before {
-      content: attr(data-placeholder);
-      float: left;
-      height: 0;
-      color: rgba(var(--v-theme-on-surface), var(--v-disabled-opacity));
-      pointer-events: none;
-    }
-
-    // Mention and reference chips, styled like the posted `MessageToken`
-    .composer-chip {
-      padding: 0 0.25rem;
-      border-radius: 0.25rem;
-      background: rgba(var(--v-theme-on-surface), 0.06);
-      color: rgb(var(--v-theme-secondary));
-      font-weight: 600;
-      white-space: nowrap;
-
-      &--reference {
-        color: rgb(var(--v-theme-info));
-      }
-    }
-
-    // Code highlight, styled like the posted `MessageBody`
-    .composer-code {
-      border-radius: 0.25rem;
-      background: rgba(var(--v-theme-tertiary), 0.1);
-      box-shadow: inset 0 0 0 1px rgba(var(--v-theme-tertiary), 0.28);
-      color: rgb(var(--v-theme-on-tertiary-container));
-      font-family: monospace;
-
-      &--block {
-        background: rgba(var(--v-theme-on-surface), 0.05);
-        box-shadow: none;
-        color: rgb(var(--v-theme-on-surface));
-      }
-    }
-  }
+  padding: 0.75rem 1rem;
 }
 </style>

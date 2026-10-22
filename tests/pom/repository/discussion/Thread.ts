@@ -70,7 +70,7 @@ export class Thread {
   readonly el: Locator;
   readonly title: Locator;
   // If the thread is anchored to a specific piece of content
-  readonly anchorChip: Locator;
+  readonly openInEditorBtn: Locator;
   readonly menuBtn: Locator;
   readonly messages: Locator;
   // Day labels and the unread marker between messages
@@ -86,7 +86,10 @@ export class Thread {
   constructor(page: Page) {
     const el = page.locator('.thread-panel');
     this.title = el.locator('.thread-title');
-    this.anchorChip = el.locator('.anchor-chip');
+    this.openInEditorBtn = el.getByRole('link', {
+      name: 'Open in editor',
+      exact: true,
+    });
     this.menuBtn = el.getByRole('button', {
       name: 'Thread actions',
       exact: true,

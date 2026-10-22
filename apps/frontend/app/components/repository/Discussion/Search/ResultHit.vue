@@ -1,5 +1,5 @@
 <template>
-  <VListItem class="result-hit px-4 py-2" rounded="lg">
+  <VListItem class="result-hit px-4 py-2">
     <div class="result-hit-row">
       <SenderAvatar :message="hit" :size="36" />
       <div class="result-hit-content">

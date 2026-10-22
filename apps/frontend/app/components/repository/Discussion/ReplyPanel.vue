@@ -1,6 +1,6 @@
 <template>
   <div class="reply-panel d-flex flex-column">
-    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-3">
+    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-4">
       <h3 class="text-title-medium font-weight-bold">Thread</h3>
       <VSpacer />
       <VBtn
@@ -13,8 +13,7 @@
         @click="emit('close')"
       />
     </div>
-    <VDivider />
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto py-3">
+    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pb-3">
       <div ref="messagesEl">
         <MessageRow
           v-if="parent"
@@ -25,14 +24,17 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div class="px-4 py-2 text-body-small text-medium-emphasis font-weight-bold">
-          {{ pluralize('reply', replies.length, true) }}
+        <div v-if="replies.length" class="d-flex align-center ga-3 px-4 py-2">
+          <span class="reply-count text-body-small text-medium-emphasis">
+            {{ pluralize('reply', replies.length, true) }}
+          </span>
+          <VDivider />
         </div>
-        <VDivider class="mb-2" />
         <MessageRow
-          v-for="reply in replies"
+          v-for="(reply, index) in replies"
           :key="reply.uid"
           :current-user-id="currentUserId"
+          :is-grouped="isGrouped(index)"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -51,7 +53,6 @@
         v-model="isBroadcast"
         :label="`Also send to ${threadLabel}`"
         class="broadcast-checkbox mt-1"
-        density="compact"
         hide-details
       />
     </div>
@@ -66,6 +67,7 @@ import {
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
+import { isContinuation } from './ThreadPanel/timeline';
 import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
@@ -98,6 +100,9 @@ const editLast = () => {
   if (last) editingUid.value = last.uid;
 };
 
+const isGrouped = (index: number) =>
+  index > 0 && isContinuation(props.replies[index - 1]!, props.replies[index]!);
+
 // Post to the channel as well
 const isBroadcast = ref(false);
 
@@ -116,7 +121,11 @@ useStickToBottom(viewportEl, messagesEl, () => props.replies);
 .reply-panel {
   min-width: 0;
   min-height: 0;
-  background: rgb(var(--v-theme-surface));
+}
+
+.reply-count {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .broadcast-checkbox {

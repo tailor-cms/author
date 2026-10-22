@@ -1,19 +1,27 @@
 <template>
   <VSheet
-    class="message-actions d-flex align-center px-1"
-    color="surface-container-high"
+    class="message-actions d-flex align-center"
+    color="surface-overlay"
     elevation="2"
     rounded="lg"
     border
   >
-    <AddReactionButton v-if="isReactable" @select="emit('react', $event)" />
+    <AddReactionButton
+      v-if="isReactable"
+      density="comfortable"
+      size="small"
+      rounded="lg"
+      @select="emit('react', $event)"
+    />
     <VBtn
       v-if="isReplyable"
       v-tooltip:top="'Reply in thread'"
       aria-label="Reply in thread"
+      density="comfortable"
       icon="mdi-chat-outline"
       size="small"
       variant="text"
+      rounded="lg"
       @click="emit('reply')"
     />
     <VMenu v-if="isAuthor" location="bottom end">
@@ -22,22 +30,22 @@
           v-tooltip:top="'More actions'"
           v-bind="menu"
           aria-label="More actions"
+          density="comfortable"
           icon="mdi-dots-horizontal"
           size="small"
           variant="text"
+          rounded="lg"
         />
       </template>
       <VList density="compact" min-width="180" nav>
         <VListItem
           prepend-icon="mdi-square-edit-outline"
-          rounded="lg"
           title="Edit message"
           @click="emit('edit')"
         />
         <VListItem
           base-color="error"
           prepend-icon="mdi-trash-can-outline"
-          rounded="lg"
           title="Delete message"
           @click="emit('remove')"
         />
@@ -62,3 +70,10 @@ const emit = defineEmits<{
   react: [emoji: string];
 }>();
 </script>
+
+<style lang="scss" scoped>
+.message-actions {
+  padding: 0.125rem;
+  gap: 0.125rem;
+}
+</style>

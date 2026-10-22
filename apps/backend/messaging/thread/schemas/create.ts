@@ -1,11 +1,14 @@
-import { MESSAGE_MAX_LENGTH } from '@tailor-cms/interfaces/comment.ts';
+import {
+  MESSAGE_MAX_LENGTH,
+  THREAD_TITLE_MAX_LENGTH,
+} from '@tailor-cms/interfaces/comment.ts';
 import { ShortText } from '#shared/request/schemas.ts';
 import { oneLine } from 'common-tags';
 import { z } from 'zod';
 
 export const CreateThreadInput = z
   .object({
-    title: ShortText(1, 120).describe(oneLine`
+    title: ShortText(1, THREAD_TITLE_MAX_LENGTH).describe(oneLine`
       Subject of the thread. Required for a repository-level thread.
     `),
     content: z

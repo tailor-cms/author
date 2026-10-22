@@ -34,10 +34,11 @@ export const useMessagingStore = defineStore('messaging', () => {
   function announce(message: Message) {
     const me = authStore.user?.id;
     if (!me || message.authorId === me) return;
-    if (message.repositoryId) unread.refreshUnread(message.repositoryId);
     // Already looking at it: the message itself is the notification.
-    const { threadId } = message;
-    if (threadId && threadId === threads.selectedThreadId.value) return;
+    if (threads.isViewingThread(message.threadId)) {
+      return threads.keepRead(message.repositoryId);
+    }
+    if (message.repositoryId) unread.refreshUnread(message.repositoryId);
     const mentionsMe = extractMentions(message.content ?? '').some(
       (it) => it.userId === me,
     );
@@ -103,6 +104,7 @@ export const useMessagingStore = defineStore('messaging', () => {
     fetchThreads: threads.fetchThreads,
     selectThread: threads.selectThread,
     deselectThread: threads.deselectThread,
+    leaveThread: threads.leaveThread,
     startThread: threads.startThread,
     postMessage: threads.postMessage,
     setResolved: threads.setResolved,

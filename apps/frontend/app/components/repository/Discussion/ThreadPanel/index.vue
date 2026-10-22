@@ -28,7 +28,7 @@
       </template>
     </ThreadTimeline>
     <TypingIndicator :users="typingUsers" class="px-5" />
-    <div class="pt-1 px-4 pb-4">
+    <div class="pt-1 px-5 pb-5">
       <MessageComposer
         v-model="draft"
         :placeholder="messages.length ? 'Reply...' : 'Start the discussion...'"
@@ -104,6 +104,6 @@ const editLast = () => {
 }
 
 .thread-composer {
-  --composer-min-height: 3.5rem;
+  --composer-min-height: 1.75rem;
 }
 </style>

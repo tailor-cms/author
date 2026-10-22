@@ -81,8 +81,8 @@ test('lists an element comment as a thread that links to it', async ({
     .toBeVisible();
   const thread = await discussion.selectThread(ELEMENT_THREAD);
   await thread.expectMessage(ELEMENT_COMMENT);
-  await expect(thread.anchorChip).toContainText(ELEMENT_THREAD);
-  await expect(thread.anchorChip).toHaveAttribute('href', /editor/);
+  await expect(thread.title).toContainText(ELEMENT_THREAD);
+  await expect(thread.openInEditorBtn).toHaveAttribute('href', /editor/);
 });
 
 test('starts a thread', async ({ page }) => {

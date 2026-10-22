@@ -1,5 +1,5 @@
 <template>
-  <div ref="viewportEl" class="thread-timeline flex-grow-1 overflow-y-auto py-3">
+  <div ref="viewportEl" class="thread-timeline flex-grow-1 overflow-y-auto pt-6">
     <div ref="messagesEl" class="timeline-entries">
       <slot name="intro" />
       <template v-for="entry in entries" :key="entry.key">

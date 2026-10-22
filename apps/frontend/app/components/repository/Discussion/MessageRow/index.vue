@@ -4,6 +4,7 @@
       'message-row--grouped': isGrouped,
       'message-row--card': hasCards,
       'message-row--broadcast': message.isBroadcast,
+      'message-row--reply': isReplyTarget,
     }"
     class="message-row"
   >
@@ -165,12 +166,27 @@ const hasBody = computed(() => {
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.5rem 1rem;
-  border-radius: 0.5rem;
+  padding: 0.375rem 1.25rem;
+
+  // Hover state layer, tinting whatever surface the row sits on
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
 
   &:hover,
   &:focus-within {
-    background: rgb(var(--v-theme-surface-container-low));
+    &::after {
+      opacity: calc(
+        var(--v-hover-opacity) * var(--v-theme-overlay-multiplier)
+      );
+    }
 
     .message-row-actions,
     .message-row-time {
@@ -178,23 +194,13 @@ const hasBody = computed(() => {
     }
   }
 
-  &--grouped {
-    padding-block: 0.1875rem;
+  // The narrower replies column
+  &--reply {
+    padding-inline: 1rem;
   }
 
   &--card {
     padding-block: 0.75rem;
-  }
-
-  // A reply also sent to the main panel
-  &--broadcast::before {
-    content: '';
-    position: absolute;
-    inset-block: 0.375rem;
-    inset-inline-start: 0.375rem;
-    width: 0.125rem;
-    border-radius: 0.0625rem;
-    background: rgba(var(--v-border-color), var(--v-border-opacity));
   }
 }
 
@@ -220,6 +226,7 @@ const hasBody = computed(() => {
 // Floats over the top edge
 .message-row-actions {
   position: absolute;
+  z-index: 1;
   top: -1rem;
   right: 0.75rem;
 }

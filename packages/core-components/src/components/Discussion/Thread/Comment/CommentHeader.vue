@@ -4,7 +4,7 @@
       <span
         v-if="comment.author"
         v-tooltip:right="comment.author.label"
-        class="author text-label-large text-truncate font-weight-semibold"
+        class="author text-body-large text-truncate font-weight-semibold"
       >
         {{ comment.author.label }}
       </span>

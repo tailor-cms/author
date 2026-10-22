@@ -6,7 +6,7 @@
         :aria-label="description"
         :aria-pressed="isCurrentUserReaction"
         :class="{ 'is-current-user-reaction': isCurrentUserReaction }"
-        :color="isCurrentUserReaction ? 'primary' : undefined"
+        :color="isCurrentUserReaction ? 'secondary' : undefined"
         class="reaction-pill"
         rounded="pill"
         size="small"
@@ -21,7 +21,7 @@
       </VChip>
     </template>
     <div>
-      {{ who }}
+      {{ who }}{{ isSoleCurrentUserReaction ? ' (click to remove)' : '' }}
       <span class="reaction-tooltip-verb">reacted with {{ label }}</span>
     </div>
   </EmojiCard>
@@ -47,6 +47,10 @@ const emit = defineEmits<{ toggle: [] }>();
 
 const isCurrentUserReaction = computed(() =>
   props.reactions.some((it) => it.userId === props.currentUserId),
+);
+
+const isSoleCurrentUserReaction = computed(
+  () => props.reactions.length === 1 && isCurrentUserReaction.value,
 );
 
 const listNames = (names: string[]) => {

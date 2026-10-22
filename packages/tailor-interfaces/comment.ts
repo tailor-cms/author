@@ -65,6 +65,9 @@ export interface Comment {
 // Longest message the server accepts
 export const MESSAGE_MAX_LENGTH = 2000;
 
+// Longest thread subject the server accepts
+export const THREAD_TITLE_MAX_LENGTH = 120;
+
 // What a `#` reference can point at. Saved inside the message text
 // (`<#activity:42|The Basics>`), so it is part of the stored format
 export const ReferenceType = {
