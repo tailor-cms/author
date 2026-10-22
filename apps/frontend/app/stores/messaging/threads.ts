@@ -4,6 +4,7 @@ import type { MessageCache } from './messageCache';
 import type { Replies } from './replies';
 import type { Unread } from './unread';
 
+import { debounce } from 'lodash-es';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
@@ -34,6 +35,8 @@ export const createThreads = (
   const threads = reactive(new Map<number, ReaderThread>());
   const messageIds = reactive(new Map<number, number[]>());
   const selectedThreadId = ref<number | null>(null);
+  // Whether the selected thread is on screen, not just kept for return
+  const isInView = ref(false);
   // The caller's read watermark at the moment a thread was opened
   const openedWatermark = ref<string | null>(null);
   const isLoading = ref(false);
@@ -52,6 +55,9 @@ export const createThreads = (
 
   const hasLoadedMessages = (threadId?: number | null) =>
     !!threadId && messageIds.has(threadId);
+
+  const isViewingThread = (threadId?: number | null) =>
+    isInView.value && !!threadId && threadId === selectedThreadId.value;
 
   function addThread(thread: Thread | ReaderThread) {
     const existing = threads.get(thread.id);
@@ -88,7 +94,7 @@ export const createThreads = (
       ...thread,
       lastMessageAt: message.createdAt,
       messageCount: thread.messageCount + 1,
-      isUnread: !isMine && threadId !== selectedThreadId.value,
+      isUnread: !isMine && !isViewingThread(threadId),
     });
   }
 
@@ -123,13 +129,16 @@ export const createThreads = (
 
   async function selectThread(repositoryId: number, threadId: number) {
     selectedThreadId.value = threadId;
+    isInView.value = true;
     if (!threads.has(threadId)) {
       const thread = await api.messaging.getThread({
         params: { repositoryId, threadId },
       });
       addThread(thread);
     }
-    openedWatermark.value = threads.get(threadId)?.lastReadAt ?? null;
+    // Only unread threads get a "New" marker; live arrivals never do
+    const thread = threads.get(threadId);
+    openedWatermark.value = thread?.isUnread ? thread.lastReadAt : null;
     const items = await api.messaging.getMessages({
       params: { repositoryId, threadId },
     });
@@ -141,6 +150,11 @@ export const createThreads = (
 
   function deselectThread() {
     selectedThreadId.value = null;
+  }
+
+  // Off the discussion page; the thread stays selected for return
+  function leaveThread() {
+    isInView.value = false;
   }
 
   async function startThread(
@@ -171,6 +185,8 @@ export const createThreads = (
     });
     addToThread(message);
     updateThreadSummary(message);
+    // Replying is reading: the "New" marker has served its purpose
+    if (threadId === selectedThreadId.value) openedWatermark.value = null;
     return message;
   }
 
@@ -252,8 +268,18 @@ export const createThreads = (
   async function markRead(repositoryId: number, threadId: number) {
     const thread = threads.get(threadId);
     if (thread) thread.isUnread = false;
-    return unread.markThreadRead(repositoryId, threadId);
+    const { lastReadAt } = await unread.markThreadRead(repositoryId, threadId);
+    // Re-read, as the entry may have been replaced while awaiting
+    const current = threads.get(threadId);
+    if (current) current.lastReadAt = lastReadAt;
   }
+
+  // Messages landing in the thread on screen are read as they arrive
+  const keepRead = debounce((repositoryId: number) => {
+    const threadId = selectedThreadId.value;
+    if (!isViewingThread(threadId)) return;
+    markRead(repositoryId, threadId!).catch(() => undefined);
+  }, 800);
 
   async function markAllRead(repositoryId: number) {
     const counts = await unread.markAllRead(repositoryId);
@@ -265,8 +291,10 @@ export const createThreads = (
     threads.clear();
     messageIds.clear();
     selectedThreadId.value = null;
+    isInView.value = false;
     openedWatermark.value = null;
     total.value = 0;
+    keepRead.cancel();
   }
 
   return {
@@ -279,6 +307,7 @@ export const createThreads = (
     isLoading,
     total,
     hasLoadedMessages,
+    isViewingThread,
     addThread,
     dropThread,
     addToThread,
@@ -286,6 +315,7 @@ export const createThreads = (
     fetchThreads,
     selectThread,
     deselectThread,
+    leaveThread,
     startThread,
     postMessage,
     postReply,
@@ -296,6 +326,7 @@ export const createThreads = (
     listAssets,
     removeThread,
     markRead,
+    keepRead,
     markAllRead,
     clear,
   };

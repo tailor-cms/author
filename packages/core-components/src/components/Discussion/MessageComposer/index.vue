@@ -1,6 +1,10 @@
 <template>
   <div
-    :class="{ 'is-focused': isFocused, 'is-dragging': isDragging }"
+    :class="{
+      'is-focused': isFocused,
+      'is-dragging': isDragging,
+      'is-search': isSearch,
+    }"
     class="message-composer"
     @dragenter.prevent="isDragging = canAttach"
     @dragleave.prevent="endDrag"
@@ -45,6 +49,7 @@
         :disabled="isEmpty || isTooLong || disabled"
         aria-label="Post message"
         color="primary"
+        density="comfortable"
         icon="mdi-send"
         rounded="lg"
         size="small"
@@ -272,6 +277,12 @@ onBeforeUnmount(() => editor.value?.destroy());
     box-shadow: 0 0 0 1px rgb(var(--v-theme-primary));
   }
 
+  &.is-search {
+    border-color: transparent;
+    background: transparent;
+    box-shadow: none;
+  }
+
   &.is-dragging {
     border-color: rgb(var(--v-theme-secondary));
     border-style: dashed;
@@ -292,9 +303,8 @@ onBeforeUnmount(() => editor.value?.destroy());
 .composer-input {
   min-height: var(--composer-min-height, auto);
   max-height: 12rem;
-  padding: 0.75rem 0.875rem 0.25rem;
+  padding: 0.75rem 1rem;
   overflow-y: auto;
-  font-size: 0.875rem;
 
   &--search {
     min-height: auto;

@@ -15,8 +15,11 @@ export const createUnread = () => {
   }, 800);
 
   async function markThreadRead(repositoryId: number, threadId: number) {
-    await api.messaging.markThreadRead({ params: { repositoryId, threadId } });
-    return fetchUnread(repositoryId);
+    const watermark = await api.messaging.markThreadRead({
+      params: { repositoryId, threadId },
+    });
+    await fetchUnread(repositoryId);
+    return watermark;
   }
 
   async function markAllRead(repositoryId: number) {
