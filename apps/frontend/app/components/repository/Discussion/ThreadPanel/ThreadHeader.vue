@@ -1,36 +1,40 @@
 <template>
   <div class="d-flex align-center ga-3 px-4 py-3">
-    <div class="thread-header-text">
-      <div class="d-flex align-center ga-2">
-        <h3 class="thread-title text-title-medium font-weight-bold text-truncate">
-          {{ title }}
-        </h3>
-        <VChip
-          v-if="thread.isResolved"
-          color="success"
-          density="comfortable"
-          prepend-icon="mdi-check-circle-outline"
-          rounded="pill"
-          size="x-small"
-          text="Resolved"
-          variant="tonal"
-        />
-      </div>
-      <VChip
+    <div class="thread-header-text d-flex align-center ga-2">
+      <VIcon
         v-if="!isChannelThread(thread)"
-        :append-icon="anchor.href ? 'mdi-arrow-top-right-thick' : undefined"
-        :href="anchor.href"
-        :prepend-icon="anchor.icon"
-        :text="anchor.label"
-        class="anchor-chip mt-2"
+        :icon="anchor.icon"
+        class="text-medium-emphasis"
+        size="20"
+      />
+      <h3
+        :title="anchor.label"
+        class="thread-title text-title-medium font-weight-bold text-truncate"
+      >
+        {{ anchor.label }}
+      </h3>
+      <VChip
+        v-if="thread.isResolved"
+        color="success"
         density="comfortable"
-        size="small"
+        prepend-icon="mdi-check-circle-outline"
+        rounded="pill"
+        size="x-small"
+        text="Resolved"
         variant="tonal"
-        rounded="xl"
-        label
       />
     </div>
     <VSpacer />
+    <VBtn
+      v-if="anchor.href"
+      v-tooltip:bottom="'Open in editor'"
+      :href="anchor.href"
+      aria-label="Open in editor"
+      density="comfortable"
+      icon="mdi-open-in-new"
+      size="small"
+      variant="text"
+    />
     <slot name="actions" />
   </div>
 </template>
@@ -45,26 +49,12 @@ const props = defineProps<{
   thread: ReaderThread;
 }>();
 
+// Names the thread: a channel by its subject, others by their content
 const anchor = useThreadAnchor(() => props.thread);
-
-const title = computed(
-  () =>
-    props.thread.title || props.thread.activity?.data?.name || 'Discussion',
-);
 </script>
 
 <style lang="scss" scoped>
 .thread-header-text {
   min-width: 0;
-}
-
-.anchor-chip {
-  max-width: 100%;
-
-  :deep(.v-chip__content) {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
 }
 </style>
