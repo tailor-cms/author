@@ -1,5 +1,9 @@
 <template>
-  <VListItem class="result-hit px-4 py-2">
+  <VListItem
+    class="result-hit bg-surface-raised px-4 py-3 mb-2"
+    elevation="1"
+    rounded="lg"
+  >
     <div class="result-hit-row">
       <SenderAvatar :message="hit" :size="36" />
       <div class="result-hit-content">

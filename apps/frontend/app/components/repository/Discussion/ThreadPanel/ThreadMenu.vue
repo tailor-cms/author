@@ -5,10 +5,11 @@
         v-bind="menuProps"
         aria-label="Thread actions"
         density="comfortable"
-        icon="mdi-dots-vertical"
-        size="small"
         variant="text"
-      />
+        icon
+      >
+        <VIcon icon="mdi-dots-vertical" size="small" />
+      </VBtn>
     </template>
     <VList density="compact" min-width="220" nav>
       <VListItem

@@ -1,5 +1,5 @@
 <template>
-  <div class="d-flex align-center ga-3 pa-4">
+  <div class="thread-header d-flex align-center ga-3 pl-4">
     <div class="thread-header-text d-flex align-center ga-2">
       <VIcon
         v-if="!isChannelThread(thread)"
@@ -9,7 +9,7 @@
       />
       <h3
         :title="anchor.label"
-        class="thread-title text-title-medium font-weight-bold text-truncate"
+        class="thread-title text-title-medium font-weight-medium text-truncate"
       >
         {{ anchor.label }}
       </h3>
@@ -30,11 +30,11 @@
       :href="anchor.href"
       aria-label="Open in editor"
       density="comfortable"
-      icon="mdi-open-in-new"
-      size="small"
       variant="text"
-    />
-    <slot name="actions" />
+      icon
+    >
+      <VIcon icon="mdi-open-in-new" size="small" />
+    </VBtn>
   </div>
 </template>
 
@@ -53,6 +53,8 @@ const anchor = useThreadAnchor(() => props.thread);
 </script>
 
 <style lang="scss" scoped>
+// Lets a long title truncate instead of pushing the toolbar actions out
+.thread-header,
 .thread-header-text {
   min-width: 0;
 }

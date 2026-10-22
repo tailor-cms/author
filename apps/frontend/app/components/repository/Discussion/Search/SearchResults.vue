@@ -1,17 +1,16 @@
 <template>
-  <div ref="resultsEl" class="search-results overflow-y-auto">
+  <div ref="resultsEl" class="search-results">
     <VList
       v-if="groups.length"
       bg-color="transparent"
-      class="d-flex flex-column ga-3 py-3"
+      class="d-flex flex-column ga-6 pa-0 overflow-visible"
     >
       <div v-for="group in groups" :key="group.threadId" class="result-group">
         <VListItem
           :prepend-icon="group.icon"
-          class="result-group-header px-4"
+          class="result-group-header bg-surface-canvas px-4 mb-2"
           min-height="40"
           prepend-gap="24"
-          @click="emit('select', group.threadId)"
         >
           <template #title>
             <span class="text-title-small">{{ group.label }}</span>
@@ -33,7 +32,8 @@
     </VList>
     <TailorEmptyState
       v-else-if="!isSearching"
-      height="100%"
+      class="mt-16"
+      height="auto"
       icon="mdi-magnify-close"
       size="48"
       text="Nothing in this repository matches that search."

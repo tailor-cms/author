@@ -1,105 +1,169 @@
 <template>
-  <div class="discussion-channel d-flex h-100">
-    <div
-      :style="{ width: `${width}px` }"
-      class="thread-list-column flex-shrink-0"
+  <VLayout class="discussion-page h-100">
+    <VNavigationDrawer
+      v-model="isListOpen"
+      :class="{ resizing: isResizing }"
+      :width="width"
+      color="surface-canvas"
+      location="left"
+      permanent
     >
-      <ThreadList
-        v-model:scope="scope"
-        v-model:name="nameFilter"
-        :has-integration-access="hasIntegrationAccess"
-        :is-loading="messagingStore.isLoading"
-        :selected-id="messagingStore.selectedThreadId"
-        :threads="messagingStore.items"
-        :unread="messagingStore.unread"
-        @manage:integrations="isIntegrationsOpen = true"
-        @clear:unread="markAllRead"
-        @select="selectThread"
-        @star="setStarred"
-        @start:thread="selectThread(null)"
+      <div class="thread-list-column h-100">
+        <ThreadList
+          v-model:scope="scope"
+          v-model:name="nameFilter"
+          :has-integration-access="hasIntegrationAccess"
+          :is-loading="messagingStore.isLoading"
+          :selected-id="messagingStore.selectedThreadId"
+          :threads="messagingStore.items"
+          :unread="messagingStore.unread"
+          @manage:integrations="isIntegrationsOpen = true"
+          @clear:unread="markAllRead"
+          @select="selectThread"
+          @star="setStarred"
+          @collapse="isListOpen = false"
+          @start:thread="selectThread(null)"
+        />
+        <div
+          aria-orientation="vertical"
+          class="resize-handle"
+          role="separator"
+          @pointerdown="startResize"
+        />
+      </div>
+    </VNavigationDrawer>
+    <VFadeTransition>
+      <VBtn
+        v-if="!isListOpen"
+        v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
+        aria-label="Open sidebar"
+        class="sidebar-toggle"
+        color="primary-container"
+        density="comfortable"
+        icon="mdi-forum-outline"
+        size="small"
+        @click="isListOpen = true"
       />
-      <div
-        aria-orientation="vertical"
-        class="resize-handle"
-        role="separator"
-        @pointerdown="startResize"
-      />
-    </div>
-    <VDivider vertical />
-    <div class="panel flex-grow-1 d-flex flex-column">
-      <SearchBar
-        :is-searching="messagingStore.isSearching"
-        :query="messagingStore.searchQuery"
-        :total="messagingStore.searchTotal"
-        @clear="messagingStore.clearSearch()"
-        @search="searchMessages"
-      />
-      <VDivider />
-      <div class="panel-split d-flex flex-grow-1">
-        <SearchResults
-          v-if="isSearchActive"
-          :current-user-id="currentUserId"
-          :hits="messagingStore.searchHits"
+    </VFadeTransition>
+    <VAppBar
+      :class="{ 'search-mode': isSearchOpen }"
+      border="b"
+      class="discussion-toolbar"
+      color="surface-canvas"
+      height="64"
+      order="1"
+      flat
+    >
+      <VFadeTransition leave-absolute>
+        <SearchBar
+          v-if="isSearchOpen"
           :is-searching="messagingStore.isSearching"
           :query="messagingStore.searchQuery"
-          class="panel-body"
-          @select="selectThread"
+          :total="messagingStore.searchTotal"
+          autofocus
+          @close="closeSearch"
+          @search="searchMessages"
         />
-        <ThreadPanel
-          v-else-if="messagingStore.selectedThread"
-          :key="messagingStore.selectedThread.id"
-          v-model:draft="draft"
+        <div v-else class="d-flex align-center ga-1 w-100 h-100 pr-3">
+          <ThreadHeader
+            v-if="messagingStore.selectedThread"
+            :thread="messagingStore.selectedThread"
+            class="flex-grow-1"
+          />
+          <h2 v-else class="text-title-medium font-weight-bold flex-grow-1 px-4">
+            New thread
+          </h2>
+          <VBtn
+            v-tooltip:bottom="'Search messages (/)'"
+            aria-label="Search messages"
+            density="comfortable"
+            variant="text"
+            icon
+            @click="isSearchOpen = true"
+          >
+            <VIcon icon="mdi-magnify" size="small" />
+          </VBtn>
+          <ThreadMenu
+            v-if="messagingStore.selectedThread"
+            :is-removable="isThreadRemovable"
+            :thread="messagingStore.selectedThread"
+            @open:files="isSharedFilesOpen = true"
+            @open:subscriptions="isSubscribingOpen = true"
+            @remove:thread="removeThread"
+            @resolve="setResolved"
+            @star="setStarred(messagingStore.selectedThread!.id, $event)"
+          />
+        </div>
+      </VFadeTransition>
+    </VAppBar>
+    <VNavigationDrawer
+      :class="{ resizing: isReplyResizing }"
+      :model-value="!!messagingStore.replyParent"
+      :width="replyWidth"
+      color="surface-sidebar"
+      location="right"
+      permanent
+    >
+      <div v-if="messagingStore.replyParent" class="reply-column h-100">
+        <ReplyPanel
           :current-user-id="currentUserId"
-          :is-removable="isThreadRemovable"
-          :last-read-at="messagingStore.openedWatermark"
-          :messages="messagingStore.messages"
-          :thread="messagingStore.selectedThread"
-          :typing-users="threadTypingUsers"
-          class="panel-body"
-          @resolve="setResolved"
-          @star="setStarred(messagingStore.selectedThread!.id, $event)"
-          @remove:thread="removeThread"
-          @open:subscriptions="isSubscribingOpen = true"
-          @open:files="isSharedFilesOpen = true"
+          :parent="messagingStore.replyParent"
+          :replies="messagingStore.replies"
+          :thread-label="replyThreadLabel"
+          class="h-100"
+          @close="messagingStore.closeReplies()"
           @react="reactToMessage"
           @remove="removeMessage"
-          @reply="openReplies"
-          @submit="postMessage"
-          @typing="reportTyping"
+          @submit="postReply"
           @update="editMessage"
         />
-        <StartDiscussion
-          v-else
-          class="panel-body"
-          @create="createThread"
+        <div
+          aria-orientation="vertical"
+          class="resize-handle resize-handle--start"
+          role="separator"
+          @pointerdown="startReplyResize"
         />
-        <template v-if="messagingStore.replyParent">
-          <VDivider vertical />
-          <div
-            :style="{ width: `${replyWidth}px` }"
-            class="reply-column flex-shrink-0"
-          >
-            <ReplyPanel
-              :current-user-id="currentUserId"
-              :parent="messagingStore.replyParent"
-              :replies="messagingStore.replies"
-              :thread-label="replyThreadLabel"
-              class="h-100"
-              @close="messagingStore.closeReplies()"
-              @react="reactToMessage"
-              @remove="removeMessage"
-              @submit="postReply"
-              @update="editMessage"
-            />
-            <div
-              aria-orientation="vertical"
-              class="resize-handle resize-handle--start"
-              role="separator"
-              @pointerdown="startReplyResize"
-            />
-          </div>
-        </template>
       </div>
+    </VNavigationDrawer>
+    <VMain scrollable>
+      <SearchResults
+        v-if="isSearchActive"
+        :current-user-id="currentUserId"
+        :hits="messagingStore.searchHits"
+        :is-searching="messagingStore.isSearching"
+        :query="messagingStore.searchQuery"
+        class="conversation-column py-8"
+        @select="selectThread"
+      />
+      <div
+        v-else-if="messagingStore.selectedThread"
+        class="conversation-column d-flex flex-column h-100 py-8"
+      >
+        <VCard
+          class="conversation d-flex flex-column"
+          color="surface-raised"
+          elevation="1"
+          rounded="lg"
+        >
+          <ThreadPanel
+            :key="messagingStore.selectedThread.id"
+            v-model:draft="draft"
+            :current-user-id="currentUserId"
+            :last-read-at="messagingStore.openedWatermark"
+            :messages="messagingStore.messages"
+            :thread="messagingStore.selectedThread"
+            :typing-users="threadTypingUsers"
+            class="panel-body"
+            @react="reactToMessage"
+            @remove="removeMessage"
+            @reply="openReplies"
+            @submit="postMessage"
+            @typing="reportTyping"
+            @update="editMessage"
+          />
+        </VCard>
+      </div>
+      <StartDiscussion v-else class="h-100" @create="createThread" />
       <SharedFilesDialog
         v-model="isSharedFilesOpen"
         :repository-id="repositoryId"
@@ -118,12 +182,13 @@
         :thread-id="messagingStore.selectedThread.id"
         @saved="onSubscribed"
       />
-    </div>
-  </div>
+    </VMain>
+  </VLayout>
 </template>
 
 <script lang="ts" setup>
 import { debounce } from 'lodash-es';
+import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
 
 import { useMessagingStore, type ThreadScope } from '@/stores/messaging';
@@ -137,10 +202,16 @@ import StartDiscussion
   from '@/components/repository/Discussion/StartDiscussion.vue';
 import SubscriptionsDialog
   from '@/components/repository/Discussion/ThreadPanel/SubscriptionsDialog.vue';
+import ThreadHeader
+  from '@/components/repository/Discussion/ThreadPanel/ThreadHeader.vue';
+import ThreadMenu
+  from '@/components/repository/Discussion/ThreadPanel/ThreadMenu.vue';
 import ThreadPanel
   from '@/components/repository/Discussion/ThreadPanel/index.vue';
 import ThreadList
   from '@/components/repository/Discussion/ThreadList/index.vue';
+import { useThreadAnchor }
+  from '@/components/repository/Discussion/composables/useThreadAnchor';
 import { useThreadDraft }
   from '@/components/repository/Discussion/composables/useThreadDraft';
 import { useThreadRoute }
@@ -168,6 +239,8 @@ const nameFilter = ref('');
 
 const draft = useThreadDraft(() => messagingStore.selectedThreadId);
 const isSearchActive = computed(() => !!messagingStore.searchQuery.trim());
+// The toolbar swaps to the search field; reopens with a kept query
+const isSearchOpen = ref(isSearchActive.value);
 
 const currentUserId = computed(() => authStore.user?.id ?? null);
 const repositoryId = computed(
@@ -184,14 +257,19 @@ const isThreadRemovable = computed(() => {
   return authStore.isAdmin || thread.createdById === currentUserId.value;
 });
 
-const { lgAndUp } = useDisplay();
-const { width, startResize } = useDrawerResize({
+const { mdAndUp, lgAndUp } = useDisplay();
+const isListOpen = ref(mdAndUp.value);
+const { width, isResizing, startResize } = useDrawerResize({
   side: 'left',
   storageKey: 'discussion:rail:width',
   defaultWidth: () => (lgAndUp.value ? 420 : 340),
 });
 
-const { width: replyWidth, startResize: startReplyResize } = useDrawerResize({
+const {
+  width: replyWidth,
+  isResizing: isReplyResizing,
+  startResize: startReplyResize,
+} = useDrawerResize({
   side: 'right',
   storageKey: 'discussion:replies:width',
   defaultWidth: 384,
@@ -206,9 +284,9 @@ const threadTypingUsers = computed(() => {
   );
 });
 
-const replyThreadLabel = computed(
-  () => messagingStore.selectedThread?.title ?? 'the thread',
-);
+// Named like the toolbar title, so a broadcast says where it goes
+const replyThreadAnchor = useThreadAnchor(() => messagingStore.selectedThread);
+const replyThreadLabel = computed(() => replyThreadAnchor.value.label);
 
 const load = () =>
   messagingStore.fetchThreads(repositoryId.value, {
@@ -221,11 +299,26 @@ const searchMessages = (query: string) =>
 
 const { openThread, closeThread } = useThreadRoute(repositoryId);
 
+const closeSearch = () => {
+  isSearchOpen.value = false;
+  messagingStore.clearSearch();
+};
+
 // From the list or a search result, so the results give way to the thread
 const selectThread = (threadId: number | null) => {
-  messagingStore.clearSearch();
+  closeSearch();
   openThread(threadId);
 };
+
+const isTyping = (target: EventTarget | null) =>
+  target instanceof HTMLElement &&
+  (target.isContentEditable || ['INPUT', 'TEXTAREA'].includes(target.tagName));
+
+onKeyStroke('/', (event) => {
+  if (isSearchOpen.value || isTyping(event.target)) return;
+  event.preventDefault();
+  isSearchOpen.value = true;
+});
 
 const createThread = async (payload: { content: string; title: string }) => {
   const thread = await messagingStore.startThread(repositoryId.value, payload);
@@ -332,16 +425,31 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.discussion-channel {
-  min-height: 0;
-  overflow: hidden;
+.discussion-page {
   text-align: left;
+
+  // Suppress the drawer's width animation while dragging its handle
+  .resizing {
+    transition-duration: 0s !important;
+  }
 }
 
-.thread-list-column {
+.thread-list-column,
+.reply-column {
   position: relative;
   min-width: 0;
-  max-width: 50vw;
+}
+
+// Reopens the collapsed thread list, like the editor's sidebar toggle
+.sidebar-toggle {
+  position: absolute;
+  // Above the scrollable VMain, which covers the whole layout
+  z-index: 1;
+  top: 6rem;
+  left: 0;
+  width: 1.5rem;
+  height: 3.5rem;
+  border-radius: 0 12px 12px 0;
 }
 
 .resize-handle {
@@ -365,14 +473,41 @@ onMounted(async () => {
   left: 0;
 }
 
-.panel {
-  position: relative;
-  min-width: 0;
-  min-height: 0;
+.discussion-toolbar {
+  // The editor toolbar's wash for a temporary mode (history, diff)
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-color: rgb(var(--v-theme-surface-container-highest));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+
+  &.search-mode {
+    border-bottom-color: rgb(var(--v-theme-outline-variant));
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  :deep(.v-toolbar__content) {
+    padding: 0;
+  }
 }
 
-.panel-split {
-  min-width: 0;
+// Same max width as the other repository pages
+.conversation-column {
+  max-width: 87.5rem;
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+// Fits a short thread; at full height the timeline scrolls inside
+.conversation {
+  flex: 0 1 auto;
   min-height: 0;
 }
 
@@ -380,11 +515,5 @@ onMounted(async () => {
   flex: 1 1 auto;
   min-width: 0;
   min-height: 0;
-}
-
-.reply-column {
-  position: relative;
-  min-width: 0;
-  max-width: 50vw;
 }
 </style>

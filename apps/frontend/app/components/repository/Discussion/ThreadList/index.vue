@@ -6,11 +6,11 @@
         :unread="unread"
         @manage:integrations="emit('manage:integrations')"
         @clear:unread="emit('clear:unread')"
+        @collapse="emit('collapse')"
         @start:thread="emit('start:thread')"
       />
       <ThreadFilters v-model:name="name" v-model:scope="scope" />
     </div>
-    <VDivider />
     <div class="flex-grow-1 overflow-y-auto pa-2">
       <template v-if="isSkeletonVisible">
         <VSkeletonLoader
@@ -67,6 +67,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
+  'collapse': [];
   'select': [threadId: number];
   'star': [threadId: number, isStarred: boolean];
   'start:thread': [];
@@ -111,7 +112,6 @@ const groups = computed(() => {
 <style lang="scss" scoped>
 .thread-list {
   min-width: 0;
-  background: rgb(var(--v-theme-surface-sidebar));
 }
 
 .group-label {
