@@ -13,8 +13,7 @@
         @click="emit('close')"
       />
     </div>
-    <VDivider />
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto py-3">
+    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pb-3">
       <div ref="messagesEl">
         <MessageRow
           v-if="parent"
@@ -25,15 +24,18 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div class="px-4 py-2 text-body-small text-medium-emphasis font-weight-bold">
-          {{ pluralize('reply', replies.length, true) }}
+        <div v-if="replies.length" class="d-flex align-center ga-3 px-4 py-2">
+          <span class="reply-count text-body-small text-medium-emphasis">
+            {{ pluralize('reply', replies.length, true) }}
+          </span>
+          <VDivider />
         </div>
-        <VDivider class="mb-2" />
         <MessageRow
           v-for="(reply, index) in replies"
           :key="reply.uid"
           :current-user-id="currentUserId"
           :is-grouped="isGrouped(index)"
+          :is-highlighted="reply.id === highlightedId"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -67,6 +69,8 @@ import {
   provideEditingMessage,
 } from '@tailor-cms/core-components';
 import { isContinuation } from './ThreadPanel/timeline';
+import { type MessageFocus, useMessageFocus }
+  from './composables/useMessageFocus';
 import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
@@ -76,11 +80,14 @@ interface Props {
   replies: Message[];
   threadLabel?: string;
   currentUserId?: number | null;
+  // A reply jumped to from a search result
+  focusedMessage?: MessageFocus | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   threadLabel: 'the channel',
   currentUserId: null,
+  focusedMessage: null,
 });
 
 const emit = defineEmits<{
@@ -113,7 +120,21 @@ const submit = (content: string) => {
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
 
-useStickToBottom(viewportEl, messagesEl, () => props.replies);
+const { release } = useStickToBottom(
+  viewportEl,
+  messagesEl,
+  () => props.replies,
+  {
+    isFollowed: (it) => it.authorId === props.currentUserId,
+    source: () => props.parent?.id,
+  },
+);
+const { highlightedId } = useMessageFocus(
+  viewportEl,
+  () => props.focusedMessage,
+  () => props.replies,
+  release,
+);
 </script>
 
 <style lang="scss" scoped>
@@ -121,6 +142,11 @@ useStickToBottom(viewportEl, messagesEl, () => props.replies);
   min-width: 0;
   min-height: 0;
   background: rgb(var(--v-theme-surface));
+}
+
+.reply-count {
+  font-weight: 600;
+  white-space: nowrap;
 }
 
 .broadcast-checkbox {
