@@ -13,18 +13,17 @@
       >
         {{ anchor.label }}
       </h3>
-      <VChip
-        v-if="thread.isResolved"
-        color="success"
-        density="comfortable"
-        prepend-icon="mdi-check-circle-outline"
-        rounded="pill"
-        size="x-small"
-        text="Resolved"
-        variant="tonal"
-      />
     </div>
     <VSpacer />
+    <VChip
+      v-if="thread.isResolved"
+      color="success"
+      prepend-icon="mdi-check-circle-outline"
+      rounded="pill"
+      size="small"
+      text="Resolved"
+      variant="tonal"
+    />
     <VBtn
       v-if="anchor.href"
       v-tooltip:bottom="'Open in editor'"

@@ -1,6 +1,6 @@
 <template>
   <div class="reply-panel d-flex flex-column">
-    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-3">
+    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-4">
       <h3 class="text-title-medium font-weight-bold">Thread</h3>
       <VSpacer />
       <VBtn

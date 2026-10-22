@@ -14,7 +14,7 @@
     <template #prepend>
       <VIcon
         :color="thread.isResolved ? 'success' : undefined"
-        :icon="thread.isResolved ? 'mdi-check' : anchor.icon"
+        :icon="thread.isResolved ? 'mdi-check-circle-outline' : anchor.icon"
         class="thread-list-item-icon"
         size="16"
       />
