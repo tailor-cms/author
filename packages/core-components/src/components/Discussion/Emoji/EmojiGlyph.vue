@@ -32,6 +32,7 @@ const isShortcode = computed(() => !!parseEmojiShortcode(props.value));
   line-height: 1;
 
   &--char {
+    font-variant-emoji: emoji;
     font-size: 1.25em;
     vertical-align: -0.1em;
   }
