@@ -6,7 +6,7 @@
         :aria-label="description"
         :aria-pressed="isCurrentUserReaction"
         :class="{ 'is-current-user-reaction': isCurrentUserReaction }"
-        :color="isCurrentUserReaction ? 'primary' : undefined"
+        :color="isCurrentUserReaction ? 'secondary' : undefined"
         class="reaction-pill"
         rounded="pill"
         size="small"
