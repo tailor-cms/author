@@ -193,9 +193,18 @@ defineExpose({ focus, submit });
   background: rgb(var(--v-theme-surface));
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
+  @media (hover: hover) {
+    &:hover {
+      border-color: rgba(
+        var(--v-theme-on-surface),
+        var(--v-high-emphasis-opacity)
+      );
+    }
+  }
+
   &.is-focused {
-    border-color: rgb(var(--v-theme-primary));
-    box-shadow: 0 0 0 1px rgb(var(--v-theme-primary));
+    border-color: rgb(var(--v-theme-on-surface));
+    box-shadow: 0 0 0 1px rgb(var(--v-theme-on-surface));
   }
 
   &.is-dragging {
