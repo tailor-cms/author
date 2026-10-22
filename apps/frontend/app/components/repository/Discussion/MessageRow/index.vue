@@ -202,17 +202,6 @@ const hasBody = computed(() => {
   &--card {
     padding-block: 0.75rem;
   }
-
-  // A reply also sent to the main panel
-  &--broadcast::before {
-    content: '';
-    position: absolute;
-    inset-block: 0.375rem;
-    inset-inline-start: 0.375rem;
-    width: 0.125rem;
-    border-radius: 0.0625rem;
-    background: rgba(var(--v-border-color), var(--v-border-opacity));
-  }
 }
 
 .message-row-gutter {
