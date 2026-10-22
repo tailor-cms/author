@@ -19,6 +19,7 @@ import { afterCommit } from '#shared/database/helpers.js';
 import { createLogger } from '#logger';
 import { messageIncludes } from '../comment.service.ts';
 import { schema } from '@tailor-cms/config';
+import { toPlainText } from '@tailor-cms/utils';
 import mail from '#shared/mail/index.js';
 import sse from '#shared/sse/index.js';
 
@@ -160,7 +161,7 @@ function add(Comment: any, Hooks: any, db: ModelsBag) {
       // What the thread is called: its subject, or its anchor's name.
       topic: thread?.title ?? activity?.data?.name ?? repository.name,
       author: author.profile,
-      content: comment.content,
+      content: toPlainText(comment.content),
       action,
       previousComments: previous,
     });
@@ -188,7 +189,7 @@ function add(Comment: any, Hooks: any, db: ModelsBag) {
       .filter((it: any) => it.author)
       .map((it: any) => ({
         author: { label: it.author.label },
-        content: it.content,
+        content: toPlainText(it.content),
       }));
   }
 }

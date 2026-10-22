@@ -1,6 +1,6 @@
 import type { Asset } from '@tailor-cms/interfaces/asset';
-import type { RepositoryMember } from '@tailor-cms/interfaces/repository';
 import type { SuggestionItem } from '@tailor-cms/core-components';
+import type { UserSummary } from '@tailor-cms/api-client';
 import { api, repositoryAsset } from '@/api';
 import { decode } from 'html-entities';
 import { elementRefId } from '@tailor-cms/utils';
@@ -18,7 +18,7 @@ const snippetText = (snippet?: string | null) =>
 const matchesQuery = (text: string, query: string) =>
   text.toLowerCase().includes(query.toLowerCase());
 
-const toUserSuggestion = (user: RepositoryMember): SuggestionItem => ({
+const toUserSuggestion = (user: UserSummary): SuggestionItem => ({
   value: String(user.id),
   label: user.label || user.email,
   subtitle: user.email,
@@ -39,11 +39,15 @@ export const useMessageSuggestions = (
   const elementName = (element: { type: string; data: unknown }) =>
     $ceRegistry.getByEntity(element)?.name ?? element.type;
 
-  const suggestUsers = (query: string) =>
-    repoStore.users
+  const suggestUsers = async (query: string) => {
+    const users = await api.messaging.getUsersWithAccess({
+      params: { repositoryId: toValue(repositoryId) },
+    });
+    return users
       .filter((it) => matchesQuery(`${it.label} ${it.email}`, query))
       .slice(0, MAX_ROWS_PER_SOURCE)
       .map(toUserSuggestion);
+  };
 
   const suggestActivities = (query: string): SuggestionItem[] =>
     repoStore.outlineActivities

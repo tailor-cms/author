@@ -33,10 +33,11 @@ export interface CommentElementRef {
   type: string;
 }
 
-// One person's emoji reaction, so it can be taken back
+// One person's emoji reaction, so it can be taken back and named
 export interface Reaction {
   emoji: string;
   userId: number;
+  user: UserSummary | null;
 }
 
 // Special case of a message: a comment left on an activity or

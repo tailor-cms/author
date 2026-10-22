@@ -1,24 +1,13 @@
 <template>
   <div v-if="groups.length" class="message-reactions d-flex flex-wrap ga-1">
-    <VChip
-      v-for="{ emoji, count, isCurrentUserReaction } in groups"
+    <ReactionPill
+      v-for="[emoji, group] in groups"
       :key="emoji"
-      :aria-label="`${emoji} reaction, ${count}`"
-      :aria-pressed="isCurrentUserReaction"
-      :class="{ 'is-current-user-reaction': isCurrentUserReaction }"
-      :color="isCurrentUserReaction ? 'primary' : undefined"
-      class="reaction-pill"
-      rounded="pill"
-      size="small"
-      tag="button"
-      variant="tonal"
-      border
-      link
-      @click="emit('toggle', emoji)"
-    >
-      <EmojiGlyph :value="emoji" />
-      <span class="reaction-count ml-1">{{ count }}</span>
-    </VChip>
+      :current-user-id="currentUserId"
+      :emoji="emoji"
+      :reactions="group"
+      @toggle="emit('toggle', emoji)"
+    />
     <EmojiPicker @select="emit('toggle', $event)">
       <template #activator="{ props: picker }">
         <VChip
@@ -41,13 +30,11 @@
 </template>
 
 <script lang="ts" setup>
-// The reactions under a message, one pill per emoji with its count.
-// Clicking a pill adds or takes back your own reaction.
 import type { Reaction } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
 
-import EmojiGlyph from '../Emoji/EmojiGlyph.vue';
 import EmojiPicker from '../Emoji/EmojiPicker.vue';
+import ReactionPill from './ReactionPill.vue';
 
 const props = withDefaults(
   defineProps<{ reactions?: Reaction[]; currentUserId?: number | null }>(),
@@ -56,31 +43,13 @@ const props = withDefaults(
 
 const emit = defineEmits<{ toggle: [emoji: string] }>();
 
+// Reactions by emoji, in the order each emoji first appeared
 const groups = computed(() => {
-  const userIdsByEmoji = new Map<string, number[]>();
-  props.reactions.forEach(({ emoji, userId }) => {
-    const userIds = userIdsByEmoji.get(emoji) ?? [];
-    userIdsByEmoji.set(emoji, [...userIds, userId]);
+  const byEmoji = new Map<string, Reaction[]>();
+  props.reactions.forEach((reaction) => {
+    const list = byEmoji.get(reaction.emoji) ?? [];
+    byEmoji.set(reaction.emoji, [...list, reaction]);
   });
-  return [...userIdsByEmoji].map(([emoji, userIds]) => ({
-    emoji,
-    count: userIds.length,
-    isCurrentUserReaction: userIds.some((id) => id === props.currentUserId),
-  }));
+  return [...byEmoji];
 });
 </script>
-
-<style lang="scss" scoped>
-.reaction-count {
-  color: rgba(var(--v-theme-on-surface), var(--v-medium-emphasis-opacity));
-}
-
-.reaction-pill.is-current-user-reaction {
-  border-color: currentColor;
-
-  .reaction-count {
-    color: inherit;
-    font-weight: 600;
-  }
-}
-</style>

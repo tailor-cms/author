@@ -2,10 +2,12 @@ import type { Emoji } from './schemas/index.ts';
 import EmojiModel, { type Emoji as EmojiRow } from './models/emoji.model.js';
 import { EMOJI_NAME_PATTERN } from '@tailor-cms/utils';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
+import { Emoji as EmojiEvents } from '@tailor-cms/common/src/sse.js';
 import { createKvStore } from '#shared/kvStore.ts';
 import crypto from 'node:crypto';
 import db from '#shared/database/index.js';
 import sharp from 'sharp';
+import sse from '#shared/sse/index.js';
 import storage from './storage.ts';
 
 export class EmojiNameTakenError extends Error {}
@@ -85,6 +87,12 @@ const toEmoji = (row: EmojiRow): Emoji => {
 // Forgets the cached list, so the next read comes from the database
 export const clearCache = () => cache.delete(MANIFEST_KEY);
 
+// After an emoji is added or removed
+async function onChange() {
+  await cache.delete(MANIFEST_KEY);
+  sse.broadcast(EmojiEvents.Update, await list());
+}
+
 /**
  * Every emoji, in one list. Deliberately unpaginated: it is the
  * dictionary a client needs before it can render a single message.
@@ -127,7 +135,7 @@ export async function create(
     isAnimated: (info.pages ?? 1) > 1,
     createdById: userId,
   });
-  await cache.delete(MANIFEST_KEY);
+  await onChange();
   await emoji.reload({ include: [CREATOR_INCLUDE] });
   return toEmoji(emoji);
 }
@@ -138,7 +146,7 @@ export async function remove(id: number): Promise<void> {
   const { contentHash } = emoji;
   // The row goes first
   await emoji.destroy();
-  await cache.delete(MANIFEST_KEY);
+  await onChange();
   // Aliases may still exist
   const remaining = await EmojiModel.count({ where: { contentHash } });
   if (!remaining) {

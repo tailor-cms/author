@@ -17,7 +17,7 @@
         :is="attachment.title_link ? 'a' : 'div'"
         v-if="attachment.title"
         :href="attachment.title_link"
-        class="d-block text-label-large font-weight-semibold"
+        class="attachment-title d-block text-label-large font-weight-semibold"
         rel="noopener noreferrer"
         target="_blank"
       >
@@ -49,7 +49,7 @@
       </div>
       <div
         v-if="attachment.footer"
-        class="text-body-small text-medium-emphasis mt-2">
+        class="attachment-footer text-body-small text-medium-emphasis mt-2">
         {{ attachment.footer }}
       </div>
     </VCard>

@@ -34,3 +34,7 @@ export const UserActivity = {
 export const Revision = {
   Create: 'revision:create',
 };
+
+export const Emoji = {
+  Update: 'emoji:update',
+};

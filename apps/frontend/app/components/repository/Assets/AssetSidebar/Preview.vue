@@ -34,7 +34,7 @@
         height="250"
         max-width="100%"
         @error="hasError = true"
-        @click="showZoom = true"
+        @click="isDialogVisible = true"
       >
         <template #placeholder>
           <div class="d-flex justify-center align-center fill-height">
@@ -88,38 +88,28 @@
         No preview available
       </span>
     </VSheet>
-    <VOverlay
+    <ImageDialog
       v-if="isImage && previewUrl"
-      v-model="showZoom"
-      :class="{ expanded: showZoom }"
-      content-class="d-flex align-center justify-center h-100 w-100"
-      close-on-content-click
-    >
-      <VBtn
-        class="position-absolute top-0 right-0 ma-4"
-        icon="mdi-close"
-        variant="tonal"
-        @click="showZoom = false"
-      />
-      <VImg
-        :src="previewUrl ?? ''"
-        max-height="80vh"
-        max-width="90vw"
-        class="rounded-lg"
-      />
-    </VOverlay>
+      v-model="isDialogVisible"
+      :alt="asset.name"
+      :height="imageMeta?.height"
+      :src="previewUrl"
+      :width="imageMeta?.width"
+    />
   </div>
 </template>
 
 <script lang="ts" setup>
 import {
   type Asset,
+  type FileAssetMeta,
   type LinkAssetMeta,
   AssetType,
 } from '@tailor-cms/interfaces/asset';
 import { getLinkEmbed, getLinkThumbnailUrl } from '@tailor-cms/utils';
 import { getAssetColor, getAssetIcon } from '../utils';
 import EmbedFrame from '@/components/common/EmbedFrame.vue';
+import ImageDialog from '@/components/common/ImageDialog.vue';
 import api from '@/api/repositoryAsset';
 
 const props = defineProps<{
@@ -129,12 +119,16 @@ const props = defineProps<{
 const isLoading = ref(false);
 const hasError = ref(false);
 const previewUrl = ref<string | null>(null);
-const showZoom = ref(false);
+const isDialogVisible = ref(false);
 
 const assetIcon = computed(() => getAssetIcon(props.asset));
 const assetColor = computed(() => getAssetColor(props.asset));
 const isImage = computed(() => props.asset?.type === AssetType.Image);
 const isLink = computed(() => props.asset?.type === AssetType.Link);
+
+const imageMeta = computed(() =>
+  isImage.value ? (props.asset.meta as FileAssetMeta) : null,
+);
 
 const linkMeta = computed(() =>
   isLink.value ? (props.asset.meta as LinkAssetMeta) : null,
@@ -151,7 +145,7 @@ watch(
   async () => {
     previewUrl.value = null;
     hasError.value = false;
-    showZoom.value = false;
+    isDialogVisible.value = false;
     if (!props.asset?.storageKey) return;
     isLoading.value = true;
     try {
@@ -177,13 +171,5 @@ watch(
 
 .image-preview {
   cursor: zoom-in;
-}
-
-.v-overlay {
-  transition: all 0.3s ease;
-
-  &.expanded {
-    backdrop-filter: blur(18px);
-  }
 }
 </style>

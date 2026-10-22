@@ -1,6 +1,11 @@
 // Standard emoji for the picker and the `:` autocomplete, from the
 // `@tiptap/extension-emoji` list.
-import { emojis, shortcodeToEmoji } from '@tiptap/extension-emoji';
+import {
+  emojis,
+  emojiToShortcode,
+  shortcodeToEmoji,
+} from '@tiptap/extension-emoji';
+import { toEmojiShortcode } from '@tailor-cms/utils';
 
 export interface EmojiEntry {
   // What gets inserted and stored
@@ -55,6 +60,13 @@ export const EMOJI_GROUPS: EmojiGroup[] = Object.entries(GROUP_LABELS)
 
 export const emojiChar = (shortcode: string) =>
   shortcodeToEmoji(shortcode, emojis)?.emoji;
+
+// The `:name:` of a standard emoji character, when it has one:
+// 👍 gives `:+1:`, a custom `:party_parrot:` has none
+export const emojiShortcode = (char: string) => {
+  const shortcode = emojiToShortcode(char, emojis);
+  return shortcode ? toEmojiShortcode(shortcode) : undefined;
+};
 
 /**
  * Scores an emoji entry against a search term.
