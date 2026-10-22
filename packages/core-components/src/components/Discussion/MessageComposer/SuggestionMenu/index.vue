@@ -18,7 +18,11 @@
         :title="item.label"
         rounded="lg"
         @click="emit('select', item)"
-      />
+      >
+        <template v-if="item.emoji" #prepend>
+          <EmojiGlyph :value="item.emoji" class="suggestion-emoji" />
+        </template>
+      </VListItem>
     </VList>
     <div v-else class="px-4 py-3 text-body-small text-medium-emphasis">
       No matches
@@ -31,6 +35,7 @@ import type { SuggestionItem } from '../../types';
 
 import { computed } from 'vue';
 import { referenceIcon } from '../../referenceIcon';
+import EmojiGlyph from '../../Emoji/EmojiGlyph.vue';
 
 const WIDTH = 360;
 const MIN_HEIGHT = 120;
@@ -58,8 +63,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{ select: [item: SuggestionItem] }>();
 
-const iconOf = ({ avatar, icon, entityType }: SuggestionItem) => {
-  if (avatar) return undefined;
+const iconOf = ({ avatar, emoji, icon, entityType }: SuggestionItem) => {
+  if (avatar || emoji) return undefined;
   return icon ?? (entityType ? referenceIcon(entityType) : undefined);
 };
 
@@ -93,3 +98,10 @@ const position = computed(() => {
   };
 });
 </script>
+
+<style lang="scss" scoped>
+.suggestion-emoji {
+  margin-inline-end: 1rem;
+  font-size: 1.25rem;
+}
+</style>

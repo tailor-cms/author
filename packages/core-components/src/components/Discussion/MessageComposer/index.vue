@@ -134,7 +134,7 @@ const suggestEmoji = (query: string): SuggestionItem[] => [
   ...customEmoji.search(query, CUSTOM_EMOJI_LIMIT).map((it) => ({
     value: toEmojiShortcode(it.name),
     label: it.name,
-    avatar: it.url,
+    emoji: toEmojiShortcode(it.name),
   })),
   ...searchEmoji(query).map((it) => ({
     value: it.char,

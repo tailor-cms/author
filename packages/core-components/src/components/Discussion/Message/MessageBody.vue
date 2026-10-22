@@ -1,5 +1,8 @@
 <template>
-  <div class="message-body">
+  <div
+    :class="{ 'message-body--emoji-only': isEmojiOnly }"
+    class="message-body"
+  >
     <template v-for="(segment, index) in segments" :key="index">
       <span v-if="segment.kind === 'codeblock'" class="code-block">
         <span v-if="segment.language" class="code-language">
@@ -30,7 +33,13 @@
         :icon="referenceIcon(segment.entityType)"
         :token="segment"
       />
-      <EmojiGlyph v-else-if="segment.kind !== 'text'" :value="segment.text" />
+      <EmojiCard v-else-if="isEmoji(segment)" :value="segment.text">
+        <template #activator="{ props: card }">
+          <span v-bind="card" class="message-emoji">
+            <EmojiGlyph :value="segment.text" />
+          </span>
+        </template>
+      </EmojiCard>
       <span v-else>{{ segment.text }}</span>
     </template>
     <!-- Inside the body, so it wraps with the last word -->
@@ -58,6 +67,7 @@ import {
 import { type FunctionalComponent, computed, h } from 'vue';
 import { type ReferenceChipProps, useDiscussionContext } from '../context';
 import { referenceIcon } from '../referenceIcon';
+import EmojiCard from '../Emoji/EmojiCard.vue';
 import EmojiGlyph from '../Emoji/EmojiGlyph.vue';
 import MessageToken from './MessageToken.vue';
 
@@ -109,6 +119,20 @@ const segments = computed(() =>
   parseMessage(props.content.trimEnd()).flatMap(toSegments),
 );
 
+const isEmoji = (segment: Segment) =>
+  segment.kind === 'emoji' || segment.kind === 'shortcode';
+
+const isBlank = (segment: Segment) =>
+  segment.kind === 'text' && !segment.text.trim();
+
+const isEmojiOnly = computed(() => {
+  // Max number of emoji for emoji-only mode
+  const EMOJI_ONLY_LIMIT = 10;
+  const emoji = segments.value.filter(isEmoji);
+  if (!emoji.length || emoji.length > EMOJI_ONLY_LIMIT) return false;
+  return segments.value.every((it) => isEmoji(it) || isBlank(it));
+});
+
 const isCurrentUser = ({ userId }: MentionToken) =>
   userId === props.currentUserId;
 </script>
@@ -118,6 +142,12 @@ const isCurrentUser = ({ userId }: MentionToken) =>
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;
+}
+
+// A message containing only emoji
+.message-body--emoji-only {
+  font-size: 1.75em;
+  line-height: 1.3;
 }
 
 // Typed as backticks, shown as code

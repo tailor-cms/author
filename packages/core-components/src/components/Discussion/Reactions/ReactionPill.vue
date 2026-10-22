@@ -1,9 +1,5 @@
 <template>
-  <VTooltip
-    content-class="reaction-tooltip elevation-8"
-    location="top"
-    max-width="220"
-  >
+  <EmojiCard :value="emoji">
     <template #activator="{ props: tooltip }">
       <VChip
         v-bind="tooltip"
@@ -24,20 +20,18 @@
         <span class="reaction-count ml-1">{{ reactions.length }}</span>
       </VChip>
     </template>
-    <div class="reaction-tooltip-emoji">
-      <EmojiGlyph :value="emoji" />
-    </div>
     <div>
       {{ who }}
       <span class="reaction-tooltip-verb">reacted with {{ label }}</span>
     </div>
-  </VTooltip>
+  </EmojiCard>
 </template>
 
 <script lang="ts" setup>
 import type { Reaction } from '@tailor-cms/interfaces/comment';
 import { computed } from 'vue';
 import { emojiShortcode } from '../Emoji/emoji';
+import EmojiCard from '../Emoji/EmojiCard.vue';
 import EmojiGlyph from '../Emoji/EmojiGlyph.vue';
 
 const props = withDefaults(
@@ -88,31 +82,6 @@ const description = computed(() => `${who.value} reacted with ${label.value}`);
     color: inherit;
     font-weight: 600;
   }
-}
-</style>
-
-<style lang="scss">
-// The tooltip body is drawn outside this component
-.v-tooltip > .v-overlay__content.reaction-tooltip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0.75rem 1rem;
-  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 0.5rem;
-  background: rgb(var(--v-theme-surface));
-  color: rgb(var(--v-theme-on-surface));
-  font-size: 0.875rem;
-  font-weight: 600;
-  line-height: 1.35;
-  text-align: center;
-  white-space: normal;
-}
-
-.reaction-tooltip-emoji {
-  margin-bottom: 0.5rem;
-  font-size: 3rem;
-  line-height: 1;
 }
 
 .reaction-tooltip-verb {
