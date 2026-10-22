@@ -5,6 +5,7 @@ export interface SuggestionItem {
   subtitle?: string;
   icon?: string;
   avatar?: string;
+  emoji?: string;
   entityType?: string;
 }
 
