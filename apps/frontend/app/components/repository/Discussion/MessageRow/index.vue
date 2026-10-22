@@ -166,7 +166,7 @@ const hasBody = computed(() => {
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.375rem 1.25rem;
+  padding: 0.25rem 1.25rem;
 
   // Hover state layer, tinting whatever surface the row sits on
   &::after {
@@ -192,6 +192,15 @@ const hasBody = computed(() => {
     .message-row-time {
       opacity: 1;
     }
+  }
+
+  // A new sender gets room above; their follow-ups sit close as one block
+  &:not(.message-row--grouped) {
+    padding-top: 0.75rem;
+  }
+
+  &--grouped {
+    padding-block: 0.125rem;
   }
 
   // The narrower replies column

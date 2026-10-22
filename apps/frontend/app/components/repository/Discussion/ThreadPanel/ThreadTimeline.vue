@@ -1,6 +1,6 @@
 <template>
   <div ref="viewportEl" class="thread-timeline flex-grow-1 overflow-y-auto">
-    <div ref="messagesEl" class="timeline-entries pt-6">
+    <div ref="messagesEl" class="timeline-entries">
       <slot name="intro" />
       <section v-for="day in days" :key="day.key" class="timeline-day">
         <VDivider class="day-rule" />

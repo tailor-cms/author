@@ -322,11 +322,14 @@ const closeSearch = () => {
   messagingStore.clearSearch();
 };
 
-// From the list or a search result, so the results give way to the thread
+// From the list or a search result; the results stay until the picked
+// thread is on screen, so the previous one doesn't flash in between
 const selectThread = (threadId: number | null) => {
-  closeSearch();
+  if (threadId === messagingStore.selectedThreadId) closeSearch();
   openThread(threadId);
 };
+
+watch(() => messagingStore.selectedThreadId, closeSearch);
 
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
