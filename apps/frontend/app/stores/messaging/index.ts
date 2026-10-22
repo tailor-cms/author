@@ -67,7 +67,7 @@ export const useMessagingStore = defineStore('messaging', () => {
       .subscribe(CommentEvents.Create, onMessageCreated)
       .subscribe(CommentEvents.Update, onMessageChanged)
       .subscribe(CommentEvents.Delete, onMessageChanged)
-      .subscribe(ThreadEvents.Create, threads.addThread)
+      .subscribe(ThreadEvents.Create, threads.listThread)
       .subscribe(ThreadEvents.Update, threads.addThread)
       .subscribe(ThreadEvents.Delete, (it: Thread) =>
         threads.dropThread(it.id),
