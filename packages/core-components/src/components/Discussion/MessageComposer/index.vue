@@ -43,7 +43,7 @@
       <VSpacer />
       <VBtn
         v-if="!isEditing"
-        :disabled="isEmpty || isTooLong || disabled"
+        :disabled="!canSubmit"
         aria-label="Post message"
         color="primary"
         density="comfortable"
@@ -77,6 +77,8 @@ interface Props {
   // Editing a posted message
   isEditing?: boolean;
   maxLength?: number;
+  // Blocks sending while keeping the message editable
+  isSubmitDisabled?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -85,6 +87,7 @@ const props = withDefaults(defineProps<Props>(), {
   autofocus: false,
   isEditing: false,
   maxLength: MESSAGE_MAX_LENGTH,
+  isSubmitDisabled: false,
 });
 
 const emit = defineEmits<{
@@ -110,6 +113,13 @@ const overflow = computed(() =>
   Math.max(0, content.value.length - props.maxLength),
 );
 const isTooLong = computed(() => overflow.value > 0);
+const canSubmit = computed(
+  () =>
+    !props.disabled &&
+    !props.isSubmitDisabled &&
+    !isEmpty.value &&
+    !isTooLong.value,
+);
 const canAttach = computed(() => !!services);
 
 const onFocus = () => {
@@ -161,7 +171,7 @@ const attachPasted = (event: ClipboardEvent) => {
 };
 
 const submit = () => {
-  if (props.disabled || isEmpty.value || isTooLong.value) return;
+  if (!canSubmit.value) return;
   emit('submit', content.value);
   // Cleared for the next message, along with the draft
   inputEl.value?.clear();

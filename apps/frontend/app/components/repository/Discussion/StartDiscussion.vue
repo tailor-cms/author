@@ -15,9 +15,9 @@
         </p>
       </div>
       <VTextField
-        ref="titleEl"
         v-model="title"
-        :error-messages="error"
+        :counter="THREAD_TITLE_MAX_LENGTH"
+        :error-messages="titleError"
         class="mb-3"
         density="comfortable"
         placeholder="Subject"
@@ -26,10 +26,10 @@
         variant="solo-filled"
         autofocus
         flat
-        @update:model-value="error = ''"
       />
       <MessageComposer
         v-model="draft"
+        :is-submit-disabled="!isTitleValid"
         placeholder="What would you like to discuss?"
         @submit="submit"
       />
@@ -39,30 +39,30 @@
 
 <script lang="ts" setup>
 import { MessageComposer } from '@tailor-cms/core-components';
+import { THREAD_TITLE_MAX_LENGTH } from '@tailor-cms/interfaces/comment';
 
 const emit = defineEmits<{
   create: [payload: { content: string; title: string }];
 }>();
 
 const title = ref('');
-const titleEl = ref<any>(null);
-const error = ref('');
 const draft = ref('');
 
+const isTitleTooLong = computed(
+  () => title.value.trim().length > THREAD_TITLE_MAX_LENGTH,
+);
+const isTitleValid = computed(
+  () => !!title.value.trim() && !isTitleTooLong.value,
+);
+const titleError = computed(() =>
+  isTitleTooLong.value
+    ? `Use ${THREAD_TITLE_MAX_LENGTH} characters or fewer`
+    : '',
+);
+
 const submit = (content: string) => {
-  const subject = title.value.trim();
-  if (!subject) {
-    error.value = 'Give the thread a subject';
-    titleEl.value?.focus();
-    // The composer clears itself on send; put the message back
-    nextTick(() => {
-      draft.value = content;
-    });
-    return;
-  }
-  emit('create', { content, title: subject });
+  emit('create', { content, title: title.value.trim() });
   title.value = '';
-  error.value = '';
 };
 </script>
 
