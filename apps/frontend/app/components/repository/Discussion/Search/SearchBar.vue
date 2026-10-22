@@ -7,7 +7,7 @@
       :autofocus="autofocus"
       :model-value="query"
       class="flex-grow-1"
-      placeholder="Search messages - @ for people, # for items"
+      placeholder="Search all threads - @ for people, # for items"
       @escape="close"
       @update:model-value="search"
     />
