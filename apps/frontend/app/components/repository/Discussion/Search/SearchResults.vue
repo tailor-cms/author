@@ -33,8 +33,7 @@
     </VList>
     <TailorEmptyState
       v-else-if="!isSearching"
-      class="mt-6"
-      height="auto"
+      height="100%"
       icon="mdi-magnify-close"
       size="48"
       text="Nothing in this repository matches that search."

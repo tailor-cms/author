@@ -4,8 +4,8 @@
     <span v-if="isReplyTarget">Also sent to the channel</span>
     <VBtn
       v-else
-      class="px-0 font-weight-bold"
-      color="primary"
+      class="px-0 font-weight-semibold"
+      color="secondary"
       density="compact"
       size="small"
       text="Replied to a thread"

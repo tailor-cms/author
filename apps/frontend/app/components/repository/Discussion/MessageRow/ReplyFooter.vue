@@ -1,7 +1,7 @@
 <template>
   <VBtn
-    class="reply-footer px-2"
-    color="primary"
+    class="reply-footer pl-1 pr-2"
+    color="secondary"
     rounded="lg"
     size="small"
     variant="text"
@@ -17,7 +17,7 @@
       />
     </span>
     <VIcon v-else class="mr-2" icon="mdi-chat-outline" size="16" />
-    <span class="text-body-small font-weight-bold">
+    <span class="text-body-small font-weight-semibold">
       {{ pluralize('reply', count, true) }}
     </span>
     <span
