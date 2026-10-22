@@ -40,7 +40,7 @@ export class ThreadList {
     this.unreadItems = el.locator('.thread-list-item--unread');
     this.mentionsChip = el.locator('.mentions-chip');
     this.nameFilter = el.getByPlaceholder('Find a conversation');
-    this.newBtn = el.getByRole('button', { name: 'New', exact: true });
+    this.newBtn = el.getByRole('button', { name: 'New thread', exact: true });
     this.menuBtn = el.getByRole('button', {
       name: 'Thread list actions',
       exact: true,

@@ -45,12 +45,11 @@
         v-if="!isEditing"
         :disabled="!canSubmit"
         aria-label="Post message"
-        color="primary"
         density="comfortable"
         icon="mdi-send"
         rounded="lg"
         size="small"
-        variant="flat"
+        variant="tonal"
         @click="submit"
       />
     </div>
