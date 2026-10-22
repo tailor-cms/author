@@ -30,9 +30,10 @@
         </div>
         <VDivider class="mb-2" />
         <MessageRow
-          v-for="reply in replies"
+          v-for="(reply, index) in replies"
           :key="reply.uid"
           :current-user-id="currentUserId"
+          :is-grouped="isGrouped(index)"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -66,6 +67,7 @@ import {
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
+import { isContinuation } from './ThreadPanel/timeline';
 import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
@@ -97,6 +99,9 @@ const editLast = () => {
   const last = lastOwnMessage(props.replies, props.currentUserId);
   if (last) editingUid.value = last.uid;
 };
+
+const isGrouped = (index: number) =>
+  index > 0 && isContinuation(props.replies[index - 1]!, props.replies[index]!);
 
 // Post to the channel as well
 const isBroadcast = ref(false);
