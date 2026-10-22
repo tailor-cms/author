@@ -20,7 +20,9 @@
         @click="emit('select', item)"
       >
         <template v-if="item.emoji" #prepend>
-          <EmojiGlyph :value="item.emoji" class="suggestion-emoji" />
+          <span class="suggestion-emoji">
+            <EmojiGlyph :value="item.emoji" />
+          </span>
         </template>
       </VListItem>
     </VList>
@@ -100,8 +102,12 @@ const position = computed(() => {
 </script>
 
 <style lang="scss" scoped>
+// One width for every emoji, so the names line up after them
 .suggestion-emoji {
-  margin-inline-end: 1rem;
-  font-size: 1.25rem;
+  display: inline-flex;
+  justify-content: center;
+  width: 1.375rem;
+  margin-inline-end: 0.375rem;
+  font-size: 1rem;
 }
 </style>
