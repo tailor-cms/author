@@ -35,7 +35,6 @@
           :key="reply.uid"
           :current-user-id="currentUserId"
           :is-grouped="isGrouped(index)"
-          :is-highlighted="reply.id === highlightedId"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -69,8 +68,6 @@ import {
   provideEditingMessage,
 } from '@tailor-cms/core-components';
 import { isContinuation } from './ThreadPanel/timeline';
-import { type MessageFocus, useMessageFocus }
-  from './composables/useMessageFocus';
 import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
@@ -80,14 +77,11 @@ interface Props {
   replies: Message[];
   threadLabel?: string;
   currentUserId?: number | null;
-  // A reply jumped to from a search result
-  focusedMessage?: MessageFocus | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   threadLabel: 'the channel',
   currentUserId: null,
-  focusedMessage: null,
 });
 
 const emit = defineEmits<{
@@ -120,28 +114,13 @@ const submit = (content: string) => {
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
 
-const { release } = useStickToBottom(
-  viewportEl,
-  messagesEl,
-  () => props.replies,
-  {
-    isFollowed: (it) => it.authorId === props.currentUserId,
-    source: () => props.parent?.id,
-  },
-);
-const { highlightedId } = useMessageFocus(
-  viewportEl,
-  () => props.focusedMessage,
-  () => props.replies,
-  release,
-);
+useStickToBottom(viewportEl, messagesEl, () => props.replies);
 </script>
 
 <style lang="scss" scoped>
 .reply-panel {
   min-width: 0;
   min-height: 0;
-  background: rgb(var(--v-theme-surface));
 }
 
 .reply-count {
