@@ -41,7 +41,6 @@ defineProps<{
 
 .result-hit-content {
   min-width: 0;
-  max-width: 46rem;
 }
 
 .result-hit-body {

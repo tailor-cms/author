@@ -212,8 +212,6 @@ const hasBody = computed(() => {
 
 .message-row-content {
   min-width: 0;
-  // A readable line length, which also keeps text clear of the toolbar
-  max-width: 46rem;
 }
 
 // Revealed on hover, with the toolbar

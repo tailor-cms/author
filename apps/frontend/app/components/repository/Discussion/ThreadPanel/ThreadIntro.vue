@@ -1,7 +1,7 @@
 <template>
   <div class="thread-intro">
     <h4 class="text-title-large font-weight-bold">{{ anchor.label }}</h4>
-    <p class="thread-intro-text text-title-medium text-medium-emphasis mt-1">
+    <p class="text-title-medium text-medium-emphasis mt-1">
       {{ text }}
     </p>
   </div>
@@ -35,9 +35,5 @@ const text = computed(() => {
 <style lang="scss" scoped>
 .thread-intro {
   padding: 0.5rem 1.5rem;
-}
-
-.thread-intro-text {
-  max-width: 46rem;
 }
 </style>

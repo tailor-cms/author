@@ -83,6 +83,11 @@ const barColor = (attachment: Attachment) => {
 </script>
 
 <style lang="scss" scoped>
+// Cards keep a fixed width while message text runs the full row
+.message-attachments {
+  max-width: 46rem;
+}
+
 .attachment {
   border-inline-start-style: solid;
   border-inline-start-width: 0.1875rem;
