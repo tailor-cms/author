@@ -17,7 +17,7 @@
         :aria-label="`Revoke ${integration.name}`"
         color="error"
         density="comfortable"
-        icon="mdi-delete-outline"
+        icon="mdi-trash-can-outline"
         size="small"
         variant="text"
         @click="emit('revoke:integration', integration)"
