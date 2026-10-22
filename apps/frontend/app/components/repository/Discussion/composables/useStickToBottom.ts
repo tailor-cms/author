@@ -13,23 +13,30 @@ export const useStickToBottom = (
   messages: MaybeRefOrGetter<unknown[]>,
 ) => {
   const isAtBottom = ref(true);
+  // Where the list was last scrolled to
+  let lastScrollTop = 0;
 
   const scrollToBottom = () => {
     const el = viewportEl.value;
     if (!el) return;
     el.scrollTop = el.scrollHeight;
+    lastScrollTop = el.scrollTop;
     isAtBottom.value = true;
   };
 
+  // Only scrolling up leaves the end, not content growing below it
   const onScroll = () => {
     const el = viewportEl.value;
     if (!el) return;
+    const isScrollingUp = el.scrollTop < lastScrollTop;
+    lastScrollTop = el.scrollTop;
     const rest = el.scrollHeight - el.scrollTop - el.clientHeight;
-    isAtBottom.value = rest <= BOTTOM_THRESHOLD_PX;
+    if (rest <= BOTTOM_THRESHOLD_PX) isAtBottom.value = true;
+    else if (isScrollingUp) isAtBottom.value = false;
   };
 
   useEventListener(viewportEl, 'scroll', onScroll, { passive: true });
-  useResizeObserver(contentEl, () => {
+  useResizeObserver([viewportEl, contentEl], () => {
     if (isAtBottom.value) scrollToBottom();
   });
 
