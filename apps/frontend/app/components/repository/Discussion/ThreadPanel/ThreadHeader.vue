@@ -31,27 +31,18 @@
       />
     </div>
     <VSpacer />
-    <ActiveUsersGroup
-      v-if="participants.length"
-      :limit="4"
-      :size="28"
-      :users="participants"
-    />
     <slot name="actions" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import type { ReaderThread } from '@tailor-cms/api-client';
-import type { UserSummary } from '@tailor-cms/interfaces/user';
 
 import { isChannelThread } from '../utils';
 import { useThreadAnchor } from '../composables/useThreadAnchor';
-import { ActiveUsersGroup } from '@tailor-cms/core-components';
 
 const props = defineProps<{
   thread: ReaderThread;
-  participants: UserSummary[];
 }>();
 
 const anchor = useThreadAnchor(() => props.thread);

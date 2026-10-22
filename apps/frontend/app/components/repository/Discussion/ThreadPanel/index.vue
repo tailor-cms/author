@@ -1,6 +1,6 @@
 <template>
   <div class="thread-panel d-flex flex-column">
-    <ThreadHeader :participants="participants" :thread="thread">
+    <ThreadHeader :thread="thread">
       <template #actions>
         <ThreadMenu
           :is-removable="isRemovable"
@@ -50,7 +50,6 @@ import {
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
-import { compact, uniqBy } from 'lodash-es';
 import ThreadHeader from './ThreadHeader.vue';
 import ThreadIntro from './ThreadIntro.vue';
 import ThreadMenu from './ThreadMenu.vue';
@@ -96,10 +95,6 @@ const editLast = () => {
   const last = lastOwnMessage(props.messages, props.currentUserId);
   if (last) editingUid.value = last.uid;
 };
-
-const participants = computed(() =>
-  uniqBy(compact(props.messages.map((it) => it.author)), 'id'),
-);
 </script>
 
 <style lang="scss" scoped>
