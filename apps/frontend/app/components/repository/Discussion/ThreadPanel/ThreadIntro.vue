@@ -1,7 +1,7 @@
 <template>
   <div class="thread-intro">
-    <h4 class="text-title-large font-weight-bold">{{ anchor.label }}</h4>
-    <p class="text-body-large text-medium-emphasis mt-1">
+    <h4 class="text-title-large font-weight-semibold">{{ anchor.label }}</h4>
+    <p class="text-body-medium text-medium-emphasis mt-1">
       {{ text }}
     </p>
   </div>

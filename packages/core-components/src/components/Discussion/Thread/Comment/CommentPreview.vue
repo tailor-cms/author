@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ resolved: isResolved }" class="content mt-1 text-body-large">
+  <div :class="{ resolved: isResolved }" class="content text-body-large">
     <span v-if="isDeleted" class="deleted text-medium-emphasis font-italic">
       This comment was deleted.
     </span>

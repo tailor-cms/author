@@ -26,7 +26,7 @@
       <MessageBody
         v-if="attachment.text"
         :content="attachment.text"
-        class="attachment-text text-body-medium mt-1"
+        class="attachment-text mt-1"
       />
       <AssetStrip
         v-if="attachment.tailor_previews?.length"

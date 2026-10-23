@@ -45,7 +45,6 @@
             :content="hasBody ? message.content : ''"
             :current-user-id="currentUserId"
             :is-edited="!!message.editedAt"
-            class="text-body-large"
           />
         </MessagePreviews>
         <MessageAttachments
@@ -197,10 +196,6 @@ const hasBody = computed(() => {
   // A new sender gets room above; their follow-ups sit close as one block
   &:not(.message-row--grouped) {
     padding-top: 0.75rem;
-  }
-
-  &--grouped {
-    padding-block: 0.125rem;
   }
 
   // The narrower replies column

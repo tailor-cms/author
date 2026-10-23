@@ -11,7 +11,7 @@
         <MessageBody
           :content="hit.content"
           :current-user-id="currentUserId"
-          class="result-hit-body text-body-large"
+          class="result-hit-body"
         />
       </div>
     </div>
