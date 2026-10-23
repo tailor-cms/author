@@ -5,7 +5,8 @@
       :key="index"
       :style="{ borderInlineStartColor: barColor(attachment) }"
       class="attachment pa-3"
-      variant="tonal"
+      color="surface-container-high"
+      variant="flat"
     >
       <div
         v-if="attachment.pretext"
