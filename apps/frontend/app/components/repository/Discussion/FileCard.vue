@@ -53,6 +53,7 @@ import {
   getAssetIcon,
   getAssetLabel,
 } from '@tailor-cms/core-components';
+import { repositoryAsset } from '@/api';
 
 // A shared file, drawn as a row rather than a link preview; opens on click
 const props = defineProps<{
@@ -60,7 +61,13 @@ const props = defineProps<{
   href?: string;
 }>();
 
-const { download: openFile } = useAssetDownload(() => props.asset);
+const openFile = async () => {
+  const { repositoryId, id } = props.asset;
+  const result = await repositoryAsset
+    .getDownloadUrl(repositoryId, id)
+    .catch(() => null);
+  if (result?.url) window.open(result.url, '_blank');
+};
 
 const icon = computed(() => getAssetIcon(props.asset));
 const color = computed(() => getAssetColor(props.asset));
