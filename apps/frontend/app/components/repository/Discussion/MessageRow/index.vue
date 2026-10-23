@@ -20,7 +20,7 @@
       <SenderAvatar v-else :message="message" :size="AVATAR_SIZE" />
     </div>
     <div class="message-row-content">
-      <!-- A reply also sent to the channel, linking back to its replies -->
+      <!-- A reply also sent to the thread, linking back to its replies -->
       <BroadcastNote
         v-if="message.isBroadcast"
         :is-reply-target="isReplyTarget"

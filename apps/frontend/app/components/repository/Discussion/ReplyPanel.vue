@@ -24,7 +24,7 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div v-if="replies.length" class="d-flex align-center ga-3 px-4 py-2">
+        <div class="d-flex align-center ga-3 px-4 py-2">
           <span class="reply-count text-body-small text-medium-emphasis">
             {{ pluralize('reply', replies.length, true) }}
           </span>
@@ -52,7 +52,7 @@
       />
       <VCheckbox
         v-model="isBroadcast"
-        :label="`Also send to ${threadLabel}`"
+        label="Also send to thread"
         class="broadcast-checkbox mt-1"
         hide-details
       />
@@ -76,14 +76,12 @@ import MessageRow from './MessageRow/index.vue';
 interface Props {
   parent: Message | null;
   replies: Message[];
-  threadLabel?: string;
   currentUserId?: number | null;
   // Opened at and highlighted, e.g. from a search result
   focusedId?: number | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  threadLabel: 'the channel',
   currentUserId: null,
   focusedId: null,
 });

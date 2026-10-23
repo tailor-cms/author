@@ -8,6 +8,7 @@
     location="right"
     mobile-breakpoint="md"
     absolute
+    disable-resize-watcher
     @update:model-value="onModelValue"
   >
     <div

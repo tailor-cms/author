@@ -106,7 +106,10 @@
       :width="replyWidth"
       color="surface-sidebar"
       location="right"
-      permanent
+      mobile-breakpoint="lg"
+      disable-resize-watcher
+      disable-route-watcher
+      @update:model-value="!$event && messagingStore.closeReplies()"
     >
       <div v-if="messagingStore.replyParent" class="reply-column h-100">
         <ReplyPanel
@@ -115,7 +118,6 @@
           :focused-id="messagingStore.focusedReplyId"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
-          :thread-label="replyThreadLabel"
           class="h-100"
           @close="messagingStore.closeReplies()"
           @react="reactToMessage"
@@ -212,8 +214,6 @@ import ThreadPanel
   from '@/components/repository/Discussion/ThreadPanel/index.vue';
 import ThreadList
   from '@/components/repository/Discussion/ThreadList/index.vue';
-import { useThreadAnchor }
-  from '@/components/repository/Discussion/composables/useThreadAnchor';
 import { useThreadDraft }
   from '@/components/repository/Discussion/composables/useThreadDraft';
 import { useThreadRoute }
@@ -285,10 +285,6 @@ const threadTypingUsers = computed(() => {
     (it: any) => it.id === messagingStore.selectedThreadId,
   );
 });
-
-// Named like the toolbar title, so a broadcast says where it goes
-const replyThreadAnchor = useThreadAnchor(() => messagingStore.selectedThread);
-const replyThreadLabel = computed(() => replyThreadAnchor.value.label);
 
 const load = () =>
   messagingStore.fetchThreads(repositoryId.value, {
