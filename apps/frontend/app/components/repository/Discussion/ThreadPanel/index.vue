@@ -13,8 +13,7 @@
         <ThreadIntro :thread="thread" />
       </template>
     </ThreadTimeline>
-    <TypingIndicator :users="typingUsers" class="px-5" />
-    <div class="pt-1 px-5 pb-5">
+    <div class="composer-field">
       <MessageComposer
         v-model="draft"
         :placeholder="messages.length ? 'Reply...' : 'Start the discussion...'"
@@ -23,6 +22,7 @@
         @submit="emit('submit', $event)"
         @typing="emit('typing')"
       />
+      <TypingIndicator :users="typingUsers" class="px-2" />
     </div>
   </div>
 </template>
@@ -79,6 +79,15 @@ const editLast = () => {
 .thread-panel {
   min-width: 0;
   min-height: 0;
+}
+
+.composer-field {
+  padding: 0 1.25rem;
+
+  .typing-indicator {
+    padding-top: 0.125rem;
+    padding-bottom: 0.25rem;
+  }
 }
 
 .thread-composer {
