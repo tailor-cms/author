@@ -6,7 +6,7 @@
       :width="width"
       color="surface-canvas"
       location="left"
-      permanent
+      mobile-breakpoint="md"
     >
       <div class="thread-list-column h-100">
         <ThreadList
@@ -524,17 +524,5 @@ onMounted(async () => {
   max-width: 87.5rem;
   margin-inline: auto;
   padding-inline: 2rem;
-}
-
-// Fits a short thread; at full height the timeline scrolls inside
-.conversation {
-  flex: 0 1 auto;
-  min-height: 0;
-}
-
-.panel-body {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
 }
 </style>
