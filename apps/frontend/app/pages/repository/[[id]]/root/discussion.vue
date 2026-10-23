@@ -241,8 +241,8 @@ const nameFilter = ref('');
 
 const draft = useThreadDraft(() => messagingStore.selectedThreadId);
 const isSearchActive = computed(() => !!messagingStore.searchQuery.trim());
-// The toolbar swaps to the search field; reopens with a kept query
-const isSearchOpen = ref(isSearchActive.value);
+// The toolbar swaps to the search field
+const isSearchOpen = ref(false);
 
 const currentUserId = computed(() => authStore.user?.id ?? null);
 const repositoryId = computed(
@@ -332,6 +332,11 @@ const openSearchResult = (hit: MessageSearchHit) => {
 };
 
 watch(() => messagingStore.selectedThreadId, closeSearch);
+// A search and its jump are for this visit; coming back starts afresh
+onBeforeUnmount(() => {
+  messagingStore.clearSearch();
+  messagingStore.focusedReplyId = null;
+});
 
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
