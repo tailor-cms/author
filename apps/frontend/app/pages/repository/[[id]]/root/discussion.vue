@@ -139,35 +139,24 @@
         class="conversation-column py-8"
         @select="selectThread"
       />
-      <div
+      <ThreadPanel
         v-else-if="messagingStore.selectedThread"
-        class="conversation-column d-flex flex-column h-100 py-8"
-      >
-        <VCard
-          :class="{ 'opacity-70': isThreadSlow }"
-          class="conversation d-flex flex-column"
-          color="surface-raised"
-          elevation="1"
-          rounded="lg"
-        >
-          <ThreadPanel
-            :key="messagingStore.selectedThread.id"
-            v-model:draft="draft"
-            :current-user-id="currentUserId"
-            :last-read-at="messagingStore.openedWatermark"
-            :messages="messagingStore.messages"
-            :thread="messagingStore.selectedThread"
-            :typing-users="threadTypingUsers"
-            class="panel-body"
-            @react="reactToMessage"
-            @remove="removeMessage"
-            @reply="openReplies"
-            @submit="postMessage"
-            @typing="reportTyping"
-            @update="editMessage"
-          />
-        </VCard>
-      </div>
+        :key="messagingStore.selectedThread.id"
+        v-model:draft="draft"
+        :class="{ 'opacity-70': isThreadSlow }"
+        :current-user-id="currentUserId"
+        :last-read-at="messagingStore.openedWatermark"
+        :messages="messagingStore.messages"
+        :thread="messagingStore.selectedThread"
+        :typing-users="threadTypingUsers"
+        class="h-100"
+        @react="reactToMessage"
+        @remove="removeMessage"
+        @reply="openReplies"
+        @submit="postMessage"
+        @typing="reportTyping"
+        @update="editMessage"
+      />
       <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
         <VProgressCircular v-if="isThreadSlow" indeterminate />
       </div>
