@@ -19,7 +19,7 @@
     </template>
     <VCard class="reference-preview" rounded="lg">
       <div class="d-flex align-center ga-2 px-3 py-2">
-        <VIcon :icon="icon" color="info" size="small" />
+        <VIcon :icon="icon" color="secondary" size="small" />
         <span class="text-label-large font-weight-semibold text-truncate">
           {{ preview?.title ?? token.label }}
         </span>
