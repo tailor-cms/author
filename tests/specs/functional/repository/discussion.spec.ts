@@ -343,7 +343,7 @@ test('a file attached shows a preview', async ({
     label: 'test-document',
   });
   await thread.composer.send();
-  await expect(thread.getMessage('first').previews.card).toBeVisible();
+  await expect(thread.getMessage('first').previews.file).toBeVisible();
   await thread.composer.attach(IMAGE.path);
   await thread.composer.send();
   const { previews } = thread.getMessage('test-image');

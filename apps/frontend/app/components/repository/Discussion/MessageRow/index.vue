@@ -25,7 +25,7 @@
         class="mb-1"
         @open="openParent"
       />
-      <MessageHeader v-if="!isGrouped" :message="message" />
+      <MessageHeader v-if="!isGrouped && !isEditing" :message="message" />
       <div
         v-if="isDeleted"
         class="text-body-large text-medium-emphasis font-italic"
@@ -45,7 +45,6 @@
             :content="hasBody ? message.content : ''"
             :current-user-id="currentUserId"
             :is-edited="!!message.editedAt"
-            class="text-body-large"
           />
         </MessagePreviews>
         <MessageAttachments
@@ -163,15 +162,18 @@ const hasBody = computed(() => {
 <style lang="scss" scoped>
 .message-row {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.375rem 1.25rem;
+  padding: 0.25rem 1.25rem;
 
   // Hover state layer, tinting whatever surface the row sits on
+  // while staying under the row's cards
   &::after {
     content: '';
     position: absolute;
+    z-index: -1;
     inset: 0;
     border-radius: inherit;
     background: currentColor;
@@ -194,6 +196,11 @@ const hasBody = computed(() => {
     }
   }
 
+  // A new sender gets room above; their follow-ups sit close as one block
+  &:not(.message-row--grouped) {
+    padding-top: 0.75rem;
+  }
+
   // The narrower replies column
   &--reply {
     padding-inline: 1rem;
@@ -212,8 +219,6 @@ const hasBody = computed(() => {
 
 .message-row-content {
   min-width: 0;
-  // A readable line length, which also keeps text clear of the toolbar
-  max-width: 46rem;
 }
 
 // Revealed on hover, with the toolbar

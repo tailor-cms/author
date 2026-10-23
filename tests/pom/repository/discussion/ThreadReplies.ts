@@ -24,7 +24,7 @@ export class ThreadReplies {
     this.parent = new ThreadMessage(page, this.messages.first(), el);
     this.composer = new MessageComposer(page, el);
     this.closeBtn = el.getByRole('button', {
-      name: 'Close thread',
+      name: 'Close replies',
       exact: true,
     });
     this.alsoSendToThreadCheckbox = el

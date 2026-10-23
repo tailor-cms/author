@@ -4,7 +4,7 @@ import type { MessageCache } from './messageCache';
 import type { Replies } from './replies';
 import type { Unread } from './unread';
 
-import { debounce } from 'lodash-es';
+import { compact, debounce, map } from 'lodash-es';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
@@ -32,9 +32,16 @@ export const createThreads = (
 ) => {
   const authStore = useAuthStore();
 
+  // Every thread loaded, whether or not the list shows it
   const threads = reactive(new Map<number, ReaderThread>());
+  // The list as filtered: what the last fetch returned, plus new threads
+  const listedIds = ref<number[]>([]);
+  // Filters of the last fetch
+  const listParams = ref<ThreadParams>({});
   const messageIds = reactive(new Map<number, number[]>());
   const selectedThreadId = ref<number | null>(null);
+  // The thread last asked for, which may still be loading
+  let requestedThreadId: number | null = null;
   // Whether the selected thread is on screen, not just kept for return
   const isInView = ref(false);
   // The caller's read watermark at the moment a thread was opened
@@ -42,7 +49,9 @@ export const createThreads = (
   const isLoading = ref(false);
   const total = ref(0);
 
-  const items = computed(() => Array.from(threads.values()).sort(byRecency));
+  const items = computed(() =>
+    compact(listedIds.value.map((id) => threads.get(id))).sort(byRecency),
+  );
 
   const selectedThread = computed(() =>
     selectedThreadId.value ? threads.get(selectedThreadId.value) : null,
@@ -51,6 +60,11 @@ export const createThreads = (
   const selectedThreadMessages = computed(() => {
     const threadId = selectedThreadId.value;
     return threadId ? messageCache.getMany(messageIds.get(threadId)) : [];
+  });
+
+  const isListFiltered = computed(() => {
+    const { scope, type, name } = listParams.value;
+    return (!!scope && scope !== 'all') || !!type || !!name?.trim();
   });
 
   const hasLoadedMessages = (threadId?: number | null) =>
@@ -65,8 +79,20 @@ export const createThreads = (
     return threads.get(thread.id) as ReaderThread;
   }
 
+  // A thread created elsewhere shows up live, unless the list is filtered;
+  // a filtered list picks it up on its next fetch
+  function listThread(thread: Thread | ReaderThread) {
+    const added = addThread(thread);
+    if (isListFiltered.value || listedIds.value.includes(thread.id)) {
+      return added;
+    }
+    listedIds.value.push(thread.id);
+    return added;
+  }
+
   function dropThread(threadId: number) {
     threads.delete(threadId);
+    listedIds.value = listedIds.value.filter((id) => id !== threadId);
     messageIds.delete(threadId);
     if (selectedThreadId.value === threadId) selectedThreadId.value = null;
   }
@@ -118,8 +144,9 @@ export const createThreads = (
     isLoading.value = true;
     try {
       const fetched = await fetchAll(repositoryId, params);
-      threads.clear();
       fetched.forEach(addThread);
+      listedIds.value = map(fetched, 'id');
+      listParams.value = params;
       total.value = fetched.length;
       return items.value;
     } finally {
@@ -127,8 +154,16 @@ export const createThreads = (
     }
   }
 
-  async function selectThread(repositoryId: number, threadId: number) {
+  // Puts a thread on screen, with where its "New" marker starts
+  function showThread(threadId: number, watermark: string | null) {
     selectedThreadId.value = threadId;
+    openedWatermark.value = watermark;
+  }
+
+  // Shows the thread with its messages, never empty in between: one seen
+  // before switches at once and refreshes, a new one once they arrive
+  async function selectThread(repositoryId: number, threadId: number) {
+    requestedThreadId = threadId;
     isInView.value = true;
     if (!threads.has(threadId)) {
       const thread = await api.messaging.getThread({
@@ -138,17 +173,22 @@ export const createThreads = (
     }
     // Only unread threads get a "New" marker; live arrivals never do
     const thread = threads.get(threadId);
-    openedWatermark.value = thread?.isUnread ? thread.lastReadAt : null;
+    const watermark = thread?.isUnread ? thread.lastReadAt : null;
+    if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
     const items = await api.messaging.getMessages({
       params: { repositoryId, threadId },
     });
+    // Another thread was picked meanwhile
+    if (requestedThreadId !== threadId) return items;
     messageIds.set(threadId, []);
     (items as unknown as Message[]).forEach((it) => addToThread(it));
+    if (selectedThreadId.value !== threadId) showThread(threadId, watermark);
     await markRead(repositoryId, threadId);
     return items;
   }
 
   function deselectThread() {
+    requestedThreadId = null;
     selectedThreadId.value = null;
   }
 
@@ -289,8 +329,11 @@ export const createThreads = (
 
   function clear() {
     threads.clear();
+    listedIds.value = [];
+    listParams.value = {};
     messageIds.clear();
     selectedThreadId.value = null;
+    requestedThreadId = null;
     isInView.value = false;
     openedWatermark.value = null;
     total.value = 0;
@@ -309,6 +352,7 @@ export const createThreads = (
     hasLoadedMessages,
     isViewingThread,
     addThread,
+    listThread,
     dropThread,
     addToThread,
     updateThreadSummary,

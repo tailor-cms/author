@@ -1,6 +1,6 @@
 <template>
   <div class="message-header d-flex align-baseline ga-2">
-    <span class="message-header-sender text-body-large font-weight-semibold">
+    <span class="message-header-sender font-weight-bold">
       {{ senderName(message) }}
     </span>
     <VChip
@@ -38,7 +38,7 @@ defineProps<{
 <style lang="scss" scoped>
 .message-header-sender {
   color: rgb(var(--v-theme-on-surface));
-  line-height: 1.25rem;
+  font-size: 0.9375rem;
 }
 
 .integration-badge {

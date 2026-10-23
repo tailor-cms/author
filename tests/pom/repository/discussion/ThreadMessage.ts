@@ -32,12 +32,16 @@ export class MessageBody {
 }
 
 export class MessagePreviews {
+  // A pasted or shared link
   readonly card: Locator;
+  // A shared file that is not an image
+  readonly file: Locator;
   readonly image: Locator;
   readonly thumbnail: Locator;
 
   constructor(parent: Locator) {
     this.card = parent.locator('.preview-card');
+    this.file = parent.locator('.file-card');
     this.image = parent.locator('.image-preview');
     this.thumbnail = this.image.getByRole('img');
   }

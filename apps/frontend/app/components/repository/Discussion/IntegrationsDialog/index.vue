@@ -25,12 +25,15 @@
           :integration="integration"
           @revoke:integration="confirmRevoke"
         />
-        <VEmptyState
+        <TailorEmptyState
           v-if="!external.length"
           :text="EMPTY_HINT"
+          height="auto"
           icon="mdi-webhook"
           size="40"
+          text-width="320"
           title="Nothing registered yet"
+          variant="text"
         />
         <template v-if="builtin.length">
           <VListSubheader class="mt-2" title="Built-in" />
@@ -65,7 +68,7 @@
 </template>
 
 <script lang="ts" setup>
-import { TailorDialog } from '@tailor-cms/core-components';
+import { TailorDialog, TailorEmptyState } from '@tailor-cms/core-components';
 
 import type {
   Integration,

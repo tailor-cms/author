@@ -61,7 +61,7 @@ export class ThreadList {
   }
 
   getFilterLocator(name: string) {
-    return withExactText(this.el.locator('.scope-filter'), name);
+    return withExactText(this.el.locator('.scope-filters .v-chip'), name);
   }
 
   // Group label; e.g. starred section

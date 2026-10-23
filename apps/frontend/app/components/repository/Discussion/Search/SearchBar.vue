@@ -1,10 +1,14 @@
 <template>
-  <div class="search-bar position-relative d-flex align-center ga-3 py-3 px-4">
+  <div
+    class="search-bar position-relative d-flex align-center ga-3 px-4 w-100
+      h-100"
+  >
     <MessageSearch
+      :autofocus="autofocus"
       :model-value="query"
       class="flex-grow-1"
-      placeholder="Search messages - @ for people, # for items"
-      @escape="clear"
+      placeholder="Search all threads - @ for people, # for items"
+      @escape="close"
       @update:model-value="search"
     />
     <span
@@ -14,15 +18,15 @@
       {{ pluralize('result', total, true) }}
     </span>
     <VBtn
-      v-if="hasQuery"
-      v-tooltip:bottom="'Clear search'"
-      aria-label="Clear search"
+      v-tooltip:bottom="'Close search'"
+      aria-label="Close search"
       density="comfortable"
-      icon="mdi-close"
-      size="small"
       variant="text"
-      @click="clear"
-    />
+      icon
+      @click="close"
+    >
+      <VIcon icon="mdi-close" size="small" />
+    </VBtn>
     <VProgressLinear
       :active="isSearching"
       color="primary"
@@ -43,10 +47,15 @@ interface Props {
   query: string;
   total: number;
   isSearching?: boolean;
+  autofocus?: boolean;
 }
 
-const props = withDefaults(defineProps<Props>(), { isSearching: false });
-const emit = defineEmits<{ search: [query: string]; clear: [] }>();
+const props = withDefaults(defineProps<Props>(), {
+  isSearching: false,
+  autofocus: false,
+});
+
+const emit = defineEmits<{ search: [query: string]; close: [] }>();
 
 const hasQuery = computed(() => !!props.query.trim());
 const hasSummary = computed(() => hasQuery.value && !props.isSearching);
@@ -58,9 +67,9 @@ const search = debounce(
   SEARCH_DELAY_MS,
 );
 
-const clear = () => {
+const close = () => {
   search.cancel();
-  emit('clear');
+  emit('close');
 };
 
 onBeforeUnmount(() => search.cancel());

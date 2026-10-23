@@ -139,6 +139,7 @@ const isCurrentUser = ({ userId }: MentionToken) =>
 
 <style lang="scss" scoped>
 .message-body {
+  font-size: 0.9375rem;
   white-space: pre-wrap;
   word-break: break-word;
   overflow-wrap: break-word;

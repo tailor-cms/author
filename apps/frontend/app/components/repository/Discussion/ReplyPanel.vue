@@ -1,11 +1,11 @@
 <template>
   <div class="reply-panel d-flex flex-column">
     <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-4">
-      <h3 class="text-title-medium font-weight-bold">Thread</h3>
+      <h3 class="text-title-medium font-weight-bold">Replies</h3>
       <VSpacer />
       <VBtn
-        v-tooltip:left="'Close thread'"
-        aria-label="Close thread"
+        v-tooltip:left="'Close replies'"
+        aria-label="Close replies"
         density="comfortable"
         icon="mdi-close"
         size="small"
@@ -13,7 +13,7 @@
         @click="emit('close')"
       />
     </div>
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pb-3">
+    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pt-4 pb-3">
       <div ref="messagesEl">
         <MessageRow
           v-if="parent"

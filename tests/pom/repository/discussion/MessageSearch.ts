@@ -1,4 +1,5 @@
 import type { Locator, Page } from '@playwright/test';
+import { expect } from '@playwright/test';
 
 import { ComposerInput, type SuggestionOptions } from './MessageComposer';
 
@@ -10,7 +11,9 @@ export class MessageSearch {
   readonly hits: Locator;
   readonly groups: Locator;
   readonly summary: Locator;
-  readonly clearBtn: Locator;
+  // Swaps the toolbar to the search field
+  readonly openBtn: Locator;
+  readonly closeBtn: Locator;
 
   constructor(page: Page) {
     this.bar = page.locator('.search-bar');
@@ -23,14 +26,25 @@ export class MessageSearch {
     this.hits = this.el.locator('.result-hit');
     this.groups = this.el.locator('.result-group');
     this.summary = this.bar.locator('.search-summary');
-    this.clearBtn = this.bar.getByRole('button', {
-      name: 'Clear search',
+    this.openBtn = page.getByRole('button', {
+      name: 'Search messages',
+      exact: true,
+    });
+    this.closeBtn = this.bar.getByRole('button', {
+      name: 'Close search',
       exact: true,
     });
     this.page = page;
   }
 
-  query(text: string) {
+  async open() {
+    if (await this.bar.isVisible()) return;
+    await this.openBtn.click();
+    await expect(this.bar).toBeVisible();
+  }
+
+  async query(text: string) {
+    await this.open();
     return this.input.write(text);
   }
 

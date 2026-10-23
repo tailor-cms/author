@@ -6,21 +6,29 @@
         :unread="unread"
         @manage:integrations="emit('manage:integrations')"
         @clear:unread="emit('clear:unread')"
+        @collapse="emit('collapse')"
         @start:thread="emit('start:thread')"
       />
       <ThreadFilters v-model:name="name" v-model:scope="scope" />
     </div>
-    <VDivider />
     <div class="flex-grow-1 overflow-y-auto pa-2">
-      <template v-if="isSkeletonVisible">
+      <!-- Rows shaped like the threads; a refetch keeps the list instead -->
+      <template v-if="isSkeletonVisible && !threads.length">
         <VSkeletonLoader
-          v-for="it in 4"
+          v-for="it in 12"
           :key="it"
-          class="mb-2 rounded-lg"
-          type="list-item-avatar-two-line"
+          color="transparent"
+          height="36"
+          type="list-item"
         />
       </template>
-      <VList v-else-if="threads.length" bg-color="transparent" class="pa-0" nav>
+      <VList
+        v-else-if="threads.length"
+        :class="{ 'opacity-70': isSkeletonVisible }"
+        bg-color="transparent"
+        class="pa-0"
+        nav
+      >
         <template v-for="group in groups" :key="group.label">
           <VListSubheader v-if="group.label" class="group-label">
             {{ group.label }}
@@ -45,7 +53,6 @@ import type { ReaderThread } from '@tailor-cms/api-client';
 import type { ThreadScope } from '@/stores/messaging';
 
 import { partition } from 'lodash-es';
-import { useTimeoutFn } from '@vueuse/core';
 
 import ThreadListHeader from './ThreadListHeader.vue';
 import ThreadFilters from './ThreadFilters.vue';
@@ -67,6 +74,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
+  'collapse': [];
   'select': [threadId: number];
   'star': [threadId: number, isStarred: boolean];
   'start:thread': [];
@@ -77,25 +85,7 @@ const emit = defineEmits<{
 const scope = defineModel<ThreadScope>('scope', { default: 'all' });
 const name = defineModel<string>('name', { default: '' });
 
-// A fast load shows no skeleton
-const SKELETON_DELAY_MS = 250;
-
-const isSkeletonVisible = ref(false);
-const { start, stop } = useTimeoutFn(
-  () => (isSkeletonVisible.value = true),
-  SKELETON_DELAY_MS,
-  { immediate: false },
-);
-
-watch(
-  () => props.isLoading,
-  (isLoading) => {
-    stop();
-    isSkeletonVisible.value = false;
-    if (isLoading) start();
-  },
-  { immediate: true },
-);
+const isSkeletonVisible = useSkeletonDelay(() => props.isLoading);
 
 // Starred threads first, followed by the rest
 const groups = computed(() => {
@@ -111,7 +101,6 @@ const groups = computed(() => {
 <style lang="scss" scoped>
 .thread-list {
   min-width: 0;
-  background: rgb(var(--v-theme-surface-sidebar));
 }
 
 .group-label {

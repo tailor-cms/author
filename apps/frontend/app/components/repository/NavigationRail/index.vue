@@ -16,9 +16,9 @@
       stacked
     >
       <VTab
-        v-for="tab in repositoryTabs"
+        v-for="tab in railTabs"
         :key="tab.key"
-        :active="tab.matches?.(String(route.name ?? ''))"
+        :active="tab.isActive"
         :ripple="false"
         :text="tab.label"
         :to="tab.to"
@@ -32,7 +32,10 @@
             offset-x="-2"
             offset-y="-2"
           >
-            <VIcon :icon="`mdi-${tab.icon}`" />
+            <span :class="{ 'is-active': tab.isActive }" class="rail-icon">
+              <VIcon :icon="`mdi-${tab.icon}`" class="rail-icon-outline" />
+              <VIcon :icon="`mdi-${tab.activeIcon}`" class="rail-icon-fill" />
+            </span>
           </VBadge>
         </template>
       </VTab>
@@ -80,7 +83,7 @@
 <script lang="ts" setup>
 import type { Activity } from '@tailor-cms/interfaces/activity';
 import type { RepositoryAction } from '@/composables/useRepositoryActions';
-import type { RouteLocationRaw } from 'vue-router';
+import type { RouteLocationNamedRaw } from 'vue-router';
 
 import { ActiveUsersGroup } from '@tailor-cms/core-components';
 import { useCurrentRepository } from '@/stores/current-repository';
@@ -90,8 +93,10 @@ import { useUserTracking } from '@/stores/user-tracking';
 interface RailTab {
   key: string;
   label: string;
+  // Outlined at rest, filled when active
   icon: string;
-  to: RouteLocationRaw;
+  activeIcon: string;
+  to: RouteLocationNamedRaw;
   matches?: (routeName: string) => boolean;
   badge?: string;
   badgeColor?: string;
@@ -109,8 +114,8 @@ const messagingStore = useMessagingStore();
 
 const discussionBadge = computed(() => {
   const { mentions, threads } = messagingStore.unread;
-  if (mentions) return { badge: String(mentions), badgeColor: 'secondary' };
-  if (threads) return { badge: String(threads), badgeColor: 'primary' };
+  if (mentions) return { badge: String(mentions), badgeColor: 'tertiary' };
+  if (threads) return { badge: String(threads), badgeColor: 'secondary' };
   return {};
 });
 
@@ -152,7 +157,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
     {
       key: 'structure',
       label: repoStore.isCollection ? 'Items' : 'Structure',
-      icon: repoStore.isCollection ? 'view-list' : 'file-tree',
+      icon: repoStore.isCollection ? 'view-list-outline' : 'file-tree-outline',
+      activeIcon: repoStore.isCollection ? 'view-list' : 'file-tree',
       to: {
         name: 'repository',
         params: { id },
@@ -165,7 +171,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
     items.push({
       key: 'editor',
       label: 'Editor',
-      icon: 'text-box-edit',
+      icon: 'text-box-edit-outline',
+      activeIcon: 'text-box-edit',
       to: {
         name: 'editor',
         params: { id, activityId: editorActivityId.value },
@@ -177,7 +184,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
     items.push({
       key: 'progress',
       label: 'Progress',
-      icon: 'chart-timeline-variant-shimmer',
+      icon: 'clipboard-check-outline',
+      activeIcon: 'clipboard-check',
       to: {
         name: 'progress',
         params: { id },
@@ -190,8 +198,8 @@ const repositoryTabs = computed<RailTab[]>(() => {
     key: 'discussion',
     label: 'Threads',
     icon: 'forum-outline',
+    activeIcon: 'forum',
     to: { name: 'discussion', params: { id } },
-    matches: (name) => name === 'discussion',
     ...discussionBadge.value,
   });
 
@@ -199,13 +207,15 @@ const repositoryTabs = computed<RailTab[]>(() => {
     {
       key: 'history',
       label: 'History',
-      icon: 'history',
+      icon: 'clock-time-four-outline',
+      activeIcon: 'clock-time-four',
       to: { name: 'revisions', params: { id } },
     },
     {
       key: 'assets',
       label: 'Assets',
-      icon: 'image-multiple',
+      icon: 'image-multiple-outline',
+      activeIcon: 'image-multiple',
       to: { name: 'repository-assets', params: { id } },
     },
   );
@@ -214,9 +224,9 @@ const repositoryTabs = computed<RailTab[]>(() => {
     items.push({
       key: 'search',
       label: 'Search',
-      icon: 'folder-search',
+      icon: 'folder-search-outline',
+      activeIcon: 'folder-search',
       to: { name: 'search', params: { id } },
-      matches: (name) => name === 'search',
     });
   }
 
@@ -226,6 +236,7 @@ const repositoryTabs = computed<RailTab[]>(() => {
         key: 'access',
         label: 'Access',
         icon: 'shield-account-outline',
+        activeIcon: 'shield-account',
         to: { name: 'repository-access', params: { id } },
         matches: (name) => name.startsWith('repository-access'),
       },
@@ -233,14 +244,23 @@ const repositoryTabs = computed<RailTab[]>(() => {
         key: 'settings',
         label: 'Settings',
         icon: 'cog-outline',
+        activeIcon: 'cog',
         to: { name: 'repository-settings', params: { id } },
-        matches: (name) => name === 'repository-settings',
       },
     );
   }
 
   return items;
 });
+
+const isTabActive = ({ matches, to }: RailTab) => {
+  const name = String(route.name ?? '');
+  return matches ? matches(name) : to.name === name;
+};
+
+const railTabs = computed(() =>
+  repositoryTabs.value.map((tab) => ({ ...tab, isActive: isTabActive(tab) })),
+);
 
 const repositoryActions = useRepositoryActions(() => repoStore.accessPolicy);
 
@@ -287,7 +307,6 @@ watch(
 
       .v-icon {
         padding: 1rem;
-        transition: transform 0.3s ease;
       }
     }
 
@@ -314,6 +333,41 @@ watch(
           transform: scale(1.1);
         }
       }
+    }
+  }
+}
+
+// Outline and fill stacked; activating fades the fill in as it grows
+.rail-icon {
+  display: grid;
+
+  .v-icon {
+    grid-area: 1 / 1;
+    transition:
+      transform 0.3s ease,
+      opacity 0.2s ease,
+      scale 0.3s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  .rail-icon-fill {
+    opacity: 0;
+    scale: 0.6;
+  }
+
+  &.is-active {
+    .rail-icon-outline {
+      opacity: 0;
+    }
+
+    .rail-icon-fill {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .v-icon {
+      transition: none;
     }
   }
 }

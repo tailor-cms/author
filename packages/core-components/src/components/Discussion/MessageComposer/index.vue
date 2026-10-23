@@ -27,7 +27,7 @@
       height="2"
       indeterminate
     />
-    <div class="d-flex align-center px-2 pb-2">
+    <div class="d-flex align-center pa-2">
       <AttachButton
         v-if="canAttach"
         :disabled="disabled || isUploading"
@@ -41,17 +41,20 @@
         :submit-label="isEditing ? 'save' : 'send'"
       />
       <VSpacer />
-      <VBtn
-        v-if="!isEditing"
-        :disabled="!canSubmit"
-        aria-label="Post message"
-        density="comfortable"
-        icon="mdi-send"
-        rounded="lg"
-        size="small"
-        variant="tonal"
-        @click="submit"
-      />
+      <!-- Where the send button sits; editing puts Cancel / Save here -->
+      <slot name="actions">
+        <VBtn
+          v-if="!isEditing"
+          :disabled="!canSubmit"
+          aria-label="Post message"
+          density="comfortable"
+          icon="mdi-send"
+          rounded="lg"
+          size="small"
+          variant="tonal"
+          @click="submit"
+        />
+      </slot>
     </div>
   </div>
 </template>
@@ -187,9 +190,10 @@ defineExpose({ focus, submit });
   min-width: 0;
   // Lets the hint fit itself to the composer's width
   container-type: inline-size;
-  border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
-  border-radius: 0.75rem;
-  background: rgb(var(--v-theme-surface));
+  // Outlined like a Vuetify field (rounded="lg") at rest
+  border: thin solid rgba(var(--v-theme-on-surface), 0.38);
+  border-radius: 0.5rem;
+  background: rgb(var(--v-theme-surface-canvas));
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   @media (hover: hover) {

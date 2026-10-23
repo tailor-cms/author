@@ -4,8 +4,8 @@
       v-for="(attachment, index) in attachments"
       :key="index"
       :style="{ borderInlineStartColor: barColor(attachment) }"
-      class="attachment pa-3"
-      variant="tonal"
+      class="attachment px-4 py-3"
+      variant="flat"
     >
       <div
         v-if="attachment.pretext"
@@ -26,13 +26,13 @@
       <MessageBody
         v-if="attachment.text"
         :content="attachment.text"
-        class="attachment-text text-body-medium mt-1"
+        class="attachment-text mt-1"
       />
       <AssetStrip
         v-if="attachment.tailor_previews?.length"
         :previews="attachment.tailor_previews"
         :total="attachment.tailor_previews_total"
-        class="mt-3"
+        class="mt-2"
       />
       <div v-if="attachment.fields?.length" class="attachment-fields mt-2">
         <div
@@ -83,11 +83,17 @@ const barColor = (attachment: Attachment) => {
 </script>
 
 <style lang="scss" scoped>
+// Cards keep a fixed width while message text runs the full row
+.message-attachments {
+  max-width: 46rem;
+}
+
 .attachment {
   border-inline-start-style: solid;
-  border-inline-start-width: 0.1875rem;
+  border-inline-start-width: 0.25rem;
   border-start-start-radius: 0.25rem;
   border-end-start-radius: 0.25rem;
+  background: rgba(var(--v-theme-surface-container-highest), 0.3);
 }
 
 .attachment-text {

@@ -1,5 +1,5 @@
 <template>
-  <div class="start-discussion d-flex flex-column justify-center pa-8">
+  <div class="start-discussion d-flex flex-column pa-8 mt-8">
     <div class="panel mx-auto w-100">
       <div class="text-center mb-8">
         <VAvatar color="secondary" size="64" variant="tonal">
@@ -24,7 +24,6 @@
         class="mb-3"
         density="comfortable"
         placeholder="Subject"
-        prepend-inner-icon="mdi-format-title"
         rounded="lg"
         autofocus
         flat

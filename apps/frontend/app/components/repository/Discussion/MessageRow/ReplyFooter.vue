@@ -59,7 +59,7 @@ const lastReplyAgo = useTimeAgo(() => props.message.lastReplyAt ?? '');
 
 <style lang="scss" scoped>
 .reply-footer-avatar {
-  box-shadow: 0 0 0 0.125rem rgb(var(--v-theme-surface));
+  box-shadow: 0 0 0 0.125rem rgb(var(--v-theme-surface-raised));
 
   & + & {
     margin-left: -0.375rem;

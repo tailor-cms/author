@@ -85,12 +85,14 @@ export class Thread {
 
   constructor(page: Page) {
     const el = page.locator('.thread-panel');
-    this.title = el.locator('.thread-title');
-    this.openInEditorBtn = el.getByRole('link', {
+    // Title and thread actions live in the page toolbar
+    const toolbar = page.locator('.discussion-toolbar');
+    this.title = toolbar.locator('.thread-title');
+    this.openInEditorBtn = toolbar.getByRole('link', {
       name: 'Open in editor',
       exact: true,
     });
-    this.menuBtn = el.getByRole('button', {
+    this.menuBtn = toolbar.getByRole('button', {
       name: 'Thread actions',
       exact: true,
     });

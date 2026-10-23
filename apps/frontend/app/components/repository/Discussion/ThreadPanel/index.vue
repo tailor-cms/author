@@ -1,19 +1,5 @@
 <template>
   <div class="thread-panel d-flex flex-column">
-    <ThreadHeader :thread="thread">
-      <template #actions>
-        <ThreadMenu
-          :is-removable="isRemovable"
-          :thread="thread"
-          @open:files="emit('open:files')"
-          @open:subscriptions="emit('open:subscriptions')"
-          @remove:thread="emit('remove:thread')"
-          @resolve="emit('resolve', $event)"
-          @star="emit('star', $event)"
-        />
-      </template>
-    </ThreadHeader>
-    <VDivider />
     <ThreadTimeline
       :current-user-id="currentUserId"
       :last-read-at="lastReadAt"
@@ -27,8 +13,7 @@
         <ThreadIntro :thread="thread" />
       </template>
     </ThreadTimeline>
-    <TypingIndicator :users="typingUsers" class="px-5" />
-    <div class="pt-1 px-5 pb-5">
+    <div class="composer-field">
       <MessageComposer
         v-model="draft"
         :placeholder="messages.length ? 'Reply...' : 'Start the discussion...'"
@@ -37,6 +22,7 @@
         @submit="emit('submit', $event)"
         @typing="emit('typing')"
       />
+      <TypingIndicator :users="typingUsers" class="px-2" />
     </div>
   </div>
 </template>
@@ -50,9 +36,7 @@ import {
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
-import ThreadHeader from './ThreadHeader.vue';
 import ThreadIntro from './ThreadIntro.vue';
-import ThreadMenu from './ThreadMenu.vue';
 import ThreadTimeline from './ThreadTimeline.vue';
 import TypingIndicator from './TypingIndicator.vue';
 
@@ -62,7 +46,6 @@ interface Props {
   currentUserId?: number | null;
   lastReadAt?: string | null;
   typingUsers?: { id: number; label: string }[];
-  isRemovable?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -72,17 +55,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  'submit': [content: string];
-  'remove': [id: number];
-  'reply': [id: number];
-  'react': [id: number, emoji: string];
-  'update': [id: number, content: string];
-  'typing': [];
-  'resolve': [isResolved: boolean];
-  'star': [isStarred: boolean];
-  'remove:thread': [];
-  'open:files': [];
-  'open:subscriptions': [];
+  submit: [content: string];
+  remove: [id: number];
+  reply: [id: number];
+  react: [id: number, emoji: string];
+  update: [id: number, content: string];
+  typing: [];
 }>();
 
 // Per thread, kept when switching away & back
@@ -101,6 +79,15 @@ const editLast = () => {
 .thread-panel {
   min-width: 0;
   min-height: 0;
+}
+
+.composer-field {
+  padding: 0 1.25rem;
+
+  .typing-indicator {
+    padding-top: 0.125rem;
+    padding-bottom: 0.25rem;
+  }
 }
 
 .thread-composer {

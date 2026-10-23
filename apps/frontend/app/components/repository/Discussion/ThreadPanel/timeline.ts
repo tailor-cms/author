@@ -12,6 +12,13 @@ export type TimelineEntry =
   | { type: 'unread'; key: string }
   | { type: 'message'; key: string; message: Message; isGrouped: boolean };
 
+// A day's entries under its label, which stays pinned while they scroll by
+export interface TimelineDay {
+  key: string;
+  label: string;
+  entries: Exclude<TimelineEntry, { type: 'day' }>[];
+}
+
 interface TimelineSource {
   messages: Message[];
   // Where the reader left off, captured when the thread was opened
@@ -82,3 +89,10 @@ export const buildTimeline = (source: TimelineSource): TimelineEntry[] => {
     ]);
   });
 };
+
+export const groupByDay = (entries: TimelineEntry[]): TimelineDay[] =>
+  entries.reduce<TimelineDay[]>((days, entry) => {
+    if (entry.type === 'day') days.push({ ...entry, entries: [] });
+    else days.at(-1)?.entries.push(entry);
+    return days;
+  }, []);

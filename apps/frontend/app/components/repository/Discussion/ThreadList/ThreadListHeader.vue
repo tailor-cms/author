@@ -5,7 +5,7 @@
       v-if="unread.mentions"
       :text="`${unread.mentions}`"
       class="mentions-chip ml-2"
-      color="secondary"
+      color="tertiary"
       prepend-icon="mdi-at"
       rounded="pill"
       size="x-small"
@@ -51,6 +51,16 @@
         />
       </VList>
     </VMenu>
+    <VBtn
+      v-tooltip:bottom="{ text: 'Collapse sidebar', openDelay: 500 }"
+      aria-label="Collapse sidebar"
+      class="collapse-btn ml-1"
+      density="comfortable"
+      icon="mdi-chevron-double-left"
+      size="small"
+      variant="tonal"
+      @click="emit('collapse')"
+    />
   </div>
 </template>
 
@@ -61,8 +71,20 @@ defineProps<{
 }>();
 
 const emit = defineEmits<{
+  'collapse': [];
   'start:thread': [];
   'clear:unread': [];
   'manage:integrations': [];
 }>();
 </script>
+
+<style lang="scss" scoped>
+.collapse-btn {
+  opacity: 0.7;
+  transition: opacity 160ms ease;
+
+  &:hover {
+    opacity: 1;
+  }
+}
+</style>

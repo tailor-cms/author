@@ -9,16 +9,15 @@
   >
     <template #subheader>
       <div class="px-5 pb-3">
-        <div class="text-body-medium text-medium-emphasis mb-3">
+        <div class="text-body-medium text-medium-emphasis mb-2">
           Everything attached to a message, most recent first.
         </div>
-        <VChipGroup v-model="scope" color="primary" mandatory>
+        <VChipGroup v-model="scope" color="secondary" mandatory>
           <VChip
             v-for="option in SCOPES"
             :key="option.value"
             :text="option.label"
             :value="option.value"
-            density="comfortable"
             rounded="pill"
             size="small"
             variant="tonal"
@@ -37,11 +36,16 @@
           width="8rem"
         />
       </div>
-      <VEmptyState
+      <TailorEmptyState
         v-else-if="!items.length"
+        class="my-8"
+        height="auto"
         icon="mdi-paperclip-off"
+        size="48"
         text="Files and links attached to messages collect here."
+        text-width="320"
         title="Nothing shared yet"
+        variant="text"
       />
       <div v-else class="d-flex flex-wrap ga-3 py-4">
         <SharedAssetTile
@@ -59,7 +63,7 @@
 </template>
 
 <script lang="ts" setup>
-import { TailorDialog } from '@tailor-cms/core-components';
+import { TailorDialog, TailorEmptyState } from '@tailor-cms/core-components';
 import { formatTimeAgo } from '@vueuse/core';
 import { ReferenceType } from '@tailor-cms/interfaces/comment';
 import { useMessagingStore } from '@/stores/messaging';
