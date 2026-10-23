@@ -162,15 +162,18 @@ const hasBody = computed(() => {
 <style lang="scss" scoped>
 .message-row {
   position: relative;
+  isolation: isolate;
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
   padding: 0.25rem 1.25rem;
 
   // Hover state layer, tinting whatever surface the row sits on
+  // while staying under the row's cards
   &::after {
     content: '';
     position: absolute;
+    z-index: -1;
     inset: 0;
     border-radius: inherit;
     background: currentColor;
