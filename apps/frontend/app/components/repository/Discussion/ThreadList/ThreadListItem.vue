@@ -68,15 +68,23 @@ const starLabel = computed(() =>
 
 <style lang="scss" scoped>
 .thread-list-item {
-  .thread-list-item-star {
-    opacity: 0.3;
-    transition: opacity 0.15s ease;
-  }
+  @media (hover: hover) {
+    .thread-list-item-star {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
 
-  &:hover .thread-list-item-star,
-  .thread-list-item-star:focus-visible,
-  .thread-list-item-star--active {
-    opacity: 1;
+    &:hover,
+    &:focus-within,
+    &.v-list-item--active {
+      .thread-list-item-star {
+        opacity: 1;
+      }
+    }
+
+    .thread-list-item-star--active {
+      opacity: 1;
+    }
   }
 
   .thread-list-item-title {
