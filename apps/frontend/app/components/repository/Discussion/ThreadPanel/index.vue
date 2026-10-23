@@ -2,6 +2,7 @@
   <div class="thread-panel d-flex flex-column">
     <ThreadTimeline
       :current-user-id="currentUserId"
+      :focused-id="focusedId"
       :last-read-at="lastReadAt"
       :messages="messages"
       @react="(id, emoji) => emit('react', id, emoji)"
@@ -46,12 +47,15 @@ interface Props {
   currentUserId?: number | null;
   lastReadAt?: string | null;
   typingUsers?: { id: number; label: string }[];
+  // Opened at and highlighted, e.g. from a search result
+  focusedId?: number | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   lastReadAt: null,
   typingUsers: () => [],
+  focusedId: null,
 });
 
 const emit = defineEmits<{

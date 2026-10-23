@@ -110,7 +110,9 @@
     >
       <div v-if="messagingStore.replyParent" class="reply-column h-100">
         <ReplyPanel
+          :key="messagingStore.replyParent.id"
           :current-user-id="currentUserId"
+          :focused-id="messagingStore.openedReplyId"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
           :thread-label="replyThreadLabel"
@@ -137,7 +139,7 @@
         :is-searching="messagingStore.isSearching"
         :query="messagingStore.searchQuery"
         class="conversation-column py-8"
-        @select="selectThread"
+        @select:hit="openSearchResult"
       />
       <ThreadPanel
         v-else-if="messagingStore.selectedThread"
@@ -145,6 +147,7 @@
         v-model:draft="draft"
         :class="{ 'opacity-70': isThreadSlow }"
         :current-user-id="currentUserId"
+        :focused-id="routeMessageId"
         :last-read-at="messagingStore.openedWatermark"
         :messages="messagingStore.messages"
         :thread="messagingStore.selectedThread"
@@ -184,6 +187,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { MessageSearchHit } from '@tailor-cms/api-client';
+
 import { debounce } from 'lodash-es';
 import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
@@ -294,7 +299,7 @@ const load = () =>
 const searchMessages = (query: string) =>
   messagingStore.search(repositoryId.value, query);
 
-const { routeThreadId, openThread, closeThread } =
+const { routeThreadId, routeMessageId, openThread, closeThread } =
   useThreadRoute(repositoryId);
 
 // The picked thread shows once its messages are in; a slow load dims the
@@ -313,9 +318,17 @@ const closeSearch = () => {
 
 // From the list or a search result; the results stay until the picked
 // thread is on screen, so the previous one doesn't flash in between
-const selectThread = (threadId: number | null) => {
+const selectThread = (threadId: number | null, messageId?: number) => {
   if (threadId === messagingStore.selectedThreadId) closeSearch();
-  openThread(threadId);
+  openThread(threadId, messageId);
+};
+
+// At the message in its thread, or a reply under its parent
+const openSearchResult = (hit: MessageSearchHit) => {
+  const parentId = hit.isBroadcast ? null : (hit.parentId ?? null);
+  selectThread(hit.threadId, parentId ?? hit.id);
+  if (parentId) openReplies(parentId, hit.id);
+  else messagingStore.closeReplies();
 };
 
 watch(() => messagingStore.selectedThreadId, closeSearch);
@@ -345,8 +358,8 @@ const postMessage = async (content: string) => {
 };
 
 // Separate column for replies
-const openReplies = (messageId: number) =>
-  messagingStore.openReplies(repositoryId.value, messageId);
+const openReplies = (messageId: number, replyId?: number) =>
+  messagingStore.openReplies(repositoryId.value, messageId, replyId);
 
 const postReply = async (content: string, isBroadcast: boolean) => {
   const parentId = messagingStore.openReplyParentId;

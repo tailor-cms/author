@@ -30,6 +30,7 @@
             v-else-if="entry.type === 'message'"
             :current-user-id="currentUserId"
             :is-grouped="entry.isGrouped"
+            :is-highlighted="entry.message.id === focusedId"
             :message="entry.message"
             @react="(id, emoji) => emit('react', id, emoji)"
             @remove="emit('remove', $event)"
@@ -54,11 +55,14 @@ interface Props {
   currentUserId?: number | null;
   // Where the reader left off; captured when the thread was opened
   lastReadAt?: string | null;
+  // Opened at and highlighted, e.g. from a search result
+  focusedId?: number | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   lastReadAt: null,
+  focusedId: null,
 });
 
 const emit = defineEmits<{
@@ -78,7 +82,12 @@ const startsUnread = (day: TimelineDay) => day.entries[0]?.type === 'unread';
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
 
-useStickToBottom(viewportEl, messagesEl, () => props.messages);
+useStickToBottom(
+  viewportEl,
+  messagesEl,
+  () => props.messages,
+  () => props.focusedId,
+);
 </script>
 
 <style lang="scss" scoped>

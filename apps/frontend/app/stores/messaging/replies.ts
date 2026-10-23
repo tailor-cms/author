@@ -6,6 +6,8 @@ import { api } from '@/api';
 export const createReplies = (messageCache: MessageCache) => {
   const replyIds = reactive(new Map<number, number[]>());
   const openReplyParentId = ref<number | null>(null);
+  // The reply they were opened at, e.g. from a search result
+  const openedReplyId = ref<number | null>(null);
 
   const replyParent = computed(() => messageCache.get(openReplyParentId.value));
 
@@ -39,9 +41,14 @@ export const createReplies = (messageCache: MessageCache) => {
     });
   }
 
-  // Opens a message's replies
-  async function openReplies(repositoryId: number, messageId: number) {
+  // Opens a message's replies, at their latest or at the given reply
+  async function openReplies(
+    repositoryId: number,
+    messageId: number,
+    replyId: number | null = null,
+  ) {
     openReplyParentId.value = messageId;
+    openedReplyId.value = replyId;
     const items = await api.messaging.getReplies({
       params: { repositoryId, messageId },
     });
@@ -57,10 +64,12 @@ export const createReplies = (messageCache: MessageCache) => {
   function clear() {
     replyIds.clear();
     openReplyParentId.value = null;
+    openedReplyId.value = null;
   }
 
   return {
     openReplyParentId,
+    openedReplyId,
     replyParent,
     replies,
     indexReply,

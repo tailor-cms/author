@@ -35,6 +35,7 @@
           :key="reply.uid"
           :current-user-id="currentUserId"
           :is-grouped="isGrouped(index)"
+          :is-highlighted="reply.id === focusedId"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -77,11 +78,14 @@ interface Props {
   replies: Message[];
   threadLabel?: string;
   currentUserId?: number | null;
+  // Opened at and highlighted, e.g. from a search result
+  focusedId?: number | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   threadLabel: 'the channel',
   currentUserId: null,
+  focusedId: null,
 });
 
 const emit = defineEmits<{
@@ -114,7 +118,12 @@ const submit = (content: string) => {
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
 
-useStickToBottom(viewportEl, messagesEl, () => props.replies);
+useStickToBottom(
+  viewportEl,
+  messagesEl,
+  () => props.replies,
+  () => props.focusedId,
+);
 </script>
 
 <style lang="scss" scoped>

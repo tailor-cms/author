@@ -5,7 +5,9 @@
       'message-row--card': hasCards,
       'message-row--broadcast': message.isBroadcast,
       'message-row--reply': isReplyTarget,
+      'message-row--highlighted': isHighlighted,
     }"
+    :data-message-id="message.id"
     class="message-row"
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
@@ -106,12 +108,15 @@ interface Props {
   isGrouped?: boolean;
   // Shown in the reply panel, which has no replies of its own
   isReplyTarget?: boolean;
+  // Jumped to, e.g. from a search result
+  isHighlighted?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   isGrouped: false,
   isReplyTarget: false,
+  isHighlighted: false,
 });
 
 const emit = defineEmits<{
@@ -197,6 +202,10 @@ const hasBody = computed(() => {
     }
   }
 
+  &--highlighted {
+    animation: message-highlight 2s ease-out;
+  }
+
   // The narrower replies column
   &--reply {
     padding-inline: 1rem;
@@ -204,6 +213,17 @@ const hasBody = computed(() => {
 
   &--card {
     padding-block: 0.75rem;
+  }
+}
+
+@keyframes message-highlight {
+  0%,
+  40% {
+    background: rgba(var(--v-theme-tertiary), 0.16);
+  }
+
+  100% {
+    background: transparent;
   }
 }
 
