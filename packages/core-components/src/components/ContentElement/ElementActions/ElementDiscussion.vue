@@ -29,6 +29,7 @@
           isVisible,
         }"
         v-model:confirmation-active="isConfirmationActive"
+        show-notifications
         @react="reactToComment"
         @remove="removeComment"
         @resolve="updateResolvement"

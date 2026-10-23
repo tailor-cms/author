@@ -108,7 +108,7 @@ useStickToBottom(viewportEl, messagesEl, () => props.messages);
 }
 
 .day-rule {
-  margin-top: 1rem;
+  margin-top: 1.75rem;
 }
 
 // Centred on the rule at rest; pinned to the top while its day scrolls by
@@ -118,7 +118,7 @@ useStickToBottom(viewportEl, messagesEl, () => props.messages);
   top: 0.5rem;
   display: flex;
   width: fit-content;
-  margin: -1rem auto 0;
+  margin: -1rem auto 0.5rem;
   font-size: 0.8125rem;
   letter-spacing: 0.01em;
 }
