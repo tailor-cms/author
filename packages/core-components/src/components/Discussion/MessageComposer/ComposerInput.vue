@@ -157,7 +157,7 @@ onBeforeUnmount(() => editor.value?.destroy());
       white-space: nowrap;
 
       &--reference {
-        color: rgb(var(--v-theme-info));
+        color: rgb(var(--v-theme-secondary));
       }
     }
 

@@ -72,7 +72,7 @@ const text = computed(() =>
 }
 
 .message-token--reference {
-  color: rgb(var(--v-theme-info));
+  color: rgb(var(--v-theme-secondary));
 }
 
 .is-link {
