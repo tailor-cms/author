@@ -110,7 +110,7 @@
       :icon="activeTabIcon"
       aria-label="Open sidebar"
       class="sidebar-toggle"
-      color="primary-container"
+      color="surface-overlay"
       density="comfortable"
       size="small"
       @click="modelValue = true"

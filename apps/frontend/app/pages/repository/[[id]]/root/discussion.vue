@@ -38,9 +38,9 @@
         v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
         aria-label="Open sidebar"
         class="sidebar-toggle"
-        color="primary-container"
+        color="surface-overlay"
         density="comfortable"
-        icon="mdi-forum-outline"
+        icon="mdi-format-list-bulleted"
         size="small"
         @click="isListOpen = true"
       />
