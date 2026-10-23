@@ -5,7 +5,7 @@
       v-if="unread.mentions"
       :text="`${unread.mentions}`"
       class="mentions-chip ml-2"
-      color="secondary"
+      color="tertiary"
       prepend-icon="mdi-at"
       rounded="pill"
       size="x-small"

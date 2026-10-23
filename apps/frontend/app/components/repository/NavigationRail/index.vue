@@ -114,8 +114,8 @@ const messagingStore = useMessagingStore();
 
 const discussionBadge = computed(() => {
   const { mentions, threads } = messagingStore.unread;
-  if (mentions) return { badge: String(mentions), badgeColor: 'secondary' };
-  if (threads) return { badge: String(threads), badgeColor: 'primary' };
+  if (mentions) return { badge: String(mentions), badgeColor: 'tertiary' };
+  if (threads) return { badge: String(threads), badgeColor: 'secondary' };
   return {};
 });
 
