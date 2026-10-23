@@ -63,7 +63,6 @@
 
 <script lang="ts" setup>
 import { formatFileSize } from '@tailor-cms/core-components';
-import { repositoryAsset } from '@/api';
 import ImageDialog from '@/components/common/ImageDialog.vue';
 
 const MAX_WIDTH_REM = 22;
@@ -85,7 +84,11 @@ const { src: thumbnailSrc, onError: onThumbnailError } = useAssetThumbnail(
 );
 
 const isDialogVisible = ref(false);
-const fileUrl = ref<string | null>(null);
+const {
+  url: fileUrl,
+  fetchUrl: fetchFileUrl,
+  download,
+} = useAssetDownload(() => props.asset);
 
 const size = computed(() => {
   const { fileSize } = props.asset.meta ?? {};
@@ -105,23 +108,9 @@ const shape = computed(() => {
   return { ratio, maxWidth };
 });
 
-const fetchFileUrl = async () => {
-  if (fileUrl.value) return;
-  const { repositoryId, id } = props.asset;
-  const result = await repositoryAsset
-    .getDownloadUrl(repositoryId, id)
-    .catch(() => null);
-  fileUrl.value = result?.url ?? null;
-};
-
 const openDialog = async () => {
   isDialogVisible.value = true;
   await fetchFileUrl();
-};
-
-const download = async () => {
-  await fetchFileUrl();
-  if (fileUrl.value) window.open(fileUrl.value, '_blank');
 };
 </script>
 

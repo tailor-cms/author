@@ -1,6 +1,5 @@
 <template>
   <VCard
-    :class="`preview-card--${variant}`"
     :style="accent ? { borderInlineStartColor: accent } : undefined"
     class="preview-card d-flex ga-3 pa-3"
     max-width="34rem"
@@ -52,12 +51,11 @@
 </template>
 
 <script lang="ts" setup>
-// The card under a message for a shared file or a pasted link
+// The card under a message for a shared or pasted link
 const props = withDefaults(
   defineProps<{
     title: string;
     icon: string;
-    variant?: 'link' | 'file';
     // A known service's brand colour
     accent?: string;
     site?: string;
@@ -68,7 +66,6 @@ const props = withDefaults(
     isExternal?: boolean;
   }>(),
   {
-    variant: 'link',
     accent: undefined,
     site: undefined,
     favicon: undefined,
@@ -95,10 +92,6 @@ const linkAttrs = computed(() => ({
   border-inline-start: 0.1875rem solid rgb(var(--v-theme-info));
   border-start-start-radius: 0.25rem;
   border-end-start-radius: 0.25rem;
-
-  &--file {
-    border-inline-start-color: rgb(var(--v-theme-secondary));
-  }
 }
 
 .preview-content {
@@ -120,10 +113,6 @@ const linkAttrs = computed(() => ({
 
   &:hover {
     text-decoration: underline;
-  }
-
-  .preview-card--file & {
-    color: rgb(var(--v-theme-on-surface));
   }
 }
 

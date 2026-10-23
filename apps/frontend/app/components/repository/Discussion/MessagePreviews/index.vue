@@ -1,6 +1,6 @@
 <template>
-  <slot v-if="!isImageOnly" />
-  <div v-if="images.length" class="d-flex flex-wrap ga-2 mt-2">
+  <slot v-if="!isPreviewOnly" />
+  <div v-if="images.length" class="d-flex flex-wrap ga-2">
     <ImagePreview
       v-for="{ reference, asset, href } in images"
       :key="reference.entityId"
@@ -72,18 +72,19 @@ const links = computed(() => {
   return extractUrls(props.content ?? '').slice(0, room);
 });
 
-const hasImagePreview = (reference: ReferenceToken) =>
-  images.value.some((it) => it.reference.entityId === reference.entityId);
+const hasPreview = (reference: ReferenceToken) =>
+  assets.value.some((it) => it.reference.entityId === reference.entityId);
 
-const isImageOrBlank = (token: MessageToken) => {
-  if (token.kind === 'reference') return hasImagePreview(token);
+const isPreviewOrBlank = (token: MessageToken) => {
+  if (token.kind === 'reference') return hasPreview(token);
   return token.kind === 'text' && !token.text.trim();
 };
 
-const isImageOnly = computed(
+// A message of only shared files reads from its preview cards
+const isPreviewOnly = computed(
   () =>
-    !!images.value.length &&
-    parseMessage(props.content ?? '').every(isImageOrBlank),
+    !!assets.value.length &&
+    parseMessage(props.content ?? '').every(isPreviewOrBlank),
 );
 
 // Loads each shared file once
