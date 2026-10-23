@@ -26,20 +26,15 @@
           :key="hit.id"
           :current-user-id="currentUserId"
           :hit="hit"
-          @click="emit('select', group.threadId)"
+          @click="emit('select:hit', hit)"
         />
       </div>
     </VList>
     <TailorEmptyState
       v-else-if="!isSearching"
-      class="mt-16"
-      height="auto"
       icon="mdi-magnify-close"
-      size="48"
       text="Nothing in this repository matches that search."
-      text-width="320"
       title="No matches"
-      variant="text"
     />
   </div>
 </template>
@@ -71,7 +66,7 @@ const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
 });
 
-const emit = defineEmits<{ select: [threadId: number] }>();
+const emit = defineEmits<{ 'select:hit': [hit: MessageSearchHit] }>();
 
 const { anchorOf } = useThreadAnchors();
 

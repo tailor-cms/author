@@ -4,7 +4,8 @@ import { useMessagingStore } from '@/stores/messaging';
 
 /**
  * Keeps the open thread in the URL (`?threadId=`), so a thread can be
- * linked, reloaded, and stepped through with back and forward.
+ * linked, reloaded, and stepped through with back and forward. A thread
+ * opened at a message keeps it too (`&messageId=`).
  */
 export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
   const route = useRoute();
@@ -14,14 +15,17 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
   const messagingStore = useMessagingStore();
 
   const routeThreadId = computed(() => Number(route.query.threadId) || null);
+  const routeMessageId = computed(() => Number(route.query.messageId) || null);
 
-  const toQuery = (threadId: number | null) =>
-    threadId
-      ? { ...route.query, threadId: String(threadId) }
-      : omit(route.query, 'threadId');
+  const toQuery = (threadId: number | null, messageId?: number) => {
+    const query = omit(route.query, 'threadId', 'messageId');
+    if (!threadId) return query;
+    if (messageId) query.messageId = String(messageId);
+    return { ...query, threadId: String(threadId) };
+  };
 
-  const openThread = (threadId: number | null) =>
-    router.push({ query: toQuery(threadId) });
+  const openThread = (threadId: number | null, messageId?: number) =>
+    router.push({ query: toQuery(threadId, messageId) });
 
   const replaceThread = (threadId: number | null) =>
     router.replace({ query: toQuery(threadId) });
@@ -49,6 +53,7 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
 
   return {
     routeThreadId,
+    routeMessageId,
     openThread,
     closeThread: () => replaceThread(null),
   };

@@ -8,6 +8,7 @@
     location="right"
     mobile-breakpoint="md"
     absolute
+    disable-resize-watcher
     disable-route-watcher
     @update:model-value="(open) => !open && store.deselectActivity()"
   >

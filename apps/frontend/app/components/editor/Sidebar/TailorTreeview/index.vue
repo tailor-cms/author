@@ -22,7 +22,8 @@
   <TailorEmptyState
     v-if="search && !hasItems"
     action-text="Clear search"
-    height="100%"
+    class="mt-6"
+    height="auto"
     icon="mdi-magnify"
     prepend-action-icon="mdi-close"
     text="No items match your search."

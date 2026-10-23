@@ -374,6 +374,8 @@ watch(
       display: block;
       content: '';
       position: absolute;
+      // Above the element's sticky toolbar, which bleeds to the frame edge
+      z-index: 3;
       height: 100%;
       left: 0;
       top: 0;

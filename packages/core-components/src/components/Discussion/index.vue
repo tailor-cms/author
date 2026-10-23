@@ -34,11 +34,14 @@
     </div>
     <VAlert
       v-if="!commentsCount && showNotifications"
-      class="alert mb-4"
-      icon="mdi-comment-outline"
+      class="alert text-label-medium py-3 mb-4"
       text="No comments yet - start the discussion below."
       variant="tonal"
-    />
+    >
+      <template #prepend>
+        <VIcon icon="mdi-comment-outline" size="20" />
+      </template>
+    </VAlert>
     <DiscussionThread
       v-if="thread.length"
       v-model:show-all="showAll"

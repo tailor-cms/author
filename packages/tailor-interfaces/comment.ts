@@ -136,7 +136,7 @@ export type Message = Omit<Comment, 'authorId' | 'author'> & {
   actor?: UserSummary | null;
   // Replies are one level deep; a reply never has replies of its own
   parentId?: number | null;
-  // A reply also sent to the channel
+  // A reply also sent to the thread
   isBroadcast?: boolean;
   // Reply summary shown under a parent
   replyCount?: number;

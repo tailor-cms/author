@@ -13,8 +13,8 @@
         @click="emit('close')"
       />
     </div>
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pt-4 pb-3">
-      <div ref="messagesEl">
+    <div ref="viewportEl" class="reply-viewport overflow-y-auto">
+      <div ref="messagesEl" class="py-3">
         <MessageRow
           v-if="parent"
           :current-user-id="currentUserId"
@@ -24,7 +24,7 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div v-if="replies.length" class="d-flex align-center ga-3 px-4 py-2">
+        <div class="d-flex align-center ga-3 px-4 py-2">
           <span class="reply-count text-body-small text-medium-emphasis">
             {{ pluralize('reply', replies.length, true) }}
           </span>
@@ -35,6 +35,7 @@
           :key="reply.uid"
           :current-user-id="currentUserId"
           :is-grouped="isGrouped(index)"
+          :is-highlighted="reply.id === focusedId"
           :message="reply"
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
@@ -43,17 +44,18 @@
         />
       </div>
     </div>
-    <div class="flex-shrink-0 pt-1 px-4 pb-4">
+    <div class="flex-shrink-0 px-4 pb-2">
       <MessageComposer
         placeholder="Reply..."
         @edit:last="editLast"
         @submit="submit"
       />
-      <VCheckbox
+      <VCheckboxBtn
         v-model="isBroadcast"
-        :label="`Also send to ${threadLabel}`"
-        class="broadcast-checkbox mt-1"
-        hide-details
+        label="Also send to thread"
+        class="broadcast-checkbox mt-2"
+        density="compact"
+        inline
       />
     </div>
   </div>
@@ -75,13 +77,14 @@ import MessageRow from './MessageRow/index.vue';
 interface Props {
   parent: Message | null;
   replies: Message[];
-  threadLabel?: string;
   currentUserId?: number | null;
+  // Opened at and highlighted, e.g. from a search result
+  focusedId?: number | null;
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  threadLabel: 'the channel',
   currentUserId: null,
+  focusedId: null,
 });
 
 const emit = defineEmits<{
@@ -114,12 +117,22 @@ const submit = (content: string) => {
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
 
-useStickToBottom(viewportEl, messagesEl, () => props.replies);
+useStickToBottom(
+  viewportEl,
+  messagesEl,
+  () => props.replies,
+  () => props.focusedId,
+);
 </script>
 
 <style lang="scss" scoped>
 .reply-panel {
   min-width: 0;
+  min-height: 0;
+}
+
+.reply-viewport {
+  flex: 0 1 auto;
   min-height: 0;
 }
 
@@ -130,6 +143,7 @@ useStickToBottom(viewportEl, messagesEl, () => props.replies);
 
 .broadcast-checkbox {
   :deep(.v-label) {
+    padding-inline-start: 0.375rem;
     font-size: 0.8125rem;
     opacity: var(--v-medium-emphasis-opacity);
   }

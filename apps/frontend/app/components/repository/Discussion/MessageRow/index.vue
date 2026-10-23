@@ -5,8 +5,10 @@
       'message-row--card': hasCards,
       'message-row--broadcast': message.isBroadcast,
       'message-row--reply': isReplyTarget,
+      'message-row--highlighted': isHighlighted,
     }"
-    class="message-row"
+    :data-message-id="message.id"
+    class="message-row rounded-lg mx-5"
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
     <div class="message-row-gutter d-flex align-center">
@@ -18,7 +20,7 @@
       <SenderAvatar v-else :message="message" :size="AVATAR_SIZE" />
     </div>
     <div class="message-row-content">
-      <!-- A reply also sent to the channel, linking back to its replies -->
+      <!-- A reply also sent to the thread, linking back to its replies -->
       <BroadcastNote
         v-if="message.isBroadcast"
         :is-reply-target="isReplyTarget"
@@ -50,7 +52,7 @@
         <MessageAttachments
           v-if="hasCards"
           :attachments="attachments"
-          class="mt-2"
+          class="my-1"
         />
         <MessageReactions
           :current-user-id="currentUserId"
@@ -106,12 +108,15 @@ interface Props {
   isGrouped?: boolean;
   // Shown in the reply panel, which has no replies of its own
   isReplyTarget?: boolean;
+  // Jumped to, e.g. from a search result
+  isHighlighted?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   isGrouped: false,
   isReplyTarget: false,
+  isHighlighted: false,
 });
 
 const emit = defineEmits<{
@@ -161,12 +166,14 @@ const hasBody = computed(() => {
 
 <style lang="scss" scoped>
 .message-row {
+  --row-overlap: 0.25rem;
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.25rem 1.25rem;
+  margin-block: calc(-2 * var(--row-overlap));
+  padding: 0.5rem;
 
   // Hover state layer, tinting whatever surface the row sits on
   // while staying under the row's cards
@@ -174,7 +181,7 @@ const hasBody = computed(() => {
     content: '';
     position: absolute;
     z-index: -1;
-    inset: 0;
+    inset: var(--row-overlap) 0;
     border-radius: inherit;
     background: currentColor;
     opacity: 0;
@@ -196,18 +203,27 @@ const hasBody = computed(() => {
     }
   }
 
-  // A new sender gets room above; their follow-ups sit close as one block
-  &:not(.message-row--grouped) {
-    padding-top: 0.75rem;
+  &--highlighted {
+    animation: message-highlight 2s ease-out;
   }
 
-  // The narrower replies column
   &--reply {
-    padding-inline: 1rem;
+    margin: 0 0.75rem;
+
+    .message-row-actions {
+      right: 0.25rem;
+    }
+  }
+}
+
+@keyframes message-highlight {
+  0%,
+  40% {
+    background: rgba(var(--v-theme-tertiary), 0.16);
   }
 
-  &--card {
-    padding-block: 0.75rem;
+  100% {
+    background: transparent;
   }
 }
 
@@ -232,7 +248,7 @@ const hasBody = computed(() => {
 .message-row-actions {
   position: absolute;
   z-index: 1;
-  top: -1rem;
-  right: 0.75rem;
+  top: calc(var(--row-overlap) - 1rem);
+  right: 1.25rem;
 }
 </style>

@@ -1,9 +1,10 @@
 <template>
   <VCard
+    :color="color"
     :disabled="isMissing"
     :ripple="false"
     :to="href"
-    class="asset-tile bg-surface-raised text-left"
+    class="asset-tile text-left"
     elevation="1"
     rounded="lg"
     variant="flat"
@@ -17,7 +18,7 @@
         cover
         @error="onThumbnailError"
       />
-      <VIcon v-else-if="!isLoading" :color="color" :icon="icon" size="40" />
+      <VIcon v-else-if="!isLoading" :color="assetColor" :icon="icon" size="40" />
     </VSheet>
     <div class="px-2 py-1">
       <VSkeletonLoader
@@ -47,7 +48,14 @@ import { getAssetDisplayName } from '../Assets/utils';
 import { useCurrentRepository } from '@/stores/current-repository';
 import { useAssetStore } from '@/stores/assets';
 
-const props = defineProps<{ reference: ReferenceTarget }>();
+interface Props {
+  reference: ReferenceTarget;
+  color?: string;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  color: 'surface-raised',
+});
 
 const repoStore = useCurrentRepository();
 const assetStore = useAssetStore();
@@ -86,7 +94,7 @@ const icon = computed(() =>
   isMissing.value ? 'mdi-file-hidden' : getAssetIcon(asset.value ?? {}),
 );
 
-const color = computed(() => getAssetColor(asset.value ?? {}));
+const assetColor = computed(() => getAssetColor(asset.value ?? {}));
 </script>
 
 <style lang="scss" scoped>

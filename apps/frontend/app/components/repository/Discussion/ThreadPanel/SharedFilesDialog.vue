@@ -8,26 +8,28 @@
     scrollable
   >
     <template #subheader>
-      <div class="px-5 pb-3">
-        <div class="text-body-medium text-medium-emphasis mb-2">
-          Everything attached to a message, most recent first.
-        </div>
-        <VChipGroup v-model="scope" color="secondary" mandatory>
-          <VChip
-            v-for="option in SCOPES"
-            :key="option.value"
-            :text="option.label"
-            :value="option.value"
-            rounded="pill"
-            size="small"
-            variant="tonal"
-          />
-        </VChipGroup>
+      <div class="px-5 text-body-medium text-medium-emphasis">
+        Everything attached to a message, most recent first.
       </div>
-      <VDivider />
     </template>
     <template #body>
-      <div v-if="isLoading" class="d-flex flex-wrap ga-3 py-2">
+      <VChipGroup v-model="scope" mandatory>
+        <VChip
+          v-for="{ value, label } in SCOPES"
+          :key="value"
+          :text="label"
+          :value="value"
+          color="secondary"
+          role="button"
+          rounded="lg"
+          size="small"
+          filter
+        />
+      </VChipGroup>
+      <div
+        v-if="isSkeletonVisible && !items.length"
+        class="d-flex flex-wrap ga-3 py-2"
+      >
         <VSkeletonLoader
           v-for="it in 6"
           :key="it"
@@ -37,7 +39,7 @@
         />
       </div>
       <TailorEmptyState
-        v-else-if="!items.length"
+        v-else-if="hasLoaded && !items.length"
         class="my-8"
         height="auto"
         icon="mdi-paperclip-off"
@@ -47,11 +49,16 @@
         title="Nothing shared yet"
         variant="text"
       />
-      <div v-else class="d-flex flex-wrap ga-3 py-4">
+      <div
+        v-else-if="items.length"
+        :class="{ 'opacity-70': isLoading }"
+        class="d-flex flex-wrap ga-3 py-2"
+      >
         <SharedAssetTile
           v-for="item in items"
           :key="item.entityId"
           :reference="{ entityType: ReferenceType.Asset, entityId: item.entityId }"
+          color="surface-overlay"
         >
           <template #subtitle>
             Shared {{ formatTimeAgo(new Date(item.lastSharedAt)) }}
@@ -94,6 +101,9 @@ const messagingStore = useMessagingStore();
 const scope = ref<Scope>('thread');
 const items = ref<SharedAsset[]>([]);
 const isLoading = ref(false);
+// Until the first answer, an empty list means nothing is known yet
+const hasLoaded = ref(false);
+const isSkeletonVisible = useSkeletonDelay(isLoading);
 
 const load = async (isStale: () => boolean) => {
   const threadId =
@@ -105,7 +115,9 @@ const load = async (isStale: () => boolean) => {
       threadId,
     );
     // Switching scope mid-load keeps only the latest answer
-    if (!isStale()) items.value = assets;
+    if (isStale()) return;
+    items.value = assets;
+    hasLoaded.value = true;
   } finally {
     if (!isStale()) isLoading.value = false;
   }
@@ -114,7 +126,12 @@ const load = async (isStale: () => boolean) => {
 watch(
   [isOpen, scope],
   ([open], _, onCleanup) => {
-    if (!open) return;
+    if (!open) {
+      // Reopened later, possibly for another thread
+      items.value = [];
+      hasLoaded.value = false;
+      return;
+    }
     let isStale = false;
     onCleanup(() => (isStale = true));
     load(() => isStale);

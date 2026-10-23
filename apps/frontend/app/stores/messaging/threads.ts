@@ -171,9 +171,12 @@ export const createThreads = (
       });
       addThread(thread);
     }
-    // Only unread threads get a "New" marker; live arrivals never do
+    // Only unread threads get a "New" marker; live arrivals never do.
+    // Never read means everything is new, as the server counts it
     const thread = threads.get(threadId);
-    const watermark = thread?.isUnread ? thread.lastReadAt : null;
+    const watermark = thread?.isUnread
+      ? (thread.lastReadAt ?? new Date(0).toISOString())
+      : null;
     if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
     const items = await api.messaging.getMessages({
       params: { repositoryId, threadId },

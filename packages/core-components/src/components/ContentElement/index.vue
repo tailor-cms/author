@@ -663,6 +663,8 @@ $accent-selected: #ff4081;
 // The field frame supplies the padding; bleed the strip to its edge
 .field > .card-toolbar {
   margin: -1rem -1rem 1rem;
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
 }
 
 .active-users {

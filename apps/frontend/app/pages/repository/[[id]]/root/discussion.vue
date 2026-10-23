@@ -6,7 +6,7 @@
       :width="width"
       color="surface-canvas"
       location="left"
-      permanent
+      mobile-breakpoint="md"
     >
       <div class="thread-list-column h-100">
         <ThreadList
@@ -38,9 +38,9 @@
         v-tooltip:right="{ text: 'Open sidebar', openDelay: 500 }"
         aria-label="Open sidebar"
         class="sidebar-toggle"
-        color="primary-container"
+        color="surface-overlay"
         density="comfortable"
-        icon="mdi-forum-outline"
+        icon="mdi-format-list-bulleted"
         size="small"
         @click="isListOpen = true"
       />
@@ -106,14 +106,18 @@
       :width="replyWidth"
       color="surface-sidebar"
       location="right"
-      permanent
+      mobile-breakpoint="lg"
+      disable-resize-watcher
+      disable-route-watcher
+      @update:model-value="!$event && messagingStore.closeReplies()"
     >
       <div v-if="messagingStore.replyParent" class="reply-column h-100">
         <ReplyPanel
+          :key="messagingStore.replyParent.id"
           :current-user-id="currentUserId"
+          :focused-id="messagingStore.focusedReplyId"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
-          :thread-label="replyThreadLabel"
           class="h-100"
           @close="messagingStore.closeReplies()"
           @react="reactToMessage"
@@ -137,37 +141,27 @@
         :is-searching="messagingStore.isSearching"
         :query="messagingStore.searchQuery"
         class="conversation-column py-8"
-        @select="selectThread"
+        @select:hit="openSearchResult"
       />
-      <div
+      <ThreadPanel
         v-else-if="messagingStore.selectedThread"
-        class="conversation-column d-flex flex-column h-100 py-8"
-      >
-        <VCard
-          :class="{ 'opacity-70': isThreadSlow }"
-          class="conversation d-flex flex-column"
-          color="surface-raised"
-          elevation="1"
-          rounded="lg"
-        >
-          <ThreadPanel
-            :key="messagingStore.selectedThread.id"
-            v-model:draft="draft"
-            :current-user-id="currentUserId"
-            :last-read-at="messagingStore.openedWatermark"
-            :messages="messagingStore.messages"
-            :thread="messagingStore.selectedThread"
-            :typing-users="threadTypingUsers"
-            class="panel-body"
-            @react="reactToMessage"
-            @remove="removeMessage"
-            @reply="openReplies"
-            @submit="postMessage"
-            @typing="reportTyping"
-            @update="editMessage"
-          />
-        </VCard>
-      </div>
+        :key="messagingStore.selectedThread.id"
+        v-model:draft="draft"
+        :class="{ 'opacity-70': isThreadSlow }"
+        :current-user-id="currentUserId"
+        :focused-id="routeMessageId"
+        :last-read-at="messagingStore.openedWatermark"
+        :messages="messagingStore.messages"
+        :thread="messagingStore.selectedThread"
+        :typing-users="threadTypingUsers"
+        class="h-100"
+        @react="reactToMessage"
+        @remove="removeMessage"
+        @reply="openReplies"
+        @submit="postMessage"
+        @typing="reportTyping"
+        @update="editMessage"
+      />
       <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
         <VProgressCircular v-if="isThreadSlow" indeterminate />
       </div>
@@ -195,6 +189,8 @@
 </template>
 
 <script lang="ts" setup>
+import type { MessageSearchHit } from '@tailor-cms/api-client';
+
 import { debounce } from 'lodash-es';
 import { onKeyStroke } from '@vueuse/core';
 import { useDisplay } from 'vuetify';
@@ -218,8 +214,6 @@ import ThreadPanel
   from '@/components/repository/Discussion/ThreadPanel/index.vue';
 import ThreadList
   from '@/components/repository/Discussion/ThreadList/index.vue';
-import { useThreadAnchor }
-  from '@/components/repository/Discussion/composables/useThreadAnchor';
 import { useThreadDraft }
   from '@/components/repository/Discussion/composables/useThreadDraft';
 import { useThreadRoute }
@@ -247,8 +241,8 @@ const nameFilter = ref('');
 
 const draft = useThreadDraft(() => messagingStore.selectedThreadId);
 const isSearchActive = computed(() => !!messagingStore.searchQuery.trim());
-// The toolbar swaps to the search field; reopens with a kept query
-const isSearchOpen = ref(isSearchActive.value);
+// The toolbar swaps to the search field
+const isSearchOpen = ref(false);
 
 const currentUserId = computed(() => authStore.user?.id ?? null);
 const repositoryId = computed(
@@ -292,10 +286,6 @@ const threadTypingUsers = computed(() => {
   );
 });
 
-// Named like the toolbar title, so a broadcast says where it goes
-const replyThreadAnchor = useThreadAnchor(() => messagingStore.selectedThread);
-const replyThreadLabel = computed(() => replyThreadAnchor.value.label);
-
 const load = () =>
   messagingStore.fetchThreads(repositoryId.value, {
     scope: scope.value,
@@ -305,7 +295,7 @@ const load = () =>
 const searchMessages = (query: string) =>
   messagingStore.search(repositoryId.value, query);
 
-const { routeThreadId, openThread, closeThread } =
+const { routeThreadId, routeMessageId, openThread, closeThread } =
   useThreadRoute(repositoryId);
 
 // The picked thread shows once its messages are in; a slow load dims the
@@ -324,12 +314,25 @@ const closeSearch = () => {
 
 // From the list or a search result; the results stay until the picked
 // thread is on screen, so the previous one doesn't flash in between
-const selectThread = (threadId: number | null) => {
+const selectThread = (threadId: number | null, messageId?: number) => {
   if (threadId === messagingStore.selectedThreadId) closeSearch();
-  openThread(threadId);
+  openThread(threadId, messageId);
+};
+
+// At the message in its thread, or a reply under its parent
+const openSearchResult = (hit: MessageSearchHit) => {
+  const parentId = hit.isBroadcast ? null : (hit.parentId ?? null);
+  selectThread(hit.threadId, parentId ?? hit.id);
+  if (parentId) openReplies(parentId, hit.id);
+  else messagingStore.closeReplies();
 };
 
 watch(() => messagingStore.selectedThreadId, closeSearch);
+// A search and its jump are for this visit; coming back starts afresh
+onBeforeUnmount(() => {
+  messagingStore.clearSearch();
+  messagingStore.focusedReplyId = null;
+});
 
 const isTyping = (target: EventTarget | null) =>
   target instanceof HTMLElement &&
@@ -356,8 +359,8 @@ const postMessage = async (content: string) => {
 };
 
 // Separate column for replies
-const openReplies = (messageId: number) =>
-  messagingStore.openReplies(repositoryId.value, messageId);
+const openReplies = (parentId: number, replyId?: number) =>
+  messagingStore.openReplies(repositoryId.value, parentId, replyId);
 
 const postReply = async (content: string, isBroadcast: boolean) => {
   const parentId = messagingStore.openReplyParentId;
@@ -524,17 +527,5 @@ onMounted(async () => {
   max-width: 87.5rem;
   margin-inline: auto;
   padding-inline: 2rem;
-}
-
-// Fits a short thread; at full height the timeline scrolls inside
-.conversation {
-  flex: 0 1 auto;
-  min-height: 0;
-}
-
-.panel-body {
-  flex: 1 1 auto;
-  min-width: 0;
-  min-height: 0;
 }
 </style>
