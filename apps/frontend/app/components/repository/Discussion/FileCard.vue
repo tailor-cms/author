@@ -2,8 +2,9 @@
   <VCard
     :ripple="false"
     class="file-card"
-    max-width="22rem"
+    max-width="100%"
     rounded="lg"
+    width="22rem"
     color="surface-base"
     variant="flat"
     border

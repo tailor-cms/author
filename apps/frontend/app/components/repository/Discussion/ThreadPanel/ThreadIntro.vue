@@ -1,6 +1,6 @@
 <template>
   <div class="thread-intro">
-    <h4 class="text-title-large font-weight-semibold">{{ anchor.label }}</h4>
+    <h4 class="text-title-large font-weight-semibold mt-1">{{ anchor.label }}</h4>
     <p class="text-body-medium text-medium-emphasis mt-1">
       {{ text }}
     </p>

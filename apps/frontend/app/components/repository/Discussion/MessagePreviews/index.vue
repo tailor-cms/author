@@ -9,13 +9,14 @@
       :is-tile="images.length > 1"
     />
   </div>
-  <FilePreview
-    v-for="{ reference, asset, href } in files"
-    :key="reference.entityId"
-    :asset="asset"
-    :href="href"
-    class="mt-2"
-  />
+  <div class="d-flex flex-wrap ga-2">
+    <FilePreview
+      v-for="{ reference, asset, href } in files"
+      :key="reference.entityId"
+      :asset="asset"
+      :href="href"
+    />
+  </div>
   <LinkPreview v-for="url in links" :key="url" :url="url" class="mt-2" />
 </template>
 
