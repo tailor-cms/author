@@ -166,7 +166,8 @@ const hasBody = computed(() => {
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  padding: 0.25rem 1.25rem;
+  margin-block: -0.5rem;
+  padding: 0.5rem 1.25rem;
 
   // Hover state layer, tinting whatever surface the row sits on
   // while staying under the row's cards
@@ -174,7 +175,7 @@ const hasBody = computed(() => {
     content: '';
     position: absolute;
     z-index: -1;
-    inset: 0;
+    inset: 0.25rem 0;
     border-radius: inherit;
     background: currentColor;
     opacity: 0;
@@ -194,11 +195,6 @@ const hasBody = computed(() => {
     .message-row-time {
       opacity: 1;
     }
-  }
-
-  // A new sender gets room above; their follow-ups sit close as one block
-  &:not(.message-row--grouped) {
-    padding-top: 0.75rem;
   }
 
   // The narrower replies column
@@ -232,7 +228,7 @@ const hasBody = computed(() => {
 .message-row-actions {
   position: absolute;
   z-index: 1;
-  top: -1rem;
+  top: calc(var(--row-overlap) - 1rem);
   right: 0.75rem;
 }
 </style>
