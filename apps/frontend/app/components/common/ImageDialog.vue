@@ -53,7 +53,5 @@ const frame = computed(() => {
   max-height: v-bind(MAX_HEIGHT);
   border-radius: 0.5rem;
   object-fit: contain;
-  background: rgba(var(--v-theme-surface), 0.4);
-  box-shadow: 0 1.5rem 3rem rgba(0, 0, 0, 0.4);
 }
 </style>

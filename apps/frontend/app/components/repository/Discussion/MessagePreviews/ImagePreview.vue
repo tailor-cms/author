@@ -126,7 +126,7 @@ const openDialog = async () => {
   overflow: hidden;
   border: thin solid rgba(var(--v-border-color), var(--v-border-opacity));
   border-radius: 0.5rem;
-  background: rgba(var(--v-theme-on-surface), 0.04);
+  background: rgb(var(--v-theme-surface-base));
 }
 
 .image-preview--tile .image-frame {
