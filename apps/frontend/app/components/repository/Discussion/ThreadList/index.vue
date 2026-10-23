@@ -43,7 +43,12 @@
           />
         </template>
       </VList>
-      <ThreadsEmptyState v-else-if="!isLoading" :filter="name" :scope="scope" />
+      <ThreadsEmptyState
+        v-else-if="!isLoading"
+        :filter="name"
+        :scope="scope"
+        @clear:search="name = ''"
+      />
     </div>
   </div>
 </template>

@@ -1,12 +1,21 @@
 <template>
   <TailorEmptyState
-    :icon="state.icon"
-    :text="state.text"
-    :title="state.title"
-    class="threads-empty-state mt-6 mx-2"
+    v-if="filter?.trim()"
+    :text="noMatchesText"
+    action-text="Clear search"
+    class="mt-6"
     height="auto"
-    size="48"
-    text-width="320"
+    icon="mdi-magnify"
+    prepend-action-icon="mdi-close"
+    title="No matches"
+    variant="text"
+    @click:action="emit('clear:search')"
+  />
+  <TailorEmptyState
+    v-else
+    v-bind="EMPTY_STATES[scope]"
+    class="mt-6"
+    height="auto"
     variant="text"
   />
 </template>
@@ -27,6 +36,8 @@ const props = defineProps<{
   scope: ThreadScope;
   filter?: string | null;
 }>();
+
+const emit = defineEmits<{ 'clear:search': [] }>();
 
 const EMPTY_STATES: Record<ThreadScope, EmptyState> = {
   all: {
@@ -56,34 +67,7 @@ const EMPTY_STATES: Record<ThreadScope, EmptyState> = {
   },
 };
 
-const state = computed<EmptyState>(() => {
-  const filter = props.filter?.trim();
-  if (!filter) return EMPTY_STATES[props.scope];
-  return {
-    title: 'No matches',
-    text: oneLine`
-      No conversation is called "${filter}". To search what
-      was said, use the search bar.`,
-    icon: 'mdi-filter-remove-outline',
-  };
-});
+const noMatchesText = computed(() => oneLine`
+  No conversation is called "${props.filter?.trim()}". To search what
+  was said, use the search bar.`);
 </script>
-
-<style lang="scss" scoped>
-.threads-empty-state {
-  :deep(.v-empty-state__title) {
-    font-size: 1rem;
-    line-height: 1.5rem;
-  }
-
-  :deep(.v-empty-state__content) {
-    padding: 1rem 0 0;
-  }
-
-  :deep(.v-empty-state__text) {
-    font-size: 0.8125rem;
-    line-height: 1.25rem;
-    opacity: var(--v-medium-emphasis-opacity);
-  }
-}
-</style>
