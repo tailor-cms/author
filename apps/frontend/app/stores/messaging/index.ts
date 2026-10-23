@@ -120,7 +120,7 @@ export const useMessagingStore = defineStore('messaging', () => {
     replies: replies.replies,
     replyParent: replies.replyParent,
     openReplyParentId: replies.openReplyParentId,
-    openedReplyId: replies.openedReplyId,
+    focusedReplyId: replies.focusedReplyId,
     openReplies: replies.openReplies,
     closeReplies: replies.closeReplies,
     postReply: threads.postReply,

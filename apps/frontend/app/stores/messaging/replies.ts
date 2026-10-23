@@ -6,8 +6,8 @@ import { api } from '@/api';
 export const createReplies = (messageCache: MessageCache) => {
   const replyIds = reactive(new Map<number, number[]>());
   const openReplyParentId = ref<number | null>(null);
-  // The reply they were opened at, e.g. from a search result
-  const openedReplyId = ref<number | null>(null);
+  // A reply to open at and highlight, e.g. from a search result
+  const focusedReplyId = ref<number | null>(null);
 
   const replyParent = computed(() => messageCache.get(openReplyParentId.value));
 
@@ -44,15 +44,15 @@ export const createReplies = (messageCache: MessageCache) => {
   // Opens a message's replies, at their latest or at the given reply
   async function openReplies(
     repositoryId: number,
-    messageId: number,
+    parentId: number,
     replyId: number | null = null,
   ) {
-    openReplyParentId.value = messageId;
-    openedReplyId.value = replyId;
+    openReplyParentId.value = parentId;
+    focusedReplyId.value = replyId;
     const items = await api.messaging.getReplies({
-      params: { repositoryId, messageId },
+      params: { repositoryId, messageId: parentId },
     });
-    replyIds.set(messageId, []);
+    replyIds.set(parentId, []);
     (items as unknown as Message[]).forEach((it) => indexReply(it));
     return items;
   }
@@ -64,12 +64,12 @@ export const createReplies = (messageCache: MessageCache) => {
   function clear() {
     replyIds.clear();
     openReplyParentId.value = null;
-    openedReplyId.value = null;
+    focusedReplyId.value = null;
   }
 
   return {
     openReplyParentId,
-    openedReplyId,
+    focusedReplyId,
     replyParent,
     replies,
     indexReply,

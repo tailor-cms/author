@@ -112,7 +112,7 @@
         <ReplyPanel
           :key="messagingStore.replyParent.id"
           :current-user-id="currentUserId"
-          :focused-id="messagingStore.openedReplyId"
+          :focused-id="messagingStore.focusedReplyId"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
           :thread-label="replyThreadLabel"
@@ -358,8 +358,8 @@ const postMessage = async (content: string) => {
 };
 
 // Separate column for replies
-const openReplies = (messageId: number, replyId?: number) =>
-  messagingStore.openReplies(repositoryId.value, messageId, replyId);
+const openReplies = (parentId: number, replyId?: number) =>
+  messagingStore.openReplies(repositoryId.value, parentId, replyId);
 
 const postReply = async (content: string, isBroadcast: boolean) => {
   const parentId = messagingStore.openReplyParentId;
