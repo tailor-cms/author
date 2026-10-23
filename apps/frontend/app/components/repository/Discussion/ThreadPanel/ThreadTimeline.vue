@@ -3,7 +3,13 @@
     <div ref="messagesEl" class="timeline-entries py-4">
       <slot name="intro" />
       <section v-for="day in days" :key="day.key" class="timeline-day">
-        <VDivider class="day-rule" />
+        <div
+          :class="{ 'unread-divider': startsUnread(day) }"
+          class="timeline-rule day-rule"
+        >
+          <VDivider v-bind="startsUnread(day) ? UNREAD_RULE : {}" />
+          <span v-if="startsUnread(day)" class="unread-label mr-6">New</span>
+        </div>
         <VChip
           :text="day.label"
           class="day-chip timeline-divider-chip px-4 font-weight-medium"
@@ -12,16 +18,16 @@
           variant="flat"
           border
         />
-        <template v-for="entry in day.entries" :key="entry.key">
-          <TimelineDivider
-            v-if="entry.type === 'unread'"
-            class="unread-divider my-6"
-            color="secondary"
-            icon="mdi-arrow-down"
-            text="New"
-          />
+        <template v-for="(entry, index) in day.entries" :key="entry.key">
+          <div
+            v-if="entry.type === 'unread' && index"
+            class="timeline-rule unread-divider my-4"
+          >
+            <VDivider v-bind="UNREAD_RULE" />
+            <span class="unread-label mr-4">New</span>
+          </div>
           <MessageRow
-            v-else
+            v-else-if="entry.type === 'message'"
             :current-user-id="currentUserId"
             :is-grouped="entry.isGrouped"
             :message="entry.message"
@@ -39,8 +45,7 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { TimelineDivider } from '@tailor-cms/core-components';
-import { buildTimeline, groupByDay } from './timeline';
+import { buildTimeline, groupByDay, type TimelineDay } from './timeline';
 import { useStickToBottom } from '../composables/useStickToBottom';
 import MessageRow from '../MessageRow/index.vue';
 
@@ -63,7 +68,12 @@ const emit = defineEmits<{
   update: [id: number, content: string];
 }>();
 
+const UNREAD_RULE = { color: 'secondary', opacity: 1 };
+
 const days = computed(() => groupByDay(buildTimeline(props)));
+
+// Unread from the day's first message: its rule doubles as the marker
+const startsUnread = (day: TimelineDay) => day.entries[0]?.type === 'unread';
 
 const viewportEl = ref<HTMLElement>();
 const messagesEl = ref<HTMLElement>();
@@ -82,8 +92,23 @@ useStickToBottom(viewportEl, messagesEl, () => props.messages);
   margin-top: auto;
 }
 
+// The label overhangs the 1px rule, so it never shifts the line
+.timeline-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 1px;
+}
+
+.unread-label {
+  color: rgb(var(--v-theme-secondary));
+  font-size: 0.8125rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
 .day-rule {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
 }
 
 // Centred on the rule at rest; pinned to the top while its day scrolls by
@@ -93,7 +118,7 @@ useStickToBottom(viewportEl, messagesEl, () => props.messages);
   top: 0.5rem;
   display: flex;
   width: fit-content;
-  margin: -1rem auto 0.75rem;
+  margin: -1rem auto 0;
   font-size: 0.8125rem;
   letter-spacing: 0.01em;
 }
