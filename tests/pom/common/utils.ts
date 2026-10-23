@@ -50,8 +50,11 @@ export const expectAlert = async (page: Page, message: string) => {
 
 // Drags a resize handle sideways; positive moves it right
 export const dragBy = async (page: Page, handle: Locator, deltaX: number) => {
+  // Waits until the handle stops moving (a drawer slides in) and takes the
+  // pointer, so the drag starts on it
+  await handle.hover();
   const box = (await handle.boundingBox())!;
-  const x = box.x + 2;
+  const x = box.x + box.width / 2;
   const y = box.y + box.height / 2;
   await page.mouse.move(x, y);
   await page.mouse.down();
