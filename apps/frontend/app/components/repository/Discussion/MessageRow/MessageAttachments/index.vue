@@ -4,7 +4,7 @@
       v-for="(attachment, index) in attachments"
       :key="index"
       :style="{ borderInlineStartColor: barColor(attachment) }"
-      class="attachment px-4 py-3"
+      class="attachment px-4 py-2"
       variant="flat"
     >
       <div
