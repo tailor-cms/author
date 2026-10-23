@@ -13,8 +13,8 @@
         @click="emit('close')"
       />
     </div>
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto py-3">
-      <div ref="messagesEl">
+    <div ref="viewportEl" class="reply-viewport overflow-y-auto">
+      <div ref="messagesEl" class="py-3">
         <MessageRow
           v-if="parent"
           :current-user-id="currentUserId"
@@ -44,17 +44,18 @@
         />
       </div>
     </div>
-    <div class="flex-shrink-0 pt-1 px-4 pb-4">
+    <div class="flex-shrink-0 px-4 pb-2">
       <MessageComposer
         placeholder="Reply..."
         @edit:last="editLast"
         @submit="submit"
       />
-      <VCheckbox
+      <VCheckboxBtn
         v-model="isBroadcast"
         label="Also send to thread"
-        class="broadcast-checkbox mt-1"
-        hide-details
+        class="broadcast-checkbox mt-2"
+        density="compact"
+        inline
       />
     </div>
   </div>
@@ -130,6 +131,11 @@ useStickToBottom(
   min-height: 0;
 }
 
+.reply-viewport {
+  flex: 0 1 auto;
+  min-height: 0;
+}
+
 .reply-count {
   font-weight: 600;
   white-space: nowrap;
@@ -137,6 +143,7 @@ useStickToBottom(
 
 .broadcast-checkbox {
   :deep(.v-label) {
+    padding-inline-start: 0.375rem;
     font-size: 0.8125rem;
     opacity: var(--v-medium-emphasis-opacity);
   }

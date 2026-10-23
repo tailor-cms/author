@@ -207,9 +207,12 @@ const hasBody = computed(() => {
     animation: message-highlight 2s ease-out;
   }
 
-  // The narrower replies column
   &--reply {
     margin: 0 0.75rem;
+
+    .message-row-actions {
+      right: 0.25rem;
+    }
   }
 }
 
@@ -246,6 +249,6 @@ const hasBody = computed(() => {
   position: absolute;
   z-index: 1;
   top: calc(var(--row-overlap) - 1rem);
-  right: 0.75rem;
+  right: 1.25rem;
 }
 </style>

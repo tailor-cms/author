@@ -49,7 +49,7 @@
           aria-label="Post message"
           density="comfortable"
           icon="mdi-send"
-          rounded="lg"
+          rounded="4"
           size="small"
           variant="tonal"
           @click="submit"
@@ -193,7 +193,7 @@ defineExpose({ focus, submit });
   // Outlined like a Vuetify field (rounded="lg") at rest
   border: thin solid rgba(var(--v-theme-on-surface), 0.38);
   border-radius: 0.5rem;
-  background: rgb(var(--v-theme-surface-canvas));
+  background: rgb(var(--v-theme-surface-base));
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 
   @media (hover: hover) {
