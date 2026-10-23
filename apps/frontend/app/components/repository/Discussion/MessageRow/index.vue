@@ -8,7 +8,7 @@
       'message-row--highlighted': isHighlighted,
     }"
     :data-message-id="message.id"
-    class="message-row"
+    class="message-row rounded-lg mx-5"
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
     <div class="message-row-gutter d-flex align-center">
@@ -52,7 +52,7 @@
         <MessageAttachments
           v-if="hasCards"
           :attachments="attachments"
-          class="mt-2"
+          class="my-1"
         />
         <MessageReactions
           :current-user-id="currentUserId"
@@ -166,13 +166,14 @@ const hasBody = computed(() => {
 
 <style lang="scss" scoped>
 .message-row {
+  --row-overlap: 0.25rem;
   position: relative;
   isolation: isolate;
   display: grid;
   grid-template-columns: 3rem 1fr;
   align-items: start;
-  margin-block: -0.5rem;
-  padding: 0.5rem 1.25rem;
+  margin-block: calc(-2 * var(--row-overlap));
+  padding: 0.5rem;
 
   // Hover state layer, tinting whatever surface the row sits on
   // while staying under the row's cards
@@ -180,7 +181,7 @@ const hasBody = computed(() => {
     content: '';
     position: absolute;
     z-index: -1;
-    inset: 0.25rem 0;
+    inset: var(--row-overlap) 0;
     border-radius: inherit;
     background: currentColor;
     opacity: 0;
@@ -208,11 +209,7 @@ const hasBody = computed(() => {
 
   // The narrower replies column
   &--reply {
-    padding-inline: 1rem;
-  }
-
-  &--card {
-    padding-block: 0.75rem;
+    margin: 0 0.75rem;
   }
 }
 

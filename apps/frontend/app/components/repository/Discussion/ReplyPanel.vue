@@ -13,7 +13,7 @@
         @click="emit('close')"
       />
     </div>
-    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto pt-4 pb-3">
+    <div ref="viewportEl" class="flex-grow-1 overflow-y-auto py-3">
       <div ref="messagesEl">
         <MessageRow
           v-if="parent"

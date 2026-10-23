@@ -97,8 +97,11 @@ useStickToBottom(
   min-height: 0;
 }
 
+// Capped like the search results; the scrollbar stays at the edge
 .timeline-entries {
-  margin-top: auto;
+  width: 100%;
+  max-width: 87.5rem;
+  margin: auto auto 0;
 }
 
 // The label overhangs the 1px rule, so it never shifts the line

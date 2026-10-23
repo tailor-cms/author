@@ -1,6 +1,6 @@
 <template>
   <slot v-if="!isPreviewOnly" />
-  <div v-if="images.length" class="d-flex flex-wrap ga-2">
+  <div v-if="images.length" class="d-flex flex-wrap ga-2 my-1">
     <ImagePreview
       v-for="{ reference, asset, href } in images"
       :key="reference.entityId"
@@ -9,7 +9,7 @@
       :is-tile="images.length > 1"
     />
   </div>
-  <div class="d-flex flex-wrap ga-2">
+  <div v-if="files.length" class="d-flex flex-wrap ga-2 my-1">
     <FilePreview
       v-for="{ reference, asset, href } in files"
       :key="reference.entityId"
@@ -17,7 +17,7 @@
       :href="href"
     />
   </div>
-  <LinkPreview v-for="url in links" :key="url" :url="url" class="mt-2" />
+  <LinkPreview v-for="url in links" :key="url" :url="url" class="my-1" />
 </template>
 
 <script lang="ts" setup>

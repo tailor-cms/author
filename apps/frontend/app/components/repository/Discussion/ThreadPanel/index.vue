@@ -86,6 +86,9 @@ const editLast = () => {
 }
 
 .composer-field {
+  width: 100%;
+  max-width: 87.5rem;
+  margin-inline: auto;
   padding: 0 1.25rem;
 
   .typing-indicator {
