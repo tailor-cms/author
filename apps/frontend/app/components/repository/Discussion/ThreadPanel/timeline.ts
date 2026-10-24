@@ -1,11 +1,8 @@
 import type { Message } from '@tailor-cms/interfaces/comment';
 
 import { compact } from 'lodash-es';
-import { formatDate } from 'date-fns/format';
+import { dayLabel } from '@tailor-cms/core-components';
 import { isSameDay } from 'date-fns/isSameDay';
-import { isThisYear } from 'date-fns/isThisYear';
-import { isToday } from 'date-fns/isToday';
-import { isYesterday } from 'date-fns/isYesterday';
 
 export type TimelineEntry =
   | { type: 'day'; key: string; label: string }
@@ -28,12 +25,6 @@ interface TimelineSource {
 
 // Messages from one sender within this window read as one block
 const GROUP_WINDOW_MS = 5 * 60 * 1000;
-
-const dayLabel = (date: Date) => {
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
-  return formatDate(date, isThisYear(date) ? 'd MMMM' : 'd MMMM yyyy');
-};
 
 // Integration posts have no author, so the integration and the name it
 // posts under tell them apart

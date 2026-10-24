@@ -14,7 +14,7 @@
       />
     </div>
     <div ref="viewportEl" class="reply-viewport overflow-y-auto">
-      <div ref="messagesEl" class="py-3">
+      <div ref="messagesEl" class="py-5">
         <MessageRow
           v-if="parent"
           :current-user-id="currentUserId"
@@ -142,9 +142,15 @@ useStickToBottom(
 }
 
 .broadcast-checkbox {
+  --v-selection-control-size: 1.5rem;
+
+  :deep(.v-icon) {
+    font-size: 1.125rem;
+  }
+
   :deep(.v-label) {
-    padding-inline-start: 0.375rem;
-    font-size: 0.8125rem;
+    padding-inline-start: 0.25rem;
+    font-size: 0.75rem;
     opacity: var(--v-medium-emphasis-opacity);
   }
 }
