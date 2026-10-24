@@ -32,10 +32,7 @@
         :has-day="isReplyTarget"
         :message="message"
       />
-      <div
-        v-if="isDeleted"
-        class="text-body-large text-medium-emphasis font-italic"
-      >
+      <div v-if="isDeleted" class="deleted text-medium-emphasis">
         This message was deleted.
       </div>
       <MessageEditor
@@ -178,6 +175,11 @@ const hasBody = computed(() => {
   align-items: start;
   margin-block: calc(-2 * var(--row-overlap));
   padding: 0.5rem;
+
+  .deleted {
+    font-size: 0.875rem;
+    font-style: italic;
+  }
 
   // Hover state layer, tinting whatever surface the row sits on
   // while staying under the row's cards
