@@ -27,7 +27,11 @@
         class="mb-1"
         @open="openParent"
       />
-      <MessageHeader v-if="!isGrouped && !isEditing" :message="message" />
+      <MessageHeader
+        v-if="!isGrouped && !isEditing"
+        :has-day="isReplyTarget"
+        :message="message"
+      />
       <div
         v-if="isDeleted"
         class="text-body-large text-medium-emphasis font-italic"
@@ -208,7 +212,7 @@ const hasBody = computed(() => {
   }
 
   &--reply {
-    margin: 0 0.75rem;
+    margin-inline: 0.75rem;
 
     .message-row-actions {
       right: 0.25rem;

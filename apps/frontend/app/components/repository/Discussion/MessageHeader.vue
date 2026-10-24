@@ -14,6 +14,7 @@
     />
     <MessageTime
       :at="message.createdAt"
+      :has-day="hasDay"
       :is-relative="hasRelativeTime"
       class="text-body-small text-medium-emphasis"
     />
@@ -32,6 +33,7 @@ defineProps<{
     'author' | 'senderName' | 'integration' | 'createdAt'
   >;
   hasRelativeTime?: boolean;
+  hasDay?: boolean;
 }>();
 </script>
 

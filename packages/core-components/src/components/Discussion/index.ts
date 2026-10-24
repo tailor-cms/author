@@ -11,6 +11,7 @@ export {
   type ReferenceViews,
 } from './context';
 export type { SuggestionFetcher, SuggestionItem } from './types';
+export { dayLabel } from './dayLabel';
 export { lastOwnMessage } from './lastOwnMessage';
 export { referenceIcon } from './referenceIcon';
 export { default as TimelineDivider } from './TimelineDivider.vue';
