@@ -34,7 +34,7 @@
 import type { ReaderThread } from '@tailor-cms/api-client';
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { PagingStatus } from '@/stores/messaging';
+import { PagingStatus } from '@/stores/messaging/pages';
 import {
   lastOwnMessage,
   MessageComposer,

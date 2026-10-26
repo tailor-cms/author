@@ -17,7 +17,6 @@ import { useAuthStore } from '@/stores/auth';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type { ThreadScope } from '@tailor-cms/interfaces/comment';
-export { PagingStatus } from './pages';
 
 export const useMessagingStore = defineStore('messaging', () => {
   const authStore = useAuthStore();

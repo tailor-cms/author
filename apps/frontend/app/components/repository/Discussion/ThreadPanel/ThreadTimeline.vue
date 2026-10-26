@@ -52,7 +52,7 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { PagingStatus } from '@/stores/messaging';
+import { PagingStatus } from '@/stores/messaging/pages';
 import { buildTimeline, groupByDay, type TimelineDay } from './timeline';
 import MessageRow from '../MessageRow/index.vue';
 import MessageViewport from '../MessageViewport.vue';

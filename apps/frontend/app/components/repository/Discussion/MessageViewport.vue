@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { PagingStatus } from '@/stores/messaging';
+import { PagingStatus } from '@/stores/messaging/pages';
 import { useInfiniteScroll } from '@vueuse/core';
 import { useStickToBottom } from './composables/useStickToBottom';
 
