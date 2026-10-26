@@ -2,9 +2,13 @@
   <VBtn
     class="reply-footer pl-1 pr-2"
     color="secondary"
+    max-width="100%"
     rounded="lg"
     size="small"
+    spaced="end"
     variant="text"
+    width="22rem"
+    border
     @click="emit('open')"
   >
     <span v-if="repliers.length" class="d-flex mr-2">
@@ -22,10 +26,17 @@
     </span>
     <span
       v-if="message.lastReplyAt"
-      class="text-body-small text-medium-emphasis ml-2"
+      class="reply-footer-hint text-body-small text-medium-emphasis ml-2"
     >
-      {{ lastReplyAgo }}
+      {{ lastReplyLabel }}
     </span>
+    <VSpacer />
+    <VIcon
+      class="reply-footer-hint ml-2"
+      color="text-medium-emphasis"
+      icon="mdi-chevron-right"
+      size="small"
+    />
   </VBtn>
 </template>
 
@@ -55,9 +66,33 @@ const repliers = computed(() =>
 );
 
 const lastReplyAgo = useTimeAgo(() => props.message.lastReplyAt ?? '');
+
+// With a single reply, "last" says nothing
+const lastReplyLabel = computed(() =>
+  count.value > 1 ? `Last reply ${lastReplyAgo.value}` : lastReplyAgo.value,
+);
 </script>
 
 <style lang="scss" scoped>
+.reply-footer {
+  border-color: transparent;
+  transition: border-color 0.15s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(var(--v-border-color), var(--v-border-opacity));
+
+    .reply-footer-hint {
+      opacity: 1;
+    }
+  }
+}
+
+.reply-footer-hint {
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
 .reply-footer-avatar {
   box-shadow: 0 0 0 0.125rem rgb(var(--v-theme-surface-raised));
 
