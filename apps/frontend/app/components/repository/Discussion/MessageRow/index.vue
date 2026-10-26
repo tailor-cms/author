@@ -8,7 +8,7 @@
       'message-row--highlighted': isHighlighted,
     }"
     :data-message-id="message.id"
-    class="message-row rounded-lg mx-5"
+    class="message-row"
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
     <div class="message-row-gutter d-flex align-center">
@@ -175,7 +175,7 @@ const hasBody = computed(() => {
   grid-template-columns: 3rem 1fr;
   align-items: start;
   margin-block: calc(-2 * var(--row-overlap));
-  padding: 0.5rem;
+  padding: 0.5rem 1.25rem;
 
   .deleted {
     font-size: 0.875rem;
@@ -215,10 +215,8 @@ const hasBody = computed(() => {
   }
 
   &--reply {
-    margin-inline: 0.75rem;
-
     .message-row-actions {
-      right: 0.25rem;
+      right: 1rem;
     }
   }
 }

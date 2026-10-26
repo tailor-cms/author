@@ -1,6 +1,6 @@
 <template>
   <div class="reply-panel d-flex flex-column">
-    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-4">
+    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 pt-4">
       <h3 class="text-title-medium font-weight-bold">Replies</h3>
       <VSpacer />
       <VBtn
@@ -32,7 +32,7 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div class="d-flex align-center ga-3 px-4 py-2">
+        <div v-if="replyCount > 0" class="d-flex align-center ga-3 px-4 py-2">
           <span class="reply-count text-body-small text-medium-emphasis">
             {{ pluralize('reply', replyCount, true) }}
           </span>
