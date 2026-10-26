@@ -80,6 +80,8 @@ export class Thread {
   readonly referencePreview: Locator;
   // Who else is writing in this thread right now
   readonly typingIndicator: Locator;
+  // Shown while opened at an older stretch, short of the newest
+  readonly jumpToLatestBtn: Locator;
   readonly composer: MessageComposer;
   readonly editor: MessageEditor;
 
@@ -101,6 +103,10 @@ export class Thread {
     this.unreadDivider = el.locator('.unread-divider').first();
     this.referencePreview = page.locator('.reference-preview');
     this.typingIndicator = el.locator('.typing-indicator');
+    this.jumpToLatestBtn = el.getByRole('button', {
+      name: 'Jump to latest',
+      exact: true,
+    });
     this.composer = new MessageComposer(page, el);
     this.editor = new MessageEditor(page, el);
     this.page = page;

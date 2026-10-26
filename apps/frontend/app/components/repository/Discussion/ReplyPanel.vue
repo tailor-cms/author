@@ -15,9 +15,11 @@
     </div>
     <MessageViewport
       :focused-id="focusedId"
-      :paging-status="pagingStatus"
+      :paging="paging"
       :messages="replies"
       class="reply-viewport"
+      @jump:latest="emit('jump:latest')"
+      @load:newer="emit('load:newer')"
       @load:older="emit('load:older')"
     >
       <div class="py-5">
@@ -73,7 +75,7 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { PagingStatus } from '@/stores/messaging/pages';
+import { NO_PAGING, type Paging } from '@/stores/messaging/pages';
 import {
   lastOwnMessage,
   MessageComposer,
@@ -92,18 +94,20 @@ interface Props {
   focusedId?: number | null;
   // The first page is still on the way
   isLoading?: boolean;
-  pagingStatus?: PagingStatus;
+  paging?: Paging;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   focusedId: null,
   isLoading: false,
-  pagingStatus: PagingStatus.Empty,
+  paging: () => NO_PAGING,
 });
 
 const emit = defineEmits<{
   'load:older': [];
+  'load:newer': [];
+  'jump:latest': [];
   'close': [];
   'submit': [content: string, isBroadcast: boolean];
   'remove': [id: number];

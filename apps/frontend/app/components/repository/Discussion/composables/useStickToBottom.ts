@@ -6,14 +6,17 @@ const BOTTOM_THRESHOLD_PX = 48;
 
 /**
  * Keeps a message list pinned to its newest entry. Given `startAt`, the
- * list opens at that message instead, and moves to it when it changes.
- * Older messages loaded above leave the reader where they were.
+ * list opens at that message instead, and moves to it when it changes or
+ * the list reloads. Pages loaded at either end leave the reader where
+ * they were; while `hasNewer`, the end is not the newest, so nothing
+ * pins to it.
  */
 export const useStickToBottom = (
   viewportEl: Ref<HTMLElement | undefined>,
   contentEl: Ref<HTMLElement | undefined>,
   messages: MaybeRefOrGetter<{ id: number }[]>,
   startAt?: MaybeRefOrGetter<number | null | undefined>,
+  hasNewer?: MaybeRefOrGetter<boolean>,
 ) => {
   const isAtBottom = ref(true);
   // Until the first messages are shown
@@ -45,7 +48,7 @@ export const useStickToBottom = (
     },
   });
   useResizeObserver([viewportEl, contentEl], () => {
-    if (isAtBottom.value) scrollToBottom();
+    if (isAtBottom.value && !toValue(hasNewer)) scrollToBottom();
   });
 
   // Measured before the list grows: the distance from the end holds
@@ -58,15 +61,34 @@ export const useStickToBottom = (
   };
 
   watch(
-    [() => toValue(messages).length, () => toValue(messages).at(-1)?.id],
-    async ([length, lastId], [prevLength = 0, prevLastId]) => {
-      const isOlderPage =
-        hasStarted && lastId === prevLastId && length > prevLength;
-      if (isOlderPage) return keepOffsetFromEnd();
+    [
+      () => toValue(messages).length,
+      () => toValue(messages)[0]?.id,
+      () => toValue(messages).at(-1)?.id,
+      () => !!toValue(hasNewer),
+    ],
+    async (
+      [length, firstId, lastId],
+      [prevLength = 0, prevFirstId, prevLastId, hadNewer],
+    ) => {
+      if (!hasStarted) {
+        await nextTick();
+        if (!length) return;
+        hasStarted = true;
+        return scrollToStart();
+      }
+      const isGrown = length > prevLength;
+      // An older page, above the reader
+      if (isGrown && lastId === prevLastId) return keepOffsetFromEnd();
+      if (isGrown && firstId === prevFirstId) {
+        // A newer page, below the reader
+        if (hadNewer) return;
+        // A new message at the end
+        await nextTick();
+        return scrollToBottom();
+      }
+      // Reloaded, e.g. at another message or back at the newest
       await nextTick();
-      if (hasStarted) return scrollToBottom();
-      if (!length) return;
-      hasStarted = true;
       scrollToStart();
     },
     { immediate: true },

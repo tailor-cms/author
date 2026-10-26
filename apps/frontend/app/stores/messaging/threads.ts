@@ -5,7 +5,7 @@ import type { Replies } from './replies';
 import type { Unread } from './unread';
 
 import { compact, debounce, map } from 'lodash-es';
-import { createMessagePages, PAGE_SIZE } from './pages';
+import { createMessagePages, PAGE_SIZE, type PageQuery } from './pages';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
@@ -64,7 +64,7 @@ export const createThreads = (
     return threadId ? messageCache.getMany(messageIds.get(threadId)) : [];
   });
 
-  const messagePagingStatus = computed(() => pages.status(selectedThreadId.value));
+  const messagesPaging = computed(() => pages.paging(selectedThreadId.value));
 
   const isListFiltered = computed(() => {
     const { scope, type, name } = listParams.value;
@@ -111,6 +111,8 @@ export const createThreads = (
     if (!threadId) return;
     const ids = messageIds.get(threadId) ?? [];
     if (ids.includes(message.id)) return;
+    // Opened at an older stretch, it comes in with the newest messages
+    if (isNew && pages.hasNewer(threadId)) return;
     messageIds.set(threadId, [...ids, message.id]);
   }
 
@@ -159,10 +161,10 @@ export const createThreads = (
   }
 
   const fetchMessages =
-    (repositoryId: number, threadId: number) => (before?: number) =>
+    (repositoryId: number, threadId: number) => (query: PageQuery = {}) =>
       api.messaging.getMessages({
         params: { repositoryId, threadId },
-        query: { before, limit: PAGE_SIZE },
+        query: { ...query, limit: PAGE_SIZE },
       });
 
   // Puts a thread on screen, with where its "New" marker starts
@@ -172,8 +174,13 @@ export const createThreads = (
   }
 
   // Shows the thread with its messages, never empty in between: one seen
-  // before switches at once and refreshes, a new one once they arrive
-  async function selectThread(repositoryId: number, threadId: number) {
+  // before switches at once and refreshes, a new one once they arrive.
+  // Opened at a message, it loads back to it
+  async function selectThread(
+    repositoryId: number,
+    threadId: number,
+    messageId: number | null = null,
+  ) {
     requestedThreadId = threadId;
     isInView.value = true;
     if (!threads.has(threadId)) {
@@ -188,12 +195,10 @@ export const createThreads = (
     const watermark = thread?.isUnread
       ? (thread.lastReadAt ?? new Date(0).toISOString())
       : null;
-    if (hasLoadedMessages(threadId)) {
-      pages.trimToLatest(messageIds, threadId);
-      showThread(threadId, watermark);
-    }
+    pages.trimToLatest(messageIds, threadId);
+    if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
     const fetchPage = fetchMessages(repositoryId, threadId);
-    const items = await pages.fetchLatest(threadId, fetchPage);
+    const items = await pages.fetchLatest(threadId, fetchPage, messageId);
     // Another thread was picked meanwhile
     if (requestedThreadId !== threadId) return items;
     messageIds.set(threadId, []);
@@ -208,6 +213,13 @@ export const createThreads = (
     if (!threadId) return;
     const fetchPage = fetchMessages(repositoryId, threadId);
     return pages.loadOlder(messageIds, threadId, fetchPage);
+  }
+
+  function loadNewerMessages(repositoryId: number) {
+    const threadId = selectedThreadId.value;
+    if (!threadId) return;
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    return pages.loadNewer(messageIds, threadId, fetchPage);
   }
 
   function deselectThread() {
@@ -237,6 +249,8 @@ export const createThreads = (
     threadId: number,
     content: string,
   ) {
+    // Sent from an older stretch, the thread moves to the newest first
+    if (pages.hasNewer(threadId)) await selectThread(repositoryId, threadId);
     const thread = threads.get(threadId);
     const message = await messageCache.save({
       repositoryId,
@@ -259,6 +273,9 @@ export const createThreads = (
     content: string,
     isBroadcast = false,
   ) {
+    if (replies.hasNewerReplies(parentId)) {
+      await replies.openReplies(repositoryId, parentId);
+    }
     const message = await messageCache.save({
       repositoryId,
       parentId,
@@ -371,7 +388,7 @@ export const createThreads = (
     selectedThreadId,
     openedWatermark,
     selectedThreadMessages,
-    messagePagingStatus,
+    messagesPaging,
     isLoading,
     total,
     hasLoadedMessages,
@@ -384,6 +401,7 @@ export const createThreads = (
     fetchThreads,
     selectThread,
     loadOlderMessages,
+    loadNewerMessages,
     deselectThread,
     leaveThread,
     startThread,

@@ -1,5 +1,5 @@
 <template>
-  <div :class="{ resolved: isResolved }" class="content text-body-large">
+  <div :class="{ resolved: isResolved }" class="content">
     <span v-if="isDeleted" class="deleted text-medium-emphasis font-italic">
       This comment was deleted.
     </span>
@@ -69,5 +69,9 @@ const previews = referenceViews?.previews ?? TextOnly;
     margin-bottom: 0.25rem;
     font-size: 0.75rem;
   }
+}
+
+.deleted {
+  font-size: 0.9375rem;
 }
 </style>

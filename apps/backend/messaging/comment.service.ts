@@ -99,24 +99,48 @@ export async function list(
   return repository.getComments({ ...opts, where, include: commentIncludes() });
 }
 
+// An id bound, e.g. `{ [Op.lt]: 42 }`
+type IdRange = Record<symbol, number>;
+
+// Up to `limit` messages on one side of an id, oldest first
+async function listSide(
+  where: WhereOptions,
+  id: IdRange | undefined,
+  isNewer: boolean,
+  limit: number,
+): Promise<Comment[]> {
+  const { Comment } = models();
+  const rows = await Comment.findAll({
+    where: id ? { ...where, id } : where,
+    include: messageIncludes(),
+    order: [['createdAt', isNewer ? 'ASC' : 'DESC']],
+    limit,
+    paranoid: false,
+  });
+  return isNewer ? rows : rows.reverse();
+}
+
 /**
- * The newest page of messages matching `where`, or the page before the
- * `before` message; oldest first either way.
+ * A page of messages matching `where`, oldest first: the newest, the one
+ * before `before` or after `after`, or one `around` a message, which
+ * starts half a page before it.
  */
 export async function listPage(
   where: WhereOptions,
   filters: MessageFilter = {},
 ): Promise<Comment[]> {
-  const { Comment } = models();
-  const { before, limit = 50 } = filters;
-  const rows = await Comment.findAll({
-    where: before ? { ...where, id: { [Op.lt]: before } } : where,
-    include: messageIncludes(),
-    order: [['createdAt', 'DESC']],
-    limit,
-    paranoid: false,
-  });
-  return rows.reverse();
+  const { before, after, around, limit = 50 } = filters;
+  if (around) {
+    const half = Math.floor(limit / 2);
+    const [older, newer] = await Promise.all([
+      listSide(where, { [Op.lt]: around }, false, half),
+      listSide(where, { [Op.gte]: around }, true, limit - half),
+    ]);
+    return [...older, ...newer];
+  }
+  if (after) return listSide(where, { [Op.gt]: after }, true, limit);
+  const id = before ? { [Op.lt]: before } : undefined;
+  return listSide(where, id, false, limit);
 }
 
 export function listReplies(

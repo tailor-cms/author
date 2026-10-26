@@ -1,13 +1,15 @@
 <template>
   <MessageViewport
     :focused-id="focusedId"
-    :paging-status="pagingStatus"
+    :paging="paging"
     :messages="messages"
     class="thread-timeline flex-grow-1"
+    @jump:latest="emit('jump:latest')"
+    @load:newer="emit('load:newer')"
     @load:older="emit('load:older')"
   >
     <div class="timeline-entries py-6">
-      <slot v-if="pagingStatus === PagingStatus.Empty" name="intro" />
+      <slot v-if="paging.older === PagingStatus.Empty" name="intro" />
       <section v-for="day in days" :key="day.key" class="timeline-day">
         <div
           :class="{ 'unread-divider': startsUnread(day) }"
@@ -52,7 +54,11 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { PagingStatus } from '@/stores/messaging/pages';
+import {
+  NO_PAGING,
+  type Paging,
+  PagingStatus,
+} from '@/stores/messaging/pages';
 import { buildTimeline, groupByDay, type TimelineDay } from './timeline';
 import MessageRow from '../MessageRow/index.vue';
 import MessageViewport from '../MessageViewport.vue';
@@ -64,18 +70,20 @@ interface Props {
   lastReadAt?: string | null;
   // Opened at and highlighted, e.g. from a search result
   focusedId?: number | null;
-  pagingStatus?: PagingStatus;
+  paging?: Paging;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   lastReadAt: null,
   focusedId: null,
-  pagingStatus: PagingStatus.Empty,
+  paging: () => NO_PAGING,
 });
 
 const emit = defineEmits<{
   'load:older': [];
+  'load:newer': [];
+  'jump:latest': [];
   'remove': [id: number];
   'reply': [id: number];
   'react': [id: number, emoji: string];

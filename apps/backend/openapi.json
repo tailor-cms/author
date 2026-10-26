@@ -11816,6 +11816,28 @@
             }
           },
           {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages newer than this one; what scrolling down from an older stretch of a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "around",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load a page around this message, half of it before; what opening a thread or its replies at an older message asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
             "name": "limit",
             "in": "query",
             "required": false,
@@ -12830,6 +12852,28 @@
             "required": false,
             "schema": {
               "description": "Load messages older than this one; what scrolling up a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages newer than this one; what scrolling down from an older stretch of a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "around",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load a page around this message, half of it before; what opening a thread or its replies at an older message asks for.",
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991

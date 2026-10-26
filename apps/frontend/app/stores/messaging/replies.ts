@@ -1,7 +1,7 @@
 import type { Message } from '@tailor-cms/interfaces/comment';
 import type { MessageCache } from './messageCache';
 
-import { createMessagePages, PAGE_SIZE } from './pages';
+import { createMessagePages, PAGE_SIZE, type PageQuery } from './pages';
 import { api } from '@/api';
 
 export const createReplies = (messageCache: MessageCache) => {
@@ -24,15 +24,16 @@ export const createReplies = (messageCache: MessageCache) => {
     return !!parentId && !replyIds.has(parentId);
   });
 
-  const replyPagingStatus = computed(() =>
-    pages.status(openReplyParentId.value),
-  );
+  const repliesPaging = computed(() => pages.paging(openReplyParentId.value));
+
+  // Opened at an older reply, short of the newest
+  const hasNewerReplies = (parentId: number) => pages.hasNewer(parentId);
 
   const fetchReplies =
-    (repositoryId: number, parentId: number) => (before?: number) =>
+    (repositoryId: number, parentId: number) => (query: PageQuery = {}) =>
       api.messaging.getReplies({
         params: { repositoryId, messageId: parentId },
-        query: { before, limit: PAGE_SIZE },
+        query: { ...query, limit: PAGE_SIZE },
       });
 
   // Only a new reply raises the count; loaded ones are already counted
@@ -42,8 +43,10 @@ export const createReplies = (messageCache: MessageCache) => {
     if (!parentId) return;
     const ids = replyIds.get(parentId) ?? [];
     if (ids.includes(message.id)) return;
-    replyIds.set(parentId, [...ids, message.id]);
     if (isNew) countReply(parentId, message);
+    // Opened at an older stretch, it comes in with the newest replies
+    if (isNew && pages.hasNewer(parentId)) return;
+    replyIds.set(parentId, [...ids, message.id]);
   }
 
   // Updates the parent's "N replies" footer
@@ -70,7 +73,7 @@ export const createReplies = (messageCache: MessageCache) => {
     openReplyParentId.value = parentId;
     focusedReplyId.value = replyId;
     const fetchPage = fetchReplies(repositoryId, parentId);
-    const items = await pages.fetchLatest(parentId, fetchPage);
+    const items = await pages.fetchLatest(parentId, fetchPage, replyId);
     replyIds.set(parentId, []);
     items.forEach((it) => indexReply(it));
     return items;
@@ -81,6 +84,13 @@ export const createReplies = (messageCache: MessageCache) => {
     if (!parentId) return;
     const fetchPage = fetchReplies(repositoryId, parentId);
     return pages.loadOlder(replyIds, parentId, fetchPage);
+  }
+
+  function loadNewerReplies(repositoryId: number) {
+    const parentId = openReplyParentId.value;
+    if (!parentId) return;
+    const fetchPage = fetchReplies(repositoryId, parentId);
+    return pages.loadNewer(replyIds, parentId, fetchPage);
   }
 
   function closeReplies() {
@@ -100,10 +110,12 @@ export const createReplies = (messageCache: MessageCache) => {
     replyParent,
     replies,
     isLoadingReplies,
-    replyPagingStatus,
+    repliesPaging,
+    hasNewerReplies,
     indexReply,
     openReplies,
     loadOlderReplies,
+    loadNewerReplies,
     closeReplies,
     clear,
   };

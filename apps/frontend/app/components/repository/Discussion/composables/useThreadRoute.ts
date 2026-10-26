@@ -31,22 +31,29 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
     router.replace({ query: toQuery(threadId) });
 
   // Reloads the thread kept from a previous visit too, so its "New"
-  // marker starts where that visit left off
-  const select = async (threadId: number | null) => {
+  // marker starts where that visit left off; opened at a message, back
+  // to that message
+  const select = async (threadId: number | null, messageId: number | null) => {
     if (!threadId) return messagingStore.deselectThread();
     try {
-      await messagingStore.selectThread(toValue(repositoryId), threadId);
+      await messagingStore.selectThread(
+        toValue(repositoryId),
+        threadId,
+        messageId,
+      );
     } catch {
       notify('That thread is no longer available', { color: 'error' });
       replaceThread(null);
     }
   };
 
-  watch(routeThreadId, select);
+  watch([routeThreadId, routeMessageId], ([threadId, messageId]) =>
+    select(threadId, messageId),
+  );
   onBeforeUnmount(() => messagingStore.leaveThread());
 
   // Arriving without a thread in the URL reopens the last one viewed
-  if (routeThreadId.value) select(routeThreadId.value);
+  if (routeThreadId.value) select(routeThreadId.value, routeMessageId.value);
   else if (messagingStore.selectedThreadId) {
     replaceThread(messagingStore.selectedThreadId);
   }

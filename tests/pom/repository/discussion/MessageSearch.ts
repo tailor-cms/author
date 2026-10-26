@@ -56,6 +56,13 @@ export class MessageSearch {
     return this.hits.filter({ hasText: text });
   }
 
+  // Opens the thread at the hit
+  async openHit(text: string) {
+    const hit = this.getHitLocator(text).first();
+    await expect(hit).toBeVisible();
+    await hit.click();
+  }
+
   getGroupLocator(text: string) {
     return this.groups.filter({ hasText: text });
   }
