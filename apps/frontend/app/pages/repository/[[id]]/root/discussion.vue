@@ -305,7 +305,7 @@ const isThreadPending = computed(
     !!routeThreadId.value &&
     routeThreadId.value !== messagingStore.selectedThreadId,
 );
-const isThreadSlow = useSkeletonDelay(isThreadPending);
+const isThreadSlow = useDelayedLoading(isThreadPending);
 
 const closeSearch = () => {
   isSearchOpen.value = false;

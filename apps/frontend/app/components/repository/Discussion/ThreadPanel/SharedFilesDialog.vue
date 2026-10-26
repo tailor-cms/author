@@ -103,7 +103,7 @@ const items = ref<SharedAsset[]>([]);
 const isLoading = ref(false);
 // Until the first answer, an empty list means nothing is known yet
 const hasLoaded = ref(false);
-const isSkeletonVisible = useSkeletonDelay(isLoading);
+const isSkeletonVisible = useDelayedLoading(isLoading);
 
 const load = async (isStale: () => boolean) => {
   const threadId =
