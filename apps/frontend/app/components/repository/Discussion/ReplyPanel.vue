@@ -37,12 +37,7 @@
           <VDivider />
         </div>
         <div v-if="isLoadingSlow" class="d-flex justify-center py-6">
-          <VProgressCircular
-            color="primary"
-            size="22"
-            width="2"
-            indeterminate
-          />
+          <VProgressCircular aria-label="Loading replies" indeterminate />
         </div>
         <MessageRow
           v-for="(reply, index) in replies"

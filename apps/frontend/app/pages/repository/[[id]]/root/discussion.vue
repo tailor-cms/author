@@ -170,9 +170,7 @@
       <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
         <VProgressCircular
           v-if="isThreadSlow"
-          color="primary"
-          size="22"
-          width="2"
+          aria-label="Loading thread"
           indeterminate
         />
       </div>

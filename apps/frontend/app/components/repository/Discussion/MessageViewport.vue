@@ -16,9 +16,6 @@
         <VProgressCircular
           v-else
           aria-label="Loading earlier messages"
-          color="primary"
-          size="22"
-          width="2"
           indeterminate
         />
       </div>
