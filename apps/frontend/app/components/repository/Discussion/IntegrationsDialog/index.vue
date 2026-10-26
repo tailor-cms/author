@@ -3,58 +3,68 @@
     v-model="isOpen"
     header-icon="mdi-webhook"
     title="Integrations"
-    width="620"
+    width="560"
+    closeable
     scrollable
   >
-    <template #subheader>
-      <div class="text-body-medium text-medium-emphasis px-5 pb-2">
-        Let outside systems post into this discussion through a webhook.
-      </div>
-    </template>
     <template #body>
       <VSkeletonLoader
         v-if="isLoading"
         color="transparent"
         type="list-item-avatar-two-line@3"
       />
-      <VList v-else bg-color="transparent" class="py-0">
-        <VListSubheader title="Registered" />
-        <IntegrationRow
-          v-for="integration in external"
-          :key="integration.id"
-          :integration="integration"
-          @revoke:integration="confirmRevoke"
-        />
-        <TailorEmptyState
-          v-if="!external.length"
-          :text="EMPTY_HINT"
-          height="auto"
-          icon="mdi-webhook"
-          size="40"
-          text-width="320"
-          title="Nothing registered yet"
-          variant="text"
-        />
-        <template v-if="builtin.length">
-          <VListSubheader class="mt-2" title="Built-in" />
-          <IntegrationRow
-            v-for="integration in builtin"
-            :key="integration.id"
-            :integration="integration"
+      <template v-else>
+        <section class="mt-n2">
+          <div class="d-flex align-center ga-2 mb-3">
+            <div>
+              <h3 class="group-label text-body-medium">Webhooks</h3>
+              <div class="text-body-small text-medium-emphasis">
+                Outside systems post into this discussion through their own URL.
+              </div>
+            </div>
+            <VSpacer />
+            <VBtn
+              prepend-icon="mdi-plus"
+              color="primary"
+              variant="flat"
+              text="Register"
+              @click="isRegisterOpen = true"
+            />
+          </div>
+          <VList
+            v-if="external.length"
+            bg-color="transparent"
+            class="d-flex flex-column ga-1 py-0"
+          >
+            <IntegrationRow
+              v-for="integration in external"
+              :key="integration.id"
+              :integration="integration"
+              @revoke:integration="confirmRevoke"
+            />
+          </VList>
+          <TailorEmptyState
+            v-else
+            :text="EMPTY_HINT"
+            icon="mdi-webhook"
+            title="No webhooks yet"
+            variant="tonal"
           />
-        </template>
-      </VList>
-    </template>
-    <template #actions>
-      <VBtn
-        color="primary"
-        prepend-icon="mdi-plus"
-        text="Register integration"
-        variant="tonal"
-        @click="isRegisterOpen = true"
-      />
-      <VSpacer />
-      <VBtn text="Close" variant="text" @click="isOpen = false" />
+        </section>
+        <section v-if="builtin.length" class="mt-4 mb-3">
+          <h3 class="group-label text-body-medium">Built-in</h3>
+          <div class="text-body-small text-medium-emphasis mb-2">
+            Tailor posts its own activity, one sender per topic.
+          </div>
+          <VList bg-color="transparent" class="d-flex flex-column ga-1 py-0">
+            <IntegrationRow
+              v-for="integration in builtin"
+              :key="integration.id"
+              :integration="integration"
+            />
+          </VList>
+        </section>
+      </template>
     </template>
   </TailorDialog>
   <RegisterDialog
@@ -81,8 +91,8 @@ import { useConfirmationDialog } from '@/composables/useConfirmationDialog';
 import { useIntegrations } from './useIntegrations';
 
 const EMPTY_HINT = `
-  Anything that can send a Slack-style JSON payload - a CI pipeline, an
-  alerting tool....`;
+  Anything that can send a Slack-style JSON payload can post here, like a CI
+  pipeline or an alerting tool.`;
 
 const props = defineProps<{ repositoryId: number }>();
 
@@ -134,3 +144,9 @@ watch(isOpen, (open) => {
   if (open) load();
 });
 </script>
+
+<style lang="scss" scoped>
+.group-label {
+  font-weight: 600;
+}
+</style>

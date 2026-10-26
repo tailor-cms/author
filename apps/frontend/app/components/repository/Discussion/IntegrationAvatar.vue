@@ -1,6 +1,6 @@
 <template>
   <VAvatar
-    :color="isBuiltin ? 'surface-container-high' : 'secondary'"
+    :color="isBuiltin ? 'surface-raised' : 'secondary'"
     :size="size"
     :variant="isBuiltin ? 'flat' : 'tonal'"
     rounded="lg"

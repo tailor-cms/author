@@ -4,7 +4,7 @@
     again - if it's lost, register the integration again.
   </div>
   <VSheet
-    class="d-flex align-center ga-2 pl-3 pr-1 py-1 mb-4"
+    class="d-flex align-center ga-2 px-4 py-3 mb-4"
     color="surface-sunken"
     rounded="lg"
   >
@@ -12,7 +12,6 @@
     <VBtn
       v-tooltip:top="'Copy webhook URL'"
       aria-label="Copy webhook URL"
-      color="primary"
       density="comfortable"
       icon="mdi-content-copy"
       size="small"
@@ -21,14 +20,17 @@
     />
   </VSheet>
   <VAlert
-    color="secondary"
-    density="compact"
+    type="info"
     icon="mdi-bell-outline"
-    rounded="lg"
     variant="tonal"
   >
-    Nothing is posted yet. Open a thread, choose <strong>Subscribe</strong>
-    and select <strong>{{ integration.name }}</strong>.
+    <VAlertTitle class="text-title-medium font-weight-semibold">
+      Nothing is posted yet
+    </VAlertTitle>
+    <p class="text-body-medium">
+      Open a thread, choose <strong>Subscribe</strong> and select
+      <strong>{{ integration.name }}</strong>.
+    </p>
   </VAlert>
 </template>
 

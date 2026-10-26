@@ -70,7 +70,7 @@ export class IntegrationsDialog {
     const el = getDialog(page, 'Integrations');
     this.integrationEntriesLocator = el.locator('.integration-row');
     this.registerBtn = el.getByRole('button', {
-      name: 'Register integration',
+      name: 'Register',
       exact: true,
     });
     this.page = page;

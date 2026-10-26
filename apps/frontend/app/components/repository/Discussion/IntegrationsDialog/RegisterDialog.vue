@@ -4,7 +4,6 @@
     :persistent="!!issued"
     :title="issued ? 'Integration registered' : 'Register integration'"
     header-icon="mdi-webhook"
-    width="560"
     @close="close"
     @submit="submit"
   >
