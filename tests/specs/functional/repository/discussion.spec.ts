@@ -260,6 +260,8 @@ test('changes to the replied message show in both panels', async ({
   await expect(parent.el).toContainText('This message was deleted');
   await expect(replies.getMessageLocator('rubric')).toBeVisible();
   await thread.expectMessage('This message was deleted');
+  await expect(thread.getMessage('This message was deleted').replyFooter)
+    .toContainText('1 reply');
 });
 
 test('`:` inserts an emoji as the character itself', async ({ page }) => {

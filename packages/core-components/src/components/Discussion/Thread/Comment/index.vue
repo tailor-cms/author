@@ -41,7 +41,7 @@
           @save="save"
         />
         <MessageReactions
-          v-if="!isEditing"
+          v-if="!isEditing && !isDeleted"
           :current-user-id="user?.id"
           :reactions="comment.reactions"
           class="mt-1"

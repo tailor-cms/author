@@ -61,13 +61,14 @@
           class="mt-1"
           @toggle="emit('react', message.id, $event)"
         />
-        <ReplyFooter
-          v-if="!isReplyTarget && message.replyCount"
-          :message="message"
-          class="mt-1"
-          @open="emit('reply', message.id)"
-        />
       </template>
+      <!-- Kept on a deleted message, so its replies stay reachable -->
+      <ReplyFooter
+        v-if="!isReplyTarget && !isEditing && message.replyCount"
+        :message="message"
+        class="mt-1"
+        @open="emit('reply', message.id)"
+      />
     </div>
     <!-- The toolbar over the row on hover -->
     <MessageActions
