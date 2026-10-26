@@ -3,8 +3,10 @@
     <ThreadTimeline
       :current-user-id="currentUserId"
       :focused-id="focusedId"
+      :paging-status="pagingStatus"
       :last-read-at="lastReadAt"
       :messages="messages"
+      @load:older="emit('load:older')"
       @react="(id, emoji) => emit('react', id, emoji)"
       @remove="emit('remove', $event)"
       @reply="emit('reply', $event)"
@@ -32,6 +34,7 @@
 import type { ReaderThread } from '@tailor-cms/api-client';
 import type { Message } from '@tailor-cms/interfaces/comment';
 
+import { PagingStatus } from '@/stores/messaging';
 import {
   lastOwnMessage,
   MessageComposer,
@@ -49,6 +52,7 @@ interface Props {
   typingUsers?: { id: number; label: string }[];
   // Opened at and highlighted, e.g. from a search result
   focusedId?: number | null;
+  pagingStatus?: PagingStatus;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -56,15 +60,17 @@ const props = withDefaults(defineProps<Props>(), {
   lastReadAt: null,
   typingUsers: () => [],
   focusedId: null,
+  pagingStatus: PagingStatus.Empty,
 });
 
 const emit = defineEmits<{
-  submit: [content: string];
-  remove: [id: number];
-  reply: [id: number];
-  react: [id: number, emoji: string];
-  update: [id: number, content: string];
-  typing: [];
+  'load:older': [];
+  'submit': [content: string];
+  'remove': [id: number];
+  'reply': [id: number];
+  'react': [id: number, emoji: string];
+  'update': [id: number, content: string];
+  'typing': [];
 }>();
 
 // Per thread, kept when switching away & back

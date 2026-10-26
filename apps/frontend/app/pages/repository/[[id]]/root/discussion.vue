@@ -116,10 +116,13 @@
           :key="messagingStore.replyParent.id"
           :current-user-id="currentUserId"
           :focused-id="messagingStore.focusedReplyId"
+          :is-loading="messagingStore.isLoadingReplies"
+          :paging-status="messagingStore.replyPagingStatus"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
           class="h-100"
           @close="messagingStore.closeReplies()"
+          @load:older="messagingStore.loadOlderReplies(repositoryId)"
           @react="reactToMessage"
           @remove="removeMessage"
           @submit="postReply"
@@ -152,9 +155,11 @@
         :focused-id="routeMessageId"
         :last-read-at="messagingStore.openedWatermark"
         :messages="messagingStore.messages"
+        :paging-status="messagingStore.messagePagingStatus"
         :thread="messagingStore.selectedThread"
         :typing-users="threadTypingUsers"
         class="h-100"
+        @load:older="messagingStore.loadOlderMessages(repositoryId)"
         @react="reactToMessage"
         @remove="removeMessage"
         @reply="openReplies"
@@ -163,7 +168,13 @@
         @update="editMessage"
       />
       <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
-        <VProgressCircular v-if="isThreadSlow" indeterminate />
+        <VProgressCircular
+          v-if="isThreadSlow"
+          color="primary"
+          size="22"
+          width="2"
+          indeterminate
+        />
       </div>
       <StartDiscussion v-else class="h-100" @create="createThread" />
       <SharedFilesDialog

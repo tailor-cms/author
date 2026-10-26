@@ -17,6 +17,7 @@ import { useAuthStore } from '@/stores/auth';
 import sseRepositoryFeed from '@/lib/RepositoryFeed';
 
 export type { ThreadScope } from '@tailor-cms/interfaces/comment';
+export { PagingStatus } from './pages';
 
 export const useMessagingStore = defineStore('messaging', () => {
   const authStore = useAuthStore();
@@ -97,6 +98,8 @@ export const useMessagingStore = defineStore('messaging', () => {
     items: threads.items,
     threads: threads.threads,
     messages: threads.selectedThreadMessages,
+    messagePagingStatus: threads.messagePagingStatus,
+    loadOlderMessages: threads.loadOlderMessages,
     selectedThread: threads.selectedThread,
     selectedThreadId: threads.selectedThreadId,
     openedWatermark: threads.openedWatermark,
@@ -118,6 +121,9 @@ export const useMessagingStore = defineStore('messaging', () => {
     markAllRead: threads.markAllRead,
     // Replies
     replies: replies.replies,
+    isLoadingReplies: replies.isLoadingReplies,
+    replyPagingStatus: replies.replyPagingStatus,
+    loadOlderReplies: replies.loadOlderReplies,
     replyParent: replies.replyParent,
     openReplyParentId: replies.openReplyParentId,
     focusedReplyId: replies.focusedReplyId,

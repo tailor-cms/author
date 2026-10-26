@@ -5,6 +5,7 @@ import type { Replies } from './replies';
 import type { Unread } from './unread';
 
 import { compact, debounce, map } from 'lodash-es';
+import { createMessagePages, PAGE_SIZE } from './pages';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
@@ -39,6 +40,7 @@ export const createThreads = (
   // Filters of the last fetch
   const listParams = ref<ThreadParams>({});
   const messageIds = reactive(new Map<number, number[]>());
+  const pages = createMessagePages(messageCache);
   const selectedThreadId = ref<number | null>(null);
   // The thread last asked for, which may still be loading
   let requestedThreadId: number | null = null;
@@ -61,6 +63,8 @@ export const createThreads = (
     const threadId = selectedThreadId.value;
     return threadId ? messageCache.getMany(messageIds.get(threadId)) : [];
   });
+
+  const messagePagingStatus = computed(() => pages.status(selectedThreadId.value));
 
   const isListFiltered = computed(() => {
     const { scope, type, name } = listParams.value;
@@ -154,6 +158,13 @@ export const createThreads = (
     }
   }
 
+  const fetchMessages =
+    (repositoryId: number, threadId: number) => (before?: number) =>
+      api.messaging.getMessages({
+        params: { repositoryId, threadId },
+        query: { before, limit: PAGE_SIZE },
+      });
+
   // Puts a thread on screen, with where its "New" marker starts
   function showThread(threadId: number, watermark: string | null) {
     selectedThreadId.value = threadId;
@@ -177,17 +188,26 @@ export const createThreads = (
     const watermark = thread?.isUnread
       ? (thread.lastReadAt ?? new Date(0).toISOString())
       : null;
-    if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
-    const items = await api.messaging.getMessages({
-      params: { repositoryId, threadId },
-    });
+    if (hasLoadedMessages(threadId)) {
+      pages.trimToLatest(messageIds, threadId);
+      showThread(threadId, watermark);
+    }
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    const items = await pages.fetchLatest(threadId, fetchPage);
     // Another thread was picked meanwhile
     if (requestedThreadId !== threadId) return items;
     messageIds.set(threadId, []);
-    (items as unknown as Message[]).forEach((it) => addToThread(it));
+    items.forEach((it) => addToThread(it));
     if (selectedThreadId.value !== threadId) showThread(threadId, watermark);
     await markRead(repositoryId, threadId);
     return items;
+  }
+
+  function loadOlderMessages(repositoryId: number) {
+    const threadId = selectedThreadId.value;
+    if (!threadId) return;
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    return pages.loadOlder(messageIds, threadId, fetchPage);
   }
 
   function deselectThread() {
@@ -335,6 +355,7 @@ export const createThreads = (
     listedIds.value = [];
     listParams.value = {};
     messageIds.clear();
+    pages.clear();
     selectedThreadId.value = null;
     requestedThreadId = null;
     isInView.value = false;
@@ -350,6 +371,7 @@ export const createThreads = (
     selectedThreadId,
     openedWatermark,
     selectedThreadMessages,
+    messagePagingStatus,
     isLoading,
     total,
     hasLoadedMessages,
@@ -361,6 +383,7 @@ export const createThreads = (
     updateThreadSummary,
     fetchThreads,
     selectThread,
+    loadOlderMessages,
     deselectThread,
     leaveThread,
     startThread,
