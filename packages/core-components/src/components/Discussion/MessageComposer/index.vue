@@ -27,7 +27,7 @@
       height="2"
       indeterminate
     />
-    <div class="d-flex align-center pa-2">
+    <div class="d-flex flex-wrap align-center gr-1 pa-2">
       <AttachButton
         v-if="canAttach"
         :disabled="disabled || isUploading"
@@ -36,9 +36,9 @@
       <EmojiPicker :disabled="disabled" @select="insertEmoji" />
       <ComposerHint
         :is-dragging="isDragging"
+        :is-editing="isEditing"
         :is-uploading="isUploading"
         :overflow="overflow"
-        :submit-label="isEditing ? 'save' : 'send'"
       />
       <VSpacer />
       <!-- Where the send button sits; editing puts Cancel / Save here -->

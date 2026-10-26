@@ -9,7 +9,7 @@
       @submit="save"
     >
       <template #actions>
-        <div class="d-flex ga-2">
+        <div class="d-flex ga-2 ms-auto">
           <VBtn
             size="small"
             text="Cancel"
