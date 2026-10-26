@@ -1,4 +1,4 @@
-import { Message } from '../../schemas/entity.ts';
+import { Message, MessageFilter } from '../../schemas/index.ts';
 import { dataEnvelope } from '#shared/request/schemas.ts';
 import { defineAction } from '#shared/request/action.ts';
 import { oneLine } from 'common-tags';
@@ -9,7 +9,7 @@ import * as service from '../thread.service.ts';
 export default defineAction({
   name: 'getMessages',
   params: schemas.ThreadItemParams,
-  query: schemas.MessageFilter,
+  query: MessageFilter,
   openapi: {
     authenticated: true,
     summary: 'List messages in a thread',

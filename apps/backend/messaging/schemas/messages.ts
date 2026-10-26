@@ -5,11 +5,14 @@ import { z } from 'zod';
 export const MessageFilter = z
   .object({
     before: IntParam().optional().describe(oneLine`
-      Load messages older than this one; what scrolling up the thread
-      asks for.
+      Load messages older than this one; what scrolling up a thread or
+      its replies asks for.
     `),
     limit: IntParam().optional().describe('Pagination limit.'),
   })
-  .describe('Reads a thread a page at a time, working back from the newest.');
+  .describe(oneLine`
+    Reads a thread or a reply chain a page at a time, working back from
+    the newest.
+  `);
 
 export type MessageFilter = z.infer<typeof MessageFilter>;

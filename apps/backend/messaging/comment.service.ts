@@ -1,10 +1,15 @@
 // Messages: posting, editing, reactions and resolution, plus the
 // projection every thread surface renders a message from.
 import type { Comment } from './models/comment.model.js';
-import type { CreateInput, ListFilter, ResolveInput } from './schemas/index.ts';
+import type {
+  CreateInput,
+  ListFilter,
+  MessageFilter,
+  ResolveInput,
+} from './schemas/index.ts';
+import type { Transaction, WhereOptions } from 'sequelize';
 import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { Repository } from '../repository/models/repository.model.js';
-import type { Transaction } from 'sequelize';
 import type { User } from '../user/models/user.model.js';
 
 import {
@@ -14,6 +19,7 @@ import {
   ThreadNotFoundError,
 } from './errors.ts';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
+import { Op } from 'sequelize';
 import { CommentType } from '@tailor-cms/interfaces/comment.ts';
 import { INTEGRATION_SUMMARY_ATTRS } from './schemas/entity.ts';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
@@ -93,14 +99,32 @@ export async function list(
   return repository.getComments({ ...opts, where, include: commentIncludes() });
 }
 
-export async function listReplies(repositoryId: number, parentId: number) {
+/**
+ * The newest page of messages matching `where`, or the page before the
+ * `before` message; oldest first either way.
+ */
+export async function listPage(
+  where: WhereOptions,
+  filters: MessageFilter = {},
+): Promise<Comment[]> {
   const { Comment } = models();
-  return Comment.findAll({
-    where: { repositoryId, parentId },
+  const { before, limit = 50 } = filters;
+  const rows = await Comment.findAll({
+    where: before ? { ...where, id: { [Op.lt]: before } } : where,
     include: messageIncludes(),
-    order: [['createdAt', 'ASC']],
+    order: [['createdAt', 'DESC']],
+    limit,
     paranoid: false,
   });
+  return rows.reverse();
+}
+
+export function listReplies(
+  repositoryId: number,
+  parentId: number,
+  filters: MessageFilter = {},
+) {
+  return listPage({ repositoryId, parentId }, filters);
 }
 
 /**

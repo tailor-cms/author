@@ -1,8 +1,5 @@
-import type {
-  CreateThreadInput,
-  MessageFilter,
-  ThreadFilter,
-} from './schemas/index.ts';
+import type { CreateThreadInput, ThreadFilter } from './schemas/index.ts';
+import type { MessageFilter } from '../schemas/index.ts';
 import type { Repository } from '../../repository/models/repository.model.js';
 import type { Thread } from './models/thread.model.js';
 import type { User } from '../../user/models/user.model.js';
@@ -332,24 +329,14 @@ export async function listMessages(
   thread: Thread,
   filters: MessageFilter = {},
 ) {
-  const { Comment } = models();
-  const { before, limit = 50 } = filters;
   const NO_REPLIES = { replyCount: 0, lastReplyAt: null, replyAuthorIds: [] };
   // Replies live under their parent, unless the author also sent one
   // to the thread itself.
-  const where: any = {
+  const where = {
     threadId: thread.id,
     [Op.or]: [{ parentId: null }, { isBroadcast: true }],
   };
-  if (before) where.id = { [Op.lt]: before };
-  const rows = await Comment.findAll({
-    where,
-    include: commentService.messageIncludes(),
-    order: [['createdAt', 'DESC']],
-    limit,
-    paranoid: false,
-  });
-  const messages = rows.reverse();
+  const messages = await commentService.listPage(where, filters);
   const summaries = await replySummaries(messages.map((it: any) => it.id));
   return messages.map((message: any) => ({
     ...message.toJSON(),
