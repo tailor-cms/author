@@ -13,15 +13,15 @@ export class EmojiDialog {
   constructor(page: Page) {
     const el = page.locator('div[role="dialog"]');
     this.name = el.getByLabel('Shortcode');
-    this.image = el.getByLabel('Image', { exact: true });
+    this.image = el.locator('input[type="file"]');
     this.saveBtn = el.getByRole('button', { name: 'Add emoji' });
     this.page = page;
     this.el = el;
   }
 
   async add(name: string, filePath: string) {
-    await this.enterName(name);
     await this.attachImage(filePath);
+    await this.enterName(name);
     await this.save();
   }
 

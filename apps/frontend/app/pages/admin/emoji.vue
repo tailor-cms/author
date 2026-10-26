@@ -152,5 +152,6 @@ onMounted(() => emojiStore.fetch());
 
 .shortcode {
   font-size: 0.8125rem;
+  font-weight: 600;
 }
 </style>

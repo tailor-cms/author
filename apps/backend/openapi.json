@@ -316,8 +316,8 @@
           },
           "name": {
             "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
-            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+            "pattern": "^[a-z0-9][a-z0-9_+\\-]{0,29}$",
+            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 1-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
           },
           "url": {
             "type": "string",
@@ -6935,8 +6935,8 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
-                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{0,29}$",
+                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 1-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
                   },
                   "image": {
                     "type": "string",
