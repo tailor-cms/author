@@ -14,7 +14,7 @@
         type="list-item-avatar-two-line@3"
       />
       <template v-else>
-        <section class="mt-n2">
+        <section class="mt-n2 mb-2">
           <div class="d-flex align-center ga-2 mb-3">
             <div>
               <h3 class="group-label text-body-medium">Webhooks</h3>
@@ -31,25 +31,40 @@
               @click="isRegisterOpen = true"
             />
           </div>
-          <VList
-            v-if="external.length"
-            bg-color="transparent"
-            class="d-flex flex-column ga-1 py-0"
-          >
-            <IntegrationRow
-              v-for="integration in external"
-              :key="integration.id"
-              :integration="integration"
-              @revoke:integration="confirmRevoke"
-            />
-          </VList>
-          <TailorEmptyState
-            v-else
-            :text="EMPTY_HINT"
-            icon="mdi-webhook"
-            title="No webhooks yet"
-            variant="tonal"
-          />
+          <VExpandTransition>
+            <VList
+              v-if="external.length"
+              bg-color="transparent"
+              class="d-flex flex-column ga-1 py-0"
+            >
+              <VExpandTransition group>
+                <div v-for="integration in external" :key="integration.id">
+                  <IntegrationRow
+                    :integration="integration"
+                    @revoke:integration="confirmRevoke"
+                  />
+                </div>
+              </VExpandTransition>
+            </VList>
+          </VExpandTransition>
+          <VExpandTransition>
+            <TailorEmptyState
+              v-if="!external.length"
+              :text="EMPTY_HINT"
+              height="200"
+              icon="mdi-webhook"
+              size="42"
+              text-width="340"
+              variant="tonal"
+            >
+              <template #title>
+                <span class="text-title-medium">Nothing registered yet</span>
+              </template>
+              <template #text>
+                <span class="text-body-small">{{ EMPTY_HINT }}</span>
+              </template>
+            </TailorEmptyState>
+          </VExpandTransition>
         </section>
         <section v-if="builtin.length" class="mt-4 mb-3">
           <h3 class="group-label text-body-medium">Built-in</h3>
@@ -72,7 +87,7 @@
     :existing-keys="existingKeys"
     :is-saving="isSaving"
     :issued="issued"
-    @close="issued = null"
+    @close="onRegisterClose"
     @register:integration="onRegister"
   />
 </template>
@@ -101,8 +116,16 @@ const isOpen = defineModel<boolean>({ default: false });
 const notify = useNotification();
 const confirmationDialog = useConfirmationDialog();
 
-const { external, builtin, isLoading, isSaving, load, register, revoke } =
-  useIntegrations(() => props.repositoryId);
+const {
+  external,
+  builtin,
+  isLoading,
+  isSaving,
+  load,
+  register,
+  add,
+  revoke,
+} = useIntegrations(() => props.repositoryId);
 
 const isRegisterOpen = ref(false);
 
@@ -124,6 +147,12 @@ const onRegister = async (input: RegisterInput) => {
       { color: 'error' },
     );
   }
+};
+
+const onRegisterClose = () => {
+  if (!issued.value) return;
+  add(issued.value.integration);
+  issued.value = null;
 };
 
 const confirmRevoke = (integration: Integration) => {

@@ -4,7 +4,7 @@
     :persistent="!!issued"
     :title="issued ? 'Integration registered' : 'Register integration'"
     header-icon="mdi-webhook"
-    @close="close"
+    @after-leave="emit('close')"
     @submit="submit"
   >
     <template #body>
@@ -136,7 +136,6 @@ const iconPreview = computed(() => icon.value || DEFAULT_ICON);
 
 const close = () => {
   isOpen.value = false;
-  emit('close');
 };
 
 const submit = handleSubmit((values) => {
