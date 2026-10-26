@@ -316,8 +316,8 @@
           },
           "name": {
             "type": "string",
-            "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
-            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+            "pattern": "^[a-z0-9][a-z0-9_+\\-]{0,29}$",
+            "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 1-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
           },
           "url": {
             "type": "string",
@@ -6935,8 +6935,8 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{1,29}$",
-                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 2-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
+                    "pattern": "^[a-z0-9][a-z0-9_+\\-]{0,29}$",
+                    "description": "The shortcode without its colons - `party` is written `:party:`. A shortcode is 1-30 characters of   lowercase letters, digits, \"_\", \"+\" or \"-\"."
                   },
                   "image": {
                     "type": "string",
@@ -11809,7 +11809,29 @@
             "in": "query",
             "required": false,
             "schema": {
-              "description": "Load messages older than this one; what scrolling up the thread asks for.",
+              "description": "Load messages older than this one; what scrolling up a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages newer than this one; what scrolling down from an older stretch of a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "around",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load a page around this message, half of it before; what opening a thread or its replies at an older message asks for.",
               "type": "integer",
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991
@@ -12800,7 +12822,7 @@
         "x-tailor-slice": "messaging",
         "x-tailor-method": "getReplies",
         "summary": "List replies to a message",
-        "description": "The side conversation under one message, oldest first. Fetched on demand so a long reply chain does not slow the thread down.",
+        "description": "The side conversation under one message, oldest first. Fetched on demand so a long reply chain does not slow the thread down; older replies load a page at a time.",
         "parameters": [
           {
             "name": "repositoryId",
@@ -12822,6 +12844,50 @@
               "exclusiveMinimum": 0,
               "maximum": 9007199254740991,
               "description": "Numeric message id (path param)."
+            }
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages older than this one; what scrolling up a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load messages newer than this one; what scrolling down from an older stretch of a thread or its replies asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "around",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Load a page around this message, half of it before; what opening a thread or its replies at an older message asks for.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "description": "Pagination limit.",
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "maximum": 9007199254740991
             }
           }
         ],

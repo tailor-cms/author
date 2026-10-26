@@ -1,10 +1,15 @@
 // Messages: posting, editing, reactions and resolution, plus the
 // projection every thread surface renders a message from.
 import type { Comment } from './models/comment.model.js';
-import type { CreateInput, ListFilter, ResolveInput } from './schemas/index.ts';
+import type {
+  CreateInput,
+  ListFilter,
+  MessageFilter,
+  ResolveInput,
+} from './schemas/index.ts';
+import type { Transaction, WhereOptions } from 'sequelize';
 import type { ListQueryOptions } from '#shared/request/action.ts';
 import type { Repository } from '../repository/models/repository.model.js';
-import type { Transaction } from 'sequelize';
 import type { User } from '../user/models/user.model.js';
 
 import {
@@ -14,6 +19,7 @@ import {
   ThreadNotFoundError,
 } from './errors.ts';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
+import { Op } from 'sequelize';
 import { CommentType } from '@tailor-cms/interfaces/comment.ts';
 import { INTEGRATION_SUMMARY_ATTRS } from './schemas/entity.ts';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
@@ -93,14 +99,56 @@ export async function list(
   return repository.getComments({ ...opts, where, include: commentIncludes() });
 }
 
-export async function listReplies(repositoryId: number, parentId: number) {
+// An id bound, e.g. `{ [Op.lt]: 42 }`
+type IdRange = Record<symbol, number>;
+
+// Up to `limit` messages on one side of an id, oldest first
+async function listSide(
+  where: WhereOptions,
+  id: IdRange | undefined,
+  isNewer: boolean,
+  limit: number,
+): Promise<Comment[]> {
   const { Comment } = models();
-  return Comment.findAll({
-    where: { repositoryId, parentId },
+  const rows = await Comment.findAll({
+    where: id ? { ...where, id } : where,
     include: messageIncludes(),
-    order: [['createdAt', 'ASC']],
+    order: [['createdAt', isNewer ? 'ASC' : 'DESC']],
+    limit,
     paranoid: false,
   });
+  return isNewer ? rows : rows.reverse();
+}
+
+/**
+ * A page of messages matching `where`, oldest first: the newest, the one
+ * before `before` or after `after`, or one `around` a message, which
+ * starts half a page before it.
+ */
+export async function listPage(
+  where: WhereOptions,
+  filters: MessageFilter = {},
+): Promise<Comment[]> {
+  const { before, after, around, limit = 50 } = filters;
+  if (around) {
+    const half = Math.floor(limit / 2);
+    const [older, newer] = await Promise.all([
+      listSide(where, { [Op.lt]: around }, false, half),
+      listSide(where, { [Op.gte]: around }, true, limit - half),
+    ]);
+    return [...older, ...newer];
+  }
+  if (after) return listSide(where, { [Op.gt]: after }, true, limit);
+  const id = before ? { [Op.lt]: before } : undefined;
+  return listSide(where, id, false, limit);
+}
+
+export function listReplies(
+  repositoryId: number,
+  parentId: number,
+  filters: MessageFilter = {},
+) {
+  return listPage({ repositoryId, parentId }, filters);
 }
 
 /**

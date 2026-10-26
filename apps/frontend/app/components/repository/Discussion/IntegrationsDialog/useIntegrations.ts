@@ -46,11 +46,14 @@ export function useIntegrations(repositoryId: MaybeRefOrGetter<number>) {
           params: scope(),
           body: input,
         });
-      items.value = [...items.value, integration];
       return { integration, webhookUrl };
     } finally {
       isSaving.value = false;
     }
+  };
+
+  const add = (integration: Integration) => {
+    items.value = [...items.value, integration];
   };
 
   const revoke = async (integrationId: number) => {
@@ -60,5 +63,14 @@ export function useIntegrations(repositoryId: MaybeRefOrGetter<number>) {
     items.value = items.value.filter((it) => it.id !== integrationId);
   };
 
-  return { external, builtin, isLoading, isSaving, load, register, revoke };
+  return {
+    external,
+    builtin,
+    isLoading,
+    isSaving,
+    load,
+    register,
+    add,
+    revoke,
+  };
 }

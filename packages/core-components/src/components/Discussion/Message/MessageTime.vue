@@ -1,5 +1,5 @@
 <template>
-  <span v-tooltip:top="tooltip" class="message-time">{{ text }}</span>
+  <span v-tooltip:top="fullDate" class="message-time">{{ text }}</span>
 </template>
 
 <script lang="ts" setup>
@@ -26,8 +26,4 @@ const text = computed(() => {
   if (!props.hasDay) return clock.value;
   return `${dayLabel(new Date(props.at))} at ${clock.value}`;
 });
-
-const tooltip = computed(() =>
-  props.isRelative ? fullDate.value : `${fullDate.value} · ${timeAgo.value}`,
-);
 </script>

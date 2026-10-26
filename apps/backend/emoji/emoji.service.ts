@@ -1,6 +1,6 @@
 import type { Emoji } from './schemas/index.ts';
 import EmojiModel, { type Emoji as EmojiRow } from './models/emoji.model.js';
-import { EMOJI_NAME_PATTERN } from '@tailor-cms/utils';
+import { EMOJI_MAX_UPLOAD_BYTES, EMOJI_NAME_PATTERN } from '@tailor-cms/utils';
 import { USER_SUMMARY_ATTRS } from '#app/user/schemas/entity.ts';
 import { Emoji as EmojiEvents } from '@tailor-cms/common/src/sse.js';
 import { createKvStore } from '#shared/kvStore.ts';
@@ -23,10 +23,6 @@ const IMAGE_SIZE_PX = 128;
 
 // A tiny file can hide a huge picture
 const MAX_DECODED_PIXELS = 16_000_000;
-
-// Two megabytes is already far more than an emoji needs; past that it
-// is a photo somebody picked by mistake.
-export const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;
 
 // Raster only to avoid XSS vectors
 const ACCEPTED_FORMATS = new Set([
@@ -119,7 +115,7 @@ export async function create(
 ): Promise<Emoji> {
   const name = input.name.trim().toLowerCase();
   if (!EMOJI_NAME_PATTERN.test(name)) throw new EmojiNameInvalidError(name);
-  if (input.image.byteLength > MAX_UPLOAD_BYTES) {
+  if (input.image.byteLength > EMOJI_MAX_UPLOAD_BYTES) {
     throw new EmojiImageInvalidError('too large');
   }
   const existing = await EmojiModel.findOne({ where: { name } });

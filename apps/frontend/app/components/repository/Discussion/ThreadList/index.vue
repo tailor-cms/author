@@ -90,7 +90,7 @@ const emit = defineEmits<{
 const scope = defineModel<ThreadScope>('scope', { default: 'all' });
 const name = defineModel<string>('name', { default: '' });
 
-const isSkeletonVisible = useSkeletonDelay(() => props.isLoading);
+const isSkeletonVisible = useDelayedLoading(() => props.isLoading);
 
 // Starred threads first, followed by the rest
 const groups = computed(() => {

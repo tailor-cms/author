@@ -5,7 +5,7 @@
     <span v-else-if="overflow > 0" class="text-error">
       {{ pluralize('character', overflow, true) }} too long
     </span>
-    <template v-else>
+    <template v-else-if="!isEditing">
       <span
         v-for="{ key, label } in SHORTCUTS"
         :key="key"
@@ -13,7 +13,7 @@
       >
         <strong>{{ key }}</strong> {{ label }}
       </span>
-      <strong>Enter</strong> to {{ submitLabel }}
+      <strong>Enter</strong> to send
     </template>
   </span>
 </template>
@@ -30,17 +30,19 @@ withDefaults(
   defineProps<{
     isDragging?: boolean;
     isUploading?: boolean;
-    submitLabel?: string;
+    isEditing?: boolean;
     overflow?: number;
   }>(),
-  { isDragging: false, isUploading: false, submitLabel: 'send', overflow: 0 },
+  { isDragging: false, isUploading: false, isEditing: false, overflow: 0 },
 );
 </script>
 
 <style lang="scss" scoped>
 .composer-hint {
   min-width: 0;
+  overflow: hidden;
   padding-left: 0.375rem;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 

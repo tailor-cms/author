@@ -116,10 +116,15 @@
           :key="messagingStore.replyParent.id"
           :current-user-id="currentUserId"
           :focused-id="messagingStore.focusedReplyId"
+          :is-loading="messagingStore.isLoadingReplies"
+          :paging="messagingStore.repliesPaging"
           :parent="messagingStore.replyParent"
           :replies="messagingStore.replies"
           class="h-100"
           @close="messagingStore.closeReplies()"
+          @jump:latest="openReplies(messagingStore.replyParent.id)"
+          @load:newer="messagingStore.loadNewerReplies(repositoryId)"
+          @load:older="messagingStore.loadOlderReplies(repositoryId)"
           @react="reactToMessage"
           @remove="removeMessage"
           @submit="postReply"
@@ -152,9 +157,13 @@
         :focused-id="routeMessageId"
         :last-read-at="messagingStore.openedWatermark"
         :messages="messagingStore.messages"
+        :paging="messagingStore.messagesPaging"
         :thread="messagingStore.selectedThread"
         :typing-users="threadTypingUsers"
         class="h-100"
+        @jump:latest="openThread(messagingStore.selectedThreadId)"
+        @load:newer="messagingStore.loadNewerMessages(repositoryId)"
+        @load:older="messagingStore.loadOlderMessages(repositoryId)"
         @react="reactToMessage"
         @remove="removeMessage"
         @reply="openReplies"
@@ -163,7 +172,11 @@
         @update="editMessage"
       />
       <div v-else-if="routeThreadId" class="d-flex justify-center py-16">
-        <VProgressCircular v-if="isThreadSlow" indeterminate />
+        <VProgressCircular
+          v-if="isThreadSlow"
+          aria-label="Loading thread"
+          indeterminate
+        />
       </div>
       <StartDiscussion v-else class="h-100" @create="createThread" />
       <SharedFilesDialog
@@ -305,7 +318,7 @@ const isThreadPending = computed(
     !!routeThreadId.value &&
     routeThreadId.value !== messagingStore.selectedThreadId,
 );
-const isThreadSlow = useSkeletonDelay(isThreadPending);
+const isThreadSlow = useDelayedLoading(isThreadPending);
 
 const closeSearch = () => {
   isSearchOpen.value = false;

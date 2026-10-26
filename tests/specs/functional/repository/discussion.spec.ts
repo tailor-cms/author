@@ -260,6 +260,30 @@ test('changes to the replied message show in both panels', async ({
   await expect(parent.el).toContainText('This message was deleted');
   await expect(replies.getMessageLocator('rubric')).toBeVisible();
   await thread.expectMessage('This message was deleted');
+  await expect(thread.getMessage('This message was deleted').replyFooter)
+    .toContainText('1 reply');
+});
+
+test('opens a search hit from before the loaded messages', async ({
+  page,
+}) => {
+  const { repositoryId, messaging } = await seedRepository();
+  const archive = await messaging.startThread('Archive', 'The kickoff agenda');
+  // Well past a page, so the newest stay unloaded even if scrolling down
+  // from the hit loads another
+  for (let i = 1; i <= 120; i++) {
+    await messaging.post(archive.id, `Status update ${i}`);
+  }
+  const discussion = await Discussion.visit(page, repositoryId);
+  await discussion.search.query('kickoff');
+  await discussion.search.openHit('kickoff agenda');
+  const { thread } = discussion;
+  await expect(thread.getMessageLocator('kickoff agenda')).toBeInViewport();
+  // Opened short of the newest, which are a jump away
+  await expect(thread.getMessageLocator('Status update 120')).toHaveCount(0);
+  await thread.jumpToLatestBtn.click();
+  await expect(thread.getMessageLocator('Status update 120')).toBeInViewport();
+  await expect(thread.jumpToLatestBtn).toBeHidden();
 });
 
 test('`:` inserts an emoji as the character itself', async ({ page }) => {

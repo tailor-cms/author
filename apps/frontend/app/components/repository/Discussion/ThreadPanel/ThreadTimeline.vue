@@ -1,7 +1,15 @@
 <template>
-  <div ref="viewportEl" class="thread-timeline flex-grow-1 overflow-y-auto">
-    <div ref="messagesEl" class="timeline-entries py-6">
-      <slot name="intro" />
+  <MessageViewport
+    :focused-id="focusedId"
+    :paging="paging"
+    :messages="messages"
+    class="thread-timeline flex-grow-1"
+    @jump:latest="emit('jump:latest')"
+    @load:newer="emit('load:newer')"
+    @load:older="emit('load:older')"
+  >
+    <div class="timeline-entries py-6">
+      <slot v-if="paging.older === PagingStatus.Empty" name="intro" />
       <section v-for="day in days" :key="day.key" class="timeline-day">
         <div
           :class="{ 'unread-divider': startsUnread(day) }"
@@ -40,15 +48,20 @@
         </template>
       </section>
     </div>
-  </div>
+  </MessageViewport>
 </template>
 
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
+import {
+  NO_PAGING,
+  type Paging,
+  PagingStatus,
+} from '@/stores/messaging/pages';
 import { buildTimeline, groupByDay, type TimelineDay } from './timeline';
-import { useStickToBottom } from '../composables/useStickToBottom';
 import MessageRow from '../MessageRow/index.vue';
+import MessageViewport from '../MessageViewport.vue';
 
 interface Props {
   messages: Message[];
@@ -57,19 +70,24 @@ interface Props {
   lastReadAt?: string | null;
   // Opened at and highlighted, e.g. from a search result
   focusedId?: number | null;
+  paging?: Paging;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   lastReadAt: null,
   focusedId: null,
+  paging: () => NO_PAGING,
 });
 
 const emit = defineEmits<{
-  remove: [id: number];
-  reply: [id: number];
-  react: [id: number, emoji: string];
-  update: [id: number, content: string];
+  'load:older': [];
+  'load:newer': [];
+  'jump:latest': [];
+  'remove': [id: number];
+  'reply': [id: number];
+  'react': [id: number, emoji: string];
+  'update': [id: number, content: string];
 }>();
 
 const UNREAD_RULE = { color: 'secondary', opacity: 1 };
@@ -78,22 +96,10 @@ const days = computed(() => groupByDay(buildTimeline(props)));
 
 // Unread from the day's first message: its rule doubles as the marker
 const startsUnread = (day: TimelineDay) => day.entries[0]?.type === 'unread';
-
-const viewportEl = ref<HTMLElement>();
-const messagesEl = ref<HTMLElement>();
-
-useStickToBottom(
-  viewportEl,
-  messagesEl,
-  () => props.messages,
-  () => props.focusedId,
-);
 </script>
 
 <style lang="scss" scoped>
 .thread-timeline {
-  display: flex;
-  flex-direction: column;
   min-height: 0;
 }
 
@@ -101,7 +107,7 @@ useStickToBottom(
 .timeline-entries {
   width: 100%;
   max-width: 87.5rem;
-  margin: auto auto 0;
+  margin-inline: auto;
 }
 
 // The label overhangs the 1px rule, so it never shifts the line

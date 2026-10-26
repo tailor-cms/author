@@ -8,7 +8,7 @@
       'message-row--highlighted': isHighlighted,
     }"
     :data-message-id="message.id"
-    class="message-row rounded-lg mx-5"
+    class="message-row"
   >
     <!-- Gutter: the sender's avatar, or the time beside a grouped follow-up -->
     <div class="message-row-gutter d-flex align-center">
@@ -61,13 +61,14 @@
           class="mt-1"
           @toggle="emit('react', message.id, $event)"
         />
-        <ReplyFooter
-          v-if="!isReplyTarget && message.replyCount"
-          :message="message"
-          class="mt-1"
-          @open="emit('reply', message.id)"
-        />
       </template>
+      <!-- Kept on a deleted message, so its replies stay reachable -->
+      <ReplyFooter
+        v-if="!isReplyTarget && !isEditing && message.replyCount"
+        :message="message"
+        class="mt-1"
+        @open="emit('reply', message.id)"
+      />
     </div>
     <!-- The toolbar over the row on hover -->
     <MessageActions
@@ -174,7 +175,7 @@ const hasBody = computed(() => {
   grid-template-columns: 3rem 1fr;
   align-items: start;
   margin-block: calc(-2 * var(--row-overlap));
-  padding: 0.5rem;
+  padding: 0.5rem 1.25rem;
 
   .deleted {
     font-size: 0.875rem;
@@ -214,10 +215,8 @@ const hasBody = computed(() => {
   }
 
   &--reply {
-    margin-inline: 0.75rem;
-
     .message-row-actions {
-      right: 0.25rem;
+      right: 1rem;
     }
   }
 }

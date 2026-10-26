@@ -22,6 +22,20 @@ test.describe('custom emoji', () => {
     await dialog.hasVisibleError('That shortcode is taken.');
   });
 
+  test('names it after the image unless one is typed', async ({ page }) => {
+    const admin = new EmojiManagement(page);
+    const dialog = await admin.openAddDialog();
+    await dialog.attachImage(IMAGE.path);
+    await expect(dialog.name).toHaveValue('test-image');
+    await dialog.attachImage(ANIMATED_IMAGE.path);
+    await expect(dialog.name).toHaveValue('test-animated');
+    await dialog.enterName('party');
+    await dialog.attachImage(IMAGE.path);
+    await expect(dialog.name).toHaveValue('party');
+    await dialog.save();
+    await admin.getEntryByName('party');
+  });
+
   test('keeps an animated GIF moving', async ({ page }) => {
     const admin = new EmojiManagement(page);
     const entry = await admin.addEmoji('celebrate', ANIMATED_IMAGE.path);

@@ -44,16 +44,19 @@ export const createMessageCache = () => {
   // Posts a new message, or edits the text of an existing one
   async function save(payload: SaveInput) {
     const { id, repositoryId, content, ...createOnly } = payload;
-    const message = id
-      ? await api.messaging.update({
-          params: { repositoryId, messageId: id },
-          body: { content },
-        })
-      : await api.messaging.create({
-          params: { repositoryId },
-          body: { content, ...createOnly },
-        });
-    return setLocal(message as Message);
+    if (!id) {
+      const message = await api.messaging.create({
+        params: { repositoryId },
+        body: { content, ...createOnly },
+      });
+      return setLocal(message as Message);
+    }
+    const message = await api.messaging.update({
+      params: { repositoryId, messageId: id },
+      body: { content },
+    });
+    // An edit comes back without the reply summary, so it keeps the cached one
+    return setLocal({ ...entries.get(id), ...message } as Message);
   }
 
   // Deleting keeps the message, without its text, so replies keep a parent

@@ -5,6 +5,7 @@ import type { Replies } from './replies';
 import type { Unread } from './unread';
 
 import { compact, debounce, map } from 'lodash-es';
+import { createMessagePages, PAGE_SIZE, type PageQuery } from './pages';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
@@ -39,6 +40,7 @@ export const createThreads = (
   // Filters of the last fetch
   const listParams = ref<ThreadParams>({});
   const messageIds = reactive(new Map<number, number[]>());
+  const pages = createMessagePages(messageCache);
   const selectedThreadId = ref<number | null>(null);
   // The thread last asked for, which may still be loading
   let requestedThreadId: number | null = null;
@@ -61,6 +63,8 @@ export const createThreads = (
     const threadId = selectedThreadId.value;
     return threadId ? messageCache.getMany(messageIds.get(threadId)) : [];
   });
+
+  const messagesPaging = computed(() => pages.paging(selectedThreadId.value));
 
   const isListFiltered = computed(() => {
     const { scope, type, name } = listParams.value;
@@ -107,6 +111,8 @@ export const createThreads = (
     if (!threadId) return;
     const ids = messageIds.get(threadId) ?? [];
     if (ids.includes(message.id)) return;
+    // Opened at an older stretch, it comes in with the newest messages
+    if (isNew && pages.hasNewer(threadId)) return;
     messageIds.set(threadId, [...ids, message.id]);
   }
 
@@ -154,6 +160,13 @@ export const createThreads = (
     }
   }
 
+  const fetchMessages =
+    (repositoryId: number, threadId: number) => (query: PageQuery = {}) =>
+      api.messaging.getMessages({
+        params: { repositoryId, threadId },
+        query: { ...query, limit: PAGE_SIZE },
+      });
+
   // Puts a thread on screen, with where its "New" marker starts
   function showThread(threadId: number, watermark: string | null) {
     selectedThreadId.value = threadId;
@@ -161,8 +174,13 @@ export const createThreads = (
   }
 
   // Shows the thread with its messages, never empty in between: one seen
-  // before switches at once and refreshes, a new one once they arrive
-  async function selectThread(repositoryId: number, threadId: number) {
+  // before switches at once and refreshes, a new one once they arrive.
+  // Opened at a message, it loads back to it
+  async function selectThread(
+    repositoryId: number,
+    threadId: number,
+    messageId: number | null = null,
+  ) {
     requestedThreadId = threadId;
     isInView.value = true;
     if (!threads.has(threadId)) {
@@ -177,17 +195,31 @@ export const createThreads = (
     const watermark = thread?.isUnread
       ? (thread.lastReadAt ?? new Date(0).toISOString())
       : null;
+    pages.trimToLatest(messageIds, threadId);
     if (hasLoadedMessages(threadId)) showThread(threadId, watermark);
-    const items = await api.messaging.getMessages({
-      params: { repositoryId, threadId },
-    });
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    const items = await pages.fetchLatest(threadId, fetchPage, messageId);
     // Another thread was picked meanwhile
     if (requestedThreadId !== threadId) return items;
     messageIds.set(threadId, []);
-    (items as unknown as Message[]).forEach((it) => addToThread(it));
+    items.forEach((it) => addToThread(it));
     if (selectedThreadId.value !== threadId) showThread(threadId, watermark);
     await markRead(repositoryId, threadId);
     return items;
+  }
+
+  function loadOlderMessages(repositoryId: number) {
+    const threadId = selectedThreadId.value;
+    if (!threadId) return;
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    return pages.loadOlder(messageIds, threadId, fetchPage);
+  }
+
+  function loadNewerMessages(repositoryId: number) {
+    const threadId = selectedThreadId.value;
+    if (!threadId) return;
+    const fetchPage = fetchMessages(repositoryId, threadId);
+    return pages.loadNewer(messageIds, threadId, fetchPage);
   }
 
   function deselectThread() {
@@ -217,6 +249,8 @@ export const createThreads = (
     threadId: number,
     content: string,
   ) {
+    // Sent from an older stretch, the thread moves to the newest first
+    if (pages.hasNewer(threadId)) await selectThread(repositoryId, threadId);
     const thread = threads.get(threadId);
     const message = await messageCache.save({
       repositoryId,
@@ -239,6 +273,9 @@ export const createThreads = (
     content: string,
     isBroadcast = false,
   ) {
+    if (replies.hasNewerReplies(parentId)) {
+      await replies.openReplies(repositoryId, parentId);
+    }
     const message = await messageCache.save({
       repositoryId,
       parentId,
@@ -335,6 +372,7 @@ export const createThreads = (
     listedIds.value = [];
     listParams.value = {};
     messageIds.clear();
+    pages.clear();
     selectedThreadId.value = null;
     requestedThreadId = null;
     isInView.value = false;
@@ -350,6 +388,7 @@ export const createThreads = (
     selectedThreadId,
     openedWatermark,
     selectedThreadMessages,
+    messagesPaging,
     isLoading,
     total,
     hasLoadedMessages,
@@ -361,6 +400,8 @@ export const createThreads = (
     updateThreadSummary,
     fetchThreads,
     selectThread,
+    loadOlderMessages,
+    loadNewerMessages,
     deselectThread,
     leaveThread,
     startThread,

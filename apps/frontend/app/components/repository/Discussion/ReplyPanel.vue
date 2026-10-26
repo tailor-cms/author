@@ -1,6 +1,6 @@
 <template>
   <div class="reply-panel d-flex flex-column">
-    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 py-4">
+    <div class="d-flex flex-shrink-0 align-center ga-2 px-4 pt-4">
       <h3 class="text-title-medium font-weight-bold">Replies</h3>
       <VSpacer />
       <VBtn
@@ -13,8 +13,16 @@
         @click="emit('close')"
       />
     </div>
-    <div ref="viewportEl" class="reply-viewport overflow-y-auto">
-      <div ref="messagesEl" class="py-5">
+    <MessageViewport
+      :focused-id="focusedId"
+      :paging="paging"
+      :messages="replies"
+      class="reply-viewport"
+      @jump:latest="emit('jump:latest')"
+      @load:newer="emit('load:newer')"
+      @load:older="emit('load:older')"
+    >
+      <div class="py-5">
         <MessageRow
           v-if="parent"
           :current-user-id="currentUserId"
@@ -24,11 +32,14 @@
           @remove="emit('remove', $event)"
           @update="(id, content) => emit('update', id, content)"
         />
-        <div class="d-flex align-center ga-3 px-4 py-2">
+        <div v-if="replyCount > 0" class="d-flex align-center ga-3 px-4 py-2">
           <span class="reply-count text-body-small text-medium-emphasis">
-            {{ pluralize('reply', replies.length, true) }}
+            {{ pluralize('reply', replyCount, true) }}
           </span>
           <VDivider />
+        </div>
+        <div v-if="isLoadingSlow" class="d-flex justify-center py-6">
+          <VProgressCircular aria-label="Loading replies" indeterminate />
         </div>
         <MessageRow
           v-for="(reply, index) in replies"
@@ -43,7 +54,7 @@
           @update="(id, content) => emit('update', id, content)"
         />
       </div>
-    </div>
+    </MessageViewport>
     <div class="flex-shrink-0 px-4 pb-2">
       <MessageComposer
         placeholder="Reply..."
@@ -64,15 +75,16 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
+import { NO_PAGING, type Paging } from '@/stores/messaging/pages';
 import {
   lastOwnMessage,
   MessageComposer,
   provideEditingMessage,
 } from '@tailor-cms/core-components';
 import { isContinuation } from './ThreadPanel/timeline';
-import { useStickToBottom } from './composables/useStickToBottom';
 import pluralize from 'pluralize-esm';
 import MessageRow from './MessageRow/index.vue';
+import MessageViewport from './MessageViewport.vue';
 
 interface Props {
   parent: Message | null;
@@ -80,20 +92,35 @@ interface Props {
   currentUserId?: number | null;
   // Opened at and highlighted, e.g. from a search result
   focusedId?: number | null;
+  // The first page is still on the way
+  isLoading?: boolean;
+  paging?: Paging;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   currentUserId: null,
   focusedId: null,
+  isLoading: false,
+  paging: () => NO_PAGING,
 });
 
 const emit = defineEmits<{
-  close: [];
-  submit: [content: string, isBroadcast: boolean];
-  remove: [id: number];
-  react: [id: number, emoji: string];
-  update: [id: number, content: string];
+  'load:older': [];
+  'load:newer': [];
+  'jump:latest': [];
+  'close': [];
+  'submit': [content: string, isBroadcast: boolean];
+  'remove': [id: number];
+  'react': [id: number, emoji: string];
+  'update': [id: number, content: string];
 }>();
+
+// Counted by the server, as only a page of replies may be loaded
+const replyCount = computed(() =>
+  Math.max(props.parent?.replyCount ?? 0, props.replies.length),
+);
+
+const isLoadingSlow = useDelayedLoading(() => props.isLoading);
 
 // If a message is being edited
 const editingUid = provideEditingMessage();
@@ -113,16 +140,6 @@ const submit = (content: string) => {
   emit('submit', content, isBroadcast.value);
   isBroadcast.value = false;
 };
-
-const viewportEl = ref<HTMLElement>();
-const messagesEl = ref<HTMLElement>();
-
-useStickToBottom(
-  viewportEl,
-  messagesEl,
-  () => props.replies,
-  () => props.focusedId,
-);
 </script>
 
 <style lang="scss" scoped>
