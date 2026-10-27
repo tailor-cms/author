@@ -23,15 +23,27 @@
       @load:older="emit('load:older')"
     >
       <div class="py-5">
-        <MessageRow
-          v-if="parent"
-          :current-user-id="currentUserId"
-          :message="parent"
-          is-reply-target
-          @react="(id, emoji) => emit('react', id, emoji)"
-          @remove="emit('remove', $event)"
-          @update="(id, content) => emit('update', id, content)"
-        />
+        <div class="parent-strip-anchor">
+          <VFadeTransition>
+            <ReplyParentStrip
+              v-if="parent && !isParentInView"
+              :message="parent"
+              class="parent-strip"
+              @jump:parent="jumpToParent"
+            />
+          </VFadeTransition>
+        </div>
+        <div ref="parentEl">
+          <MessageRow
+            v-if="parent"
+            :current-user-id="currentUserId"
+            :message="parent"
+            is-reply-target
+            @react="(id, emoji) => emit('react', id, emoji)"
+            @remove="emit('remove', $event)"
+            @update="(id, content) => emit('update', id, content)"
+          />
+        </div>
         <div v-if="replyCount > 0" class="d-flex align-center ga-3 px-4 py-2">
           <span class="reply-count text-body-small text-medium-emphasis">
             {{ pluralize('reply', replyCount, true) }}
@@ -83,8 +95,10 @@ import {
 } from '@tailor-cms/core-components';
 import { isContinuation } from './ThreadPanel/timeline';
 import pluralize from 'pluralize-esm';
+import { useIntersectionObserver } from '@vueuse/core';
 import MessageRow from './MessageRow/index.vue';
 import MessageViewport from './MessageViewport.vue';
+import ReplyParentStrip from './ReplyParentStrip.vue';
 
 interface Props {
   parent: Message | null;
@@ -115,6 +129,13 @@ const emit = defineEmits<{
   'update': [id: number, content: string];
 }>();
 
+const parentEl = ref<HTMLElement>();
+const isParentInView = ref(true);
+
+useIntersectionObserver(parentEl, ([entry]) => {
+  isParentInView.value = !!entry?.isIntersecting;
+});
+
 // Counted by the server, as only a page of replies may be loaded
 const replyCount = computed(() =>
   Math.max(props.parent?.replyCount ?? 0, props.replies.length),
@@ -132,6 +153,9 @@ const editLast = () => {
 
 const isGrouped = (index: number) =>
   index > 0 && isContinuation(props.replies[index - 1]!, props.replies[index]!);
+
+const jumpToParent = () =>
+  parentEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
 // Post to the channel as well
 const isBroadcast = ref(false);
@@ -151,6 +175,19 @@ const submit = (content: string) => {
 .reply-viewport {
   flex: 0 1 auto;
   min-height: 0;
+}
+
+.parent-strip-anchor {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 0;
+}
+
+.parent-strip {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
 }
 
 .reply-count {
