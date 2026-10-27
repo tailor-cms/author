@@ -27,7 +27,7 @@ test('should be able to create user group', async ({ page }) => {
   const name = 'Test Group';
   await userGroupPage.addUserGroup(name);
   await page.reload();
-  await expect(userGroupPage.groupGrid).toContainText(name);
+  await expect(userGroupPage.groupList).toContainText(name);
 });
 
 test('should be able to edit user group', async ({ page }) => {
@@ -38,14 +38,14 @@ test('should be able to edit user group', async ({ page }) => {
   const updatedName = 'Edited Test Group';
   await entry.edit(updatedName);
   await page.reload();
-  await expect(userGroupPage.groupGrid).toContainText(updatedName);
+  await expect(userGroupPage.groupList).toContainText(updatedName);
 });
 
 test('should be able to remove user group', async ({ page }) => {
   const userGroupPage = new GroupManagement(page);
   const name = 'Test Group';
   await userGroupPage.addUserGroup(name);
-  await expect(userGroupPage.groupGrid).toContainText(name);
+  await expect(userGroupPage.groupList).toContainText(name);
   await page.reload();
   await userGroupPage.removeUserGroup(name);
   await expect(userGroupPage.el).not.toContainText(name);
@@ -53,7 +53,7 @@ test('should be able to remove user group', async ({ page }) => {
   await expect(userGroupPage.el).not.toContainText(name);
 });
 
-test('should be able to paginate groups', async ({ page }) => {
+test('should be able to load more groups', async ({ page }) => {
   const userGroupPage = new GroupManagement(page);
   const pageOverflow = 1;
   const groupCreateCount = DEFAULT_GROUPS_PER_PAGE + pageOverflow;
@@ -65,12 +65,11 @@ test('should be able to paginate groups', async ({ page }) => {
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(
     DEFAULT_GROUPS_PER_PAGE,
   );
-  await userGroupPage.nextPage.click();
-  await expect(userGroupPage.groupEntriesLocator).toHaveCount(pageOverflow);
-  await userGroupPage.prevPage.click();
+  await userGroupPage.showMoreBtn.click();
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(
-    DEFAULT_GROUPS_PER_PAGE,
+    groupCreateCount,
   );
+  await expect(userGroupPage.showMoreBtn).not.toBeVisible();
 });
 
 test('should be able to filter by name', async ({ page }) => {
@@ -82,13 +81,13 @@ test('should be able to filter by name', async ({ page }) => {
   await page.reload();
   const target = 'Test Group 1';
   await userGroupPage.searchInput.fill(target);
-  await expect(userGroupPage.groupGrid).toContainText(target);
+  await expect(userGroupPage.groupList).toContainText(target);
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(1);
   await userGroupPage.searchInput.fill('sdlkas');
   await expect(userGroupPage.groupEntriesLocator).toHaveCount(0);
 });
 
-test('should show member and repository counts on a group card', async ({
+test('should show member and repository counts on a group entry', async ({
   page,
 }) => {
   const group = await createUserGroup('Counts Group');

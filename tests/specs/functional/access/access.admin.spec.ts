@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 
+import { AdminRail } from '../../../pom/admin/AdminRail.ts';
 import { AdminSection } from '../../../pom/admin/Admin.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import SeedClient from '../../../api/SeedClient.ts';
@@ -18,17 +19,18 @@ test.describe('as a System Admin', () => {
     await expect(appBar.adminLink).toBeVisible();
   });
 
-  test('should be able to see 5 menu entries', async ({ page }) => {
+  test('should be able to see 5 rail entries', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const appBar = new AppBar(page);
     await appBar.goToAdmin();
-    const sidebarLocator = page.locator('.admin-sidebar');
-    await expect(sidebarLocator.locator('.v-list-item')).toHaveCount(5);
-    await expect(sidebarLocator).toContainText('System Users');
-    await expect(sidebarLocator).toContainText('User Groups');
-    await expect(sidebarLocator).toContainText('Structure Types');
-    await expect(sidebarLocator).toContainText('Installed Elements');
-    await expect(sidebarLocator).toContainText('Emoji');
+    const rail = new AdminRail(page);
+    await expect(rail.tabs).toHaveText([
+      'Users',
+      'Groups',
+      'Structures',
+      'Elements',
+      'Emoji',
+    ]);
   });
 
   test('should be able to access Structure Types', async ({ page }) => {
