@@ -1,33 +1,6 @@
 <template>
   <div class="user-group-users">
-    <div class="d-flex align-center ga-3 mb-6">
-      <VBtn
-        v-tooltip:bottom="{ text: 'Go back', openDelay: 500 }"
-        aria-label="Go back"
-        density="comfortable"
-        icon="mdi-arrow-left"
-        variant="text"
-        @click="router.back()"
-      />
-      <UserGroupAvatar :logo-url="userGroup?.logoUrl" size="40" />
-      <div class="group-title text-left overflow-hidden">
-        <h1
-          v-tooltip:bottom="{ text: userGroup?.name, openDelay: 500 }"
-          class="text-title-large text-truncate"
-        >
-          {{ userGroup?.name }}
-        </h1>
-      </div>
-      <VSpacer />
-      <VBtn
-        v-if="userGroup"
-        prepend-icon="mdi-square-edit-outline"
-        text="Edit"
-        variant="text"
-        @click="isGroupDialogVisible = true"
-      />
-    </div>
-    <VDivider class="mb-6" />
+    <h1 class="d-sr-only">{{ userGroup?.name }}</h1>
     <template v-if="!isLoading">
       <div class="d-flex align-center ga-3 mb-4">
         <VTextField
@@ -58,7 +31,7 @@
         <VSpacer />
         <UserGroupMembershipDialog
           :user-group-id="userGroupId"
-          @save="fetchUsers()"
+          @save="onMembersChanged"
         />
       </div>
       <VDataIterator
@@ -100,12 +73,6 @@
         </template>
       </VDataIterator>
     </template>
-    <UserGroupDialog
-      v-model:visible="isGroupDialogVisible"
-      :group-data="userGroup"
-      :user-groups="[]"
-      @updated="onGroupUpdated"
-    />
   </div>
 </template>
 
@@ -120,8 +87,6 @@ import { TailorEmptyState } from '@tailor-cms/core-components';
 import { api } from '@/api';
 import MemberRow from '@/components/common/MemberRow.vue';
 import PaginationFooter from '@/components/common/PaginationFooter.vue';
-import UserGroupAvatar from '@/components/common/UserGroupAvatar.vue';
-import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
 import UserGroupMembershipDialog from '~/components/admin/UserGroupMembershipDialog.vue';
 
 definePageMeta({
@@ -129,8 +94,8 @@ definePageMeta({
 });
 
 const route = useRoute();
-const router = useRouter();
 const auth = useAuthStore();
+const userGroupList = useUserGroupList();
 const notify = useNotification();
 const notifyError = (message: string) => notify(message, { color: 'error' });
 
@@ -138,7 +103,8 @@ const isLoading = ref(true);
 const userGroupId = parseInt(route.params.userGroupId as string, 10);
 const userGroup = ref<UserGroup | null>(null);
 const userGroupUsers = ref<UserGroupMemberWithUser[]>([]);
-const isGroupDialogVisible = ref(false);
+
+useHead({ title: () => userGroup.value?.name ?? 'User group' });
 
 const roles = GROUP_ROLES;
 
@@ -182,13 +148,17 @@ async function fetchUsers() {
   });
 }
 
+// Member changes move the counts shown in the group list too
+const onMembersChanged = () =>
+  Promise.all([fetchUsers(), userGroupList.refresh()]);
+
 async function upsertUser(email: string, role: string) {
   try {
     const { failed } = await api.userGroup.addUser({
       params: { id: userGroupId },
       body: { emails: [email], role } as any,
     });
-    await fetchUsers();
+    await onMembersChanged();
     // A per-email failure comes back in `failed` (200), not as a throw;
     // funnel it into the same error notice
     if (failed.length) throw new Error('Role update failed');
@@ -215,22 +185,17 @@ async function removeUser(userId: number) {
       });
       if (willLoseAccess) {
         notify('You removed yourself from the group.');
+        await userGroupList.refresh();
         if (hasOtherAdminGroups) return navigateTo({ name: 'user-groups' });
         await auth.fetchUserInfo();
         return navigateTo('/');
       }
-      await fetchUsers();
+      await onMembersChanged();
       notify('User removed');
     },
   };
   showDialog(confirmation);
 }
-
-const onGroupUpdated = async () => {
-  userGroup.value = await api.userGroup.get({
-    params: { id: userGroupId },
-  });
-};
 
 onBeforeMount(async () => {
   try {
@@ -253,10 +218,6 @@ onBeforeMount(async () => {
 </script>
 
 <style lang="scss" scoped>
-.group-title {
-  min-width: 0;
-}
-
 .member-search {
   max-width: 18rem;
 

@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 import { ActivityOutline } from '../../../pom/repository/Outline.ts';
+import { AdminRail } from '../../../pom/admin/AdminRail.ts';
 import { AppBar } from '../../../pom/common/AppBar.ts';
 import { NavigationRail } from '../../../pom/repository/NavigationRail.ts';
 import SeedClient from '../../../api/SeedClient.ts';
@@ -15,13 +16,13 @@ test('should be able to access admin page', async ({ page }) => {
   const appBar = new AppBar(page);
   await appBar.goToAdmin();
   await expect(page).toHaveTitle('System Users');
-  await expect(page.getByText('System Users')).toBeVisible();
+  await expect(new AdminRail(page).getTab('Users')).toBeVisible();
 });
 
 test('should be able to navigate to the catalog page', async ({ page }) => {
   const appBar = new AppBar(page);
   await appBar.goToAdmin();
-  await expect(page.getByText('System Users')).toBeVisible();
+  await expect(page).toHaveTitle('System Users');
   await appBar.catalogLink.click();
   await expect(page).toHaveTitle('Catalog');
   await expect(page.getByText('No repositories yet')).toBeVisible();
