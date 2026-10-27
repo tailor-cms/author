@@ -10,7 +10,7 @@
     :progress="progress"
     :title="dropzoneTitle"
     @open="openDialog"
-    @select="onUploadFile"
+    @select="upload"
   />
   <VTextField
     v-else-if="!resolvedFileKey"
@@ -83,29 +83,25 @@
     @delete="onClear"
     @replace="openDialog()"
   />
-  <PickerDialog
+  <AssetPicker
     v-model="dialogOpen"
-    :accept="acceptedFileTypes"
     :allow-url-source="allowUrlSource"
     :allowed-extensions="allowedExtensions"
     :heading="dialogHeading"
     :icon="resolvedIcon"
     :initial-tab="dialogTab"
-    :is-uploading="uploading"
-    :upload-error="uploadError"
-    :upload-progress="progress"
-    @select="onSelect"
-    @upload="onUploadFile"
+    @select="emit('input', $event)"
+    @upload="emit('upload', $event)"
   />
 </template>
 
 <script lang="ts" setup>
 import { computed, inject, ref, watch } from 'vue';
 import { AssetType, inferAssetType } from '@tailor-cms/interfaces/asset';
+import AssetPicker from '../AssetPicker/index.vue';
+import type { PickerTab } from '../AssetPicker/index.vue';
 import Dropzone from './Dropzone.vue';
 import FilePreview from './FilePreview.vue';
-import PickerDialog from './PickerDialog/index.vue';
-import type { PickerTab } from './PickerDialog/index.vue';
 import { useUpload } from '../../composables/useUpload';
 
 import {
@@ -211,8 +207,6 @@ const dialogHeading = computed(() => {
   return resolvedFileKey.value ? `Change ${base.toLowerCase()}` : base;
 });
 
-const acceptedFileTypes = computed(() => props.allowedExtensions.join(','));
-
 // External URLs are rendered as-is; any other value (storage:// URI or a bare
 // storage key) is a storage reference that gets stripped and signed. Testing
 // the http(s) scheme positively tolerates the prefix being present or not.
@@ -274,15 +268,6 @@ watch(
   },
   { immediate: true },
 );
-
-// Dialog stays open showing progress; on failure it remains
-// open with the error so the user can retry
-const onUploadFile = async (file: File) => {
-  const payload = await upload(file);
-  if (payload) dialogOpen.value = false;
-};
-
-const onSelect = (payload: Record<string, any>) => emit('input', payload);
 
 // Emit both: @delete for explicit delete handling, @input null for value change
 const onClear = () => {

@@ -9,6 +9,8 @@ export { default as UserAvatar } from './components/UserAvatar.vue';
 export { default as ActiveUsers } from './components/ActiveUsers.vue';
 export { default as ActiveUsersGroup } from './components/ActiveUsersGroup.vue';
 export { default as SelectElement } from './components/SelectElement/index.vue';
+export { default as AssetPicker } from './components/AssetPicker/index.vue';
+export type { AssetPick } from './components/AssetPicker/index.vue';
 export { default as FileInput } from './components/FileInput/index.vue';
 export { default as FileInputLegacy } from './components/FileInput/LegacyWrapper.vue';
 export { default as RichTextEditor } from './components/RichTextEditor/index.vue';

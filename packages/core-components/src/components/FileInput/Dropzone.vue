@@ -70,7 +70,7 @@
 <script lang="ts" setup>
 import { computed, ref } from 'vue';
 
-import UploadProgress from './PickerDialog/UploadProgress.vue';
+import UploadProgress from '../UploadProgress.vue';
 
 interface Props {
   title: string;
