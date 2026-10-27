@@ -1,7 +1,7 @@
 import type { Locator, Page } from '@playwright/test';
 import { expect } from '@playwright/test';
 
-import { confirmAction } from '../common/utils';
+import { confirmAction, selectMenuOption } from '../common/utils';
 
 export class UserGroupUserAssignment {
   readonly page: Page;
@@ -141,15 +141,16 @@ export class GroupEntry {
     this.page = page;
   }
 
-  // Edit/delete live in the card's overflow menu
+  async open() {
+    await this.el.click();
+    await expect(this.el).toHaveClass(/v-list-item--active/);
+  }
+
+  // Edit/delete live in the entry's overflow menu
   private async selectAction(label: 'Edit' | 'Delete') {
+    await this.el.hover();
     await this.actionsBtn.click();
-    const menu = this.page.locator('.v-overlay.v-menu');
-    await menu
-      .locator('.v-list-item')
-      .filter({ hasText: label })
-      .click();
-    await expect(menu).toBeHidden();
+    await selectMenuOption(this.page, label);
   }
 
   async edit(name: string) {
@@ -170,20 +171,22 @@ export class GroupManagement {
   readonly page: Page;
   readonly el: Locator;
   readonly addBtn: Locator;
-  readonly groupGrid: Locator;
+  readonly groupList: Locator;
   readonly groupEntriesLocator: Locator;
-  readonly prevPage: Locator;
-  readonly nextPage: Locator;
+  readonly showMoreBtn: Locator;
   readonly searchInput: Locator;
 
   constructor(page: Page) {
     const el = page.locator('.group-management');
-    this.groupGrid = el.locator('.group-grid');
-    this.addBtn = el.getByRole('button', { name: 'Add user group' });
+    this.groupList = el.locator('.user-group-list');
+    this.addBtn = this.groupList.getByRole('button', {
+      name: 'Add user group',
+    });
     this.searchInput = el.getByTestId('search-user-groups').locator('input');
-    this.groupEntriesLocator = this.groupGrid.getByTestId('user-group-card');
-    this.prevPage = el.getByRole('button', { name: 'Previous page' });
-    this.nextPage = el.getByRole('button', { name: 'Next page' });
+    this.groupEntriesLocator = this.groupList.getByTestId('user-group-entry');
+    this.showMoreBtn = this.groupList.getByRole('button', {
+      name: 'Show more',
+    });
     this.el = el;
     this.page = page;
   }
@@ -200,24 +203,22 @@ export class GroupManagement {
   ) {
     const groupManagement = await GroupManagement.visit(page);
     await groupManagement.addUserGroup(name);
-    const entry = await groupManagement.getEntryByName(name);
-    if (options.visit) {
-      // The whole card navigates to the group detail page
-      await entry.el.click();
-      await GroupManagement.expectGroupPage(page, name);
-    }
+    // Creating a group opens it next to the list
+    if (options.visit) await GroupManagement.expectGroupPage(page, name);
   }
 
   static async goToGroupByName(page: Page, name: string) {
     const groupManagement = await GroupManagement.visit(page);
     const entry = await groupManagement.getEntryByName(name);
-    await entry.el.click();
+    await entry.open();
     await page.waitForLoadState('networkidle');
     await GroupManagement.expectGroupPage(page, name);
   }
 
+  // The open group is the selected entry of the list beside it
   static expectGroupPage(page: Page, name: string) {
-    return expect(page.getByRole('heading', { name })).toBeVisible();
+    const selected = page.locator('.user-group-list .v-list-item--active');
+    return expect(selected).toContainText(name);
   }
 
   async getEntries() {

@@ -1,187 +1,41 @@
 <template>
-  <div class="group-management">
-    <div class="d-flex align-center ga-4 mb-4">
-      <VTextField
-        v-model="filter"
-        bg-color="transparent"
-        class="group-search"
-        data-testid="search-user-groups"
-        density="comfortable"
-        max-width="300"
-        placeholder="Search user groups..."
-        prepend-inner-icon="mdi-magnify"
-        rounded="xl"
-        variant="solo-filled"
-        clearable
-        flat
-        hide-details
-      />
-      <VBtn
-        v-tooltip:top="{
-          text: sortOrder === 'desc' ? 'Name (Z–A)' : 'Name (A–Z)',
-          openDelay: 500,
-        }"
-        :icon="sortIcon"
-        aria-label="Toggle sort order"
-        class="text-medium-emphasis"
-        size="small"
-        variant="text"
-        @click="toggleSort"
-      />
-      <VSpacer />
-      <VBtn
-        v-if="authStore.canCreateUserGroups"
-        aria-label="Add user group"
-        color="primary"
-        prepend-icon="mdi-plus"
-        text="Add user group"
-        variant="flat"
-        @click="showGroupDialog()"
-      />
-    </div>
-    <TailorEmptyState
-      v-if="!isLoading && !userGroups.length"
-      v-bind="emptyState"
-      @click:action="filter = ''"
-    />
-    <template v-else-if="!isLoading">
-      <div class="group-grid">
-        <UserGroupCard
-          v-for="group in userGroups"
-          :key="group.id"
-          :group="group"
-          :has-actions="authStore.canModifyUserGroups"
-          @edit:group="showGroupDialog"
-          @delete:group="remove"
-        />
-      </div>
-      <PaginationFooter
-        :page="dataTable.page"
-        :page-count="pageCount"
-        :items-count="totalItems"
-        :items-per-page="dataTable.itemsPerPage"
-        @update:page="(page) => fetch({ page })"
-      />
-    </template>
-    <UserGroupDialog
-      v-model:visible="isGroupDialogVisible"
-      :group-data="editedGroup"
-      :user-groups="userGroups"
-      @created="fetch(defaultPage())"
-      @updated="fetch(defaultPage())"
-    />
-  </div>
+  <TailorEmptyState
+    v-if="!list.isLoading.value"
+    v-bind="emptyState"
+    class="mt-4"
+    @click:action="list.openCreateDialog"
+  />
 </template>
 
 <script lang="ts" setup>
-import type { UserGroup } from '@tailor-cms/interfaces/user-group';
-
 import { TailorEmptyState } from '@tailor-cms/core-components';
 
-import { api } from '@/api';
-import UserGroupCard from '@/components/admin/UserGroupCard/index.vue';
-import type { UserGroupRow } from '@/components/admin/UserGroupCard/types';
-import UserGroupDialog from '@/components/admin/UserGroupDialog.vue';
-import PaginationFooter from '@/components/common/PaginationFooter.vue';
+import { useAuthStore } from '@/stores/auth';
 
 definePageMeta({ name: 'user-groups' });
 useHead({ title: 'User group management' });
 
-const defaultPage = () => ({
-  sortBy: [{ key: 'name', order: 'asc' as 'asc' | 'desc' }],
-  page: 1,
-  itemsPerPage: 24,
-});
-
 const authStore = useAuthStore();
+const list = useUserGroupList();
 
-const isLoading = ref(true);
-const isGroupDialogVisible = ref(false);
-const userGroups = ref<UserGroupRow[]>([]);
-const totalItems = ref(0);
-const dataTable = reactive(defaultPage());
-const filter = ref('');
-const editedGroup = ref<UserGroup | null>(null);
+const hasGroups = computed(() => !!list.total.value || !!list.search.value);
 
-const pageCount = computed(() =>
-  Math.ceil(totalItems.value / dataTable.itemsPerPage),
-);
-
-const sortOrder = computed(() => dataTable.sortBy[0]?.order ?? 'asc');
-const sortIcon = computed(() => sortOrder.value === 'desc'
-  ? 'mdi-sort-alphabetical-descending'
-  : 'mdi-sort-alphabetical-ascending',
-);
-
-const emptyState = computed(() => filter.value
-  ? {
-      actionText: 'Clear search',
-      prependActionIcon: 'mdi-close',
-      icon: 'mdi-magnify',
-      text: 'No user groups match your search.',
-      title: 'No matches',
-    }
-  : {
+const emptyState = computed(() => {
+  if (hasGroups.value) {
+    return {
       icon: 'mdi-account-group-outline',
-      text: 'Create a user group to get started.',
-      title: 'No user groups',
-    },
-);
-
-const toggleSort = () => {
-  const order = sortOrder.value === 'asc' ? 'desc' : 'asc';
-  fetch({ sortBy: [{ key: 'name', order }], page: 1 });
-};
-
-const showGroupDialog = (group: UserGroup | null = null) => {
-  isGroupDialogVisible.value = true;
-  editedGroup.value = group;
-};
-
-const fetch = async (opts = {}) => {
-  Object.assign(dataTable, opts);
-  isLoading.value = true;
-  const { items, total } = await api.userGroup.list({
-    query: {
-      sortBy: dataTable.sortBy[0]?.key,
-      sortOrder: dataTable.sortBy[0]?.order === 'desc' ? 'DESC' : 'ASC',
-      offset: (dataTable.page - 1) * dataTable.itemsPerPage,
-      limit: dataTable.itemsPerPage,
-      filter: filter.value,
-    },
-  });
-  userGroups.value = items;
-  totalItems.value = total;
-  isLoading.value = false;
-};
-
-const remove = (group: UserGroup) => {
-  const showDialog = useConfirmationDialog();
-  const confirmation = {
-    title: 'Delete user group',
-    color: 'error',
-    message: `Are you sure you want to delete "${group.name}" user group?`,
-    action: () =>
-      api.userGroup
-        .delete({ params: { id: group.id } })
-        .then(() => fetch()),
+      text: 'Pick a group from the list to manage its members.',
+      title: 'Select a user group',
+    };
+  }
+  return {
+    icon: 'mdi-account-group-outline',
+    text: 'Create a user group to get started.',
+    title: 'No user groups',
+    ...(authStore.canCreateUserGroups && {
+      actionText: 'Add user group',
+      prependActionIcon: 'mdi-plus',
+    }),
   };
-  showDialog(confirmation);
-};
-
-watch(filter, () => fetch(defaultPage()));
-
-onMounted(() => fetch());
+});
 </script>
-
-<style lang="scss" scoped>
-.group-search :deep(.v-field__outline) {
-  display: none;
-}
-
-.group-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-  gap: 0.75rem;
-}
-</style>
