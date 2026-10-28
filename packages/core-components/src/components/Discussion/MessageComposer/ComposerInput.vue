@@ -67,7 +67,7 @@ const editor = useEditor({
   editable: !props.disabled,
   autofocus: props.autofocus,
   // A saved draft or the message being edited
-  content: toDocument(content.value),
+  content: toDocument(content.value, customEmoji.resolve),
   editorProps: {
     attributes: { 'role': 'textbox', 'aria-label': props.ariaLabel },
     handleKeyDown: (_view, event) => {
@@ -90,6 +90,7 @@ const editor = useEditor({
     suggestUsers: (query) => services?.suggestUsers(query) ?? [],
     suggestReferences: (query) => services?.suggestReferences(query) ?? [],
     suggestEmoji,
+    resolveEmoji: customEmoji.resolve,
     hooks: {
       onOpen: (char) => openMenus.add(char),
       onClose: (char) => openMenus.delete(char),
@@ -114,7 +115,9 @@ const focus = () => editor.value?.commands.focus('end');
 // Changed from outside, e.g. a draft restored or cleared by the parent
 watch(content, (value) => {
   if (!editor.value || value === serialize(editor.value)) return;
-  editor.value.commands.setContent(toDocument(value), { emitUpdate: false });
+  editor.value.commands.setContent(toDocument(value, customEmoji.resolve), {
+    emitUpdate: false,
+  });
 });
 
 watch(
@@ -159,6 +162,15 @@ onBeforeUnmount(() => editor.value?.destroy());
       &--reference {
         color: rgb(var(--v-theme-secondary));
       }
+    }
+
+    // Sized like the posted message's `EmojiGlyph`
+    .composer-emoji {
+      display: inline-block;
+      width: 1.375em;
+      height: 1.375em;
+      vertical-align: -0.3em;
+      object-fit: contain;
     }
 
     // Code highlight, styled like the posted `MessageBody`

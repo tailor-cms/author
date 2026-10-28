@@ -1,5 +1,5 @@
 // What the composer's editor supports: plain text, `@` mentions,
-// `#` references, `:` emoji and code highlighting
+// `#` references, `:` emoji, typed `:shortcode:`s and code highlighting
 import type { ReferenceType } from '@tailor-cms/interfaces/comment';
 import type { SuggestionFetcher } from '../../types';
 
@@ -8,10 +8,17 @@ import {
   type SuggestionConfig,
   type SuggestionHooks,
 } from '../SuggestionMenu/createSuggestion';
-import { mentionNode, referenceNode, withSpace } from './document';
-import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
+import {
+  type EmojiResolver,
+  mentionNode,
+  referenceNode,
+  withSpace,
+} from './document';
 import { CodeHighlight } from './codeHighlight';
+import { CustomEmojiNode } from './customEmoji';
+import { EmojiSync } from './emojiSync';
 import { Extension } from '@tiptap/vue-3';
+import Suggestion, { type SuggestionOptions } from '@tiptap/suggestion';
 import { Placeholder } from '@tiptap/extensions';
 import Mention from '@tiptap/extension-mention';
 import StarterKit from '@tiptap/starter-kit';
@@ -43,6 +50,7 @@ interface Options {
   suggestUsers: SuggestionFetcher;
   suggestReferences: SuggestionFetcher;
   suggestEmoji: SuggestionFetcher;
+  resolveEmoji: EmojiResolver;
   // Lets the composer know when an autocomplete menu is open
   hooks: SuggestionHooks;
 }
@@ -52,6 +60,7 @@ export const createExtensions = ({
   suggestUsers,
   suggestReferences,
   suggestEmoji,
+  resolveEmoji,
   hooks,
 }: Options) => {
   const suggestion = (config: SuggestionConfig) =>
@@ -98,6 +107,7 @@ export const createExtensions = ({
       }),
     }),
     // `:` picks an emoji and adds it as text
+    CustomEmojiNode,
     EmojiSuggestion.configure({
       suggestion: suggestion({
         char: ':',
@@ -105,6 +115,9 @@ export const createExtensions = ({
         toContent: ({ value }) => `${value} `,
       }),
     }),
+    // `:shortcode:`s become emoji, except in code, where emoji become
+    // `:shortcode:`s
+    EmojiSync.configure({ resolve: resolveEmoji }),
     // Shows text in backticks as code while typing
     CodeHighlight,
   ];

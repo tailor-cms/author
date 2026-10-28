@@ -1,5 +1,5 @@
 <template>
-  <div class="message-header d-flex align-baseline ga-2">
+  <div class="message-header d-flex flex-wrap align-baseline gc-2">
     <span class="message-header-sender font-weight-bold">
       {{ senderName(message) }}
     </span>
@@ -16,7 +16,7 @@
       :at="message.createdAt"
       :has-day="hasDay"
       :is-relative="hasRelativeTime"
-      class="text-body-small text-medium-emphasis"
+      class="text-body-small text-medium-emphasis text-no-wrap"
     />
   </div>
 </template>
