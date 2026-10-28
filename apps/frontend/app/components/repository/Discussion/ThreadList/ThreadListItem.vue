@@ -4,7 +4,6 @@
     :class="{
       'thread-list-item--unread': thread.unreadCount,
       'thread-list-item--resolved': thread.isResolved,
-      'thread-list-item--starred': thread.isStarred,
     }"
     class="thread-list-item px-2"
     min-height="36"
@@ -46,7 +45,7 @@
           inline
         />
         <VBtn
-          v-tooltip:left="starLabel"
+          v-tooltip:right="starLabel"
           :aria-label="starLabel"
           :class="{ 'thread-list-item-star--active': thread.isStarred }"
           :color="thread.isStarred ? 'tertiary' : undefined"
@@ -89,52 +88,36 @@ const starLabel = computed(() =>
   .thread-list-item-trailing {
     display: flex;
     align-items: center;
-    gap: 4px;
   }
 
   .thread-list-item-count :deep(.v-badge__wrapper) {
     margin: 0;
   }
 
+  .thread-list-item-star {
+    margin-left: 4px;
+  }
+
   @media (hover: hover) {
-    .thread-list-item-star,
-    .thread-list-item-count {
-      transition: opacity 0.15s ease;
-    }
-
+    // Collapsed at rest; opening pushes the count aside
     .thread-list-item-star {
+      max-width: 0;
+      margin-left: 0;
+      overflow: hidden;
       opacity: 0;
+      transition:
+        max-width 0.2s ease-in-out,
+        margin 0.2s ease-in-out,
+        opacity 0.2s ease-in-out;
     }
 
-    &:hover,
-    &:focus-within,
-    &.v-list-item--active {
-      .thread-list-item-star {
-        opacity: 1;
-      }
-    }
-
+    &:hover .thread-list-item-star,
+    &:focus-within .thread-list-item-star,
+    &.v-list-item--active .thread-list-item-star,
     .thread-list-item-star--active {
+      max-width: 2rem;
+      margin-left: 4px;
       opacity: 1;
-    }
-
-    // The count holds the star's place until the row is hovered
-    &:not(.thread-list-item--starred) {
-      .thread-list-item-trailing {
-        display: grid;
-        justify-items: end;
-
-        > * {
-          grid-area: 1 / 1;
-        }
-      }
-
-      &:hover,
-      &:focus-within {
-        .thread-list-item-count {
-          opacity: 0;
-        }
-      }
     }
   }
 
