@@ -12,6 +12,7 @@
       @react="(id, emoji) => emit('react', id, emoji)"
       @remove="emit('remove', $event)"
       @reply="emit('reply', $event)"
+      @set:broadcast="(id, value) => emit('set:broadcast', id, value)"
       @update="(id, content) => emit('update', id, content)"
     >
       <template #intro>
@@ -74,6 +75,7 @@ const emit = defineEmits<{
   'reply': [id: number];
   'react': [id: number, emoji: string];
   'update': [id: number, content: string];
+  'set:broadcast': [id: number, isBroadcast: boolean];
   'typing': [];
 }>();
 

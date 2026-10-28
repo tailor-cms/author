@@ -4,7 +4,7 @@ import type { MessageCache } from './messageCache';
 import type { Replies } from './replies';
 import type { Unread } from './unread';
 
-import { compact, debounce, map } from 'lodash-es';
+import { compact, debounce, map, without } from 'lodash-es';
 import { createMessagePages, PAGE_SIZE, type PageQuery } from './pages';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
@@ -114,6 +114,26 @@ export const createThreads = (
     // Opened at an older stretch, it comes in with the newest messages
     if (isNew && pages.hasNewer(threadId)) return;
     messageIds.set(threadId, [...ids, message.id]);
+  }
+
+  // A reply sent to the thread later goes where it was written; one past
+  // either end of the loaded messages comes in with its page instead
+  function showInThread(message: Message) {
+    const { id, threadId } = message;
+    const ids = threadId ? messageIds.get(threadId) : undefined;
+    if (!threadId || !ids || ids.includes(id)) return;
+    const at = ids.findIndex((it) => it > id);
+    if (at === 0 && pages.hasOlder(threadId)) return;
+    if (at < 0 && pages.hasNewer(threadId)) return;
+    if (!messageCache.get(id)) messageCache.setLocal(message);
+    const position = at < 0 ? ids.length : at;
+    messageIds.set(threadId, ids.toSpliced(position, 0, id));
+  }
+
+  function hideFromThread({ id, threadId }: Message) {
+    const ids = threadId ? messageIds.get(threadId) : undefined;
+    if (!threadId || !ids?.includes(id)) return;
+    messageIds.set(threadId, without(ids, id));
   }
 
   function updateThreadSummary(message: Message) {
@@ -397,6 +417,8 @@ export const createThreads = (
     listThread,
     dropThread,
     addToThread,
+    showInThread,
+    hideFromThread,
     updateThreadSummary,
     fetchThreads,
     selectThread,

@@ -127,6 +127,7 @@
           @load:older="messagingStore.loadOlderReplies(repositoryId)"
           @react="reactToMessage"
           @remove="removeMessage"
+          @set:broadcast="setBroadcast"
           @submit="postReply"
           @update="editMessage"
         />
@@ -167,6 +168,7 @@
         @react="reactToMessage"
         @remove="removeMessage"
         @reply="openReplies"
+        @set:broadcast="setBroadcast"
         @submit="postMessage"
         @typing="reportTyping"
         @update="editMessage"
@@ -396,6 +398,13 @@ const editMessage = async (id: number, content: string) => {
     repositoryId: repositoryId.value,
   });
   notify('Message updated');
+};
+
+const setBroadcast = async (id: number, isBroadcast: boolean) => {
+  await messagingStore.setBroadcast(repositoryId.value, id, isBroadcast);
+  notify(
+    isBroadcast ? 'Reply sent to the thread' : 'Reply removed from the thread',
+  );
 };
 
 const removeMessage = async (id: number) => {
