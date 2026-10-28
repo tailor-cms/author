@@ -92,6 +92,10 @@ const starLabel = computed(() =>
     gap: 4px;
   }
 
+  .thread-list-item-count :deep(.v-badge__wrapper) {
+    margin: 0;
+  }
+
   @media (hover: hover) {
     .thread-list-item-star,
     .thread-list-item-count {
