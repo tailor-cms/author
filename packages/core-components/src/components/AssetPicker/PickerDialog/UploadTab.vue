@@ -27,7 +27,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 
-import UploadProgress from './UploadProgress.vue';
+import UploadProgress from '../../UploadProgress.vue';
 
 interface Props {
   accept?: string;

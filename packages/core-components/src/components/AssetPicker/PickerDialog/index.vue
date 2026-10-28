@@ -98,6 +98,18 @@ import UrlTab from './UrlTab.vue';
 
 export type PickerTab = 'upload' | 'library' | 'url';
 
+export interface AssetPick {
+  // storage:// URI for uploads and library assets; external URL as entered
+  // on the URL tab
+  url: string;
+  // Signed URL for immediate display; absent for external URLs
+  publicUrl?: string | null;
+  // Bare storage key
+  key?: string;
+  name?: string;
+  size?: number;
+}
+
 interface Props {
   modelValue: boolean;
   heading?: string;
@@ -137,9 +149,9 @@ const emit = defineEmits<{
   'update:modelValue': [value: boolean];
   'upload': [file: File];
   // Single asset picked from Library or URL imported
-  'select': [payload: Record<string, any>];
+  'select': [payload: AssetPick];
   // Multiple assets picked from Library (when multiple prop is enabled)
-  'select:multiple': [payload: Record<string, any>[]];
+  'select:multiple': [payload: AssetPick[]];
 }>();
 
 // Incremented on each open; remounts tab content for fresh state
@@ -167,7 +179,7 @@ const onClose = () => {
   emit('update:modelValue', false);
 };
 
-const toPayload = (asset: any) => ({
+const toPayload = (asset: any): AssetPick => ({
   key: asset.storageKey,
   name: asset.name,
   url: asset.url,

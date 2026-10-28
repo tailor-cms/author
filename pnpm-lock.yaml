@@ -677,172 +677,172 @@ importers:
   extensions/content-elements:
     dependencies:
       '@tailor-cms/ce-accordion-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(@types/sortablejs@1.15.9)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-accordion-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-audio-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-audio-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-brightcove-video-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-brightcove-video-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-carousel-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(@types/sortablejs@1.15.9)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-carousel-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-drag-drop-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-drag-drop-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-embed-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-embed-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-file-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-file-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-fill-blank-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(@types/sortablejs@1.15.9)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-fill-blank-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-flashcards-edit':
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0(@types/sortablejs@1.15.9)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-flashcards-server':
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       '@tailor-cms/ce-html-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(@tiptap/core@3.31.4(@tiptap/pm@3.31.4))(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-html-raw-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(codemirror@6.0.2)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-html-raw-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-html-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-image-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-image-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-interactive-edit':
-        specifier: ^1.0.2
+        specifier: 1.0.2
         version: 1.0.2(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-interactive-server':
-        specifier: ^1.0.2
+        specifier: 1.0.2
         version: 1.0.2
       '@tailor-cms/ce-jodit-html-edit':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-jodit-html-server':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1
       '@tailor-cms/ce-matching-question-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-matching-question-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-modal-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-modal-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-multiple-choice-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-multiple-choice-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-mux-video-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(react@19.2.8)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-mux-video-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(pg@8.22.0)(supports-color@10.2.2)
       '@tailor-cms/ce-numerical-response-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-numerical-response-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-page-break-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-page-break-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-pdf-edit':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-pdf-server':
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1
       '@tailor-cms/ce-quill-html-edit':
-        specifier: ^3.0.2
+        specifier: 3.0.2
         version: 3.0.2(typescript@7.0.2)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-quill-html-server':
-        specifier: ^3.0.2
+        specifier: 3.0.2
         version: 3.0.2
       '@tailor-cms/ce-sequence-edit':
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0(@types/sortablejs@1.15.9)(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-sequence-server':
-        specifier: ^1.0.0
+        specifier: 1.0.0
         version: 1.0.0
       '@tailor-cms/ce-single-choice-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-single-choice-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-table-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-table-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-text-response-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-text-response-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-true-false-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-true-false-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
       '@tailor-cms/ce-video-edit':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0(vue@3.5.43(typescript@7.0.2))
       '@tailor-cms/ce-video-server':
-        specifier: ^3.0.0
+        specifier: 3.0.0
         version: 3.0.0
     devDependencies:
       '@tailor-cms/extension-installer':
@@ -3478,12 +3478,14 @@ packages:
   '@opentelemetry/sdk-trace-base@2.10.0':
     resolution: {integrity: sha512-GuYQQT7QD2EeO8lcZLRQzcbOyhqAzL+6WWTKTU9mSUBYBazkEDl+VrQcXQhbB08OWM9anD1aHleVadzulpOaUQ==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.3.0 <1.10.0'
 
   '@opentelemetry/sdk-trace-node@2.10.0':
     resolution: {integrity: sha512-GZK/G6oZyBLGlH1pUgeDch7D91KoHd2uotUGIkWCPi9GI5T9X0p4L7nNAMDR1BQjkRYoDqo+ddfVx9t5Uhys+Q==}
     engines: {node: ^18.19.0 || >=20.6.0}
+    deprecated: Use @opentelemetry/sdk-trace package
     peerDependencies:
       '@opentelemetry/api': '>=1.0.0 <1.10.0'
 

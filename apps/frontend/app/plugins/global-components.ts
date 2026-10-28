@@ -1,4 +1,5 @@
 import {
+  AssetPicker,
   ContentElement,
   ElementPlaceholder,
   EmbeddedContainer,
@@ -13,5 +14,6 @@ export default defineNuxtPlugin((nuxt) => {
   nuxt.vueApp.component('TailorEmbeddedContainer', EmbeddedContainer);
   nuxt.vueApp.component('TailorAssetInput', FileInputLegacy);
   nuxt.vueApp.component('TailorFileInput', FileInput);
+  nuxt.vueApp.component('TailorAssetPicker', AssetPicker);
   nuxt.vueApp.component('TailorElementPlaceholder', ElementPlaceholder);
 });
