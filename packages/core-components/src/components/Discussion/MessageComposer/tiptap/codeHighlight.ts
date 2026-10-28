@@ -1,12 +1,16 @@
 // Display `code` blocks while typing, the way the posted message will.
 import type { Node } from '@tiptap/pm/model';
 
-import { parseMarkup, type MarkupSegment } from '@tailor-cms/utils';
+import {
+  type MarkupSegment,
+  parseMarkup,
+  toEmojiShortcode,
+} from '@tailor-cms/utils';
 import { Decoration, DecorationSet } from '@tiptap/pm/view';
 import { Extension } from '@tiptap/vue-3';
 import { Plugin } from '@tiptap/pm/state';
 
-interface PlainText {
+export interface PlainText {
   text: string;
   // Editor position of each character in `text`, see `toPlainText`
   positions: (number | null)[];
@@ -31,8 +35,10 @@ const CLASS_NAME = {
  *
  * The line break is not in the editor, so its position is null.
  * It still needs an entry, so the nth position stays the nth character.
+ * A custom emoji counts as its `:shortcode:`: the first character gets
+ * its position, the rest null.
  */
-const toPlainText = (doc: Node): PlainText => {
+export const toPlainText = (doc: Node): PlainText => {
   let text = '';
   const positions: (number | null)[] = [];
   doc.descendants((node, pos) => {
@@ -45,6 +51,10 @@ const toPlainText = (doc: Node): PlainText => {
       // has no character of its own in the editor
       text += '\n';
       positions.push(null);
+    } else if (node.type.name === 'customEmoji') {
+      const value = toEmojiShortcode(node.attrs.name);
+      text += value;
+      positions.push(pos, ...Array<null>(value.length - 1).fill(null));
     }
     // A chip adds no text; the positions just skip past it
   });

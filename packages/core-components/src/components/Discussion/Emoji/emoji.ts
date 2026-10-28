@@ -23,13 +23,20 @@ export interface EmojiGroup {
   entries: EmojiEntry[];
 }
 
+// A symbol that is text unless followed by U+FE0F, e.g. ☺ or ❤
+const TEXT_BY_DEFAULT =
+  /(?!\p{Emoji_Presentation}|\p{Emoji_Modifier})\p{Emoji}(?!\uFE0F)/gu;
+
+// Adds U+FE0F where the list leaves it out, so ☺ is drawn as an emoji
+const asEmoji = (char: string) => char.replace(TEXT_BY_DEFAULT, '$&\uFE0F');
+
 // Leaves out image-only entries, which have no character, and regional
 // indicator letters, which only mean something in pairs (a 26 Unicode
 // letters 🇦 to 🇿. They exist to build country flags)
 const ENTRIES: EmojiEntry[] = emojis
   .filter((it) => !!it.emoji && !it.name.startsWith('regional_indicator_'))
   .map((it) => ({
-    char: it.emoji!,
+    char: asEmoji(it.emoji!),
     name: it.name,
     shortcode: it.shortcodes[0] ?? it.name,
     shortcodes: it.shortcodes,
@@ -58,8 +65,10 @@ export const EMOJI_GROUPS: EmojiGroup[] = Object.entries(GROUP_LABELS)
   }))
   .filter((it) => it.entries.length);
 
-export const emojiChar = (shortcode: string) =>
-  shortcodeToEmoji(shortcode, emojis)?.emoji;
+export const emojiChar = (shortcode: string) => {
+  const char = shortcodeToEmoji(shortcode, emojis)?.emoji;
+  return char && asEmoji(char);
+};
 
 // The `:name:` of a standard emoji character, when it has one:
 // 👍 gives `:+1:`, a custom `:party_parrot:` has none
