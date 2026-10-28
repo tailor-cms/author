@@ -4,18 +4,21 @@ import type { MessageCache } from './messageCache';
 import type { Replies } from './replies';
 import type { Unread } from './unread';
 
-import { compact, debounce, map } from 'lodash-es';
+import { compact, debounce, map, without } from 'lodash-es';
 import { createMessagePages, PAGE_SIZE, type PageQuery } from './pages';
 import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
 type ThreadParams = { scope?: ThreadScope; type?: string; name?: string };
-type ReaderState = Pick<ReaderThread, 'isUnread' | 'isStarred' | 'lastReadAt'>;
+type ReaderState = Pick<
+  ReaderThread,
+  'unreadCount' | 'isStarred' | 'lastReadAt'
+>;
 
 export type Thread = Omit<ReaderThread, keyof ReaderState>;
 
 const NO_READER_STATE: ReaderState = {
-  isUnread: false,
+  unreadCount: 0,
   isStarred: false,
   lastReadAt: null,
 };
@@ -116,17 +119,38 @@ export const createThreads = (
     messageIds.set(threadId, [...ids, message.id]);
   }
 
+  // A reply sent to the thread later goes where it was written; one past
+  // either end of the loaded messages comes in with its page instead
+  function showInThread(message: Message) {
+    const { id, threadId } = message;
+    const ids = threadId ? messageIds.get(threadId) : undefined;
+    if (!threadId || !ids || ids.includes(id)) return;
+    const at = ids.findIndex((it) => it > id);
+    if (at === 0 && pages.hasOlder(threadId)) return;
+    if (at < 0 && pages.hasNewer(threadId)) return;
+    if (!messageCache.get(id)) messageCache.setLocal(message);
+    const position = at < 0 ? ids.length : at;
+    messageIds.set(threadId, ids.toSpliced(position, 0, id));
+  }
+
+  function hideFromThread({ id, threadId }: Message) {
+    const ids = threadId ? messageIds.get(threadId) : undefined;
+    if (!threadId || !ids?.includes(id)) return;
+    messageIds.set(threadId, without(ids, id));
+  }
+
   function updateThreadSummary(message: Message) {
     const { threadId } = message;
     const thread = threadId ? threads.get(threadId) : null;
     if (!thread) return;
     const me = authStore.user?.id ?? null;
     const isMine = message.authorId === me || message.actorId === me;
+    const isRead = isMine || isViewingThread(threadId);
     addThread({
       ...thread,
       lastMessageAt: message.createdAt,
       messageCount: thread.messageCount + 1,
-      isUnread: !isMine && !isViewingThread(threadId),
+      unreadCount: isRead ? 0 : thread.unreadCount + 1,
     });
   }
 
@@ -192,7 +216,7 @@ export const createThreads = (
     // Only unread threads get a "New" marker; live arrivals never do.
     // Never read means everything is new, as the server counts it
     const thread = threads.get(threadId);
-    const watermark = thread?.isUnread
+    const watermark = thread?.unreadCount
       ? (thread.lastReadAt ?? new Date(0).toISOString())
       : null;
     pages.trimToLatest(messageIds, threadId);
@@ -347,7 +371,7 @@ export const createThreads = (
 
   async function markRead(repositoryId: number, threadId: number) {
     const thread = threads.get(threadId);
-    if (thread) thread.isUnread = false;
+    if (thread) thread.unreadCount = 0;
     const { lastReadAt } = await unread.markThreadRead(repositoryId, threadId);
     // Re-read, as the entry may have been replaced while awaiting
     const current = threads.get(threadId);
@@ -363,7 +387,7 @@ export const createThreads = (
 
   async function markAllRead(repositoryId: number) {
     const counts = await unread.markAllRead(repositoryId);
-    threads.forEach((it) => (it.isUnread = false));
+    threads.forEach((it) => (it.unreadCount = 0));
     return counts;
   }
 
@@ -397,6 +421,8 @@ export const createThreads = (
     listThread,
     dropThread,
     addToThread,
+    showInThread,
+    hideFromThread,
     updateThreadSummary,
     fetchThreads,
     selectThread,

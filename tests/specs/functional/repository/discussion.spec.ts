@@ -242,6 +242,28 @@ test('replies to a message, one level deep', async ({ page }) => {
   await expect(question.replyFooter).toContainText('2 replies');
 });
 
+test('sends a posted reply to the thread and takes it out', async ({
+  page,
+}) => {
+  const { discussion, thread, replies } = await toReplies(page);
+  await expect(thread.messages).toHaveCount(1);
+  const reply = replies.getMessage('rubric');
+  await reply.sendToThread();
+  await thread.expectMessage('rubric');
+  await expect(thread.getMessageLocator('rubric'))
+    .toContainText('Replied to a thread');
+  await expect(reply.el).toContainText('Also sent to the thread');
+  await page.reload({ waitUntil: 'networkidle' });
+  await discussion.selectThread('Release');
+  await expect(thread.messages).toHaveCount(2);
+  // Taken out of the thread, it stays among the replies
+  await thread.getMessage('rubric').removeFromThread();
+  await expect(thread.messages).toHaveCount(1);
+  const reopened = await thread.openReplies('Should we ship');
+  await expect(reopened.getMessage('rubric').el)
+    .not.toContainText('Also sent to the thread');
+});
+
 test('changes to the replied message show in both panels', async ({
   page,
 }) => {

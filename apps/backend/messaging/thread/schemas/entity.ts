@@ -60,7 +60,7 @@ export type Thread = z.infer<typeof Thread>;
 
 // The thread plus the user specific fields
 export const ReaderThread = Thread.extend({
-  isUnread: z.boolean(),
+  unreadCount: UInt().describe('Messages the reader has not seen.'),
   isStarred: z.boolean().describe('Starred by the reader'),
   lastReadAt: Timestamp().nullable(),
 })

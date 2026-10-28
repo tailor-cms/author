@@ -16,6 +16,7 @@ import {
   AnchorNotFoundError,
   InvalidResolveSelectorError,
   ParentNotFoundError,
+  ReplyNotSendableError,
   ThreadNotFoundError,
 } from './errors.ts';
 import { Comment as Events } from '@tailor-cms/common/src/sse.js';
@@ -283,6 +284,26 @@ export async function update(
   await sequelize.transaction((transaction: Transaction) =>
     comment.update(attrs, { transaction }),
   );
+  return comment.reload({ include: commentIncludes() });
+}
+
+/**
+ * Shows a reply in its thread as well, at the time it was written, or
+ * takes it back out.
+ */
+export async function setBroadcast(
+  comment: Comment,
+  isBroadcast: boolean,
+): Promise<Comment> {
+  if (!comment.parentId || comment.deletedAt) {
+    throw new ReplyNotSendableError();
+  }
+  if (comment.isBroadcast !== isBroadcast) {
+    const { sequelize } = models();
+    await sequelize.transaction((transaction: Transaction) =>
+      comment.update({ isBroadcast }, { transaction }),
+    );
+  }
   return comment.reload({ include: commentIncludes() });
 }
 

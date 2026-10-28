@@ -168,4 +168,13 @@ export class ThreadMessage {
   async remove() {
     await this.toolbar.runAction('Delete message');
   }
+
+  // An already sent reply, shown in the thread as well
+  async sendToThread() {
+    await this.toolbar.runAction('Send to thread');
+  }
+
+  async removeFromThread() {
+    await this.toolbar.runAction('Remove from thread');
+  }
 }

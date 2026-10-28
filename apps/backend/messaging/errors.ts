@@ -9,6 +9,13 @@ export class ParentNotFoundError extends Error {
   }
 }
 
+export class ReplyNotSendableError extends Error {
+  constructor(message = 'Only a reply can be sent to its thread or taken out') {
+    super(message);
+    this.name = 'ReplyNotSendableError';
+  }
+}
+
 export class InvalidResolveSelectorError extends Error {
   constructor(message = 'id or contentElementId required') {
     super(message);
@@ -99,6 +106,7 @@ export class NoSubscriberError extends Error {
 
 const STATUS = [
   [ParentNotFoundError, StatusCodes.NOT_FOUND],
+  [ReplyNotSendableError, StatusCodes.BAD_REQUEST],
   [InvalidResolveSelectorError, StatusCodes.BAD_REQUEST],
   [UnanchoredMessageError, StatusCodes.BAD_REQUEST],
   [AnchorNotFoundError, StatusCodes.NOT_FOUND],
