@@ -2783,8 +2783,11 @@
               }
             ]
           },
-          "isUnread": {
-            "type": "boolean"
+          "unreadCount": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 9007199254740991,
+            "description": "Messages the reader has not seen."
           },
           "isStarred": {
             "type": "boolean",
@@ -2821,7 +2824,7 @@
           "createdAt",
           "updatedAt",
           "deletedAt",
-          "isUnread",
+          "unreadCount",
           "isStarred",
           "lastReadAt"
         ],

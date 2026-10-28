@@ -2,8 +2,9 @@
   <VListItem
     :active="isSelected"
     :class="{
-      'thread-list-item--unread': thread.isUnread,
+      'thread-list-item--unread': thread.unreadCount,
       'thread-list-item--resolved': thread.isResolved,
+      'thread-list-item--starred': thread.isStarred,
     }"
     class="thread-list-item px-2"
     min-height="36"
@@ -34,18 +35,29 @@
       <span class="thread-list-item-title text-body-medium">{{ anchor.label }}</span>
     </template>
     <template #append>
-      <VBtn
-        v-tooltip:left="starLabel"
-        :aria-label="starLabel"
-        :class="{ 'thread-list-item-star--active': thread.isStarred }"
-        :color="thread.isStarred ? 'tertiary' : undefined"
-        :icon="thread.isStarred ? 'mdi-star' : 'mdi-star-outline'"
-        class="thread-list-item-star"
-        density="compact"
-        size="small"
-        variant="text"
-        @click.stop="emit('star', thread.id, !thread.isStarred)"
-      />
+      <div class="thread-list-item-trailing">
+        <VBadge
+          v-if="thread.unreadCount"
+          :content="thread.unreadCount"
+          :label="`${thread.unreadCount} unread`"
+          class="thread-list-item-count"
+          color="secondary"
+          max="99"
+          inline
+        />
+        <VBtn
+          v-tooltip:left="starLabel"
+          :aria-label="starLabel"
+          :class="{ 'thread-list-item-star--active': thread.isStarred }"
+          :color="thread.isStarred ? 'tertiary' : undefined"
+          :icon="thread.isStarred ? 'mdi-star' : 'mdi-star-outline'"
+          class="thread-list-item-star"
+          density="compact"
+          size="small"
+          variant="text"
+          @click.stop="emit('star', thread.id, !thread.isStarred)"
+        />
+      </div>
     </template>
   </VListItem>
 </template>
@@ -74,10 +86,20 @@ const starLabel = computed(() =>
 
 <style lang="scss" scoped>
 .thread-list-item {
+  .thread-list-item-trailing {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
   @media (hover: hover) {
+    .thread-list-item-star,
+    .thread-list-item-count {
+      transition: opacity 0.15s ease;
+    }
+
     .thread-list-item-star {
       opacity: 0;
-      transition: opacity 0.15s ease;
     }
 
     &:hover,
@@ -90,6 +112,25 @@ const starLabel = computed(() =>
 
     .thread-list-item-star--active {
       opacity: 1;
+    }
+
+    // The count holds the star's place until the row is hovered
+    &:not(.thread-list-item--starred) {
+      .thread-list-item-trailing {
+        display: grid;
+        justify-items: end;
+
+        > * {
+          grid-area: 1 / 1;
+        }
+      }
+
+      &:hover,
+      &:focus-within {
+        .thread-list-item-count {
+          opacity: 0;
+        }
+      }
     }
   }
 

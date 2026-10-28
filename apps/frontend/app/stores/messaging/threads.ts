@@ -10,12 +10,15 @@ import { api } from '@/api';
 import { useAuthStore } from '@/stores/auth';
 
 type ThreadParams = { scope?: ThreadScope; type?: string; name?: string };
-type ReaderState = Pick<ReaderThread, 'isUnread' | 'isStarred' | 'lastReadAt'>;
+type ReaderState = Pick<
+  ReaderThread,
+  'unreadCount' | 'isStarred' | 'lastReadAt'
+>;
 
 export type Thread = Omit<ReaderThread, keyof ReaderState>;
 
 const NO_READER_STATE: ReaderState = {
-  isUnread: false,
+  unreadCount: 0,
   isStarred: false,
   lastReadAt: null,
 };
@@ -142,11 +145,12 @@ export const createThreads = (
     if (!thread) return;
     const me = authStore.user?.id ?? null;
     const isMine = message.authorId === me || message.actorId === me;
+    const isRead = isMine || isViewingThread(threadId);
     addThread({
       ...thread,
       lastMessageAt: message.createdAt,
       messageCount: thread.messageCount + 1,
-      isUnread: !isMine && !isViewingThread(threadId),
+      unreadCount: isRead ? 0 : thread.unreadCount + 1,
     });
   }
 
@@ -212,7 +216,7 @@ export const createThreads = (
     // Only unread threads get a "New" marker; live arrivals never do.
     // Never read means everything is new, as the server counts it
     const thread = threads.get(threadId);
-    const watermark = thread?.isUnread
+    const watermark = thread?.unreadCount
       ? (thread.lastReadAt ?? new Date(0).toISOString())
       : null;
     pages.trimToLatest(messageIds, threadId);
@@ -367,7 +371,7 @@ export const createThreads = (
 
   async function markRead(repositoryId: number, threadId: number) {
     const thread = threads.get(threadId);
-    if (thread) thread.isUnread = false;
+    if (thread) thread.unreadCount = 0;
     const { lastReadAt } = await unread.markThreadRead(repositoryId, threadId);
     // Re-read, as the entry may have been replaced while awaiting
     const current = threads.get(threadId);
@@ -383,7 +387,7 @@ export const createThreads = (
 
   async function markAllRead(repositoryId: number) {
     const counts = await unread.markAllRead(repositoryId);
-    threads.forEach((it) => (it.isUnread = false));
+    threads.forEach((it) => (it.unreadCount = 0));
     return counts;
   }
 
