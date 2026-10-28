@@ -76,11 +76,14 @@
       :is-author="isOwnMessage"
       :is-reactable="!isDeleted"
       :is-replyable="isReplyable"
+      :is-broadcast="message.isBroadcast"
+      :is-broadcastable="isBroadcastable"
       class="message-row-actions"
       @edit="isEditing = true"
       @react="emit('react', message.id, $event)"
       @remove="emit('remove', message.id)"
       @reply="emit('reply', message.id)"
+      @set:broadcast="emit('set:broadcast', message.id, $event)"
     />
   </div>
 </template>
@@ -122,10 +125,11 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  remove: [id: number];
-  reply: [id: number];
-  react: [id: number, emoji: string];
-  update: [id: number, content: string];
+  'remove': [id: number];
+  'reply': [id: number];
+  'react': [id: number, emoji: string];
+  'update': [id: number, content: string];
+  'set:broadcast': [id: number, isBroadcast: boolean];
 }>();
 
 const AVATAR_SIZE = 36;
@@ -147,6 +151,9 @@ const isDeleted = computed(() => !!props.message.deletedAt);
 const isReplyable = computed(() => !isDeleted.value && !props.isReplyTarget);
 const isOwnMessage = computed(
   () => !isDeleted.value && props.message.author?.id === props.currentUserId,
+);
+const isBroadcastable = computed(
+  () => isOwnMessage.value && !!props.message.parentId,
 );
 // A deleted message has no available actions
 const hasActions = computed(() => !isDeleted.value && !isEditing.value);

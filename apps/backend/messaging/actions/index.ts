@@ -1,6 +1,7 @@
 export { default as list } from './list.action.ts';
 export { default as create } from './create.action.ts';
 export { default as patch } from './patch.action.ts';
+export { default as setBroadcast } from './set-broadcast.action.ts';
 export { default as remove } from './remove.action.ts';
 export { default as resolve } from './resolve.action.ts';
 export { default as replies } from './replies.action.ts';

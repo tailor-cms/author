@@ -2,7 +2,7 @@
   <VListItem
     :active="isSelected"
     :class="{
-      'thread-list-item--unread': thread.isUnread,
+      'thread-list-item--unread': thread.unreadCount,
       'thread-list-item--resolved': thread.isResolved,
     }"
     class="thread-list-item px-2"
@@ -34,18 +34,29 @@
       <span class="thread-list-item-title text-body-medium">{{ anchor.label }}</span>
     </template>
     <template #append>
-      <VBtn
-        v-tooltip:left="starLabel"
-        :aria-label="starLabel"
-        :class="{ 'thread-list-item-star--active': thread.isStarred }"
-        :color="thread.isStarred ? 'tertiary' : undefined"
-        :icon="thread.isStarred ? 'mdi-star' : 'mdi-star-outline'"
-        class="thread-list-item-star"
-        density="compact"
-        size="small"
-        variant="text"
-        @click.stop="emit('star', thread.id, !thread.isStarred)"
-      />
+      <div class="thread-list-item-trailing">
+        <VBadge
+          v-if="thread.unreadCount"
+          :content="thread.unreadCount"
+          :label="`${thread.unreadCount} unread`"
+          class="thread-list-item-count"
+          color="secondary"
+          max="99"
+          inline
+        />
+        <VBtn
+          v-tooltip:right="starLabel"
+          :aria-label="starLabel"
+          :class="{ 'thread-list-item-star--active': thread.isStarred }"
+          :color="thread.isStarred ? 'tertiary' : undefined"
+          :icon="thread.isStarred ? 'mdi-star' : 'mdi-star-outline'"
+          class="thread-list-item-star"
+          density="compact"
+          size="small"
+          variant="text"
+          @click.stop="emit('star', thread.id, !thread.isStarred)"
+        />
+      </div>
     </template>
   </VListItem>
 </template>
@@ -74,21 +85,38 @@ const starLabel = computed(() =>
 
 <style lang="scss" scoped>
 .thread-list-item {
+  .thread-list-item-trailing {
+    display: flex;
+    align-items: center;
+  }
+
+  .thread-list-item-count :deep(.v-badge__wrapper) {
+    margin: 0;
+  }
+
+  .thread-list-item-star {
+    margin-left: 4px;
+  }
+
   @media (hover: hover) {
+    // Collapsed at rest; opening pushes the count aside
     .thread-list-item-star {
+      max-width: 0;
+      margin-left: 0;
+      overflow: hidden;
       opacity: 0;
-      transition: opacity 0.15s ease;
+      transition:
+        max-width 0.2s ease-in-out,
+        margin 0.2s ease-in-out,
+        opacity 0.2s ease-in-out;
     }
 
-    &:hover,
-    &:focus-within,
-    &.v-list-item--active {
-      .thread-list-item-star {
-        opacity: 1;
-      }
-    }
-
+    &:hover .thread-list-item-star,
+    &:focus-within .thread-list-item-star,
+    &.v-list-item--active .thread-list-item-star,
     .thread-list-item-star--active {
+      max-width: 2rem;
+      margin-left: 4px;
       opacity: 1;
     }
   }

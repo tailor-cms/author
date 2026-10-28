@@ -52,6 +52,7 @@ crud
   .post('/', actions.create)
   .get('/:messageId/replies', actions.replies)
   .post('/:messageId/reactions', actions.reactions)
+  .put('/:messageId/broadcast', actions.setBroadcast, { before: [canEdit] })
   .patch('/:messageId', actions.patch, { before: [canEdit] })
   .delete('/:messageId', actions.remove, { before: [canEdit] });
 

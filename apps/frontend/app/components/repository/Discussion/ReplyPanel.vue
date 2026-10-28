@@ -63,6 +63,7 @@
           is-reply-target
           @react="(id, emoji) => emit('react', id, emoji)"
           @remove="emit('remove', $event)"
+          @set:broadcast="(id, value) => emit('set:broadcast', id, value)"
           @update="(id, content) => emit('update', id, content)"
         />
       </div>
@@ -127,6 +128,7 @@ const emit = defineEmits<{
   'remove': [id: number];
   'react': [id: number, emoji: string];
   'update': [id: number, content: string];
+  'set:broadcast': [id: number, isBroadcast: boolean];
 }>();
 
 const parentEl = ref<HTMLElement>();

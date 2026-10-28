@@ -69,6 +69,8 @@ export const createMessagePages = (messageCache: MessageCache) => {
     older: endStatus(older, key),
     newer: endStatus(newer, key),
   });
+  // Starts short of the oldest messages
+  const hasOlder = (key?: number | null) => !!key && older.withMore.has(key);
   // Stops short of the newest messages
   const hasNewer = (key?: number | null) => !!key && newer.withMore.has(key);
 
@@ -159,6 +161,7 @@ export const createMessagePages = (messageCache: MessageCache) => {
 
   return {
     paging,
+    hasOlder,
     hasNewer,
     fetchLatest,
     loadOlder,

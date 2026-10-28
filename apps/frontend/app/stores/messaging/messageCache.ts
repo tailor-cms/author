@@ -82,6 +82,21 @@ export const createMessageCache = () => {
     return entries.get(id);
   }
 
+  // Sends an already sent reply to its thread as well, or takes it out
+  async function setBroadcast(
+    repositoryId: number,
+    id: number,
+    isBroadcast: boolean,
+  ) {
+    if (!entries.has(id)) throw new Error('Message not found');
+    const updated = await api.messaging.setBroadcast({
+      params: { repositoryId, messageId: id },
+      body: { isBroadcast },
+    });
+    mergeLocal(id, updated as Partial<Message>);
+    return entries.get(id);
+  }
+
   const clear = () => entries.clear();
 
   return {
@@ -93,6 +108,7 @@ export const createMessageCache = () => {
     save,
     remove,
     toggleReaction,
+    setBroadcast,
     clear,
   };
 };

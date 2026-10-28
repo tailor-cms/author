@@ -54,12 +54,20 @@ const readerInclude = (userId: number) => ({
 const WATERMARK = fn('COALESCE', col('reader.last_read_at'), new Date(0));
 
 // Unread: something was said after the reader's watermark. One
-// definition serves the flag, the filter and the badge.
+// definition serves the filter and the badge.
 const IS_UNREAD = Sequelize.where(
   WATERMARK,
   Op.lt,
   col('thread.last_message_at'),
 );
+// How many messages, replies included, came after the watermark
+const UNREAD_COUNT_SQL = `(
+  SELECT COUNT(*)::int FROM "comment"
+  WHERE "comment"."thread_id" = "thread"."id"
+    AND "comment"."deleted_at" IS NULL
+    AND "comment"."created_at" >
+      COALESCE("reader"."last_read_at", 'epoch'::timestamptz)
+)`;
 const UNREAD_WHERE = {
   lastMessageAt: { [Op.ne]: null },
   [Op.and]: [IS_UNREAD],
@@ -123,7 +131,7 @@ const threadQuery = (userId?: number) => ({
   attributes: {
     include: [
       [lit(RESOLVED_SQL), 'isResolved'],
-      ...(userId ? [[IS_UNREAD, 'isUnread']] : []),
+      ...(userId ? [[lit(UNREAD_COUNT_SQL), 'unreadCount']] : []),
     ],
   },
 });
@@ -302,10 +310,9 @@ export async function listThreads(
  * Merges the thread and user-thread state into a single entity.
  */
 function toReaderThread(row: Thread) {
-  const { reader, isUnread, ...thread } = row.toJSON() as any;
+  const { reader, ...thread } = row.toJSON() as any;
   return {
     ...thread,
-    isUnread: !!isUnread,
     lastReadAt: reader?.lastReadAt ?? null,
     isStarred: reader?.isStarred ?? false,
   };

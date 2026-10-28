@@ -59,8 +59,30 @@ export const useMessagingStore = defineStore('messaging', () => {
     announce(message);
   }
 
-  const onMessageChanged = (message: Message) =>
+  // A reply shows in its thread only while it's sent there
+  function placeReply(message: Message) {
+    if (!message.parentId) return;
+    if (message.isBroadcast) threads.showInThread(message);
+    else threads.hideFromThread(message);
+  }
+
+  function onMessageChanged(message: Message) {
     messageCache.mergeLocal(message.id, message);
+    placeReply(message);
+  }
+
+  async function setBroadcast(
+    repositoryId: number,
+    id: number,
+    isBroadcast: boolean,
+  ) {
+    const message = await messageCache.setBroadcast(
+      repositoryId,
+      id,
+      isBroadcast,
+    );
+    if (message) placeReply(message);
+  }
 
   const $subscribeToSSE = () => {
     sseRepositoryFeed
@@ -91,6 +113,7 @@ export const useMessagingStore = defineStore('messaging', () => {
     saveMessage: messageCache.save,
     removeMessage: messageCache.remove,
     toggleReaction: messageCache.toggleReaction,
+    setBroadcast,
     // Comments on content, for the editor
     ...comments,
     // Threads
