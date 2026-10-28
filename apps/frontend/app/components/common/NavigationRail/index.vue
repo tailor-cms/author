@@ -29,6 +29,7 @@
             :color="tab.badgeColor ?? 'secondary'"
             :content="tab.badge"
             :model-value="!!tab.badge"
+            max="99"
             offset-x="-2"
             offset-y="-2"
           >
