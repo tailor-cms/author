@@ -122,6 +122,7 @@
           :replies="messagingStore.replies"
           class="h-100"
           @close="messagingStore.closeReplies()"
+          @jump:start="openFirstReplies(messagingStore.replyParent.id)"
           @jump:latest="openReplies(messagingStore.replyParent.id)"
           @load:newer="messagingStore.loadNewerReplies(repositoryId)"
           @load:older="messagingStore.loadOlderReplies(repositoryId)"
@@ -162,7 +163,7 @@
         :thread="messagingStore.selectedThread"
         :typing-users="threadTypingUsers"
         class="h-100"
-        @jump:latest="openThread(messagingStore.selectedThreadId)"
+        @jump:latest="openLatest(messagingStore.selectedThreadId)"
         @load:newer="messagingStore.loadNewerMessages(repositoryId)"
         @load:older="messagingStore.loadOlderMessages(repositoryId)"
         @react="reactToMessage"
@@ -310,8 +311,13 @@ const load = () =>
 const searchMessages = (query: string) =>
   messagingStore.search(repositoryId.value, query);
 
-const { routeThreadId, routeMessageId, openThread, closeThread } =
-  useThreadRoute(repositoryId);
+const {
+  routeThreadId,
+  routeMessageId,
+  openThread,
+  openLatest,
+  closeThread,
+} = useThreadRoute(repositoryId);
 
 // The picked thread shows once its messages are in; a slow load dims the
 // current one, or shows a loader when there is none
@@ -376,6 +382,8 @@ const postMessage = async (content: string) => {
 // Separate column for replies
 const openReplies = (parentId: number, replyId?: number) =>
   messagingStore.openReplies(repositoryId.value, parentId, replyId);
+
+const openFirstReplies = (parentId: number) => openReplies(parentId, parentId);
 
 const postReply = async (content: string, isBroadcast: boolean) => {
   const parentId = messagingStore.openReplyParentId;

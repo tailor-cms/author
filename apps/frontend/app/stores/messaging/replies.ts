@@ -46,7 +46,10 @@ export const createReplies = (messageCache: MessageCache) => {
     if (isNew) countReply(parentId, message);
     // Opened at an older stretch, it comes in with the newest replies
     if (isNew && pages.hasNewer(parentId)) return;
-    replyIds.set(parentId, [...ids, message.id]);
+    replyIds.set(
+      parentId,
+      pages.capToWindow([...ids, message.id], parentId, true),
+    );
   }
 
   // Updates the parent's "N replies" footer

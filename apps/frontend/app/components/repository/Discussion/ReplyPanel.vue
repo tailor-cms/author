@@ -26,30 +26,34 @@
         <div class="parent-strip-anchor">
           <VFadeTransition>
             <ReplyParentStrip
-              v-if="parent && !isParentInView"
+              v-if="parent && !isParentShown"
               :message="parent"
               class="parent-strip"
               @jump:parent="jumpToParent"
             />
           </VFadeTransition>
         </div>
-        <div ref="parentEl">
-          <MessageRow
-            v-if="parent"
-            :current-user-id="currentUserId"
-            :message="parent"
-            is-reply-target
-            @react="(id, emoji) => emit('react', id, emoji)"
-            @remove="emit('remove', $event)"
-            @update="(id, content) => emit('update', id, content)"
-          />
-        </div>
-        <div v-if="replyCount > 0" class="d-flex align-center ga-3 px-4 py-2">
-          <span class="reply-count text-body-small text-medium-emphasis">
-            {{ pluralize('reply', replyCount, true) }}
-          </span>
-          <VDivider />
-        </div>
+        <template v-if="parent && isAtStart">
+          <div ref="parentEl">
+            <MessageRow
+              :current-user-id="currentUserId"
+              :message="parent"
+              is-reply-target
+              @react="(id, emoji) => emit('react', id, emoji)"
+              @remove="emit('remove', $event)"
+              @update="(id, content) => emit('update', id, content)"
+            />
+          </div>
+          <div
+            v-if="replyCount > 0"
+            class="d-flex align-center ga-3 px-4 py-2"
+          >
+            <span class="reply-count text-body-small text-medium-emphasis">
+              {{ pluralize('reply', replyCount, true) }}
+            </span>
+            <VDivider />
+          </div>
+        </template>
         <div v-if="isLoadingSlow" class="d-flex justify-center py-6">
           <VProgressCircular aria-label="Loading replies" indeterminate />
         </div>
@@ -88,7 +92,11 @@
 <script lang="ts" setup>
 import type { Message } from '@tailor-cms/interfaces/comment';
 
-import { NO_PAGING, type Paging } from '@/stores/messaging/pages';
+import {
+  NO_PAGING,
+  type Paging,
+  PagingStatus,
+} from '@/stores/messaging/pages';
 import {
   lastOwnMessage,
   MessageComposer,
@@ -123,6 +131,7 @@ const emit = defineEmits<{
   'load:older': [];
   'load:newer': [];
   'jump:latest': [];
+  'jump:start': [];
   'close': [];
   'submit': [content: string, isBroadcast: boolean];
   'remove': [id: number];
@@ -156,8 +165,15 @@ const editLast = () => {
 const isGrouped = (index: number) =>
   index > 0 && isContinuation(props.replies[index - 1]!, props.replies[index]!);
 
-const jumpToParent = () =>
+// The parent opens the conversation, so it shows once the first replies
+// are in; until then the strip stands in for it
+const isAtStart = computed(() => props.paging.older === PagingStatus.Empty);
+const isParentShown = computed(() => isAtStart.value && isParentInView.value);
+
+const jumpToParent = () => {
+  if (!isAtStart.value) return emit('jump:start');
   parentEl.value?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 // Post to the channel as well
 const isBroadcast = ref(false);
