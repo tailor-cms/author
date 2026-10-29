@@ -20,47 +20,78 @@
         />
       </slot>
     </template>
-    <VCard class="emoji-picker" elevation="8" rounded="lg" width="320">
-      <div class="pa-2">
-        <VTextField
-          v-model="query"
-          density="compact"
-          placeholder="Search emoji"
-          prepend-inner-icon="mdi-magnify"
+    <VCard color="surface-raised" class="emoji-picker" width="340">
+      <VTextField
+        v-model="query"
+        bg-color="surface-container-high"
+        class="mx-3 mt-3 mb-1"
+        density="compact"
+        placeholder="Search emoji"
+        prepend-inner-icon="mdi-magnify"
+        rounded="lg"
+        variant="solo"
+        autofocus
+        clearable
+        flat
+        hide-details
+      />
+      <VTabs
+        v-if="!query"
+        :model-value="currentGroup"
+        color="primary"
+        class="mx-3"
+        density="compact"
+        height="32"
+        grow
+        @update:model-value="jumpTo"
+      >
+        <VTab
+          v-for="{ label } in groupStarts"
+          :key="label"
+          v-tooltip:top="label"
+          :aria-label="label"
+          :value="label"
+          class="px-0"
+          min-width="0"
           rounded="lg"
-          variant="solo-filled"
-          autofocus
-          clearable
-          flat
-          hide-details
-        />
-      </div>
+        >
+          <VIcon :icon="GROUP_ICONS[label] ?? 'mdi-emoticon-outline'" />
+        </VTab>
+      </VTabs>
       <VDivider />
-      <VVirtualScroll v-if="rows.length" :items="rows" max-height="18rem">
-        <template #default="{ item }">
-          <div
-            v-if="item.label"
-            class="emoji-group-label px-3 pt-2 pb-1 text-body-small"
-          >
-            {{ item.label }}
-          </div>
-          <div class="emoji-grid px-2">
-            <button
-              v-for="{ value, title, isCustom } in item.items"
-              :key="value"
-              :title="title"
-              class="emoji-cell"
-              type="button"
-              @click="select(value)"
+      <div class="bg-surface-overlay">
+        <VVirtualScroll
+          v-if="rows.length"
+          ref="scrollEl"
+          :items="rows"
+          max-height="18rem"
+          @scroll.passive="onScroll"
+        >
+          <template #default="{ item, index }">
+            <div
+              v-if="item.label"
+              class="emoji-group-label px-3 pt-2 pb-1 text-body-small"
             >
-              <EmojiGlyph v-if="isCustom" :value="value" />
-              <span v-else class="emoji-char">{{ value }}</span>
-            </button>
-          </div>
-        </template>
-      </VVirtualScroll>
-      <div v-else class="px-3 py-4 text-body-small text-medium-emphasis">
-        No emoji matches that.
+              {{ item.label }}
+            </div>
+            <div :data-row="index" class="emoji-grid px-2">
+              <button
+                v-for="{ value, title, isCustom } in item.items"
+                :key="value"
+                :title="title"
+                class="emoji-cell"
+                type="button"
+                @click="select(value)"
+              >
+                <EmojiGlyph v-if="isCustom" :value="value" />
+                <span v-else class="emoji-char">{{ value }}</span>
+              </button>
+            </div>
+          </template>
+        </VVirtualScroll>
+        <div v-else class="px-3 py-4 text-body-small text-medium-emphasis">
+          No emoji matches that.
+        </div>
       </div>
     </VCard>
   </VMenu>
@@ -70,8 +101,9 @@
 import type { CustomEmoji } from '../types';
 
 import { EMOJI_GROUPS, type EmojiEntry, searchEmoji } from './emoji';
+import { chunk, find, findLast, last } from 'lodash-es';
 import { computed, ref } from 'vue';
-import { chunk } from 'lodash-es';
+import type { VVirtualScroll } from 'vuetify/components';
 import { toEmojiShortcode } from '@tailor-cms/utils';
 import { useCustomEmoji } from './useCustomEmoji';
 import EmojiGlyph from './EmojiGlyph.vue';
@@ -99,7 +131,22 @@ const emit = defineEmits<{ select: [value: string] }>();
 
 const CUSTOM_LIMIT = 32;
 const RESULT_LIMIT = 60;
-const COLUMNS = 8;
+const COLUMNS = 9;
+// A row showing less than this at the top counts as scrolled past
+const ROW_PEEK_PX = 8;
+
+const GROUP_ICONS: Record<string, string> = {
+  Custom: 'mdi-star-outline',
+  Smileys: 'mdi-emoticon-outline',
+  People: 'mdi-account-outline',
+  Nature: 'mdi-paw',
+  Food: 'mdi-food-apple-outline',
+  Travel: 'mdi-car-outline',
+  Activities: 'mdi-soccer',
+  Objects: 'mdi-lightbulb-outline',
+  Symbols: 'mdi-heart-outline',
+  Flags: 'mdi-flag-outline',
+};
 
 const toItem = ({ char, shortcode }: EmojiEntry): PickerItem => ({
   value: char,
@@ -141,6 +188,51 @@ const rows = computed<PickerRow[]>(() => groups.value.flatMap(({ label, items })
   })),
 ));
 
+// Where each group starts, for the category strip
+const groupStarts = computed(() =>
+  rows.value.flatMap(({ label }, index) => (label ? [{ label, index }] : [])),
+);
+
+const scrollEl = ref<InstanceType<typeof VVirtualScroll>>();
+const scrolledGroup = ref<string>();
+const currentGroup = computed(
+  () => scrolledGroup.value ?? groupStarts.value[0]?.label,
+);
+
+const jumpTo = (label: unknown) => {
+  const start = groupStarts.value.find((it) => it.label === label);
+  if (!start) return;
+  scrolledGroup.value = start.label;
+  scrollEl.value?.scrollToIndex(start.index);
+  scrollEl.value?.$el.animate([{ opacity: 0.4 }, { opacity: 1 }], {
+    duration: 150,
+    easing: 'ease-out',
+  });
+};
+
+// The group of the first row in view; at the end, the last group, whose
+// label may never reach the top
+const findCurrentGroup = (el: HTMLElement) => {
+  const isAtEnd = el.scrollTop + el.clientHeight >= el.scrollHeight - 1;
+  if (isAtEnd) return last(groupStarts.value)?.label;
+  const top = el.getBoundingClientRect().top;
+  const rowEls = el.querySelectorAll<HTMLElement>('[data-row]');
+  const row = find(
+    rowEls,
+    (it) => it.getBoundingClientRect().bottom > top + ROW_PEEK_PX,
+  );
+  const index = Number(row?.dataset.row ?? 0);
+  return findLast(groupStarts.value, (it) => it.index <= index)?.label;
+};
+
+// The virtual scroll redraws the rows in view on the next frame, so they
+// are read on the one after
+const onScroll = (e: Event) => {
+  const el = e.target as HTMLElement;
+  const update = () => (scrolledGroup.value = findCurrentGroup(el));
+  requestAnimationFrame(() => requestAnimationFrame(update));
+};
+
 const select = (value: string) => {
   emit('select', value);
   isOpen.value = false;
@@ -157,7 +249,7 @@ const select = (value: string) => {
 
 .emoji-grid {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(9, 1fr);
   gap: 0.125rem;
   padding-bottom: 0.125rem;
 }
