@@ -5,6 +5,9 @@ import { map } from 'lodash-es';
 
 // Messages per request; a full page means more may remain past it
 export const PAGE_SIZE = 50;
+// Messages a list keeps loaded; past it, the end away from the reader
+// unloads, and loads back once scrolled to
+export const WINDOW_SIZE = 5 * PAGE_SIZE;
 // How much of a page around a message comes before it, as the server
 // splits it
 const PAGE_BEFORE = Math.floor(PAGE_SIZE / 2);
@@ -99,6 +102,16 @@ export const createMessagePages = (messageCache: MessageCache) => {
     return page;
   }
 
+  // Over the window, drops the end away from the one that grew; marked as
+  // having more, it loads back when scrolled to
+  function capToWindow(list: number[], key: number, isNewer: boolean) {
+    if (list.length <= WINDOW_SIZE) return list;
+    const far = isNewer ? older : newer;
+    far.withMore.add(key);
+    far.failed.delete(key);
+    return isNewer ? list.slice(-WINDOW_SIZE) : list.slice(0, WINDOW_SIZE);
+  }
+
   // Adds the page past the loaded end of `ids`; a failure is kept, for
   // the list to offer a retry
   async function loadMore(
@@ -121,7 +134,8 @@ export const createMessagePages = (messageCache: MessageCache) => {
       if (!loaded || edgeOf(loaded) !== edge) return;
       track(end, key, page.length);
       const added = map(page.map((it) => messageCache.setLocal(it)), 'id');
-      ids.set(key, isNewer ? [...loaded, ...added] : [...added, ...loaded]);
+      const list = isNewer ? [...loaded, ...added] : [...added, ...loaded];
+      ids.set(key, capToWindow(list, key, isNewer));
     } catch {
       end.failed.add(key);
     } finally {
@@ -167,6 +181,7 @@ export const createMessagePages = (messageCache: MessageCache) => {
     loadOlder,
     loadNewer,
     trimToLatest,
+    capToWindow,
     clear,
   };
 };

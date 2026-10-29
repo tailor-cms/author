@@ -47,6 +47,13 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
     }
   };
 
+  // Back to the newest messages: dropping the message from the URL loads
+  // them, or with none there, the same URL would not, so they load here
+  const openLatest = (threadId: number | null) => {
+    if (routeMessageId.value) return openThread(threadId);
+    return select(threadId, null);
+  };
+
   watch([routeThreadId, routeMessageId], ([threadId, messageId]) =>
     select(threadId, messageId),
   );
@@ -62,6 +69,7 @@ export const useThreadRoute = (repositoryId: MaybeRefOrGetter<number>) => {
     routeThreadId,
     routeMessageId,
     openThread,
+    openLatest,
     closeThread: () => replaceThread(null),
   };
 };

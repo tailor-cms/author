@@ -116,7 +116,10 @@ export const createThreads = (
     if (ids.includes(message.id)) return;
     // Opened at an older stretch, it comes in with the newest messages
     if (isNew && pages.hasNewer(threadId)) return;
-    messageIds.set(threadId, [...ids, message.id]);
+    messageIds.set(
+      threadId,
+      pages.capToWindow([...ids, message.id], threadId, true),
+    );
   }
 
   // A reply sent to the thread later goes where it was written; one past
