@@ -38,7 +38,7 @@
       <VTabs
         v-if="!query"
         :model-value="currentGroup"
-        color="primary"
+        color="secondary"
         class="mx-3"
         density="compact"
         height="32"
@@ -55,7 +55,7 @@
           min-width="0"
           rounded="lg"
         >
-          <VIcon :icon="GROUP_ICONS[label] ?? 'mdi-emoticon-outline'" />
+          <VIcon :icon="groupIcon(label)" />
         </VTab>
       </VTabs>
       <VDivider />
@@ -136,16 +136,16 @@ const COLUMNS = 9;
 const ROW_PEEK_PX = 8;
 
 const GROUP_ICONS: Record<string, string> = {
-  Custom: 'mdi-star-outline',
-  Smileys: 'mdi-emoticon-outline',
-  People: 'mdi-account-outline',
-  Nature: 'mdi-paw',
-  Food: 'mdi-food-apple-outline',
-  Travel: 'mdi-car-outline',
-  Activities: 'mdi-soccer',
-  Objects: 'mdi-lightbulb-outline',
-  Symbols: 'mdi-heart-outline',
-  Flags: 'mdi-flag-outline',
+  Custom: 'star',
+  Smileys: 'emoticon',
+  People: 'account',
+  Nature: 'paw',
+  Food: 'food-apple',
+  Travel: 'car',
+  Activities: 'trophy',
+  Objects: 'lightbulb',
+  Symbols: 'heart',
+  Flags: 'flag',
 };
 
 const toItem = ({ char, shortcode }: EmojiEntry): PickerItem => ({
@@ -198,6 +198,12 @@ const scrolledGroup = ref<string>();
 const currentGroup = computed(
   () => scrolledGroup.value ?? groupStarts.value[0]?.label,
 );
+
+// Filled when selected, outlined otherwise
+const groupIcon = (label: string) => {
+  const name = GROUP_ICONS[label] ?? 'emoticon';
+  return `mdi-${name}${label === currentGroup.value ? '' : '-outline'}`;
+};
 
 const jumpTo = (label: unknown) => {
   const start = groupStarts.value.find((it) => it.label === label);
