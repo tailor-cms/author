@@ -18,7 +18,7 @@ Traditional courses, adaptive learning paths, knowledge bases, content libraries
 
 <sub>The editor - your outline on the left, the page you are writing on the right</sub>
 
-<sub><b>Built-in extensions:</b> 27 content elements &nbsp;·&nbsp; 5 containers &nbsp;·&nbsp; 12 meta inputs<br>Every one is a swappable package, not core code &nbsp;·&nbsp; 10 example schemas included</sub>
+<sub><b>Built-in extensions:</b> 28 content elements &nbsp;·&nbsp; 5 containers &nbsp;·&nbsp; 12 meta inputs<br>Every one is a swappable package, not core code &nbsp;·&nbsp; 10 example schemas included</sub>
 
 </div>
 
@@ -40,7 +40,7 @@ A course is not a list of pages with media. Pedagogy decides shape, and every ap
 Most content tools can express none of these, because they already decided the shape for you: here is a page, here are some fields, squeeze your material in.
 
 <p align="center">
-<img src="./.github/assets/structure.webp" alt="The structure view: a nested outline, with the selected level's status, fields and comments alongside" />
+<img src="./.github/assets/structure.webp" alt="The structure view: an expanded outline with a page linked from another course and a removed page awaiting publish, and the selected module's status, fields and comments alongside" />
 <br>
 <sub>Levels you name yourself, nested as deep as the material needs, each carrying its own information</sub>
 </p>
@@ -50,9 +50,9 @@ Tailor starts from **your** model instead. You describe the shape your material 
 - **Configurable, not hardcoded.** Content types are configuration. Changing your model is an edit, not a migration.
 - **Deeply structured.** Content is a tree you nest as far as your material needs, not a flat pile of entries.
 - **Learning-shaped, not learning-locked.** Assessments, question pools and progress are first-class - and the same schema system runs knowledge bases, Q&A libraries and article collections, all shipped as working examples.
-- **Rich out of the box.** 27 content elements, 5 containers and 12 meta inputs ship built in - and every one is an extension package, written with the same API you'd use for your own.
+- **Rich out of the box.** 28 content elements, 5 containers and 12 meta inputs ship built in - and every one is an extension package, written with the same API you'd use for your own.
 - **AI that earns its keep.** A reviewer that scores your pages against rubrics, and an assistant that acts on whatever you have open.
-- **Built for teams.** Comments, revisions, workflow states, per-role access and live editing updates come as standard.
+- **Built for teams.** Threads and comments, revisions, workflow states, per-role access and live editing updates come as standard.
 - **Publish once, consume anywhere.** Publishing writes a clean, versioned manifest into storage you own - S3 or the filesystem. No proprietary delivery API sits between your content and whatever renders it: an LMS, your own app, a static site. Every built-in element also ships a Vue 3 display component, so rendering the result is not a from-scratch job.
 - **MIT licensed.** Self-host it, fork it, ship it.
 
@@ -61,7 +61,7 @@ Tailor starts from **your** model instead. You describe the shape your material 
 | | A typical headless CMS | Tailor |
 | --- | --- | --- |
 | **Your outline** | A flat list of entries. Any hierarchy is something you fake with reference fields and slugs. | A real tree, and you name the levels yourself - module, chapter, topic, unit, entry, whatever your material calls for. Each level sets what can sit inside it, and authors work directly in that tree. |
-| **Where content lives** | A rich-text field and a few extra fields. Whether it reads as a lesson or a quiz is your frontend's problem. | Any level in your outline can hold content instead of more levels, and its **type** decides the shape that content takes - a reading page, a template of named sections, a timed exam, a pool of questions to draw from. You fill it with typed blocks: **27 in the box**, from tables and flashcards to eight kinds of question. |
+| **Where content lives** | A rich-text field and a few extra fields. Whether it reads as a lesson or a quiz is your frontend's problem. | Any level in your outline can hold content instead of more levels, and its **type** decides the shape that content takes - a reading page, a template of named sections, a timed exam, a pool of questions to draw from. You fill it with typed blocks: **28 in the box**, from tables and flashcards to eight kinds of question. |
 | **The details you track** | The same fixed set of fields on every entry. | You decide what each level carries - say, a duration on a module, a difficulty on a page, a source note on one image. Different fields at every level, all set in the schema. |
 | **Checking understanding** | Not something it does. You store questions as entries and grade them in another system. | Eight kinds of question, graded or ungraded, written right next to the material they test - and grouped into an exam or a pool to draw from. |
 | **Using something twice** | Point at another entry by its ID. A copy is a copy. | Reuse one question, a page, or an entire module in another project. The copy stays in step with the original until you change it - then it's yours. |
@@ -74,7 +74,7 @@ Publishing a blog or a marketing site? Use one of those instead - they are bette
 ### ✍️ Author without detours
 
 - **One workspace.** Build the outline and write the content in the same view - add, reorder and edit anything inline, with no jumping between screens.
-- **Discuss in place.** Comment on any activity or individual element, resolve threads, and keep the conversation next to the work instead of in a chat app.
+- **Discuss in place.** Comment on any activity or individual element, resolve threads, and keep the conversation next to the work instead of in a chat app - every thread also lands on the project's Threads page.
 - **Find any element.** Search every piece of content in a project, with highlighted snippets and in-place preview.
 - **Every change on record.** Browse a page's past versions, restore one with a click, or roll an entire project back to any point in its history.
 - **See what a republish will change.** Compare any page against the version already published, so nothing ships by surprise - and the project tells you at a glance when it has unpublished changes.
@@ -83,19 +83,31 @@ Publishing a blog or a marketing site? Use one of those instead - they are bette
 - **Make it yours.** Light and dark themes, plus a color system to rebrand the whole app.
 
 <p align="center">
-<img src="./.github/assets/element-editing.webp" width="49%" alt="A rich-text element selected for editing, with its formatting toolbar above and its settings sidebar alongside" /> <img src="./.github/assets/comments.webp" width="49%" alt="A comment thread open beside the page being edited" />
+<img src="./.github/assets/element-editing.webp" width="49%" alt="A rich-text element selected for editing, with its formatting toolbar inside the card and its settings in the sidebar" /> <img src="./.github/assets/comments.webp" width="49%" alt="A comment thread open on an element, right on the page being edited" />
 <br>
 <sub><b>Edit in place</b> - every block, with its own settings &nbsp;·&nbsp; <b>Discuss in place</b> - threads next to the work</sub>
+</p>
+
+### 💬 Threads, where the work is
+
+- **Every conversation in one place.** The Threads page collects each comment left on a page or element, next to free-standing threads you open with a subject - with unread counts, filters for mentions, open threads and your own, and search across every message.
+- **Talk about the work, point at the work.** @mention a teammate and they get an email, #reference an activity, element or asset, reply in a side panel, attach files and react with emoji - including your organisation's own custom set.
+- **Let your tools speak up.** Tailor posts publishes into the threads that subscribe to them, and anything that already posts to Slack - a CI pipeline, an alerting tool, a translation vendor - can post over a webhook.
+
+<p align="center">
+<img src="./.github/assets/threads.webp" alt="The Threads page: conversations on the left, an open thread with a shared image, reactions and an integration post in the middle, and a reply panel on the right" />
+<br>
+<sub>Every comment and every conversation in a project, in one place</sub>
 </p>
 
 ### ✨ AI that does the heavy lifting
 
 - **Lens** is your pre-publish reviewer. It scores every page against quality rubrics - clarity, credibility, accessibility, publish-readiness - flags blockers, and turns each one into a concrete fix.
-- **Renoir is an agent, not a chat box.** Give it a goal and it plans the work, then carries it out on the project you have open - reaching for any of 30 tools to restructure an outline, create and refine elements, find and import media, or generate a whole section. It reads your schema before it acts, so what it builds fits your model, and it stops to ask when a decision is yours to make.
+- **Renoir is an agent, not a chat box.** Give it a goal and it plans the work, then carries it out on the project you have open - reaching for more than 30 tools to restructure an outline, create and refine elements, find and import media, or generate a whole section. It can even build an interactive page - a self-contained simulation or widget, drafted and tested in a sandboxed browser and reusing images from your library. It reads your schema before it acts, so what it builds fits your model, it stops to ask when a decision is yours to make, and it keeps working in the background while you carry on editing.
 - **Media discovery** surfaces the right images for exactly the section you're working on and pulls them into your library, ready to use.
 
 <p align="center">
-<img src="./.github/assets/lens.webp" width="49%" alt="The Lens review panel scoring a module against the Publish Readiness rubric" /> <img src="./.github/assets/renoir.webp" width="49%" alt="Renoir docked beside a page of content, scoped to the page currently open in the editor" />
+<img src="./.github/assets/lens.webp" width="49%" alt="The Lens review panel scoring a page 13 out of 16 against the Publish Readiness rubric" /> <img src="./.github/assets/renoir.webp" width="49%" alt="Renoir docked beside a page of content, scoped to the page currently open in the editor" />
 <br>
 <sub><b>Lens</b> - scored against a rubric, turned into fixes &nbsp;·&nbsp; <b>Renoir</b> - an agent working on the project you have open</sub>
 </p>
@@ -107,14 +119,14 @@ Publishing a blog or a marketing site? Use one of those instead - they are bette
 - **Asset library.** Upload, import and organize every file in one place, trace exactly where each one is used before you change it, and pull in what's missing straight from the web.
 
 <p align="center">
-<img src="./.github/assets/assets.webp" width="49%" alt="The asset library: images, video, YouTube and web links with type filters and a usage panel" /> <img src="./.github/assets/collection.webp" width="49%" alt="A collection: articles, authors, tags and categories with an item sidebar" />
+<img src="./.github/assets/assets.webp" width="49%" alt="The asset library in tile view, with a selected photo's details, source, license and the places it is used in the sidebar" /> <img src="./.github/assets/collection.webp" width="49%" alt="A collection's items page: articles listed with filters for articles, authors, tags and categories, and the selected article's details alongside" />
 <br>
 <sub><b>Asset library</b> - every file in one home &nbsp;·&nbsp; <b>Collections</b> - flat entities, related as you write</sub>
 </p>
 
 ### 👥 Run it across an organisation
 
-- **Groups, not just people.** Put users into groups, give a group access to a set of projects, and set someone's role per group as well as per project.
+- **Groups, not just people.** Put users into groups, give a group access to a set of projects, and set someone's role per group as well as per project. Each group is a workspace with its own logo in the catalog, and every project's Access page lists its members and groups.
 - **Single sign-on.** OIDC alongside local accounts and email invites.
 - **A workflow you define.** Move each part of a project through your own states, with priority, assignee and due date, on a board or in a list.
 - **Know what's live.** Every project flags when it has unpublished changes, and any page can be compared against its published version before you republish.
@@ -176,13 +188,13 @@ flowchart LR
 
 Nothing below is hardcoded into the core. Every item here is an **extension** - the same kind of package you'd write yourself, installed and versioned like any other. Each element comes in two halves: the authoring component your team writes with, and a Vue 3 display component that renders the published result for learners.
 
-**27 content elements** - the blocks an author actually places:
+**28 content elements** - the blocks an author actually places:
 
 | Group | Elements |
 | --- | --- |
 | **Text**        | Rich text (TipTap, Quill, Jodit), raw HTML                                                                                                                  |
 | **Media**       | Image, video, audio, PDF, file, embed, Mux and Brightcove video                                                                                             |
-| **Interactive** | Accordion, carousel, modal, table, flashcards, sequence, section break                                                                                      |
+| **Interactive** | Accordion, carousel, modal, table, flashcards, sequence, section break, interactive page                                                                    |
 | **Questions**   | Single choice, multiple choice, true/false, matching, fill in the blank, numerical response, text response, drag & drop - each available graded or ungraded |
 
 <p align="center">
@@ -201,13 +213,13 @@ Four extension points, each plugging in at a different level of the model. Every
 
 | Extension | Plugs in at | What it adds | In the box | Manage |
 | --- | --- | --- | --- | --- |
-| 🧱 **Content Element**   | inside a container                                   | a new kind of block an author can place         | **27**     | `pnpm ce` |
+| 🧱 **Content Element**   | inside a container                                   | a new kind of block an author can place         | **28**     | `pnpm ce` |
 | 📐 **Content Container** | on any level that holds content                      | a new way to lay that content out               | **5**      | `pnpm cc` |
 | 🎛️ **Meta Input**        | on a repository, an activity **or** a single element | a new configurable field                        | **12**     | `pnpm mi` |
 | 🔌 **Plugin**            | across the whole app                                 | a feature with its own UI, data hooks and state | i18n       | `pnpm pl` |
 
 <p align="center">
-<img src="./.github/assets/installed-elements.webp" alt="The admin Installed Elements page listing 19 content elements and 8 question types, each versioned" />
+<img src="./.github/assets/installed-elements.webp" alt="The admin Installed Elements page listing 20 content elements and 8 question types, each versioned" />
 <br>
 <sub>Every extension is a versioned package, listed and manageable from admin</sub>
 </p>
@@ -257,7 +269,7 @@ Migrations apply automatically at boot unless you set `DATABASE_DISABLE_MIGRATIO
 - **Backend** - one handler per endpoint, validated end to end. The same schemas generate the OpenAPI spec and a fully typed API client.
 - **Data** - PostgreSQL, optional Redis. Storage on S3 or the filesystem.
 - **Auth** - local accounts, invites, and OIDC single sign-on.
-- **Quality** - 448 Playwright tests across 62 spec files: functional, visual (Percy) and accessibility suites, on a sharded CI pipeline.
+- **Quality** - 504 Playwright tests across 65 spec files: functional, visual (Percy) and accessibility suites, on a sharded CI pipeline.
 
 ```
 apps/frontend    the authoring UI
@@ -291,9 +303,9 @@ infrastructure/  Pulumi program for AWS deployment
 ## More of the app
 
 <p align="center">
-<img src="./.github/assets/catalog.webp" width="49%" alt="The catalog: repository cards labelled by schema type" /> <img src="./.github/assets/search.webp" width="49%" alt="Project-wide element search with previews and type filters" />
+<img src="./.github/assets/catalog.webp" width="49%" alt="The catalog: repository cards labelled by schema type, with the workspace rail on the left" /> <img src="./.github/assets/search.webp" width="49%" alt="Project-wide element search with previews and type filters" />
 <br>
-<sub><b>Catalog</b> - every project, labelled by type &nbsp;·&nbsp; <b>Search</b> - every element, previewed in place</sub>
+<sub><b>Catalog</b> - every project, labelled by type and grouped into workspaces &nbsp;·&nbsp; <b>Search</b> - every element, previewed in place</sub>
 <br><br>
 <img src="./.github/assets/workflow.webp" width="49%" alt="The workflow board: activities across todo, in progress, review and done" /> <img src="./.github/assets/revisions.webp" width="49%" alt="Repository history: a chronological audit trail of every change and who made it" />
 <br>
