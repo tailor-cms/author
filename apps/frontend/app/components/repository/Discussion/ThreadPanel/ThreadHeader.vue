@@ -17,8 +17,7 @@
     <VSpacer />
     <VChip
       v-if="thread.isResolved"
-      color="success"
-      prepend-icon="mdi-check-circle-outline"
+      prepend-icon="mdi-check"
       rounded="pill"
       size="small"
       text="Resolved"

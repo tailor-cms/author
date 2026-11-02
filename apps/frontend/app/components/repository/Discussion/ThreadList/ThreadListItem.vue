@@ -12,23 +12,7 @@
     @click="emit('select', thread.id)"
   >
     <template #prepend>
-      <VIcon
-        v-if="thread.isResolved"
-        v-tooltip:right="'Resolved'"
-        :aria-hidden="false"
-        aria-label="Resolved"
-        class="thread-list-item-icon"
-        icon="mdi-check-circle-outline"
-        color="success"
-        role="img"
-        size="16"
-      />
-      <VIcon
-        v-else
-        :icon="anchor.icon"
-        class="thread-list-item-icon"
-        size="16"
-      />
+      <VIcon :icon="anchor.icon" class="thread-list-item-icon" size="16" />
     </template>
     <template #title>
       <span class="thread-list-item-title text-body-medium">{{ anchor.label }}</span>
@@ -43,6 +27,15 @@
           color="secondary"
           max="99"
           inline
+        />
+        <VIcon
+          v-else-if="thread.isResolved"
+          v-tooltip:right="'Resolved'"
+          :aria-hidden="false"
+          aria-label="Resolved"
+          class="thread-list-item-resolved"
+          icon="mdi-check"
+          role="img"
         />
         <VBtn
           v-tooltip:right="starLabel"
@@ -136,8 +129,18 @@ const starLabel = computed(() =>
     }
   }
 
-  &--resolved:not(.thread-list-item--unread) .thread-list-item-title {
-    color: rgba(var(--v-theme-on-surface), 0.55);
+  .thread-list-item-resolved {
+    color: rgba(var(--v-theme-on-surface), 0.5);
+  }
+
+  &--resolved:not(.thread-list-item--unread) {
+    .thread-list-item-icon {
+      opacity: 0.5;
+    }
+
+    .thread-list-item-title {
+      color: rgba(var(--v-theme-on-surface), 0.55);
+    }
   }
 }
 </style>
