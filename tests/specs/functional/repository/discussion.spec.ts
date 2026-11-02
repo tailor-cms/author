@@ -201,7 +201,7 @@ test('an element comment thread cannot be deleted or subscribed', async ({
     .toHaveCount(0);
 });
 
-test('a starred thread is listed first, for whoever starred it', async ({
+test('a starred thread is listed first in its section', async ({
   page,
 }) => {
   const { repositoryId, messaging } = await seedRepository();
@@ -213,11 +213,28 @@ test('a starred thread is listed first, for whoever starred it', async ({
   await threadList.getItem('Budget').toggleStar();
   // Saved, so it is still first after a reload
   await page.reload({ waitUntil: 'networkidle' });
-  await expect(threadList.getGroupLabelLocator('Starred')).toBeVisible();
   await expect(threadList.items.first()).toContainText('Budget');
   await threadList.getItem('Budget').toggleStar();
-  await expect(threadList.getGroupLabelLocator('Starred')).toHaveCount(0);
   await expect(threadList.items.first()).toContainText('Rewrite');
+});
+
+test('threads split into topics and content, and collapse', async ({
+  page,
+}) => {
+  // A teammate's comment, so the collapsed section has something unread
+  const { repositoryId, messaging } = await seedRepository(TEAMMATE.email);
+  await messaging.startThread('Budget', CHANNEL_MESSAGE);
+  const { threadList } = await Discussion.visit(page, repositoryId);
+  const topics = threadList.getSection('Topics');
+  const content = threadList.getSection('Content');
+  await expect(topics.items).toContainText(['Budget']);
+  await expect(content.items).toContainText([ELEMENT_THREAD]);
+  await content.toggle();
+  await expect(content.items.first()).toBeHidden();
+  await expect(content.unreadBadge).toBeVisible();
+  // A filter opens every section
+  await threadList.getFilterLocator('Unread').click();
+  await expect(content.items.first()).toBeVisible();
 });
 
 test('replies to a message, one level deep', async ({ page }) => {

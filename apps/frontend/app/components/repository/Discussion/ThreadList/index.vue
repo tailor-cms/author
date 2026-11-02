@@ -24,15 +24,27 @@
       </template>
       <VList
         v-else-if="threads.length"
+        v-model:opened="openSections"
         :class="{ 'opacity-70': isSkeletonVisible }"
         bg-color="transparent"
         class="pa-0"
+        indent="0"
         nav
       >
-        <template v-for="group in groups" :key="group.label">
-          <VListSubheader v-if="group.label" class="group-label">
-            {{ group.label }}
-          </VListSubheader>
+        <VListGroup
+          v-for="group in groups"
+          :key="group.id"
+          :value="group.id"
+          class="thread-section"
+        >
+          <template #activator="{ props: activator, isOpen }">
+            <ThreadSectionHeader
+              v-bind="activator"
+              :is-open="isOpen"
+              :label="group.label"
+              :unread-count="group.unreadCount"
+            />
+          </template>
           <ThreadListItem
             v-for="thread in group.threads"
             :key="thread.id"
@@ -41,7 +53,7 @@
             @select="emit('select', $event)"
             @star="(id, isStarred) => emit('star', id, isStarred)"
           />
-        </template>
+        </VListGroup>
       </VList>
       <ThreadsEmptyState
         v-else-if="!isLoading"
@@ -57,12 +69,21 @@
 import type { ReaderThread } from '@tailor-cms/api-client';
 import type { ThreadScope } from '@/stores/messaging';
 
-import { partition } from 'lodash-es';
+import { map, negate, partition, sumBy } from 'lodash-es';
+import { ThreadType } from '@tailor-cms/interfaces/comment';
 
 import ThreadListHeader from './ThreadListHeader.vue';
 import ThreadFilters from './ThreadFilters.vue';
 import ThreadListItem from './ThreadListItem.vue';
+import ThreadSectionHeader from './ThreadSectionHeader.vue';
 import ThreadsEmptyState from './ThreadsEmptyState.vue';
+
+const isTopic = (it: ReaderThread) => it.type === ThreadType.Repository;
+
+const SECTIONS = [
+  { id: 'topics', label: 'Topics', includes: isTopic },
+  { id: 'content', label: 'Content', includes: negate(isTopic) },
+];
 
 interface Props {
   threads: ReaderThread[];
@@ -92,26 +113,24 @@ const name = defineModel<string>('name', { default: '' });
 
 const isSkeletonVisible = useDelayedLoading(() => props.isLoading);
 
-// Starred threads first, followed by the rest
-const groups = computed(() => {
-  const [starred, rest] = partition(props.threads, 'isStarred');
-  if (!starred.length) return [{ label: '', threads: rest }];
-  return [
-    { label: 'Starred', threads: starred },
-    { label: 'More conversations', threads: rest },
-  ].filter((it) => it.threads.length);
-});
+const starredFirst = (threads: ReaderThread[]) =>
+  partition(threads, 'isStarred').flat();
+
+const groups = computed(() =>
+  SECTIONS.map(({ id, label, includes }) => {
+    const threads = starredFirst(props.threads.filter(includes));
+    return { id, label, threads, unreadCount: sumBy(threads, 'unreadCount') };
+  }).filter((it) => it.threads.length),
+);
+
+const openSections = ref(map(SECTIONS, 'id'));
+
+// A filter never leaves matches hidden in a collapsed section
+watch([name, scope], () => (openSections.value = map(SECTIONS, 'id')));
 </script>
 
 <style lang="scss" scoped>
 .thread-list {
   min-width: 0;
-}
-
-.group-label {
-  min-height: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
 }
 </style>

@@ -21,6 +21,22 @@ export class ThreadListItem {
   }
 }
 
+export class ThreadSection {
+  readonly header: Locator;
+  readonly items: Locator;
+  readonly unreadBadge: Locator;
+
+  constructor(el: Locator) {
+    this.header = el.locator('.thread-section-header');
+    this.items = el.locator('.thread-list-item');
+    this.unreadBadge = this.header.locator('.v-badge');
+  }
+
+  toggle() {
+    return this.header.click();
+  }
+}
+
 export class ThreadList {
   readonly page: Page;
   readonly el: Locator;
@@ -64,9 +80,15 @@ export class ThreadList {
     return withExactText(this.el.locator('.scope-filters .v-chip'), name);
   }
 
-  // Group label; e.g. starred section
-  getGroupLabelLocator(text: string) {
-    return withExactText(this.el.locator('.group-label'), text);
+  // Topics or Content
+  getSection(label: string) {
+    const name = withExactText(
+      this.page.locator('.thread-section-label'),
+      label,
+    );
+    return new ThreadSection(
+      this.el.locator('.thread-section').filter({ has: name }),
+    );
   }
 
   async openMenu() {
