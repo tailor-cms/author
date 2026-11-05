@@ -308,9 +308,8 @@ const typeName = computed(
 const preview = computed(() => {
   if (isQuestion.value) return questionPreview.value;
   const { title, content, description, name } = props.element.data ?? {};
-  if (title || name || description) return htmlToText(title || name || description);
-  if (typeof content !== 'string') return '';
-  return htmlToText(content);
+  const text = title || name || description || content;
+  return typeof text === 'string' ? htmlToText(text) : '';
 });
 
 const questionPreview = computed(() => {

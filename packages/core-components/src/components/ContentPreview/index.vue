@@ -7,7 +7,7 @@
     variant="tonal"
   />
   <template v-for="container in contentContainers">
-    <VRow v-if="container.elements.length" :key="container.id">
+    <VRow v-if="container.elements?.length" :key="container.id">
       <ContentElementWrapper
         v-for="it in container.elements"
         :key="it.id"
