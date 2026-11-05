@@ -24,12 +24,8 @@ const downlevelDecorators = () => ({
 });
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  format: ['esm', 'cjs'],
-  platform: 'node',
-  target: 'node24',
+  target: 'node26',
   dts: true,
-  clean: true,
   plugins: [downlevelDecorators()],
-  outExtensions: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.js' }),
+  fixedExtension: false,
 });

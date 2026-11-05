@@ -3,7 +3,7 @@
 ## Usage
 
 ```js
-const { getSchemaApi, getWorkflowApi, processSchemas } = require('@tailor-cms/config-parser');
+import { getSchemaApi, getWorkflowApi, processSchemas } from '@tailor-cms/config-parser';
 ```
 
 ## API
