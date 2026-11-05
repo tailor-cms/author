@@ -1,11 +1,7 @@
 import { defineConfig } from 'tsdown';
 
 export default defineConfig({
-  entry: ['src/index.ts'],
-  format: ['esm', 'cjs'],
-  platform: 'node',
-  target: 'node24',
+  target: 'node26',
   dts: true,
-  clean: true,
-  outExtensions: ({ format }) => ({ js: format === 'cjs' ? '.cjs' : '.js' }),
+  fixedExtension: false,
 });

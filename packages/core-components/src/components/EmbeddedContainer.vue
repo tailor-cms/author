@@ -16,7 +16,6 @@
         :is-readonly="isReadonly"
         :is-dragged="isDragged"
         v-bind="$attrs"
-        class="my-2"
         :variant="elementVariant"
         @delete="requestDeleteConfirmation(element)"
         @save="save(element, 'data', $event)"

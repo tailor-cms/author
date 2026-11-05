@@ -1,27 +1,26 @@
 {
   "name": "@tailor-cms/interfaces",
   "description": "Tailor data interfaces",
+  "author": "Studion <info@gostudion.com>",
+  "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "version": "0.0.1",
+  "version": "1.0.0",
   "files": [
     "dist"
   ],
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+      "import": "./dist/index.js"
     },
     "./*": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     },
     "./*.ts": {
       "types": "./dist/*.d.ts",
-      "import": "./dist/*.js",
-      "require": "./dist/*.cjs"
+      "import": "./dist/*.js"
     }
   },
   "scripts": {
@@ -30,5 +29,11 @@
   "devDependencies": {
     "tsdown": "^0.22.14",
     "typescript": "^6.0.3"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=26"
   }
 }

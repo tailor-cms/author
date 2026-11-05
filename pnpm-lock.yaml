@@ -942,6 +942,9 @@ importers:
 
   packages/core-components:
     dependencies:
+      '@tailor-cms/interfaces':
+        specifier: workspace:^
+        version: link:../tailor-interfaces
       '@tailor-cms/utils':
         specifier: workspace:^
         version: link:../utils
@@ -1015,9 +1018,6 @@ importers:
         specifier: ^1.4.0
         version: 1.7.1
     devDependencies:
-      '@tailor-cms/interfaces':
-        specifier: workspace:*
-        version: link:../tailor-interfaces
       '@types/pluralize':
         specifier: ^0.0.33
         version: 0.0.33
@@ -1456,9 +1456,6 @@ importers:
 
   packages/utils:
     dependencies:
-      '@paralleldrive/cuid2':
-        specifier: ^3.3.0
-        version: 3.3.0
       get-video-id:
         specifier: ^4.2.0
         version: 4.2.0
@@ -3379,6 +3376,7 @@ packages:
 
   '@nuxtjs/google-fonts@3.2.0':
     resolution: {integrity: sha512-cGAjDJoeQ2jm6VJCo4AtSmKO6KjsbO9RSLj8q261fD0lMVNMZCxkCxBkg8L0/2Vfgp+5QBHWVXL71p1tiybJFw==}
+    deprecated: '@nuxtjs/google-fonts is deprecated and no longer maintained. Use @nuxt/fonts instead: https://nuxt.com/modules/fonts/migrating-from-google-fonts'
 
   '@one-ini/wasm@0.1.1':
     resolution: {integrity: sha512-XuySG1E38YScSJoMlqovLru4KTUNSjgVTIjyh7qMX6aNN5HY5Ct5LhRJdxO79JtTzKfzV/bnWpz+zquYrISsvw==}
@@ -4428,6 +4426,7 @@ packages:
   '@smithy/core@3.30.0':
     resolution: {integrity: sha512-dl2yRglDxfzH9uJ4fSo4zTaAHa0zH7+V7BZMRWy8hEYIKT1BiqMUK/CN6T3ADQ3kbA5N1tmUulroJ2UtONS7Kw==}
     engines: {node: '>=18.0.0'}
+    deprecated: Deprecated due to a bug in custom logger data redaction. See https://github.com/aws/aws-sdk-js-v3/issues/8393.
 
   '@smithy/credential-provider-imds@4.4.14':
     resolution: {integrity: sha512-QgbuahIb2qxQeZQvNK0sw3aF3JH5zwH8j2lLp5DUasVXexGGMWULAR+7z0omPXFolCP/m5wN9M5lm9EGdSviTQ==}
