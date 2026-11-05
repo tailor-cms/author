@@ -3,7 +3,7 @@
   "description": "Reusable Tailor UI components",
   "author": "Studion <info@gostudion.com>",
   "license": "MIT",
-  "version": "1.2.4",
+  "version": "2.0.0",
   "files": [
     "src"
   ],
@@ -16,7 +16,6 @@
     "#utils/*": "./src/utils/*"
   },
   "devDependencies": {
-    "@tailor-cms/interfaces": "workspace:*",
     "@types/pluralize": "^0.0.33"
   },
   "peerDependencies": {
@@ -33,6 +32,7 @@
     "yup": "^1.4.0"
   },
   "dependencies": {
+    "@tailor-cms/interfaces": "workspace:^",
     "@tiptap/extension-emoji": "^3.31.4",
     "@tiptap/extension-mention": "^3.31.4",
     "@tiptap/extension-subscript": "^3.31.4",
@@ -47,9 +47,6 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "vue-chartjs": "^5.3.4"
   },
-  "bundleDependencies": [
-    "@tailor-cms/interfaces"
-  ],
   "publishConfig": {
     "access": "public"
   }
