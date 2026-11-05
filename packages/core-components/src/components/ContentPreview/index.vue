@@ -6,19 +6,21 @@
     text="No available elements."
     variant="tonal"
   />
-  <VRow v-for="container in contentContainers" :key="container.id">
-    <ContentElementWrapper
-      v-for="it in container.elements"
-      :key="it.id"
-      :element="it"
-      :is-selected="!!selectionMap[it.id]"
-      :selectable="selectable"
-      :selection-disabled="isSelectionDisabled"
-      is-readonly
-      @element:open="$emit('element:open', $event)"
-      @toggle="$emit('toggle', it)"
-    />
-  </VRow>
+  <template v-for="container in contentContainers">
+    <VRow v-if="container.elements.length" :key="container.id">
+      <ContentElementWrapper
+        v-for="it in container.elements"
+        :key="it.id"
+        :element="it"
+        :is-selected="!!selectionMap[it.id]"
+        :selectable="selectable"
+        :selection-disabled="isSelectionDisabled"
+        is-readonly
+        @element:open="$emit('element:open', $event)"
+        @toggle="$emit('toggle', it)"
+      />
+    </VRow>
+  </template>
 </template>
 
 <script lang="ts" setup>

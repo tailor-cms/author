@@ -100,7 +100,6 @@ const scrollContainer = throttle((e) => {
 <style lang="scss" scoped>
 .contained-content {
   position: relative;
-  margin: 7px 0;
   padding: 0;
 }
 </style>
